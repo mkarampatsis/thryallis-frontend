@@ -1,0 +1,30 @@
+<p>select-organization works!</p>
+
+<div class="govgr-body">Επιλέξτε με κλικ κάποιον φορέα.</div>
+
+<div class="govgr-body">
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="organizations"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [rowSelection]="rowSelection"
+        [pagination]="true"
+        [paginationPageSize]="20"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        (selectionChanged)="onSelectionChanged()"
+        class="ag-theme-balham"></ag-grid-angular>
+
+    @if (currentOrganization) {
+        <div class="d-flex gap-2 align-items-center justify-content-end small mt-2">
+            <span class="small">{{ currentOrganization?.preferredLabel }}</span>
+            <button
+                class="btn btn-primary"
+                (click)="onSelectedOrganization()">
+                Επιλογή
+            </button>
+        </div>
+    }
+</div>

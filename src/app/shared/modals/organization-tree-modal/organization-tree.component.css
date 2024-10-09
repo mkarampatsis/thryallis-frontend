@@ -1,0 +1,14 @@
+.tree-node {
+    display: flex;
+    align-items: center;
+    font-size: small;
+    height: 1.9rem;
+}
+
+mat-icon {
+    color: grey;
+}
+
+mat-icon:hover {
+    color: #007bff;
+}

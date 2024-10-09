@@ -1,0 +1,18 @@
+<div class="float-right z-3">
+    @for (toast of toastService.toasts; track toast) {
+        <ngb-toast
+            [class]="toast.classname"
+            [autohide]="true"
+            [delay]="toast.delay || 5000"
+            (hidden)="toastService.remove(toast)"
+        >
+            <div class="text-center">
+                <!-- <ng-template [ngTemplateOutlet]="toast.template"></ng-template> -->
+                <ng-container
+                    [ngComponentOutlet]="toast.component"
+                    [ngComponentOutletInputs]="toast.inputs"
+                ></ng-container>
+            </div>
+        </ngb-toast>
+    }
+</div>

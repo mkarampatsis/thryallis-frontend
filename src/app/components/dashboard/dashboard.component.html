@@ -1,0 +1,153 @@
+<!-- @if (organizationsLoading$ | async) {
+    <span class="d-flex align-items-center gap-2">
+        Συγχρονισμός Φορέων...
+        <span
+            class="spinner-border text-primary"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+    </span>
+}
+
+@if (organizationalUnitsLoading$ | async) {
+    <span class="d-flex align-items-center gap-2">
+        Συγχρονισμός Μονάδων ...
+        <span
+            class="spinner-border text-primary"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+    </span>
+} -->
+
+<h4 class="govgr-heading-md">Οι προσβάσεις σας</h4>
+
+<p class="govgr-body">
+    Στους παρακάτω πίνακες εμφανίζονται οι φορείς και οι μονάδες που έχετε πρόσβαση και οι επιτρεπτές ενέργειες.
+</p>
+
+<h5 class="govgr-heading-md d-flex align-items-center gap-2">
+    Φορείς
+    @if (organizations_loading) {
+        <div
+            class="spinner-border text-primary"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+</h5>
+
+@if (organizations.length > 0 && !organizations_loading) {
+    <div class="d-flex flex-column flex-lg-row gap-2">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Κωδικός</th>
+                    <th scope="col">Ονομασία</th>
+                    <th scope="col">Ενέργειες</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (organization of organizations; track organization) {
+                    <tr class="align-middle">
+                        <td>{{ organization.code }}</td>
+                        <td>{{ organization.preferredLabel }}</td>
+                        <td class="d-flex gap-2 fs-5">
+                            <i
+                                class="bi bi-info-circle"
+                                role="button"
+                                (click)="showOrganizationDetails(organization.code)"></i>
+
+                            <i
+                                class="bi bi-pencil-square"
+                                role="button"
+                                (click)="editForeas(organization.code)"></i>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+} @else {
+    <div
+        class="alert alert-info w-25 mb-4 text-center fw-semibold"
+        role="alert">
+        Δεν έχετε πρόσβαση σε φορείς.
+    </div>
+}
+
+<h5 class="govgr-heading-md d-flex align-items-center gap-2 mt-4">
+    Μονάδες
+    @if (organizational_units_loading) {
+        <div
+            class="spinner-border text-primary"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+</h5>
+
+@if (organizational_units.length > 0 && !organizational_units_loading) {
+    <div class="d-flex flex-column flex-lg-row gap-2 mb-4">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Κωδικός</th>
+                    <th scope="col">Ονομασία Φορέα</th>
+                    <th scope="col">Ονομασία Μονάδας</th>
+                    <th scope="col">Ενέργειες</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (organizational_unit of organizational_units; track organizational_unit) {
+                    <tr class="align-middle">
+                        <td>{{ organizational_unit.code }}</td>
+                        <td>{{ organizationCodesMap.get(organizational_unit.organizationCode) }}</td>
+                        <td>{{ organizational_unit.preferredLabel }}</td>
+                        <td class="d-flex gap-2 fs-5">
+                            <i
+                                class="bi bi-info-circle"
+                                role="button"
+                                (click)="showOrganizationalUnitDetails(organizational_unit.code)"></i>
+
+                            <i
+                                class="bi bi-pencil-square"
+                                role="button"
+                                (click)="editMonada(organizational_unit.code)"></i>
+
+                            <!-- <i
+                                class="bi bi-gear"
+                                role="button"
+                                (click)="newRemit(organizational_unit)"></i> -->
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!-- @for (organizational_unit of organizational_units; track organizational_unit) {
+            <div
+                class="card"
+                style="width: 20rem">
+                <div class="card-header fw-semibold text-center text-truncate">
+                    {{ organizationCodesMap.get(organizational_unit.organizationCode) }}
+                    <br />
+                    {{ organizational_unit.preferredLabel }}
+                </div>
+                <div class="card-body text-center d-flex flex-column align-items-center gap-2">
+                    <button
+                        class="btn btn-primary"
+                        style="width: fit-content"
+                        (click)="newRemit(organizational_unit)">
+                        Νέα Αρμοδιότητα
+                    </button>
+                </div>
+            </div>
+        } -->
+    </div>
+} @else {
+    <div
+        class="alert alert-info w-25 text-center fw-semibold"
+        role="alert">
+        Δεν έχετε πρόσβαση σε μονάδες.
+    </div>
+}

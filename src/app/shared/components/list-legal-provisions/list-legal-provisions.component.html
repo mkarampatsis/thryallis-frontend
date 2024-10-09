@@ -1,0 +1,71 @@
+@if (legalProvisions.length === 0) {
+    <div class="alert alert-info">Δεν υπάρχουν προς το παρόν διατάξεις πρόβλεψης</div>
+} @else {
+    <table class="table table-bordered small">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Νομική Πράξη</th>
+                <th class="text-center">Μέρος</th>
+                <th class="text-center">Άρθρο</th>
+                <th class="text-center">Παράγραφος</th>
+                <th class="text-center">Εδάφιο</th>
+                <th class="text-center">Παράρτημα</th>
+                <th class="text-center">Κείμενο</th>
+                @if (actionColumnVisible) {
+                    <th class="text-center">Ενέργειες</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (legalProvision of legalProvisions; let i = $index; track i) {
+                <tr>
+                    <td class="text-center align-content-center">
+                        {{ i + 1 }}
+                    </td>
+                    <td class="align-content-center">
+                        {{ legalProvision.legalActKey }}
+                    </td>
+                    <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.meros }}</td>
+                    <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.arthro }}</td>
+                    <td class="text-center align-content-center">
+                        {{ legalProvision.legalProvisionSpecs.paragrafos }}
+                    </td>
+                    <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.edafio }}</td>
+                    <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.pararthma }}</td>
+                    <td class="text-center align-content-center">
+                        <i
+                            role="button"
+                            (click)="displayLegalProvision(legalProvision)"
+                            class="bi bi-file-text fs-5 me-2"></i>
+                        <i
+                            [cdkCopyToClipboard]="legalProvision.legalProvisionText"
+                            role="button"
+                            class="bi bi-copy fs-5"></i>
+                    </td>
+                    @if (actionColumnVisible) {
+                        <td class="text-center align-content-center">
+                            @if (!legalProvision.isNew) {
+                                <i
+                                    role="button"
+                                    (click)="editLegalProvision(legalProvision)"
+                                    class="bi bi-pencil-square fs-5 me-2"></i>
+                                @if (countAllLegalProvisionsExceptNew > 1) {
+                                    <i
+                                        role="button"
+                                        (click)="removeLegalProvision(i)"
+                                        class="bi bi-trash fs-5"></i>
+                                }
+                            } @else {
+                                <i
+                                    role="button"
+                                    (click)="removeNewLegalProvision(i)"
+                                    class="bi bi-trash fs-5"></i>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

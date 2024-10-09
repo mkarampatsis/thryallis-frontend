@@ -1,0 +1,11 @@
+<div class="d-flex justify-content-between m-3">
+    <span class="h5">Επιλογή Διάταξης</span>
+    <button
+        type="button"
+        class="btn-close"
+        (click)="modalRef.dismiss()"></button>
+</div>
+<div class="modal-body">
+    <app-select-legal-provision
+        (selectedLegalProvisions)="onSelectedLegalProvision($event)"></app-select-legal-provision>
+</div>

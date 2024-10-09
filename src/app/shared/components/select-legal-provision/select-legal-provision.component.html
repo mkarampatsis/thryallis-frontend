@@ -1,0 +1,39 @@
+<div class="d-flex align-items-center justify-content-between">
+    <button
+        class="btn btn-primary btn-sm mb-2"
+        (click)="newLegalProvision()">
+        Νέα Διάταξη
+    </button>
+    <span class="small">Επιλέξτε με κλικ κάποια διάταξη (ctrl+κλικ για επιπλέον διατάξεις)</span>
+</div>
+<ag-grid-angular
+    [domLayout]="'autoHeight'"
+    [rowData]="legalProvisions"
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs"
+    [rowClassRules]="rowClassRules"
+    [pagination]="true"
+    [paginationPageSize]="20"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    [rowSelection]="rowSelection"
+    (gridReady)="onGridReady($event)"
+    (selectionChanged)="onSelectionChanged()"
+    class="ag-theme-balham"></ag-grid-angular>
+@if (currentLegalProvisions.length) {
+    <div class="d-flex justify-content-end small mt-2">
+        @if (currentLegalProvisions.length > 1) {
+            <button
+                (click)="onSelectedLegalProvisions()"
+                class="btn btn-primary btn-sm">
+                Επιλογή {{ currentLegalProvisions.length }} διατάξεων
+            </button>
+        } @else {
+            <button
+                (click)="onSelectedLegalProvisions()"
+                class="btn btn-primary btn-sm">
+                Επιλογή διάταξης
+            </button>
+        }
+    </div>
+}

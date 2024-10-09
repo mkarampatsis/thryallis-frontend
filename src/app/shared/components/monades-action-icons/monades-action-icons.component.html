@@ -1,0 +1,13 @@
+<div class="d-flex gap-1 align-items-center">
+    <mat-icon role="button" (click)="showOrganizationUnitDetails()">info</mat-icon>
+    @if (canEdit(params.data.code)) {
+        <mat-icon
+            role="button"
+            (click)="newRemit(params.data)"
+            placement="top"
+            ngbTooltip="Νέα Αρμοδιότητα"
+            container="body"
+            >engineering</mat-icon
+        >
+    }
+</div>

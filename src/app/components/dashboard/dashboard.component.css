@@ -1,0 +1,6 @@
+mat-icon {
+    color: grey;
+}
+mat-icon:hover {
+    color: #007bff;
+}

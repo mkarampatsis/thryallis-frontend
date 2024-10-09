@@ -1,0 +1,25 @@
+@import "ag-grid-community/styles/ag-grid.css";
+@import "ag-grid-community/styles/ag-theme-balham.css";
+
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+i {
+    color: grey;
+}
+i:hover {
+    color: #007bff;
+}
+
+.rag-red-outer {
+    background-color: lightcoral;
+    color: blue;
+}

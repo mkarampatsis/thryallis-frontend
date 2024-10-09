@@ -1,0 +1,18 @@
+<div class="d-flex justify-content-between m-3">
+    <span class="h5">Εμφάνιση Νομοθεσίας</span>
+    <button
+        type="button"
+        class="btn-close"
+        (click)="modalRef.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+    <div class="card">
+        <ngx-extended-pdf-viewer
+            [src]="pdfURL.href"
+            [filenameForDownload]="pdfURL.download"
+            [height]="'auto'"
+            [textLayer]="true"
+            [showHandToolButton]="true"></ngx-extended-pdf-viewer>
+    </div>
+</div>

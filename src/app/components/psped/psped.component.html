@@ -1,0 +1,66 @@
+<h4 class="govgr-heading-md">Πολυεπίπεδη Διακυβέρνηση</h4>
+<p class="govgr-body">
+    Καλώς ήρθατε. Επιλέξτε από το μενού την επιθυμητή ενότητα ή δείτε τις
+    <a
+        routerLink="/dashboard"
+        class="link-info">
+        προσβάσεις
+    </a>
+    σας.
+</p>
+
+<h5 class="govgr-heading-md">Συνολική Εικόνα</h5>
+
+<p class="govgr-body">Επιλέξτε κάποια οντότητα για να μετακινηθείτε στη διαχείρισή της.</p>
+
+<div class="d-flex gap-4 text-nowrap">
+    <div
+        class="card"
+        role="button"
+        routerLink="/foreis">
+        <div class="card-header fw-semibold text-center">Φορείς</div>
+        <div class="card-body text-center fs-4">
+            {{ foreasCount }}
+        </div>
+    </div>
+
+    <div
+        class="card"
+        role="button"
+        routerLink="/monades">
+        <div class="card-header fw-semibold text-center">Μονάδες</div>
+        <div class="card-body text-center fs-4">
+            {{ monadesCount }}
+        </div>
+    </div>
+
+    <div
+        class="card"
+        role="button"
+        routerLink="/armodiothtes">
+        <div class="card-header fw-semibold text-center">Αρμοδιότητες</div>
+        <div class="card-body text-center fs-4">
+            {{ remitCount }}
+        </div>
+    </div>
+
+    <div
+        class="card"
+        role="button"
+        routerLink="/nomikes-praxeis">
+        <div class="card-header fw-semibold text-center">Νομικές Πράξεις</div>
+        <div class="card-body text-center fs-4">
+            {{ legalActCount }}
+        </div>
+    </div>
+
+    <div
+        class="card"
+        role="button"
+        routerLink="/diataxeis">
+        <div class="card-header fw-semibold text-center">Διατάξεις</div>
+        <div class="card-body text-center fs-4">
+            {{ legalProvisionCount }}
+        </div>
+    </div>
+</div>

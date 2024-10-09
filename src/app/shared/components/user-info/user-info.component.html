@@ -1,0 +1,56 @@
+<ul class="navbar-nav small">
+    <li
+        ngbDropdown
+        class="nav-item">
+        <a
+            id="userContextMenu"
+            class="d-flex align-items-center"
+            ngbDropdownToggle>
+            @if (!imgSrcError) {
+                <img
+                    class="rounded-circle me-2"
+                    [src]="user().photoUrl"
+                    alt="user photo"
+                    (error)="imgSrcError = true" />
+            } @else {
+                <i class="bi bi-person-circle text-white fs-1"></i>
+            }
+        </a>
+        <div
+            ngbDropdownMenu
+            class="dropdown-menu"
+            aria-labelledby="userContextMenu">
+            <a
+                ngbDropdownItem
+                [disabled]="true">
+                <span class="fw-bold">{{ user().name }}</span>
+            </a>
+
+            <a
+                ngbDropdownItem
+                routerLink="/dashboard">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-person-gear fs-4"></i>
+                    Οι προσβάσεις μου
+                </div>
+            </a>
+            <a
+                *ngIf="hasHelpDeskRole()"
+                ngbDropdownItem
+                routerLink="/user-admin">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-person fs-4"></i>
+                    Διαχείριση Χρηστών
+                </div>
+            </a>
+            <a
+                ngbDropdownItem
+                (click)="logout()">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-escape fs-4"></i>
+                    <span>Έξοδος</span>
+                </div>
+            </a>
+        </div>
+    </li>
+</ul>

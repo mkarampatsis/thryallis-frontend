@@ -1,0 +1,15 @@
+<h1 class="govgr-heading-sm">Αρμοδιότητες Μονάδων του Ελληνικού Δημοσίου</h1>
+
+<div class="govgr-body">
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="remits"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="10"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+</div>

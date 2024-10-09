@@ -1,0 +1,30 @@
+<div class="d-flex justify-content-between m-3">
+    <span class="h5">Επιβεβαίωση ενέργειας</span>
+    <button
+        type="button"
+        class="btn-close"
+        (click)="modalRef.dismiss()"></button>
+</div>
+<div class="modal-body">
+    <div class="d-flex flex-column gap-3">
+        <ngb-alert [dismissible]="false">
+            <strong>ΠΡΟΣΟΧΗ!</strong>
+            <span
+                class="ms-2"
+                [innerHTML]="prompt"></span>
+        </ngb-alert>
+
+        <div class="d-flex justify-content-end gap-3">
+            <button
+                (click)="onClick(false)"
+                class="btn btn-danger">
+                Όχι
+            </button>
+            <button
+                (click)="onClick(true)"
+                class="btn btn-success">
+                Ναι
+            </button>
+        </div>
+    </div>
+</div>

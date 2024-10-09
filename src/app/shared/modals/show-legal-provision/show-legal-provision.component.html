@@ -1,0 +1,75 @@
+<div class="d-flex justify-content-between m-3">
+    <span class="h5">Κείμενο Διάταξης από τη Νομοθεσία</span>
+    <button
+        type="button"
+        class="btn-close"
+        (click)="modalRef.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <span class="fw-semibold">{{ legalProvision.legalActKey }}</span>
+
+            <table class="w-50">
+                <tr>
+                    <th
+                        *ngIf="legalProvision.legalProvisionSpecs.meros"
+                        class="text-center">
+                        Μέρος
+                    </th>
+                    <th
+                        *ngIf="legalProvision.legalProvisionSpecs.arthro"
+                        class="text-center">
+                        Άρθρο
+                    </th>
+                    <th
+                        *ngIf="legalProvision.legalProvisionSpecs.paragrafos"
+                        class="text-center">
+                        Παράγραφος
+                    </th>
+                    <th
+                        *ngIf="legalProvision.legalProvisionSpecs.edafio"
+                        class="text-center">
+                        Εδάφιο
+                    </th>
+                    <th
+                        *ngIf="legalProvision.legalProvisionSpecs.pararthma"
+                        class="text-center">
+                        Παράρτημα
+                    </th>
+                </tr>
+                <tr>
+                    <td
+                        *ngIf="legalProvision.legalProvisionSpecs.meros"
+                        class="text-center">
+                        {{ legalProvision.legalProvisionSpecs.meros }}
+                    </td>
+                    <td
+                        *ngIf="legalProvision.legalProvisionSpecs.arthro"
+                        class="text-center">
+                        {{ legalProvision.legalProvisionSpecs.arthro }}
+                    </td>
+                    <td
+                        *ngIf="legalProvision.legalProvisionSpecs.paragrafos"
+                        class="text-center">
+                        {{ legalProvision.legalProvisionSpecs.paragrafos }}
+                    </td>
+                    <td
+                        *ngIf="legalProvision.legalProvisionSpecs.edafio"
+                        class="text-center">
+                        {{ legalProvision.legalProvisionSpecs.edafio }}
+                    </td>
+                    <td
+                        *ngIf="legalProvision.legalProvisionSpecs.pararthma"
+                        class="text-center">
+                        {{ legalProvision.legalProvisionSpecs.pararthma }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div
+            class="card-body"
+            [innerHTML]="legalProvision.legalProvisionText"></div>
+    </div>
+</div>

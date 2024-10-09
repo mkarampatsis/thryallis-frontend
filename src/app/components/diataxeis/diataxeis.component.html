@@ -1,0 +1,19 @@
+<h1 class="govgr-heading-sm">Διατάξεις του συστήματος ΠΣΠΕΔ</h1>
+
+<!-- <button
+    class="btn btn-primary btn-sm mb-2"
+    (click)="newLegalProvision()">
+    Νέα Διάταξη
+</button> -->
+<ag-grid-angular
+    [domLayout]="'autoHeight'"
+    [rowData]="legalProvisions"
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs"
+    [rowClassRules]="rowClassRules"
+    [pagination]="true"
+    [paginationPageSize]="20"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    (gridReady)="onGridReady($event)"
+    class="ag-theme-balham"></ag-grid-angular>

@@ -1,3 +1,5 @@
+src/app/shared/config.ts
+
 # Logs
 logs
 *.log

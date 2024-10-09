@@ -1,0 +1,10 @@
+<div class="d-flex justify-content-between m-3">
+    <span class="h5">Επιλογή Νομικής Πράξης</span>
+    <button
+        type="button"
+        class="btn-close"
+        (click)="modalRef.dismiss()"></button>
+</div>
+<div class="modal-body">
+    <app-select-legal-action (selectedLegalAct)="onSelectedLegalAct($event)"></app-select-legal-action>
+</div>

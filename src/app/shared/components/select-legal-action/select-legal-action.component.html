@@ -1,0 +1,35 @@
+<p class="mb-4">
+    Επιλέξτε μια Νομική Πράξη για να ενεργοποιηθεί το κουμπί της επιλογής ή εισάγετε μια νέα Νομική Πράξη και στη
+    συνέχεια επιλέξτε την.
+</p>
+<div class="d-flex align-items-center justify-content-between">
+    <button
+        class="btn btn-primary btn-sm mb-2"
+        (click)="newLegalAct()">
+        Νέα Νομική Πράξη
+    </button>
+    <span class="small">Επιλέξτε με κλίκ κάποια νομική πράξη</span>
+</div>
+<ag-grid-angular
+    [domLayout]="'autoHeight'"
+    [rowData]="legalActs"
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs"
+    [pagination]="true"
+    [paginationPageSize]="50"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    [rowSelection]="rowSelection"
+    (gridReady)="onGridReady($event)"
+    (selectionChanged)="onSelectionChanged()"
+    class="ag-theme-balham"></ag-grid-angular>
+@if (currentLegalAct) {
+    <div class="d-flex gap-2 align-items-center justify-content-end small mt-2">
+        <span class="small">{{ currentLegalAct?.legalActKey }}</span>
+        <button
+            class="btn btn-primary"
+            (click)="onSelectedLegalAct()">
+            Επιλογή
+        </button>
+    </div>
+}

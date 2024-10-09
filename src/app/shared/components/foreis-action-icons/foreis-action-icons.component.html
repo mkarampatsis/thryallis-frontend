@@ -1,0 +1,29 @@
+<div class="d-flex gap-1 align-items-center">
+    <mat-icon
+        role="button"
+        (click)="showOrganizationDetails()"
+        placement="top"
+        ngbTooltip="Καρτέλα Φορέα"
+        container="body">
+        info
+    </mat-icon>
+    <mat-icon
+        role="button"
+        (click)="showOrganizationTree()"
+        placement="top"
+        ngbTooltip="Οργανόγραμμα Φορέα"
+        container="body">
+        account_tree
+    </mat-icon>
+    @if (canEdit(params.data.code)) {
+        <mat-icon
+            role="button"
+            (click)="editForeas()"
+            placement="top"
+            ngbTooltip="Αλλαγή Πολυεπίπεδης"
+            container="body">
+            edit
+        </mat-icon>
+    }
+    <!-- <mat-icon role="button" (click)="editForeas()">edit</mat-icon> -->
+</div>

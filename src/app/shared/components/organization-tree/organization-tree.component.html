@@ -1,0 +1,69 @@
+@if (isLoading) {
+    <div
+        class="d-flex justify-content-center align-items-center"
+        style="height: 100%">
+        <mat-spinner></mat-spinner>
+    </div>
+} @else {
+    @if (organizationTree?.length === 0) {
+        <ngb-alert
+            [type]="'info'"
+            [dismissible]="false">
+            Δεν υπάρχουν μονάδες στο φορέα.
+        </ngb-alert>
+    } @else {
+        <cdk-tree
+            [dataSource]="dataSource"
+            [treeControl]="treeControl">
+            <!-- This is the tree node template for leaf nodes -->
+            <cdk-tree-node
+                *cdkTreeNodeDef="let node"
+                cdkTreeNodePadding
+                [style.display]="shouldRender(node) ? 'flex' : 'none'"
+                class="tree-node">
+                <!-- use a disabled button to provide padding for tree leaf -->
+
+                <button
+                    mat-icon-button
+                    disabled></button>
+
+                <span
+                    role="button"
+                    (click)="showOrganizationUnitDetails(node.monada.code)"
+                    ngbTooltip="Κωδικός απογραφής: {{ node.monada.code }}"
+                    placement="end"
+                    class="text-truncate">
+                    {{ node.monada.preferredLabel }}
+                </span>
+            </cdk-tree-node>
+
+            <!-- This is the tree node template for expandable nodes -->
+
+            <cdk-tree-node
+                *cdkTreeNodeDef="let node; when: hasChild"
+                cdkTreeNodePadding
+                [style.display]="shouldRender(node) ? 'flex' : 'none'"
+                class="tree-node">
+                <button
+                    mat-icon-button
+                    cdkTreeNodeToggle
+                    [attr.aria-label]="'Toggle ' + node.monada.preferredLabel"
+                    (click)="node.isExpanded = !node.isExpanded"
+                    [style.visibility]="node.expandable ? 'visible' : 'hidden'"
+                    style="display: flex; align-items: center">
+                    <mat-icon class="mat-icon-rtl-mirror">
+                        {{ treeControl.isExpanded(node) ? "expand_more" : "chevron_right" }}
+                    </mat-icon>
+                </button>
+                <span
+                    role="button"
+                    (click)="showOrganizationUnitDetails(node.monada.code)"
+                    ngbTooltip="Κωδικός απογραφής: {{ node.monada.code }}"
+                    placement="end"
+                    class="text-truncate">
+                    {{ node.monada.preferredLabel }}
+                </span>
+            </cdk-tree-node>
+        </cdk-tree>
+    }
+}

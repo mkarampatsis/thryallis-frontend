@@ -1,0 +1,25 @@
+<!-- @if (keyValue.value) { -->
+<div class="row">
+    <div class="col-md-4 fw-semibold d-inline text-truncate">
+        {{ keyValue.key }}
+    </div>
+    <div class="col-md-8">
+        @if (keyValue.value) {
+            @if (isArray(keyValue.value)) {
+                @for (value of keyValue.value; track value) {
+                    {{ value }}
+                    <br />
+                }
+            } @else {
+                @if (isDateString(keyValue.value) && isDate(keyValue.value)) {
+                    {{ keyValue.value | date: "longDate" }}
+                } @else {
+                    {{ keyValue.value }}
+                }
+            }
+        } @else {
+            <span class="text-secondary">*</span>
+        }
+    </div>
+</div>
+<!-- } -->
