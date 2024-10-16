@@ -1,4 +1,5 @@
 src/app/shared/config.ts
+/.angular/cache
 
 # Logs
 logs

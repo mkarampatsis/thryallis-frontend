@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { SearchFormComponent } from './search-form/search-form.component';
+import { MatrixComponent } from './matrix/matrix.component';
 
 @Component({
     selector: 'app-search',
     standalone: true,
-    imports: [MatIconModule],
+    imports: [NgbNavModule, SearchFormComponent, MatrixComponent],
     templateUrl: './search.component.html',
     styleUrl: './search.component.css',
 })
 export class SearchComponent {
-    search(event: any) {
-        alert('Not implemented yet! ');
-    }
+    active = 1;
 }

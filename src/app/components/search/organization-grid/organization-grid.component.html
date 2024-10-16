@@ -1,0 +1,15 @@
+<div class="govgr-body mt-3">
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="data"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="50"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        (rowDoubleClicked)="onRowDoubleClicked($event)"
+        class="ag-theme-balham">
+    </ag-grid-angular>
+</div>

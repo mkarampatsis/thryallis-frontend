@@ -21,4 +21,9 @@ export class DictionaryService {
         const url = `${APIPREFIX}/UnitTypes`;
         return this.http.get<IDictionaryType[]>(url);
     }
+
+    getAllFunctions(): Observable<IDictionaryType[]> {
+        const url = `${APIPREFIX}/Functions`;
+        return this.http.get<IDictionaryType[]>(url);
+    }
 }

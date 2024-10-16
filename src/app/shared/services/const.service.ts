@@ -69,6 +69,9 @@ export class ConstService {
     ORGANIZATION_UNIT_TYPES: IDictionaryType[] = [];
     ORGANIZATION_UNIT_TYPES_MAP: Map<number, string> = new Map<number, string>();
 
+    ORGANIZATION_FUNCTIONS: IDictionaryType[] = [];
+    ORGANIZATION_FUNCTIONS_MAP: Map<number, string> = new Map<number, string>();
+
     ORGANIZATION_CODES: IOrganizationCode[] = [];
     ORGANIZATION_CODES_MAP: Map<string, string> = new Map<string, string>();
 
@@ -103,6 +106,12 @@ export class ConstService {
             flex: 1,
             cellRenderer: (params) => params.value.find((data) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
         },
+    ];
+
+    SEARCH_COL_DEFS: ColDef[] = [
+        { field: 'preferredLabel', headerName: 'Φορέας', flex: 1 },
+        { field: 'object_id', headerName: 'id', flex: 1, hide: true  },
+        { field: 'score', headerName: 'Score', flex: 1 },
     ];
 
     ORGANIZATIONS_COL_DEFS: ColDef[] = [
@@ -255,10 +264,10 @@ export class ConstService {
                     const orgUnitCode = ou.code;
                     this.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.set(orgUnitCode, orgCode);
                 });
-                console.log(
-                    'ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP',
-                    this.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP,
-                );
+                // console.log(
+                //     'ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP',
+                //     this.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP,
+                // );
             });
 
         this.dictionaryService
@@ -280,6 +289,17 @@ export class ConstService {
                     this.ORGANIZATION_UNIT_TYPES_MAP.set(x.apografi_id, x.description);
                 });
             });
+        
+        this.dictionaryService
+            .getAllFunctions()
+            .pipe(take(1))
+            .subscribe((data) => {
+                this.ORGANIZATION_FUNCTIONS = data;
+                this.ORGANIZATION_FUNCTIONS.forEach((x) => {
+                    this.ORGANIZATION_FUNCTIONS_MAP.set(x.apografi_id, x.description);
+                });
+            });    
+
 
         this.cofogService
             .getCofog()

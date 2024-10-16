@@ -205,7 +205,6 @@ export class ModalService {
     }
 
     showPdfViewer(pdfURL: HTMLAnchorElement) {
-        console.log("1>>>", pdfURL, pdfURL.href, pdfURL.download)
         const modalRef = this.modalService.open(PdfViewerComponent, {
             size: 'xl',
             centered: true,

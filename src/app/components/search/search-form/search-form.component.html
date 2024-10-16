@@ -1,0 +1,239 @@
+<h4 class="govgr-heading-md">Αναζήτηση</h4>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+            <span class="fw-semibold">Στοιχεία Φορέα</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
+                <input type="text" 
+                    class="form-control" 
+                    formControlName="organization_preferredLabel" 
+                    id="organization_preferredLabel"  
+                    placeholder="Πληκτρολογήστε Στοιχεία Φορέα"/>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
+                    <select
+                        class="form-select"
+                        id="organization_types_map"
+                        formControlName="organization_types_map">
+                        <option value="" disabled selected>Επιλέξτε Τύπο Φορέα</option>
+                        @for (types of  organization_types_map.keys(); track types) {
+                            <option
+                                [value]="organization_types_map.get(types)">
+                                {{ organization_types_map.get(types) }}
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
+                    <select
+                        class="form-select"
+                        id="organization_functions_map"
+                        formControlName="organization_functions_map">
+                        <option value="" disabled selected>Επιλέξτε Σκοπό Φορέα</option>
+                        @for (types of organization_functions_map.keys(); track types) {
+                            <option
+                                [value]="organization_functions_map.get(types)">
+                                {{ organization_functions_map.get(types) }}
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_unitTypes" class="form-label">Επίπεδο Διακυβέρνησης</label> -->
+                    <select
+                        class="form-select"
+                        id="organization_levels"
+                        formControlName="organization_levels">
+                        <option value="" disabled selected>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
+                        @for (types of organization_levels; track types) {
+                            <option
+                                [value]="types">
+                                {{ types }}
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <!-- <label for="organization_subOrganizationOf" class="form-label">Εποπτεύων φορέας</label> -->
+                <input type="text" 
+                    class="form-control"
+                    formControlName="organization_subOrganizationOf" 
+                    id="organization_subOrganizationOf"  
+                    placeholder="Πληκτρολογήστε Εποπτεύων Φορέα"/>
+            </div>
+            
+            <div class="mb-3">
+                <!-- <label for="organization_status" class="form-label">Κατάσταση</label> -->
+                <select
+                    class="form-select"
+                    id="organization_status"
+                    formControlName="organization_status">
+                    <option value='Inactive'>Ανενεργός Φορέας</option>
+                    <option value='Active' selected>Ενεργός Φορέας</option>
+                </select>
+            </div>
+       </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+            <span class="fw-semibold">Στοιχεία Μονάδων</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
+                <input type="text" 
+                    class="form-control" 
+                    formControlName="organization_units_preferredLabel" 
+                    id="organization_units_preferredLabel"  
+                    placeholder="Πληκτρολογήστε Στοιχεία Μονάδας"/>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
+                    <select
+                        class="form-select"
+                        id="organization_units_types_map"
+                        formControlName="organization_units_types_map">
+                        <option value="" disabled selected>Επιλέξτε Τύπο Μονάδας</option>
+                        @for (types of organization_unit_types_map.keys(); track types) {
+                            <option
+                                [value]="organization_unit_types_map.get(types)">
+                                {{ organization_unit_types_map.get(types) }}
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
+                    <select
+                        class="form-select"
+                        id="organization_units_functions_map"
+                        formControlName="organization_units_functions_map">
+                        <option value="" disabled selected>Επιλέξτε Σκοπό Μονάδας</option>
+                        @for (types of organization_functions_map.keys(); track types) {
+                            <option
+                                [value]="organization_functions_map.get(types)">
+                                {{ organization_functions_map.get(types) }}
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_unitTypes" class="form-label">Επίπεδο Διακυβέρνησης</label> -->
+                    <input type="text" 
+                        class="form-control" 
+                        formControlName="organization_units_num_of_subunits" 
+                        id="organization_units_num_of_subunits"  
+                        placeholder="Πληκτρολογήστε Αριθμό Υποκείμενων Μονάδων"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+            <span class="fw-semibold">Στοιχεία Αρμοδιοτήτων</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
+                <input type="text" 
+                    class="form-control" 
+                    formControlName="remit_text" 
+                    id="remit_text"  
+                    placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
+                    <select
+                        class="form-select"
+                        id="remit_type"
+                        formControlName="remit_type">
+                        <option value="" disabled selected>Επιλέξτε Τύπο Αρμοδιότητας</option>
+                        @for (types of remit_type; track types) {
+                            <option
+                                [value]="types">
+                                {{ types }}
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
+                    <select
+                        class="form-select"
+                        id="remit_cofog"
+                        formControlName="remit_cofog">
+                        <option value="" disabled selected>Επιλέξτε COFOG</option>
+                        @for (types of remit_cofog; track types) {
+                            <option
+                                [value]="types.name">
+                                {{ types.name }}
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <!-- <label for="organization_status" class="form-label">Κατάσταση</label> -->
+                    <select
+                        class="form-select"
+                        id="remit_status"
+                        formControlName="remit_status">
+                        <option value='ΑΝΕΝΕΡΓΗ'>Ανενεργή Αρμοδιότητα</option>
+                        <option value='ΕΝΕΡΓΗ'>Ενεργή Αρμοδιότητα</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <button
+            type="button"
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="!formValid() || form.pristine">
+            Υποβολή
+        </button>
+    </div>
+</form>
+        
+@if(rowData) {
+    <h5>Αποτελέσματα αναζήτησης</h5>
+    <p><strong>Φορείς: </strong>{{organizationResults.length}}</p>
+    <p><strong>Μονάδες: </strong>{{organization_unitsResults.length}}</p>
+    <p><strong>Αρμοδιότητες: </strong>{{remitResults.length}}</p>
+
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+        <li [ngbNavItem]="1">
+            <button ngbNavLink>Φορείς</button>
+            <ng-template ngbNavContent>
+                <app-organization-grid [data]="organizationResults"></app-organization-grid>
+            </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+            <button ngbNavLink>Μονάδες</button>
+            <ng-template ngbNavContent>
+                <app-organization-unit-grid [data]="organization_unitsResults"></app-organization-unit-grid>
+            </ng-template>
+        </li>
+        <li [ngbNavItem]="3">
+            <button ngbNavLink>Αρμοδιότητες</button>
+            <ng-template ngbNavContent>
+                <app-remit-grid></app-remit-grid>
+            </ng-template>
+        </li>
+    </ul>
+    
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+}
+
+

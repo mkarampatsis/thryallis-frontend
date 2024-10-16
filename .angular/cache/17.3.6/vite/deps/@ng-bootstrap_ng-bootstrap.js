@@ -1,10 +1,10 @@
 import {
+  takeUntilDestroyed
+} from "./chunk-RDOMWG5X.js";
+import {
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR
 } from "./chunk-ST7H66PJ.js";
-import {
-  takeUntilDestroyed
-} from "./chunk-RDOMWG5X.js";
 import {
   DOCUMENT,
   FormStyle,
