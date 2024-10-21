@@ -3,18 +3,21 @@ import { GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
-import { OrganizationalUnit } from 'src/app/shared/interfaces/search/search.interface';
+import { ISearchGrid } from 'src/app/shared/interfaces/search/search.interface';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
-  selector: 'app-organization-unit-grid',
+  selector: 'app-search-grid',
   standalone: true,
   imports: [AgGridAngular, GridLoadingOverlayComponent],
-  templateUrl: './organization-unit-grid.component.html',
-  styleUrl: './organization-unit-grid.component.css'
+  templateUrl: './search-grid.component.html',
+  styleUrl: './search-grid.component.css'
 })
-export class OrganizationUnitGridComponent {
-    @Input() data: OrganizationalUnit[] | null;
+export class SearchGridComponent {
+    @Input() data: ISearchGrid[] | null;
+    
     constService = inject(ConstService);
+    modalService = inject(ModalService);
 
     defaultColDef = this.constService.defaultColDef;
     colDefs = this.constService.SEARCH_COL_DEFS;
@@ -28,12 +31,12 @@ export class OrganizationUnitGridComponent {
 
     onGridReady(params: GridReadyEvent): void {
         this.gridApi = params.api;
-        // this.gridApi.showLoadingOverlay();
-        // this.gridApi.hideOverlay();
+        this.gridApi.showLoadingOverlay();
+        this.gridApi.hideOverlay();
     }
 
     onRowDoubleClicked(event: any): void {
-        console.log(event);
-        // this.modalService.userAccesses(event.data);
+        console.log(event.data);
+        this.modalService.showSearchDetails(event.data);
     }
 }

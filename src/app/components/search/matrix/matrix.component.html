@@ -1,1 +1,47 @@
-<p>matrix works!</p>
+<h4 class="govgr-heading-md">Φορείς</h4>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="card mb-4">
+        <div class="d-flex gap-3 align-items-center">
+            <div class="flex-fill mb-3">
+                <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
+                <select
+                    class="form-select"
+                    id="organization_1"
+                    formControlName="organization_1">
+                    <option value="" disabled selected>Επιλέξτε 1o Φορέα</option>
+                    @for (foreas of foreis; track foreas) {
+                        <option
+                            [value]="foreas.code">
+                            {{ foreas.preferredLabel }}
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="flex-fill mb-3">
+                <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
+                <select
+                    class="form-select"
+                    id="organization_2"
+                    formControlName="organization_2">
+                    <option value="" disabled selected>Επιλέξτε 2ο Φορέα</option>
+                    @for (foreas of foreis; track foreas) {
+                        <option
+                            [value]="foreas.code">
+                            {{ foreas.preferredLabel }}
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <button
+                type="button"
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="!formValid() || form.pristine">
+                Υποβολή
+            </button>
+        </div>
+    </div>
+</form>

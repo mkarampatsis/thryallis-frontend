@@ -25,6 +25,8 @@ import { IRemit } from '../interfaces/remit/remit.interface';
 import { MonadaEditComponent } from '../modals/monada-edit/monada-edit.component';
 import { UserAccessesComponent } from '../modals/user-accesses/user-accesses.component';
 import { IUser } from '../interfaces/auth';
+import { ISearchGrid } from '../interfaces/search/search.interface';
+import { SearchDetailsComponent } from '../modals/search-details/search-details.component';
 
 @Injectable({
     providedIn: 'root',
@@ -231,5 +233,15 @@ export class ModalService {
         modalRef.componentInstance.modalRef = modalRef;
         modalRef.componentInstance.prompt = prompt;
         return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
+    }
+
+    showSearchDetails(data: ISearchGrid) {
+        const modalRef = this.modalService.open(SearchDetailsComponent, {
+            fullscreen: 'lg',
+            size: 'xl',
+            centered: true,
+        });
+        modalRef.componentInstance.data = data;
+        modalRef.componentInstance.modalRef = modalRef;
     }
 }

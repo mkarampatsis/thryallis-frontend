@@ -208,32 +208,7 @@
         
 @if(rowData) {
     <h5>Αποτελέσματα αναζήτησης</h5>
-    <p><strong>Φορείς: </strong>{{organizationResults.length}}</p>
-    <p><strong>Μονάδες: </strong>{{organization_unitsResults.length}}</p>
-    <p><strong>Αρμοδιότητες: </strong>{{remitResults.length}}</p>
-
-    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-        <li [ngbNavItem]="1">
-            <button ngbNavLink>Φορείς</button>
-            <ng-template ngbNavContent>
-                <app-organization-grid [data]="organizationResults"></app-organization-grid>
-            </ng-template>
-        </li>
-        <li [ngbNavItem]="2">
-            <button ngbNavLink>Μονάδες</button>
-            <ng-template ngbNavContent>
-                <app-organization-unit-grid [data]="organization_unitsResults"></app-organization-unit-grid>
-            </ng-template>
-        </li>
-        <li [ngbNavItem]="3">
-            <button ngbNavLink>Αρμοδιότητες</button>
-            <ng-template ngbNavContent>
-                <app-remit-grid></app-remit-grid>
-            </ng-template>
-        </li>
-    </ul>
-    
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    <app-search-grid [data]="rowData"></app-search-grid>
 }
 
 

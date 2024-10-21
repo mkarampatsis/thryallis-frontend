@@ -43,7 +43,7 @@ export class UserAdminComponent implements OnInit {
     }
 
     onRowDoubleClicked(event: any): void {
-        console.log(event);
+        // console.log(event);
         this.modalService.userAccesses(event.data);
     }
 }

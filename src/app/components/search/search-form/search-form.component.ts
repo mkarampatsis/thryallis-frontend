@@ -1,20 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { OrganizationGridComponent } from '../organization-grid/organization-grid.component';
-import { OrganizationUnitGridComponent } from '../organization-unit-grid/organization-unit-grid.component';
-import { RemitGridComponent } from '../remit-grid/remit-grid.component';
+import { SearchGridComponent } from '../search-grid/search-grid.component';
 
 import { take } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { SearchService } from 'src/app/shared/services/search.service';
-import { ISearch, Organization, OrganizationalUnit , Remit } from 'src/app/shared/interfaces/search/search.interface';
+import { ISearchGrid } from 'src/app/shared/interfaces/search/search.interface';
 
 
 @Component({
   selector: 'app-search-form',
   standalone: true,
-  imports: [NgbNavModule, ReactiveFormsModule, OrganizationGridComponent, OrganizationUnitGridComponent, RemitGridComponent],
+  imports: [NgbNavModule, ReactiveFormsModule, SearchGridComponent],
   templateUrl: './search-form.component.html',
   styleUrl: './search-form.component.css'
 })
@@ -44,10 +42,7 @@ export class SearchFormComponent {
         }
     };
 
-    rowData: ISearch | null;
-    organizationResults: Organization[] | null
-    organization_unitsResults: OrganizationalUnit[] | null
-    remitResults: Remit[] | null
+    rowData: ISearchGrid[] | null;
 
     form = new FormGroup({
         organization_preferredLabel: new FormControl('', Validators.required),
@@ -184,11 +179,23 @@ export class SearchFormComponent {
             .postSearch(elasticJSON)
             .pipe(take(1))
             .subscribe((data) => {
-                this.rowData = data;
-                this.organizationResults = data['organizations']
-                this.organization_unitsResults = data['organizational_units']
-                this.remitResults = data['remits']
-                // this.gridApi.setGridOption("rowData", data['organizations'])
+                const newData = data.organizations.map(org => {
+                    return org.organizational_units.map(unit => {
+                      return {
+                        organizationCode: org.code,
+                        organizationScore: org.score,
+                        organizationObjectId: org.object_id,
+                        organizationPreferredLabel: org.preferredLabel,
+                        organizationalUnitCode: unit.code,
+                        organizationalUnitScore: unit.code,
+                        organizationalUnitObjectId: unit.object_id,
+                        organizationalUnitPreferredLabel: unit.preferredLabel,
+                        remitRemitText: unit.remit.remitText,
+                        remitObjectId: unit.remit.object_id
+                      };
+                    });
+                  }).flat();
+                this.rowData = newData;
             });
     }
 

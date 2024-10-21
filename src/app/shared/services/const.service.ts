@@ -109,9 +109,19 @@ export class ConstService {
     ];
 
     SEARCH_COL_DEFS: ColDef[] = [
-        { field: 'preferredLabel', headerName: 'Φορέας', flex: 1 },
-        { field: 'object_id', headerName: 'id', flex: 1, hide: true  },
-        { field: 'score', headerName: 'Score', flex: 1 },
+        { field: 'organizationCode', headerName: 'Κωδ. Φορέα', flex: 1, hide: true },
+        { field: 'organizationPreferredLabel', headerName: 'Φορέας', flex: 1 },
+        { field: 'organizationObjectId', headerName: 'id', flex: 1, hide: true  },
+        { field: 'organizationScore', headerName: 'Score Φορέα', flex: 1 },
+  
+        { field: 'organizationalUnitCode', headerName: 'Κωδ. Μονάδας', flex: 1, hide: true },
+        { field: 'organizationalUnitPreferredLabel', headerName: 'Μονάδα', flex: 1 },
+        { field: 'organizationalUnitObjectId', headerName: 'id', flex: 1, hide: true  },
+
+        { field: 'remitRemitText', headerName: 'Αρμοδιότητα', flex: 1 },
+        { field: 'remitObjectId', headerName: 'Μονάδα', flex: 1, hide: true },
+
+        { field: 'organizationalUnitScore', headerName: 'Score', flex: 1, sort: 'desc' }
     ];
 
     ORGANIZATIONS_COL_DEFS: ColDef[] = [
