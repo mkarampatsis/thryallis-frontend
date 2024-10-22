@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
-import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
+// import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
 
 @Component({
     selector: 'app-login',
@@ -14,7 +14,7 @@ import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
 })
 export class LoginComponent {
     store = inject(Store<AppState>);
-    private authService = inject(Oauth2Service);
+    // private authService = inject(Oauth2Service);
 
     organizationsLoading$ = this.store.select((state) => state.organizations.loading);
     organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
@@ -22,17 +22,17 @@ export class LoginComponent {
 
     loading$ = this.organizationsLoading$ || this.organizationalUnitsLoading$;
 
-    login() {
-        this.authService.login();
-    }
+    // login() {
+    //     this.authService.login();
+    // }
 
-    logout() {
-        this.authService.logout();
-        // this.router.navigate([`https://test.gsis.gr/oauth2server/logout/${{CLIENT_ID}}/?url=https://localhost:4200/`]);
-    }
+    // logout() {
+    //     this.authService.logout();
+    //     // this.router.navigate([`https://test.gsis.gr/oauth2server/logout/${{CLIENT_ID}}/?url=https://localhost:4200/`]);
+    // }
 
-    get profile() {
-        let profile:any = this.authService.getProfile(); 
-        return profile ? profile: null;
-    }
+    // get profile() {
+    //     let profile:any = this.authService.getProfile(); 
+    //     return profile ? profile: null;
+    // }
 }
