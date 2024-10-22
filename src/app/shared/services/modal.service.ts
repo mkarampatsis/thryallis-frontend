@@ -25,8 +25,7 @@ import { IRemit } from '../interfaces/remit/remit.interface';
 import { MonadaEditComponent } from '../modals/monada-edit/monada-edit.component';
 import { UserAccessesComponent } from '../modals/user-accesses/user-accesses.component';
 import { IUser } from '../interfaces/auth';
-import { ISearchGrid } from '../interfaces/search/search.interface';
-import { SearchDetailsComponent } from '../modals/search-details/search-details.component';
+import { RemitDetailsComponent } from '../modals/remit-details/remit-details.component';
 
 @Injectable({
     providedIn: 'root',
@@ -235,9 +234,8 @@ export class ModalService {
         return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
     }
 
-    showSearchDetails(data: ISearchGrid) {
-        const modalRef = this.modalService.open(SearchDetailsComponent, {
-            fullscreen: 'lg',
+    showRemitDetails(data: { organizationCode: string; remitId: string }) {
+        const modalRef = this.modalService.open(RemitDetailsComponent, {
             size: 'xl',
             centered: true,
         });
@@ -245,3 +243,4 @@ export class ModalService {
         modalRef.componentInstance.modalRef = modalRef;
     }
 }
+

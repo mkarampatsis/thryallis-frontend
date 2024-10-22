@@ -46,6 +46,14 @@ export const selectRemits$ = createSelector(selectRemitsState$, (state) => state
 export const selectRemitsLoading$ = createSelector(selectRemitsState$, (state) => state.loading);
 export const selectRemitsError$ = createSelector(selectRemitsState$, (state) => state.error);
 
+// A selector to return remit with specific id
+export const selectRemitById$ = (id: string) =>
+    createSelector(selectRemits$, (remits) => {
+        const remit = remits
+            .filter(r => r._id['$oid'] === id);
+        return remit ? remit : null;
+    }); 
+
 // Remits Effects
 export const loadRemitsEffect = createEffect(
     (actions$ = inject(Actions), remitService = inject(RemitService)) => {

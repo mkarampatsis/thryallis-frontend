@@ -23,3 +23,7 @@ i:hover {
     background-color: lightcoral;
     color: blue;
 }
+
+.emphasis em {
+    color: red
+}
