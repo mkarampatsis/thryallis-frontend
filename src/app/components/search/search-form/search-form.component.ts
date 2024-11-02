@@ -30,6 +30,8 @@ export class SearchFormComponent {
     remit_type = this.constService.REMIT_TYPES;
     remit_cofog = this.constService.COFOG;
 
+    loading = false; 
+
     elasticJSON_initial = {
         "organizations": {
             "must": []
@@ -62,11 +64,11 @@ export class SearchFormComponent {
     });
 
     ngOnInit() {
-        this.form.controls.organization_status.setValue('Active');
-        this.form.controls.remit_status.setValue('ΕΝΕΡΓΗ');
+        this.initializeForm();
     }
 
     onSubmit() {
+        this.loading = true;
         let elasticJSON = JSON.parse(JSON.stringify(this.elasticJSON_initial));
 
         if (this.form.controls.organization_preferredLabel.value){
@@ -174,11 +176,13 @@ export class SearchFormComponent {
             delete elasticJSON.organization_units
         if (elasticJSON.remits.must.length===0)
             delete elasticJSON.remits
-
+        
+        // console.log("ElasticJson>>>",elasticJSON);
         this.searchService
             .postSearch(elasticJSON)
             .pipe(take(1))
             .subscribe((data) => {
+                // console.log(">>",data)
                 const newData = data.organizations.map(org => {
                     return org.organizational_units.map(unit => {
                       return {
@@ -190,15 +194,35 @@ export class SearchFormComponent {
                         organizationalUnitScore: unit.code,
                         organizationalUnitObjectId: unit.object_id,
                         organizationalUnitPreferredLabel: unit.preferredLabel,
-                        remitRemitText: unit.remit.remitText,
-                        remitObjectId: unit.remit.object_id
+                        remitRemitText: unit['remit'] ? unit.remit.remitText: "Δεν υπάρχουν στοιχεία",
+                        remitObjectId: unit['remit']? unit.remit.object_id :"" 
                       };
                     });
                   }).flat();
+                // console.log("newData>>",newData)
                 this.rowData = newData;
+                this.loading = false;
             });
     }
 
+    resetForm(){
+        this.form.reset();
+        this.initializeForm();
+        this.rowData = null
+    }
+
+    initializeForm(){
+        this.form.controls.organization_status.setValue('Active');
+        this.form.controls.organization_types_map.setValue('');
+        this.form.controls.organization_functions_map.setValue('');
+        this.form.controls.organization_levels.setValue('');
+        this.form.controls.organization_units_types_map.setValue('');
+        this.form.controls.organization_units_functions_map.setValue('');
+        this.form.controls.remit_type.setValue('');
+        this.form.controls.remit_cofog.setValue('');
+        this.form.controls.remit_cofog.setValue('');
+        this.form.controls.remit_status.setValue('ΕΝΕΡΓΗ');
+    }
     formValid(): boolean {
         // const legalActType = this.form.get('legalActType').value;
         // if (legalActType && ['ΝΟΜΟΣ', 'ΠΡΟΕΔΡΙΚΟ ΔΙΑΤΑΓΜΑ'].includes(legalActType)) {

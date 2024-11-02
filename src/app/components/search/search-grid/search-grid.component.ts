@@ -52,7 +52,7 @@ export class SearchGridComponent {
         },
         { field: 'remitObjectId', flex: 1, hide: true },
 
-        { field: 'organizationalUnitScore', headerName: 'Βαθ. Αρμοδ.', flex: 1, sort: 'desc' }
+        { field: 'organizationalUnitScore', headerName: 'Βαθ. Μοναδ./Αρμοδ.', flex: 1, sort: 'desc' }
     ];
 
     autoSizeStrategy = this.constService.autoSizeStrategy;
@@ -76,10 +76,12 @@ export class SearchGridComponent {
             else if (event.colDef.field === 'organizationalUnitPreferredLabel') {
                 this.modalService.showOrganizationUnitDetails(event.data.organizationalUnitCode)
             } else {
-                this.modalService.showRemitDetails({ 
-                    organizationCode: event.data.organizationalUnitCode, 
-                    remitId: event.data.remitObjectId 
-                })
+                if (event.data.remitObjectId){
+                    this.modalService.showRemitDetails({ 
+                        organizationCode: event.data.organizationalUnitCode, 
+                        remitId: event.data.remitObjectId 
+                    })
+                }
             }
         }
     }

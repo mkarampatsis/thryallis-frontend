@@ -63,7 +63,7 @@ export class OrganizationUnitDetailsComponent {
             .getRemitsByCode(this.organizationalUnitCode)
             .pipe(take(1))
             .subscribe((data) => {
-                console.log(data);
+                // console.log(data);
                 this.remits = data;
             });
 

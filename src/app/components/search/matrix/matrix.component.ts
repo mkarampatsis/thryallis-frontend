@@ -1,16 +1,18 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
 import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { ConstService } from 'src/app/shared/services/const.service';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent  } from 'ag-grid-community';
+import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 
 @Component({
   selector: 'app-matrix',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [AgGridAngular, GridLoadingOverlayComponent],
   templateUrl: './matrix.component.html',
   styleUrl: './matrix.component.css'
 })
@@ -24,12 +26,18 @@ export class MatrixComponent {
     organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
     organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
 
-    form = new FormGroup({
-        organization_1: new FormControl('', Validators.required),
-        organization_2: new FormControl('', Validators.required),
-    });
-    
-    ngOnInit(){
+    defaultColDef = this.constService.defaultColDef;
+    colDefs: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS;
+    autoSizeStrategy = this.constService.autoSizeStrategy;
+
+    loadingOverlayComponent = GridLoadingOverlayComponent;
+    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
+
+    gridApi: GridApi<IOrganizationList>;
+
+    onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+        this.gridApi = params.api;
+        this.gridApi.showLoadingOverlay();
         this.store
             .select(selectOrganizations$)
             .pipe(take(1))
@@ -41,25 +49,11 @@ export class MatrixComponent {
                         subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
                     };
                 });
+                this.gridApi.hideOverlay();
             });
     }
 
-    onSubmit(){
-        console.log(this.form.value)
-    }
-
-    formValid(): boolean {
-        // const legalActType = this.form.get('legalActType').value;
-        // if (legalActType && ['ΝΟΜΟΣ', 'ΠΡΟΕΔΡΙΚΟ ΔΙΑΤΑΓΜΑ'].includes(legalActType)) {
-        //     if (this.emptyFEK()) {
-        //         return this.form.valid;
-        //     } else {
-        //         console.log('>>>>>>>>>>>>', this.form.valid, this.fekYear, this.form.get('legalActDateOrYear').value);
-        //         return this.form.valid && this.fekYear === this.form.get('legalActDateOrYear').value;
-        //     }
-        // } else {
-            // return this.form.valid;
-        // }
-        return true
-    }
+    // public rowSelection: RowSelectionOptions | "single" | "multiple" = {
+    //     mode: "multiRow",
+    //   };
 }
