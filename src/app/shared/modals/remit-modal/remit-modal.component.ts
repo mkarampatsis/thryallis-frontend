@@ -147,18 +147,18 @@ export class RemitModalComponent implements OnInit, OnDestroy {
             // legalProvisions: this.form.get('legalProvisions').value,
             legalProvisions: newLegalProvisions,
         } as IRemit;
-        console.log(remit);
+        // console.log(remit);
         if (!this.remit) {
             this.remitService.newRemit(remit).subscribe((data) => {
                 // console.log(data);
-                console.log('New Remit', data);
+                // console.log('New Remit', data);
                 this.modalRef.dismiss();
                 this.remitService.remitsNeedUpdate.set(true);
             });
         } else {
             this.remitService.updateRemit(remit).subscribe((data) => {
                 // console.log(data);
-                console.log('Updated Remit', data);
+                // console.log('Updated Remit', data);
                 this.modalRef.dismiss();
                 this.legalProvisionService.legalProvisionsNeedUpdate.set(true);
             });

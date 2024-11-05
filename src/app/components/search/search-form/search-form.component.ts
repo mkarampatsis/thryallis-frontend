@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SearchGridComponent } from '../search-grid/search-grid.component';
-
-import { take } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { SearchService } from 'src/app/shared/services/search.service';
 import { ISearchGrid } from 'src/app/shared/interfaces/search/search.interface';
+import { ICofog2 } from 'src/app/shared/interfaces/cofog/cofog2.interface';
+import { ICofog3 } from 'src/app/shared/interfaces/cofog/cofog3.interface';
+import { Subscription, take } from 'rxjs';
 
 
 @Component({
@@ -21,168 +22,103 @@ export class SearchFormComponent {
     constService = inject(ConstService);
     searchService = inject(SearchService);
 
-    organization_levels = this.constService.ORGANIZATION_LEVELS;
-    organization_types_map = this.constService.ORGANIZATION_TYPES_MAP;
-    organization_functions_map = this.constService.ORGANIZATION_FUNCTIONS_MAP;
+    organizationLevels = this.constService.ORGANIZATION_LEVELS;
+    organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
+    organizationFunctionsMap = this.constService.ORGANIZATION_FUNCTIONS_MAP;
 
-    organization_unit_types_map = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
+    organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
+    organizationUnitFunctionsMap = this.constService.ORGANIZATION_FUNCTIONS_MAP;
     
-    remit_type = this.constService.REMIT_TYPES;
-    remit_cofog = this.constService.COFOG;
+    remitType = this.constService.REMIT_TYPES;
+    cofog1 = this.constService.COFOG;
+    cofog2: ICofog2[] = [];
+    cofog3: ICofog3[] = [];
+    cofog1_selected: boolean = false;
+    cofog2_selected: boolean = false;
 
     loading = false; 
-
-    elasticJSON_initial = {
-        "organizations": {
-            "must": []
-        },
-        "organizational_units":{
-            "must":[]
-        },
-        "remits":{
-            "must":[]
-        }
-    };
+    showMoreOrganizationFields = false;
+    showMoreOrganizationUnitFields = false;
 
     rowData: ISearchGrid[] | null;
 
     form = new FormGroup({
-        organization_preferredLabel: new FormControl('', Validators.required),
-        organization_types_map: new FormControl('', Validators.required),
-        organization_functions_map: new FormControl('', Validators.required),
-        organization_subOrganizationOf: new FormControl('', Validators.required),
-        organization_levels: new FormControl('', Validators.required),
-        organization_status: new FormControl('', Validators.required),
-        organization_units_preferredLabel: new FormControl('', Validators.required),
-        organization_units_types_map: new FormControl('', Validators.required),
-        organization_units_functions_map: new FormControl('', Validators.required),
-        organization_units_num_of_subunits: new FormControl('', Validators.required),
-        remit_text: new FormControl('', Validators.required),
-        remit_type: new FormControl('', Validators.required),
-        remit_cofog: new FormControl('', Validators.required),
-        remit_status: new FormControl('', Validators.required)
+        organizations: new FormGroup({
+            preferredLabel: new FormControl('', Validators.required),
+            typesMap: new FormControl('', Validators.required),
+            functionsMap: new FormControl('', Validators.required),
+            subOrganizationOf: new FormControl('', Validators.required),
+            levels: new FormControl('', Validators.required),
+            status: new FormControl('', Validators.required),
+            foundationDate: new FormControl('', Validators.required),
+            terminationDate: new FormControl('', Validators.required),
+            foundationFek: new FormGroup({
+                year:new FormControl('', Validators.required)
+            }),
+            mainAddress: new FormGroup({
+                postCode: new FormControl('', Validators.required)
+            }) 
+        }),
+        organization_units: new FormGroup({
+            preferredLabel: new FormControl('', Validators.required),
+            typesMap: new FormControl('', Validators.required),
+            functionsMap: new FormControl('', Validators.required),
+            numOfSubunits: new FormControl('', Validators.required),
+            mainAddress: new FormGroup({
+                postCode: new FormControl('', Validators.required)
+            })
+        }),
+        remits: new FormGroup({
+            text: new FormControl('', Validators.required),
+            type: new FormControl('', Validators.required),
+            cofog1: new FormControl('', Validators.required),
+            cofog2: new FormControl('', Validators.required),
+            cofog3: new FormControl('', Validators.required),
+            status: new FormControl('', Validators.required)
+        })
     });
+
+    formSubscriptions: Subscription[] = [];
 
     ngOnInit() {
         this.initializeForm();
+
+        this.formSubscriptions.push(
+            this.form.get('remits.cofog1').valueChanges.subscribe((value) => {
+                if (value) {
+                    this.form.get('remits.cofog2').setValue('');
+                    this.cofog1_selected = true;
+                    this.cofog2_selected = false;
+                    this.cofog2 = this.constService.COFOG.find((cofog) => cofog.code === value)?.cofog2 || [];
+                }
+            }),
+        );
+
+        this.formSubscriptions.push(
+            this.form.get('remits.cofog2').valueChanges.subscribe((value) => {
+                if (value) {
+                    this.form.get('remits.cofog3').setValue('');
+                    this.cofog2_selected = true;
+                    this.cofog3 = this.cofog2.find((cofog) => cofog.code === value)?.cofog3 || [];
+                }
+            }),
+        );
+    }
+
+    ngOnDestroy(): void {
+        this.formSubscriptions.forEach((sub) => sub.unsubscribe());
     }
 
     onSubmit() {
         this.loading = true;
-        let elasticJSON = JSON.parse(JSON.stringify(this.elasticJSON_initial));
-
-        if (this.form.controls.organization_preferredLabel.value){
-            elasticJSON['organizations']['must'].push({
-                "field": "preferredLabel",
-                "type": "match",
-                "query": this.form.controls.organization_preferredLabel.value
-            })
-        }
-        if (this.form.controls.organization_types_map.value){
-            elasticJSON['organizations']['must'].push({
-                "field": "organizationType",
-                "type": "match",
-                "query": this.form.controls.organization_types_map.value
-            })
-        }
-        if (this.form.controls.organization_functions_map.value){
-            elasticJSON['organizations']['must'].push({
-                "field": "purpose",
-                "type": "match",
-                "query": this.form.controls.organization_functions_map.value
-            })
-        }
-        if (this.form.controls.organization_subOrganizationOf.value){
-            elasticJSON['organizations']['must'].push({
-                "field": "subOrganizationOf",
-                "type": "match",
-                "query": this.form.controls.organization_subOrganizationOf.value
-            })
-        }
-        if (this.form.controls.organization_levels.value){
-            elasticJSON['organizations']['must'].push({
-                "field": "level",
-                "type": "match",
-                "query": this.form.controls.organization_levels.value
-            })
-        }
-        if (this.form.controls.organization_status.value!="Active"){
-            elasticJSON['organizations']['must'].push({
-                "field": "status",
-                "type": "match",
-                "query": this.form.controls.organization_status.value
-            })
-        }
-        if (this.form.controls.organization_units_preferredLabel.value){
-            elasticJSON['organizational_units']['must'].push({
-                "field": "preferredLabel",
-                "type": "match",
-                "query": this.form.controls.organization_units_preferredLabel.value
-            })
-        }
-        if (this.form.controls.organization_units_types_map.value){
-            elasticJSON['organizational_units']['must'].push({
-                "field": "unitType",
-                "type": "match",
-                "query": this.form.controls.organization_units_types_map.value
-            })
-        }
-        if (this.form.controls.organization_units_functions_map.value){
-            elasticJSON['organizational_units']['must'].push({
-                "field": "purpose",
-                "type": "match",
-                "query": this.form.controls.organization_units_functions_map.value
-            })
-        }
-        if (this.form.controls.organization_units_num_of_subunits.value){
-            elasticJSON['organizational_units']['must'].push({
-                "field": "numOfSubUnits",
-                "type": "match",
-                "query": this.form.controls.organization_units_num_of_subunits.value
-            })
-        }
-        if (this.form.controls.remit_text.value){
-            elasticJSON['remits']['must'].push({
-                "field": "remitText",
-                "type": "match",
-                "query": this.form.controls.remit_text.value
-            })
-        }
-        if (this.form.controls.remit_type.value){
-            elasticJSON['remits']['must'].push({
-                "field": "remitType",
-                "type": "match",
-                "query": this.form.controls.remit_type.value
-            })
-        }
-        if (this.form.controls.remit_cofog.value){
-            elasticJSON['remits']['must'].push({
-                "field": "cofog",
-                "type": "match",
-                "query": this.form.controls.remit_cofog.value
-            })
-        }
-        if (this.form.controls.remit_status.value!="ΕΝΕΡΓΗ"){
-            elasticJSON['remits']['must'].push({
-                "field": "status",
-                "type": "match",
-                "query": this.form.controls.remit_status.value
-            })
-        }
-
-        if (elasticJSON.organizations.must.length===0)
-            delete elasticJSON.organizations
-        if (elasticJSON.organizational_units.must.length===0)
-            delete elasticJSON.organization_units
-        if (elasticJSON.remits.must.length===0)
-            delete elasticJSON.remits
+ 
+        const searchQuery = this.buildSearchQuery(this.form);
+        // console.log(searchQuery);
         
-        // console.log("ElasticJson>>>",elasticJSON);
         this.searchService
-            .postSearch(elasticJSON)
+            .postSearch(searchQuery)
             .pipe(take(1))
             .subscribe((data) => {
-                // console.log(">>",data)
                 const newData = data.organizations.map(org => {
                     return org.organizational_units.map(unit => {
                       return {
@@ -199,30 +135,151 @@ export class SearchFormComponent {
                       };
                     });
                   }).flat();
-                // console.log("newData>>",newData)
                 this.rowData = newData;
                 this.loading = false;
             });
     }
 
     resetForm(){
-        this.form.reset();
         this.initializeForm();
         this.rowData = null
+        this.cofog1_selected = false;
+        this.cofog2_selected = false;
+        this.showMoreOrganizationFields = false;
+        this.showMoreOrganizationUnitFields = false
+        this.loading = false
     }
 
     initializeForm(){
-        this.form.controls.organization_status.setValue('Active');
-        this.form.controls.organization_types_map.setValue('');
-        this.form.controls.organization_functions_map.setValue('');
-        this.form.controls.organization_levels.setValue('');
-        this.form.controls.organization_units_types_map.setValue('');
-        this.form.controls.organization_units_functions_map.setValue('');
-        this.form.controls.remit_type.setValue('');
-        this.form.controls.remit_cofog.setValue('');
-        this.form.controls.remit_cofog.setValue('');
-        this.form.controls.remit_status.setValue('ΕΝΕΡΓΗ');
+        this.form.controls.organizations.setValue({
+            preferredLabel:"",
+            subOrganizationOf:"",
+            status: "Active",
+            typesMap: "",
+            functionsMap: "",
+            levels:"",
+            foundationDate:"",
+            terminationDate:"",
+            mainAddress:{
+                postCode:""
+            },
+            foundationFek:{
+                year:""
+            }
+
+        });
+
+        this.form.controls.organization_units.setValue({
+            preferredLabel: "",
+            typesMap: "",
+            functionsMap: "",
+            numOfSubunits: "",
+            mainAddress:{
+                postCode:""
+            },
+        });
+  
+        this.form.controls.remits.setValue({
+            text: "",
+            type: "",
+            cofog1: "",
+            cofog2: "",
+            cofog3: "",
+            status: "ΕΝΕΡΓΗ"
+        });
     }
+
+    buildSearchQuery(formGroup: FormGroup): any {
+        const result = {};
+
+        Object.keys(formGroup.controls).forEach(key => {
+          const control = formGroup.get(key);
+      
+          if (control instanceof FormGroup) {
+            const populatedFields = this.getPopulatedFields(control);
+            const mustArray = [];
+
+            Object.keys(populatedFields).forEach(fieldName => {
+                mustArray.push({
+                    field: fieldName,
+                    type: "match",
+                    query: fieldName ==="cofog1"  || fieldName ==="cofog2"  || fieldName ==="cofog3" ? this.getCofogName(fieldName) : populatedFields[fieldName]
+                });
+            });
+      
+            if (mustArray.length > 0) {
+              result[key] = { must: mustArray };
+            }
+          }
+        });
+      
+        return result;
+      }
+
+    // Method to get only populated fields from the form
+    getPopulatedFields(formGroup: FormGroup): any {
+        const filledData = {};
+    
+        Object.keys(formGroup.controls).forEach(key => {
+        const control = formGroup.get(key);
+    
+        if (control instanceof FormGroup) {
+            // Recursive call if the control is a FormGroup
+            const nestedData = this.getPopulatedFields(control);
+            if (Object.keys(nestedData).length > 0) {
+            filledData[key] = nestedData;
+            }
+        } else if (control instanceof FormControl && control.value) {
+            // Include only if the control has a non-empty value
+            filledData[key] = control.value;
+        }
+        });
+    
+        return filledData;
+    }
+
+    getCofogName(data:string){
+        
+        if (data ==='cofog1'){
+            const cofog_1_value = this.form.controls.remits.controls.cofog1.value
+            return this.constService.COFOG.find((cofog) => cofog.code === cofog_1_value).name
+        }
+
+        if (data ==='cofog2'){
+            const cofog_1_value = this.form.controls.remits.controls.cofog1.value
+            const cofog_2_value = this.form.controls.remits.controls.cofog2.value
+            return  this.constService.COFOG
+                        .find((cofog) => cofog.code === cofog_1_value)
+                        .cofog2.find((cofog) => cofog.code === cofog_2_value).name
+        }
+
+        if (data ==='cofog3'){
+            const cofog_1_value = this.form.controls.remits.controls.cofog1.value
+            const cofog_2_value = this.form.controls.remits.controls.cofog2.value
+            const cofog_3_value = this.form.controls.remits.controls.cofog3.value
+            return  this.constService.COFOG
+                        .find((cofog) => cofog.code === cofog_1_value)
+                        .cofog2.find((cofog) => cofog.code === cofog_2_value)
+                        .cofog3.find((cofog) => cofog.code === cofog_3_value).name
+        }
+    }
+    
+    moreFields(part: string){
+        if (part === 'organization')
+            this.showMoreOrganizationFields = true;
+        else    
+            this.showMoreOrganizationUnitFields = true
+
+    }
+
+    lessFields(part: string){
+        if (part === 'organization')
+            this.showMoreOrganizationFields = false;
+        else    
+            this.showMoreOrganizationUnitFields = false
+
+    }
+
     formValid(): boolean {
         // const legalActType = this.form.get('legalActType').value;
         // if (legalActType && ['ΝΟΜΟΣ', 'ΠΡΟΕΔΡΙΚΟ ΔΙΑΤΑΓΜΑ'].includes(legalActType)) {

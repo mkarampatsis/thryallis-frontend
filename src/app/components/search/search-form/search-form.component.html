@@ -5,54 +5,50 @@
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Φορέα</span>
         </div>
-        <div class="card-body">
+        <div formGroupName="organizations" class="card-body">
             <div class="mb-3">
-                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
                 <input type="text" 
                     class="form-control" 
-                    formControlName="organization_preferredLabel" 
-                    id="organization_preferredLabel"  
+                    formControlName="preferredLabel" 
+                    id="preferredLabel"  
                     placeholder="Πληκτρολογήστε Στοιχεία Φορέα"/>
             </div>
-            <div class="d-flex gap-3 align-items-center">
+            <div class="d-flex gap-3 align-items-center" >
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
                     <select
                         class="form-select"
-                        id="organization_types_map"
-                        formControlName="organization_types_map">
+                        id="typesMap"
+                        formControlName="typesMap">
                         <option value="" disabled>Επιλέξτε Τύπο Φορέα</option>
-                        @for (types of  organization_types_map.keys(); track types) {
+                        @for (types of organizationTypesMap.keys(); track types) {
                             <option
-                                [value]="organization_types_map.get(types)">
-                                {{ organization_types_map.get(types) }}
+                                [value]="organizationTypesMap.get(types)">
+                                {{ organizationTypesMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
                     <select
                         class="form-select"
-                        id="organization_functions_map"
-                        formControlName="organization_functions_map">
+                        id="functionsMap"
+                        formControlName="functionsMap">
                         <option value="" disabled>Επιλέξτε Σκοπό Φορέα</option>
-                        @for (types of organization_functions_map.keys(); track types) {
+                        @for (types of organizationFunctionsMap.keys(); track types) {
                             <option
-                                [value]="organization_functions_map.get(types)">
-                                {{ organization_functions_map.get(types) }}
+                                [value]="organizationFunctionsMap.get(types)">
+                                {{ organizationFunctionsMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_unitTypes" class="form-label">Επίπεδο Διακυβέρνησης</label> -->
                     <select
                         class="form-select"
-                        id="organization_levels"
-                        formControlName="organization_levels">
+                        id="levels"
+                        formControlName="levels">
                         <option value="" disabled>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
-                        @for (types of organization_levels; track types) {
+                        @for (types of organizationLevels; track types) {
                             <option
                                 [value]="types">
                                 {{ types }}
@@ -61,25 +57,36 @@
                     </select>
                 </div>
             </div>
-            <div class="mb-3">
-                <!-- <label for="organization_subOrganizationOf" class="form-label">Εποπτεύων φορέας</label> -->
-                <input type="text" 
-                    class="form-control"
-                    formControlName="organization_subOrganizationOf" 
-                    id="organization_subOrganizationOf"  
-                    placeholder="Πληκτρολογήστε Εποπτεύων Φορέα"/>
+            <div class="d-flex gap-3 align-items-center" >
+                <div class="flex-fill mb-3">
+                    <input type="text" 
+                        class="form-control"
+                        formControlName="subOrganizationOf" 
+                        id="subOrganizationOf"  
+                        placeholder="Πληκτρολογήστε Εποπτεύων Φορέα"/>
+                </div>
+                
+                <div class="flex-fill mb-3">
+                    <select
+                        class="form-select"
+                        id="status"
+                        formControlName="status">
+                        <option value='Inactive'>Ανενεργός Φορέας</option>
+                        <option value='Active'>Ενεργός Φορέας</option>
+                    </select>
+                </div>
             </div>
-            
-            <div class="mb-3">
-                <!-- <label for="organization_status" class="form-label">Κατάσταση</label> -->
-                <select
-                    class="form-select"
-                    id="organization_status"
-                    formControlName="organization_status">
-                    <option value='Inactive'>Ανενεργός Φορέας</option>
-                    <option value='Active'>Ενεργός Φορέας</option>
-                </select>
-            </div>
+            @if(!showMoreOrganizationFields) {
+                <a role="button" class="link-primary link-offset-2" (click)="moreFields('organization')">Περισσότερα πεδία</a>
+            }
+            @if(showMoreOrganizationFields){
+                <div class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                    rest form
+                    </div>
+                </div>
+                <a role="button" class="link-primary link-offset-2" (click)="lessFields('organization')">Λιγότερα πεδία</a>
+            }
        </div>
     </div>
 
@@ -87,79 +94,84 @@
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Μονάδων</span>
         </div>
-        <div class="card-body">
+        <div formGroupName="organization_units" class="card-body">
             <div class="mb-3">
-                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
                 <input type="text" 
                     class="form-control" 
-                    formControlName="organization_units_preferredLabel" 
-                    id="organization_units_preferredLabel"  
+                    formControlName="preferredLabel" 
+                    id="preferredLabel"  
                     placeholder="Πληκτρολογήστε Στοιχεία Μονάδας"/>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
                     <select
                         class="form-select"
-                        id="organization_units_types_map"
-                        formControlName="organization_units_types_map">
+                        id="typesMap"
+                        formControlName="typesMap">
                         <option value="" disabled>Επιλέξτε Τύπο Μονάδας</option>
-                        @for (types of organization_unit_types_map.keys(); track types) {
+                        @for (types of organizationUnitTypesMap.keys(); track types) {
                             <option
-                                [value]="organization_unit_types_map.get(types)">
-                                {{ organization_unit_types_map.get(types) }}
+                                [value]="organizationUnitTypesMap.get(types)">
+                                {{ organizationUnitTypesMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
                     <select
                         class="form-select"
-                        id="organization_units_functions_map"
-                        formControlName="organization_units_functions_map">
+                        id="functionsMap"
+                        formControlName="functionsMap">
                         <option value="" disabled>Επιλέξτε Σκοπό Μονάδας</option>
-                        @for (types of organization_functions_map.keys(); track types) {
+                        @for (types of organizationUnitFunctionsMap.keys(); track types) {
                             <option
-                                [value]="organization_functions_map.get(types)">
-                                {{ organization_functions_map.get(types) }}
+                                [value]="organizationUnitFunctionsMap.get(types)">
+                                {{ organizationUnitFunctionsMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_unitTypes" class="form-label">Επίπεδο Διακυβέρνησης</label> -->
                     <input type="text" 
                         class="form-control" 
-                        formControlName="organization_units_num_of_subunits" 
-                        id="organization_units_num_of_subunits"  
+                        formControlName="numOfSubunits" 
+                        id="numOfSubunits"  
                         placeholder="Πληκτρολογήστε Αριθμό Υποκείμενων Μονάδων"/>
                 </div>
             </div>
+            @if(!showMoreOrganizationUnitFields) {
+                <a role="button" class="link-primary link-offset-2" (click)="moreFields('organizationUnits')">Περισσότερα πεδία</a>
+            }
+            @if(showMoreOrganizationUnitFields){
+                <div class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                    rest form
+                    </div>
+                </div>
+                <a role="button" class="link-primary link-offset-2" (click)="lessFields('organizationUnits')">Λιγότερα πεδία</a>
+            }
         </div>
     </div>
-    <div class="card mb-4">
+    <div formGroupName="remits" class="card mb-4">
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Αρμοδιοτήτων</span>
         </div>
         <div class="card-body">
             <div class="mb-3">
-                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
                 <input type="text" 
                     class="form-control" 
-                    formControlName="remit_text" 
-                    id="remit_text"  
+                    formControlName="text" 
+                    id="text"  
                     placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
                     <select
                         class="form-select"
-                        id="remit_type"
-                        formControlName="remit_type">
+                        id="type"
+                        formControlName="type">
                         <option value="" disabled>Επιλέξτε Τύπο Αρμοδιότητας</option>
-                        @for (types of remit_type; track types) {
+                        @for (types of remitType; track types) {
                             <option
                                 [value]="types">
                                 {{ types }}
@@ -168,30 +180,62 @@
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
                     <select
                         class="form-select"
-                        id="remit_cofog"
-                        formControlName="remit_cofog">
-                        <option value="" disabled>Επιλέξτε COFOG</option>
-                        @for (types of remit_cofog; track types) {
+                        id="status"
+                        formControlName="status">
+                        <option value='ΑΝΕΝΕΡΓΗ'>Ανενεργή Αρμοδιότητα</option>
+                        <option value='ΕΝΕΡΓΗ'>Ενεργή Αρμοδιότητα</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="flex-fill mb-3">
+                    <select
+                        class="form-select"
+                        id="cofog1"
+                        formControlName="cofog1">
+                        <option value="" disabled>Επιλέξτε Λειτουργική Περιοχή COFOG</option>
+                        @for (types of cofog1; track types) {
                             <option
-                                [value]="types.name">
+                                [value]="types.code">
                                 {{ types.name }}
                             </option>
                         }
                     </select>
                 </div>
-                <div class="flex-fill mb-3">
-                    <!-- <label for="organization_status" class="form-label">Κατάσταση</label> -->
-                    <select
-                        class="form-select"
-                        id="remit_status"
-                        formControlName="remit_status">
-                        <option value='ΑΝΕΝΕΡΓΗ'>Ανενεργή Αρμοδιότητα</option>
-                        <option value='ΕΝΕΡΓΗ'>Ενεργή Αρμοδιότητα</option>
-                    </select>
-                </div>
+                @if (cofog1_selected) {
+                    <div class="flex-fill mb-3">
+                        <select
+                            class="form-select"
+                            id="cofog2"
+                            formControlName="cofog2">
+                            <option value="" disabled>Επιλέξτε Λειτουργικό Τομέα COFOG</option>
+                            @for (types of cofog2; track types) {
+                                <option
+                                    [value]="types.code">
+                                    {{ types.name }}
+                                </option>
+                            }
+                        </select>
+                    </div>
+                }
+                @if (cofog2_selected) {
+                    <div class="flex-fill mb-3">
+                        <select
+                            class="form-select"
+                            id="cofog3"
+                            formControlName="cofog3">
+                            <option value="" disabled>Επιλέξτε Θεματική Περιοχή COFOG</option>
+                            @for (types of cofog3; track types) {
+                                <option
+                                    [value]="types.code">
+                                    {{ types.name }}
+                                </option>
+                            }
+                        </select>
+                    </div>
+                 }
             </div>
         </div>
     </div>
