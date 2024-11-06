@@ -80,9 +80,85 @@
                 <a role="button" class="link-primary link-offset-2" (click)="moreFields('organization')">Περισσότερα πεδία</a>
             }
             @if(showMoreOrganizationFields){
-                <div class="d-flex gap-3 align-items-center" >
+                <div formGroupName="foundationDate" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
-                    rest form
+                        <label for="date">Ημερομηνία Ίδρυσης</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="eq">=</option>
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                </div>
+                <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία Τερματισμού</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="eq">=</option>
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                </div>
+                <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία ΦΕΚ</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="eq">=</option>
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                </div>
+                <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <input type="text" 
+                            class="form-control"
+                            formControlName="postCode" 
+                            id="postCode"  
+                            placeholder="Ταχυδρομικός Τομέας"/>
                     </div>
                 </div>
                 <a role="button" class="link-primary link-offset-2" (click)="lessFields('organization')">Λιγότερα πεδία</a>
@@ -94,7 +170,7 @@
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Μονάδων</span>
         </div>
-        <div formGroupName="organization_units" class="card-body">
+        <div formGroupName="organizational_units" class="card-body">
             <div class="mb-3">
                 <input type="text" 
                     class="form-control" 
@@ -144,8 +220,14 @@
             }
             @if(showMoreOrganizationUnitFields){
                 <div class="d-flex gap-3 align-items-center" >
-                    <div class="flex-fill mb-3">
-                    rest form
+                    <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
+                        <div class="flex-fill mb-3">
+                            <input type="text" 
+                                class="form-control"
+                                formControlName="postCode" 
+                                id="postCode"  
+                                placeholder="Ταχυδρομικός Τομέας"/>
+                        </div>
                     </div>
                 </div>
                 <a role="button" class="link-primary link-offset-2" (click)="lessFields('organizationUnits')">Λιγότερα πεδία</a>
@@ -160,16 +242,16 @@
             <div class="mb-3">
                 <input type="text" 
                     class="form-control" 
-                    formControlName="text" 
-                    id="text"  
+                    formControlName="remitText" 
+                    id="remitText"  
                     placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="type"
-                        formControlName="type">
+                        id="remitType"
+                        formControlName="remitType">
                         <option value="" disabled>Επιλέξτε Τύπο Αρμοδιότητας</option>
                         @for (types of remitType; track types) {
                             <option
@@ -237,6 +319,50 @@
                     </div>
                  }
             </div>
+            <!-- <div formArrayName="remitFoundation">
+                <div 
+                    *ngFor="let remit of remitFoundations.controls; let i=index" 
+                    [formGroupName]="i" 
+                    class="d-flex gap-3 align-items-center">
+                    
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία Αρμοδιότητας</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="eq">=</option>
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                    <mat-icon
+                        role="button"
+                        class="cursor-pointer"
+                        (click) = removeAddress(i)  
+                    >
+                        delete 
+                    </mat-icon>
+                    <mat-icon
+                        role="button"
+                        class="cursor-pointer"
+                        (click) = addAddress()
+                    >
+                        add
+                    </mat-icon>
+                </div>
+            </div> -->
         </div>
     </div>
     <div class="d-flex align-items-center gap-2 mb-3">

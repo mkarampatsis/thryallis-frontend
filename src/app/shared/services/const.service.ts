@@ -124,9 +124,10 @@ export class ConstService {
         { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
         { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
     ];
+    
 
     ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES: ColDef[] = [
-        { headerName: 'Επιλογή', checkboxSelection: true, filter: true, sortable: true, flex: 0.5 },
+        { headerName: 'Επιλογή', headerCheckboxSelection: true, checkboxSelection: true, flex: 0.5 },
         { field: 'code', headerName: 'Κωδικός', flex: 1 },
         {
             field: 'preferredLabel',

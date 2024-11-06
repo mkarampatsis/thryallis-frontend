@@ -3,7 +3,7 @@
 <h1 class="govgr-heading-sm">Φορείς του Ελληνικού Δημοσίου</h1>
 
 <span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω σε μια γραμμή</span>
-<!-- <ag-grid-angular
+<ag-grid-angular
     [domLayout]="'autoHeight'"
     [rowData]="foreis"
     [defaultColDef]="defaultColDef"
@@ -12,6 +12,7 @@
     [paginationPageSize]="20"
     [loadingOverlayComponent]="loadingOverlayComponent"
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    [rowSelection]="rowSelection"
+    rowSelection="multiple"
+    (rowSelected)="onRowSelected($event)"
     (gridReady)="onGridReady($event)"
-    class="ag-theme-balham"></ag-grid-angular> -->
+    class="ag-theme-balham"></ag-grid-angular>

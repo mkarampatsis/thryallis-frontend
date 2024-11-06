@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent  } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, GridOptions  } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 
 @Component({
@@ -21,13 +21,15 @@ export class MatrixComponent {
     store = inject(Store<AppState>);
     organizations$ = selectOrganizations$;
 
+    selectedRowLimit = 3;
+
     foreis: IOrganizationList[] = [];
 
     organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
     organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
 
     defaultColDef = this.constService.defaultColDef;
-    colDefs: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS;
+    colDefs: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES;
     autoSizeStrategy = this.constService.autoSizeStrategy;
 
     loadingOverlayComponent = GridLoadingOverlayComponent;
@@ -53,7 +55,25 @@ export class MatrixComponent {
             });
     }
 
-    // public rowSelection: RowSelectionOptions | "single" | "multiple" = {
-    //     mode: "multiRow",
-    //   };
+    onRowSelected(event: any) {
+        const selectedNodes = event.api.getSelectedNodes();
+      
+        // Disable further selections if the limit is reached
+        if (selectedNodes.length >= this.selectedRowLimit) {
+          event.api.forEachNode((node) => {
+            if (!node.isSelected()) {
+              node.selectable = false; // Disable checkbox for unselected rows
+            }
+          });
+        } else {
+          // Enable selection for all rows if under the limit
+          event.api.forEachNode((node) => {
+            node.selectable = true; // Re-enable checkbox
+          });
+        }
+
+        // Log selected rows to the console
+        const selectedData = selectedNodes.map(node => node.data);
+        console.log('Selected Rows:', selectedData);
+      }
 }
