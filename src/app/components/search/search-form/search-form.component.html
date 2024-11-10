@@ -7,11 +7,34 @@
         </div>
         <div formGroupName="organizations" class="card-body">
             <div class="mb-3">
-                <input type="text" 
+                <div>
+                    <input type="text" 
                     class="form-control" 
                     formControlName="preferredLabel" 
                     id="preferredLabel"  
                     placeholder="Πληκτρολογήστε Στοιχεία Φορέα"/>
+                </div>
+                <div class="row row-cols-lg-auto">
+                    <span>Αναζήτηση στοιχείων φορέα ως:</span>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_Org1"
+                            value="words">
+                        <label class="form-check-label" for="preferredLabelSearch_Org1">ξεχωριστές λέξεις</label>,
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_Org2"
+                            value="phrase">
+                        <label class="form-check-label" for="preferredLabelSearch_Org2">ολόκληρη φράση</label>
+                    </div>
+                </div>
             </div>
             <div class="d-flex gap-3 align-items-center" >
                 <div class="flex-fill mb-3">
@@ -67,13 +90,18 @@
                 </div>
                 
                 <div class="flex-fill mb-3">
-                    <select
-                        class="form-select"
-                        id="status"
-                        formControlName="status">
-                        <option value='Inactive'>Ανενεργός Φορέας</option>
-                        <option value='Active'>Ενεργός Φορέας</option>
-                    </select>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusActiveOrg" formControlName="statusActive">
+                        <label class="form-check-label" for="statusActiveOrg">
+                            Ενεργός Φορέας
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusInactiveOrg" formControlName="statusInactive">
+                        <label class="form-check-label" for="statusInactiveOrg">
+                            Ανενεργός Φορέας
+                        </label>
+                    </div>
                 </div>
             </div>
             @if(!showMoreOrganizationFields) {
@@ -96,7 +124,7 @@
                             id="range"
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
-                            <option value="eq">=</option>
+                            <!-- <option value="eq">=</option> -->
                             <option value="gt" >&gt;</option>
                             <option value="gte" >&gt;=</option>
                             <option value="lt" >&lt;</option>
@@ -120,7 +148,7 @@
                             id="range"
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
-                            <option value="eq">=</option>
+                            <!-- <option value="eq">=</option> -->
                             <option value="gt" >&gt;</option>
                             <option value="gte" >&gt;=</option>
                             <option value="lt" >&lt;</option>
@@ -144,7 +172,7 @@
                             id="range"
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
-                            <option value="eq">=</option>
+                            <!-- <option value="eq">=</option> -->
                             <option value="gt" >&gt;</option>
                             <option value="gte" >&gt;=</option>
                             <option value="lt" >&lt;</option>
@@ -172,11 +200,34 @@
         </div>
         <div formGroupName="organizational_units" class="card-body">
             <div class="mb-3">
-                <input type="text" 
-                    class="form-control" 
-                    formControlName="preferredLabel" 
-                    id="preferredLabel"  
-                    placeholder="Πληκτρολογήστε Στοιχεία Μονάδας"/>
+                <div>
+                    <input type="text" 
+                        class="form-control" 
+                        formControlName="preferredLabel" 
+                        id="preferredLabel"  
+                        placeholder="Πληκτρολογήστε Στοιχεία Μονάδας"/>
+                </div>
+                <div class="row row-cols-lg-auto">
+                    <span>Αναζήτηση στοιχείων μονάδας ως:</span>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_OrgU1"
+                            value="words">
+                        <label class="form-check-label" for="preferredLabelSearch_OrgU1">ξεχωριστές λέξεις</label>,
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_OrgU1"
+                            value="phrase">
+                        <label class="form-check-label" for="preferredLabelSearch_OrgU1">ολόκληρη φράση</label>
+                    </div>
+                </div>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
@@ -240,11 +291,34 @@
         </div>
         <div class="card-body">
             <div class="mb-3">
-                <input type="text" 
-                    class="form-control" 
-                    formControlName="remitText" 
-                    id="remitText"  
-                    placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
+                <div>
+                    <input type="text" 
+                        class="form-control" 
+                        formControlName="remitText" 
+                        id="remitText"  
+                        placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
+                </div>
+                <div class="row row-cols-lg-auto">
+                    <span>Αναζήτηση στοιχείων αρμοδιότητας ως:</span>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="remitTextSearch" 
+                            id="remitTextSearch1"
+                            value="words">
+                        <label class="form-check-label" for="remitTextSearch1">ξεχωριστές λέξεις</label>,
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="remitTextSearch" 
+                            id="remitTextSearch2"
+                            value="phrase">
+                        <label class="form-check-label" for="remitTextSearch2">ολόκληρη φράση</label>
+                    </div>
+                </div>   
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
@@ -262,13 +336,18 @@
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <select
-                        class="form-select"
-                        id="status"
-                        formControlName="status">
-                        <option value='ΑΝΕΝΕΡΓΗ'>Ανενεργή Αρμοδιότητα</option>
-                        <option value='ΕΝΕΡΓΗ'>Ενεργή Αρμοδιότητα</option>
-                    </select>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusActiveRemit" formControlName="statusActive">
+                        <label class="form-check-label" for="statusActiveRemit">
+                            Ενεργή Αρμοδιότητα
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusInactiveRemit" formControlName="statusInactive">
+                        <label class="form-check-label" for="statusInactiveRemit">
+                            Ανενεργή Αρμοδιότητα
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="d-flex gap-3 align-items-center">
@@ -319,7 +398,7 @@
                     </div>
                  }
             </div>
-            <!-- <div formArrayName="remitFoundation">
+            <div formArrayName="remitFoundation">
                 <div 
                     *ngFor="let remit of remitFoundations.controls; let i=index" 
                     [formGroupName]="i" 
@@ -340,7 +419,7 @@
                             id="range"
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
-                            <option value="eq">=</option>
+                            <!-- <option value="eq">=</option> -->
                             <option value="gt" >&gt;</option>
                             <option value="gte" >&gt;=</option>
                             <option value="lt" >&lt;</option>
@@ -362,7 +441,7 @@
                         add
                     </mat-icon>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
     <div class="d-flex align-items-center gap-2 mb-3">

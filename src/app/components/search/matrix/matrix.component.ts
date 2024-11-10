@@ -8,6 +8,7 @@ import { ConstService } from 'src/app/shared/services/const.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, GridOptions  } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
+import { SearchService } from 'src/app/shared/services/search.service';
 
 @Component({
   selector: 'app-matrix',
@@ -21,7 +22,10 @@ export class MatrixComponent {
     store = inject(Store<AppState>);
     organizations$ = selectOrganizations$;
 
-    selectedRowLimit = 3;
+    searchService = inject(SearchService)
+
+    selectedRowLimit = 2;
+    selectedData = []
 
     foreis: IOrganizationList[] = [];
 
@@ -73,7 +77,13 @@ export class MatrixComponent {
         }
 
         // Log selected rows to the console
-        const selectedData = selectedNodes.map(node => node.data);
-        console.log('Selected Rows:', selectedData);
+        this.selectedData = selectedNodes.map(node => node.data);
+        
+      }
+
+      showMatrix1(){
+        console.log(this.selectedData)
+        let data = this.searchService.showMatrix1(this.selectedData)
+        console.log(">>",data)
       }
 }

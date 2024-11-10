@@ -48,11 +48,13 @@ export class SearchFormComponent {
     form = new FormGroup({
         organizations: new FormGroup({
             preferredLabel: new FormControl('', Validators.required),
+            preferredLabelSearch: new FormControl(''),
             typesMap: new FormControl('', Validators.required),
             functionsMap: new FormControl('', Validators.required),
             subOrganizationOf: new FormControl('', Validators.required),
             levels: new FormControl('', Validators.required),
-            status: new FormControl('', Validators.required),
+            statusActive: new FormControl(true, Validators.required),
+            statusInactive: new FormControl(false, Validators.required),
             foundationDate: new FormGroup({
                 date: new FormControl('', Validators.required),
                 range: new FormControl('', Validators.required),
@@ -71,6 +73,7 @@ export class SearchFormComponent {
         }),
         organizational_units: new FormGroup({
             preferredLabel: new FormControl('', Validators.required),
+            preferredLabelSearch: new FormControl(''),
             typesMap: new FormControl('', Validators.required),
             functionsMap: new FormControl('', Validators.required),
             numOfSubunits: new FormControl('', Validators.required),
@@ -80,11 +83,13 @@ export class SearchFormComponent {
         }),
         remits: new FormGroup({
             remitText: new FormControl('', Validators.required),
+            remitTextSearch: new FormControl(''),
             remitType: new FormControl('', Validators.required),
             cofog1: new FormControl('', Validators.required),
             cofog2: new FormControl('', Validators.required),
             cofog3: new FormControl('', Validators.required),
-            status: new FormControl('', Validators.required),
+            statusActive: new FormControl(true, Validators.required),
+            statusInactive: new FormControl(false, Validators.required),
             remitFoundation: new FormArray([
                 new FormGroup({
                     date: new FormControl('', Validators.required),
@@ -130,9 +135,9 @@ export class SearchFormComponent {
     onSubmit() {
         this.loading = true;
 
-        // const searchQuery = this.buildSearchQuery(this.form);
+        console.log(this.form.value);
         const searchQuery = this.transformData(this.form.value);
-        // console.log(searchQuery);
+        console.log(searchQuery);
         
         this.searchService
             .postSearch(searchQuery)
@@ -173,8 +178,10 @@ export class SearchFormComponent {
     initializeForm(){
         this.form.controls.organizations.patchValue({
             preferredLabel:"",
+            preferredLabelSearch:"phrase",
             subOrganizationOf:"",
-            status: "Active",
+            statusActive: true,
+            statusInactive: false,
             typesMap: "",
             functionsMap: "",
             levels:"",
@@ -198,6 +205,7 @@ export class SearchFormComponent {
 
         this.form.controls.organizational_units.patchValue({
             preferredLabel: "",
+            preferredLabelSearch:"phrase",
             typesMap: "",
             functionsMap: "",
             numOfSubunits: "",
@@ -206,16 +214,18 @@ export class SearchFormComponent {
             },
         });
   
-        this.form.patchValue({
-            remits: {
-              remitText: '',
-              remitType: '',
-              cofog1: '',
-              cofog2: '',
-              cofog3: '',
-              status: 'ΕΝΕΡΓΗ',
-            }
+        this.form.controls.remits.patchValue({
+                remitText: '',
+                remitTextSearch: 'phrase',
+                remitType: '',
+                cofog1: '',
+                cofog2: '',
+                cofog3: '',
+                statusActive: true,
+                statusInactive: false,
         });
+
+        console.log(this.form.controls.remits.value)
 
         const remitFoundationArray = this.form.get('remits.remitFoundation') as FormArray;
         remitFoundationArray.clear(); // Clears all existing controls
@@ -228,55 +238,6 @@ export class SearchFormComponent {
             })
         );
     }
-
-    // buildSearchQuery(formGroup: FormGroup): any {
-    //     const result = {};
-
-    //     Object.keys(formGroup.controls).forEach(key => {
-    //       const control = formGroup.get(key);
-      
-    //       if (control instanceof FormGroup) {
-    //         const populatedFields = this.getPopulatedFields(control);
-    //         const mustArray = [];
-
-    //         Object.keys(populatedFields).forEach(fieldName => {
-    //             mustArray.push({
-    //                 field: fieldName,
-    //                 type: "match",
-    //                 query: fieldName ==="cofog1"  || fieldName ==="cofog2"  || fieldName ==="cofog3" ? this.getCofogName(fieldName) : populatedFields[fieldName]
-    //             });
-    //         });
-      
-    //         if (mustArray.length > 0) {
-    //           result[key] = { must: mustArray };
-    //         }
-    //       }
-    //     });
-      
-    //     return result;
-    //   }
-
-    // // Method to get only populated fields from the form
-    // getPopulatedFields(formGroup: FormGroup): any {
-    //     const filledData = {};
-    
-    //     Object.keys(formGroup.controls).forEach(key => {
-    //     const control = formGroup.get(key);
-    
-    //     if (control instanceof FormGroup) {
-    //         // Recursive call if the control is a FormGroup
-    //         const nestedData = this.getPopulatedFields(control);
-    //         if (Object.keys(nestedData).length > 0) {
-    //         filledData[key] = nestedData;
-    //         }
-    //     } else if (control instanceof FormControl && control.value) {
-    //         // Include only if the control has a non-empty value
-    //         filledData[key] = control.value;
-    //     }
-    //     });
-    
-    //     return filledData;
-    // }
 
     getCofogName(data:string){
         
@@ -308,66 +269,85 @@ export class SearchFormComponent {
         const transformed = {};
       
         // Transform each section if it has non-empty values
-        const organizations = this.transformSection(input.organizations);
+        const organizations = this.transformSection(input.organizations, "organizations");
         if (organizations) transformed['organizations'] = organizations;
       
-        const organizationalUnits = this.transformSection(input.organizational_units);
+        const organizationalUnits = this.transformSection(input.organizational_units, "organizational_units");
         if (organizationalUnits) transformed['organizational_units'] = organizationalUnits;
       
-        const remits = this.transformSection(input.remits);
+        const remits = this.transformSection(input.remits, "remits");
         if (remits) transformed['remits'] = remits;
+
+        transformed['organizations']['must'] = transformed['organizations']['must'].filter(item => item.field !== "preferredLabelSearch");
+        transformed['organizational_units']['must'] = transformed['organizational_units']['must'].filter(item => item.field !== "preferredLabelSearch");
+        transformed['remits']['must'] = transformed['remits']['must'].filter(item => item.field !== "preferredLabelSearch");
         
         return transformed;
     }
 
-    transformSection(section: any) {
+    transformSection(section: any, sectionName: string) {
         const mustArray = [];
         for (const key in section) {
-          if (section.hasOwnProperty(key)) {
-            const value = section[key];
-            
-            // Check if value is an object with date and range fields (i.e., date field)
-            if (typeof value === 'object' && value.date && value.range) {
-              mustArray.push({
-                field: key,
-                type: "date",
-                query: { [value.range]: new Date(value.date).toISOString() }
-              });
-            }
-            // If it's a nested object with specific fields, like foundationFek or mainAddress
-            else if (typeof value === 'object' && !Array.isArray(value)) {
-              for (const nestedKey in value) {
-                if (value[nestedKey]) {  // Check if the nested field has a value
-                  mustArray.push({
-                    field: `${key}.${nestedKey}`,
-                    type: "match",
-                    query: value[nestedKey]
-                  });
+            if (section.hasOwnProperty(key)) {
+                const value = section[key];
+                
+                // Check if value is an object with date and range fields (i.e., date field)
+                if (typeof value === 'object' && value.date && value.range) {
+                mustArray.push({
+                    field: key,
+                    // type: "date",
+                    query: { [value.range]: new Date(value.date).toISOString() }
+                });
                 }
-              }
-            }
-            // If it's an array (for remitFoundation in remits), iterate over each element
-            else if (Array.isArray(value)) {
-              value.forEach((item) => {
-                if (item.date && item.range) {
-                  mustArray.push({
-                    field: `${key}`,
-                    type: "date",
-                    query: { [item.range]: new Date(item.date).toISOString() }
-                  });
+                // If it's a nested object with specific fields, like foundationFek or mainAddress
+                else if (typeof value === 'object' && !Array.isArray(value)) {
+                for (const nestedKey in value) {
+                    if (value[nestedKey]) {  // Check if the nested field has a value
+                    mustArray.push({
+                        field: `${key}.${nestedKey}`,
+                        type: "words",
+                        query: value[nestedKey]
+                    });
+                    }
                 }
-              });
+                }
+                // If it's an array (for remitFoundation in remits), iterate over each element
+                else if (Array.isArray(value)) {
+                value.forEach((item) => {
+                    if (item.date && item.range) {
+                    mustArray.push({
+                        field: `${key}`,
+                        // type: "date",
+                        query: { [item.range]: new Date(item.date).toISOString() }
+                    });
+                    }
+                });
+                }
+                // Handle regular fields with non-empty values
+                else if (value) {
+                    if ((key==="statusActive" || key==="statusInactive") &&  sectionName==="organizations"){
+                        console.log(">>>",key, sectionName)
+                        mustArray.push({
+                            field: "status",
+                            type: 'words',
+                            query: key==="statusActive"?"Active":"Inactive"
+                        });
+                    } else if (((key==="statusActive" || key==="statusInactive") &&  sectionName==="remits")){
+                        mustArray.push({
+                            field: "status",
+                            type: 'words',
+                            query: key==="statusActive"?"ΕΝΕΡΓΗ":"ΑΝΕΝΕΡΓΗ"
+                        });
+                    } else {
+
+                        mustArray.push({
+                            field: key,
+                            type: key==="preferredLabel" || key==="remitText"?section[`${key}Search`]:'words',
+                            query: key ==="cofog1"  || key ==="cofog2"  || key ==="cofog3" ? this.getCofogName(key) : value
+                        });
+                    }
+                }
             }
-            // Handle regular fields with non-empty values
-            else if (value) {
-              mustArray.push({
-                field: key,
-                type: "match",
-                // query: value
-                query: key ==="cofog1"  || key ==="cofog2"  || key ==="cofog3" ? this.getCofogName(key) : value
-              });
-            }
-          }
         }
     
         return mustArray.length ? { must: mustArray } : null;
