@@ -4,14 +4,12 @@ import { SearchGridComponent } from '../search-grid/search-grid.component';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { SearchService } from 'src/app/shared/services/search.service';
-import { ISearchGrid } from 'src/app/shared/interfaces/search/search.interface';
+import { ISearchGridOutput } from 'src/app/shared/interfaces/search/search.interface';
 import { ICofog2 } from 'src/app/shared/interfaces/cofog/cofog2.interface';
 import { ICofog3 } from 'src/app/shared/interfaces/cofog/cofog3.interface';
 import { Subscription, take } from 'rxjs';
 import { NgFor } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { query } from '@angular/animations';
-
 
 @Component({
   selector: 'app-search-form',
@@ -43,7 +41,7 @@ export class SearchFormComponent {
     showMoreOrganizationFields = false;
     showMoreOrganizationUnitFields = false;
 
-    rowData: ISearchGrid[] | null;
+    rowData: ISearchGridOutput[] | null;
 
     form = new FormGroup({
         organizations: new FormGroup({
@@ -90,7 +88,7 @@ export class SearchFormComponent {
             cofog3: new FormControl('', Validators.required),
             statusActive: new FormControl(true, Validators.required),
             statusInactive: new FormControl(false, Validators.required),
-            remitFoundation: new FormArray([
+            fekDate: new FormArray([
                 new FormGroup({
                     date: new FormControl('', Validators.required),
                     range: new FormControl('', Validators.required), 
@@ -101,7 +99,7 @@ export class SearchFormComponent {
 
     formSubscriptions: Subscription[] = [];
     
-    remitFoundations = this.form.get('remits.remitFoundation') as FormArray 
+    remitFoundations = this.form.get('remits.fekDate') as FormArray 
 
     ngOnInit() {
         this.initializeForm();
@@ -135,32 +133,18 @@ export class SearchFormComponent {
     onSubmit() {
         this.loading = true;
 
-        console.log(this.form.value);
+        // console.log(this.form.value);
         const searchQuery = this.transformData(this.form.value);
-        console.log(searchQuery);
-        
+        // console.log("searchQuery>>",searchQuery);
+
         this.searchService
             .postSearch(searchQuery)
             .pipe(take(1))
             .subscribe((data) => {
-                // console.log(data)
-                const newData = data.organizations.map(org => {
-                    return org.organizational_units.map(unit => {
-                      return {
-                        organizationCode: org.code,
-                        organizationScore: org.score,
-                        organizationObjectId: org.object_id,
-                        organizationPreferredLabel: org.preferredLabel,
-                        organizationalUnitCode: unit.code,
-                        organizationalUnitScore: unit.code,
-                        organizationalUnitObjectId: unit.object_id,
-                        organizationalUnitPreferredLabel: unit.preferredLabel,
-                        remitRemitText: unit['remit'] ? unit.remit.remitText: "Δεν υπάρχουν στοιχεία",
-                        remitObjectId: unit['remit']? unit.remit.object_id :"" 
-                      };
-                    });
-                  }).flat();
-                this.rowData = newData;
+                // console.log("Data>>",data)
+                const gridData = this.searchService.createGridData(data)
+                // console.log("gridData>>",gridData);
+                this.rowData = gridData;
                 this.loading = false;
             });
     }
@@ -225,9 +209,7 @@ export class SearchFormComponent {
                 statusInactive: false,
         });
 
-        console.log(this.form.controls.remits.value)
-
-        const remitFoundationArray = this.form.get('remits.remitFoundation') as FormArray;
+        const remitFoundationArray = this.form.get('remits.fekDate') as FormArray;
         remitFoundationArray.clear(); // Clears all existing controls
 
         // Add a single empty group (like the one in the initial form definition)
@@ -278,11 +260,9 @@ export class SearchFormComponent {
         const remits = this.transformSection(input.remits, "remits");
         if (remits) transformed['remits'] = remits;
 
-        transformed['organizations']['must'] = transformed['organizations']['must'].filter(item => item.field !== "preferredLabelSearch");
-        transformed['organizational_units']['must'] = transformed['organizational_units']['must'].filter(item => item.field !== "preferredLabelSearch");
-        transformed['remits']['must'] = transformed['remits']['must'].filter(item => item.field !== "preferredLabelSearch");
-        
-        return transformed;
+        const cleanData = this.cleanData(transformed)
+                
+        return cleanData;
     }
 
     transformSection(section: any, sectionName: string) {
@@ -326,7 +306,6 @@ export class SearchFormComponent {
                 // Handle regular fields with non-empty values
                 else if (value) {
                     if ((key==="statusActive" || key==="statusInactive") &&  sectionName==="organizations"){
-                        console.log(">>>",key, sectionName)
                         mustArray.push({
                             field: "status",
                             type: 'words',
@@ -351,7 +330,32 @@ export class SearchFormComponent {
         }
     
         return mustArray.length ? { must: mustArray } : null;
-      }
+    }
+
+    cleanData(obj: any) {
+        // Check and remove preferredLabelSearch and remitTextSearch
+        obj['organizations']['must'] = obj['organizations']['must'].filter(item => item.field !== "preferredLabelSearch");
+        obj['organizational_units']['must'] = obj['organizational_units']['must'].filter(item => item.field !== "preferredLabelSearch");
+        obj['remits']['must'] = obj['remits']['must'].filter(item => item.field !== "remitTextSearch");
+
+        // Check and remove organizational_units if must array is empty
+        if (obj.organizational_units?.must.length === 0) {
+          delete obj.organizational_units;
+        }
+      
+        const specificDocument = {
+            field: "status",
+            type: "words",
+            query: "ΕΝΕΡΓΗ"
+        };
+
+        // Check and remove remits if must array only contains the specific document
+        if (obj.remits?.must.length === 1 && JSON.stringify(obj.remits.must[0]) === JSON.stringify(specificDocument)) {
+          delete obj.remits;
+        }
+
+        return obj
+    }
     
     moreFields(part: string){
         if (part === 'organization')

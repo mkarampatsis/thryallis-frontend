@@ -4,7 +4,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
-import { ISearchGrid } from 'src/app/shared/interfaces/search/search.interface';
+import { ISearchGridOutput } from 'src/app/shared/interfaces/search/search.interface';
 import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
   styleUrl: './search-grid.component.css'
 })
 export class SearchGridComponent {
-    @Input() data: ISearchGrid[] | null;
+    @Input() data: ISearchGridOutput[] | null;
     
     constService = inject(ConstService);
     modalService = inject(ModalService);
@@ -43,7 +43,7 @@ export class SearchGridComponent {
         { field: 'organizationalUnitObjectId', flex: 1, hide: true  },
 
         { 
-            field: 'remitRemitText', 
+            field: 'remitText', 
             headerName: 'Αρμοδιότητα',
             flex: 4,
             cellRenderer: HtmlCellRenderer,
@@ -73,7 +73,7 @@ export class SearchGridComponent {
             if (event.colDef.field === 'organizationPreferredLabel') {
                 this.modalService.showOrganizationDetails(event.data.organizationCode);
             }
-            else if (event.colDef.field === 'organizationalUnitPreferredLabel') {
+            else if (event.data.organizationalUnitObjectId && event.colDef.field === 'organizationalUnitPreferredLabel') {
                 this.modalService.showOrganizationUnitDetails(event.data.organizationalUnitCode)
             } else {
                 if (event.data.remitObjectId){
