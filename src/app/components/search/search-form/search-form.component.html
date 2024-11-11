@@ -5,54 +5,73 @@
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Φορέα</span>
         </div>
-        <div class="card-body">
+        <div formGroupName="organizations" class="card-body">
             <div class="mb-3">
-                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
-                <input type="text" 
+                <div>
+                    <input type="text" 
                     class="form-control" 
-                    formControlName="organization_preferredLabel" 
-                    id="organization_preferredLabel"  
+                    formControlName="preferredLabel" 
+                    id="preferredLabel"  
                     placeholder="Πληκτρολογήστε Στοιχεία Φορέα"/>
+                </div>
+                <div class="row row-cols-lg-auto">
+                    <span>Αναζήτηση στοιχείων φορέα ως:</span>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_Org1"
+                            value="words">
+                        <label class="form-check-label" for="preferredLabelSearch_Org1">ξεχωριστές λέξεις</label>,
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_Org2"
+                            value="phrase">
+                        <label class="form-check-label" for="preferredLabelSearch_Org2">ολόκληρη φράση</label>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex gap-3 align-items-center">
+            <div class="d-flex gap-3 align-items-center" >
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
                     <select
                         class="form-select"
-                        id="organization_types_map"
-                        formControlName="organization_types_map">
-                        <option value="" disabled selected>Επιλέξτε Τύπο Φορέα</option>
-                        @for (types of  organization_types_map.keys(); track types) {
+                        id="typesMap"
+                        formControlName="typesMap">
+                        <option value="" disabled>Επιλέξτε Τύπο Φορέα</option>
+                        @for (types of organizationTypesMap.keys(); track types) {
                             <option
-                                [value]="organization_types_map.get(types)">
-                                {{ organization_types_map.get(types) }}
+                                [value]="organizationTypesMap.get(types)">
+                                {{ organizationTypesMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
                     <select
                         class="form-select"
-                        id="organization_functions_map"
-                        formControlName="organization_functions_map">
-                        <option value="" disabled selected>Επιλέξτε Σκοπό Φορέα</option>
-                        @for (types of organization_functions_map.keys(); track types) {
+                        id="functionsMap"
+                        formControlName="functionsMap">
+                        <option value="" disabled>Επιλέξτε Σκοπό Φορέα</option>
+                        @for (types of organizationFunctionsMap.keys(); track types) {
                             <option
-                                [value]="organization_functions_map.get(types)">
-                                {{ organization_functions_map.get(types) }}
+                                [value]="organizationFunctionsMap.get(types)">
+                                {{ organizationFunctionsMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_unitTypes" class="form-label">Επίπεδο Διακυβέρνησης</label> -->
                     <select
                         class="form-select"
-                        id="organization_levels"
-                        formControlName="organization_levels">
-                        <option value="" disabled selected>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
-                        @for (types of organization_levels; track types) {
+                        id="levels"
+                        formControlName="levels">
+                        <option value="" disabled>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
+                        @for (types of organizationLevels; track types) {
                             <option
                                 [value]="types">
                                 {{ types }}
@@ -61,25 +80,117 @@
                     </select>
                 </div>
             </div>
-            <div class="mb-3">
-                <!-- <label for="organization_subOrganizationOf" class="form-label">Εποπτεύων φορέας</label> -->
-                <input type="text" 
-                    class="form-control"
-                    formControlName="organization_subOrganizationOf" 
-                    id="organization_subOrganizationOf"  
-                    placeholder="Πληκτρολογήστε Εποπτεύων Φορέα"/>
+            <div class="d-flex gap-3 align-items-center" >
+                <div class="flex-fill mb-3">
+                    <input type="text" 
+                        class="form-control"
+                        formControlName="subOrganizationOf" 
+                        id="subOrganizationOf"  
+                        placeholder="Πληκτρολογήστε Εποπτεύων Φορέα"/>
+                </div>
+                
+                <div class="flex-fill mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusActiveOrg" formControlName="statusActive">
+                        <label class="form-check-label" for="statusActiveOrg">
+                            Ενεργός Φορέας
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusInactiveOrg" formControlName="statusInactive">
+                        <label class="form-check-label" for="statusInactiveOrg">
+                            Ανενεργός Φορέας
+                        </label>
+                    </div>
+                </div>
             </div>
-            
-            <div class="mb-3">
-                <!-- <label for="organization_status" class="form-label">Κατάσταση</label> -->
-                <select
-                    class="form-select"
-                    id="organization_status"
-                    formControlName="organization_status">
-                    <option value='Inactive'>Ανενεργός Φορέας</option>
-                    <option value='Active' selected>Ενεργός Φορέας</option>
-                </select>
-            </div>
+            @if(!showMoreOrganizationFields) {
+                <a role="button" class="link-primary link-offset-2" (click)="moreFields('organization')">Περισσότερα πεδία</a>
+            }
+            @if(showMoreOrganizationFields){
+                <div formGroupName="foundationDate" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία Ίδρυσης</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <!-- <option value="eq">=</option> -->
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                </div>
+                <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία Τερματισμού</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <!-- <option value="eq">=</option> -->
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                </div>
+                <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία ΦΕΚ</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <!-- <option value="eq">=</option> -->
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                </div>
+                <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
+                    <div class="flex-fill mb-3">
+                        <input type="text" 
+                            class="form-control"
+                            formControlName="postCode" 
+                            id="postCode"  
+                            placeholder="Ταχυδρομικός Τομέας"/>
+                    </div>
+                </div>
+                <a role="button" class="link-primary link-offset-2" (click)="lessFields('organization')">Λιγότερα πεδία</a>
+            }
        </div>
     </div>
 
@@ -87,79 +198,136 @@
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Μονάδων</span>
         </div>
-        <div class="card-body">
+        <div formGroupName="organizational_units" class="card-body">
             <div class="mb-3">
-                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
-                <input type="text" 
-                    class="form-control" 
-                    formControlName="organization_units_preferredLabel" 
-                    id="organization_units_preferredLabel"  
-                    placeholder="Πληκτρολογήστε Στοιχεία Μονάδας"/>
+                <div>
+                    <input type="text" 
+                        class="form-control" 
+                        formControlName="preferredLabel" 
+                        id="preferredLabel"  
+                        placeholder="Πληκτρολογήστε Στοιχεία Μονάδας"/>
+                </div>
+                <div class="row row-cols-lg-auto">
+                    <span>Αναζήτηση στοιχείων μονάδας ως:</span>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_OrgU1"
+                            value="words">
+                        <label class="form-check-label" for="preferredLabelSearch_OrgU1">ξεχωριστές λέξεις</label>,
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="preferredLabelSearch" 
+                            id="preferredLabelSearch_OrgU1"
+                            value="phrase">
+                        <label class="form-check-label" for="preferredLabelSearch_OrgU1">ολόκληρη φράση</label>
+                    </div>
+                </div>
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
                     <select
                         class="form-select"
-                        id="organization_units_types_map"
-                        formControlName="organization_units_types_map">
-                        <option value="" disabled selected>Επιλέξτε Τύπο Μονάδας</option>
-                        @for (types of organization_unit_types_map.keys(); track types) {
+                        id="typesMap"
+                        formControlName="typesMap">
+                        <option value="" disabled>Επιλέξτε Τύπο Μονάδας</option>
+                        @for (types of organizationUnitTypesMap.keys(); track types) {
                             <option
-                                [value]="organization_unit_types_map.get(types)">
-                                {{ organization_unit_types_map.get(types) }}
+                                [value]="organizationUnitTypesMap.get(types)">
+                                {{ organizationUnitTypesMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
                     <select
                         class="form-select"
-                        id="organization_units_functions_map"
-                        formControlName="organization_units_functions_map">
-                        <option value="" disabled selected>Επιλέξτε Σκοπό Μονάδας</option>
-                        @for (types of organization_functions_map.keys(); track types) {
+                        id="functionsMap"
+                        formControlName="functionsMap">
+                        <option value="" disabled>Επιλέξτε Σκοπό Μονάδας</option>
+                        @for (types of organizationUnitFunctionsMap.keys(); track types) {
                             <option
-                                [value]="organization_functions_map.get(types)">
-                                {{ organization_functions_map.get(types) }}
+                                [value]="organizationUnitFunctionsMap.get(types)">
+                                {{ organizationUnitFunctionsMap.get(types) }}
                             </option>
                         }
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_unitTypes" class="form-label">Επίπεδο Διακυβέρνησης</label> -->
                     <input type="text" 
                         class="form-control" 
-                        formControlName="organization_units_num_of_subunits" 
-                        id="organization_units_num_of_subunits"  
+                        formControlName="numOfSubunits" 
+                        id="numOfSubunits"  
                         placeholder="Πληκτρολογήστε Αριθμό Υποκείμενων Μονάδων"/>
                 </div>
             </div>
+            @if(!showMoreOrganizationUnitFields) {
+                <a role="button" class="link-primary link-offset-2" (click)="moreFields('organizationUnits')">Περισσότερα πεδία</a>
+            }
+            @if(showMoreOrganizationUnitFields){
+                <div class="d-flex gap-3 align-items-center" >
+                    <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
+                        <div class="flex-fill mb-3">
+                            <input type="text" 
+                                class="form-control"
+                                formControlName="postCode" 
+                                id="postCode"  
+                                placeholder="Ταχυδρομικός Τομέας"/>
+                        </div>
+                    </div>
+                </div>
+                <a role="button" class="link-primary link-offset-2" (click)="lessFields('organizationUnits')">Λιγότερα πεδία</a>
+            }
         </div>
     </div>
-    <div class="card mb-4">
+    <div formGroupName="remits" class="card mb-4">
         <div class="card-header d-flex justify-content-between">
             <span class="fw-semibold">Στοιχεία Αρμοδιοτήτων</span>
         </div>
         <div class="card-body">
             <div class="mb-3">
-                <!-- <label for="organization_preferredLabel" class="form-label">Ονομασία</label> -->
-                <input type="text" 
-                    class="form-control" 
-                    formControlName="remit_text" 
-                    id="remit_text"  
-                    placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
+                <div>
+                    <input type="text" 
+                        class="form-control" 
+                        formControlName="remitText" 
+                        id="remitText"  
+                        placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας"/>
+                </div>
+                <div class="row row-cols-lg-auto">
+                    <span>Αναζήτηση στοιχείων αρμοδιότητας ως:</span>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="remitTextSearch" 
+                            id="remitTextSearch1"
+                            value="words">
+                        <label class="form-check-label" for="remitTextSearch1">ξεχωριστές λέξεις</label>,
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            formControlName="remitTextSearch" 
+                            id="remitTextSearch2"
+                            value="phrase">
+                        <label class="form-check-label" for="remitTextSearch2">ολόκληρη φράση</label>
+                    </div>
+                </div>   
             </div>
             <div class="d-flex gap-3 align-items-center">
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_typesMap" class="form-label">Τύπος Φορέα</label> -->
                     <select
                         class="form-select"
-                        id="remit_type"
-                        formControlName="remit_type">
-                        <option value="" disabled selected>Επιλέξτε Τύπο Αρμοδιότητας</option>
-                        @for (types of remit_type; track types) {
+                        id="remitType"
+                        formControlName="remitType">
+                        <option value="" disabled>Επιλέξτε Τύπο Αρμοδιότητας</option>
+                        @for (types of remitType; track types) {
                             <option
                                 [value]="types">
                                 {{ types }}
@@ -168,34 +336,115 @@
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <!-- <label for="organization_functionsMap" class="form-label">Σκοπός</label> -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusActiveRemit" formControlName="statusActive">
+                        <label class="form-check-label" for="statusActiveRemit">
+                            Ενεργή Αρμοδιότητα
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="statusInactiveRemit" formControlName="statusInactive">
+                        <label class="form-check-label" for="statusInactiveRemit">
+                            Ανενεργή Αρμοδιότητα
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="remit_cofog"
-                        formControlName="remit_cofog">
-                        <option value="" disabled selected>Επιλέξτε COFOG</option>
-                        @for (types of remit_cofog; track types) {
+                        id="cofog1"
+                        formControlName="cofog1">
+                        <option value="" disabled>Επιλέξτε Λειτουργική Περιοχή COFOG</option>
+                        @for (types of cofog1; track types) {
                             <option
-                                [value]="types.name">
+                                [value]="types.code">
                                 {{ types.name }}
                             </option>
                         }
                     </select>
                 </div>
-                <div class="flex-fill mb-3">
-                    <!-- <label for="organization_status" class="form-label">Κατάσταση</label> -->
-                    <select
-                        class="form-select"
-                        id="remit_status"
-                        formControlName="remit_status">
-                        <option value='ΑΝΕΝΕΡΓΗ'>Ανενεργή Αρμοδιότητα</option>
-                        <option value='ΕΝΕΡΓΗ'>Ενεργή Αρμοδιότητα</option>
-                    </select>
+                @if (cofog1_selected) {
+                    <div class="flex-fill mb-3">
+                        <select
+                            class="form-select"
+                            id="cofog2"
+                            formControlName="cofog2">
+                            <option value="" disabled>Επιλέξτε Λειτουργικό Τομέα COFOG</option>
+                            @for (types of cofog2; track types) {
+                                <option
+                                    [value]="types.code">
+                                    {{ types.name }}
+                                </option>
+                            }
+                        </select>
+                    </div>
+                }
+                @if (cofog2_selected) {
+                    <div class="flex-fill mb-3">
+                        <select
+                            class="form-select"
+                            id="cofog3"
+                            formControlName="cofog3">
+                            <option value="" disabled>Επιλέξτε Θεματική Περιοχή COFOG</option>
+                            @for (types of cofog3; track types) {
+                                <option
+                                    [value]="types.code">
+                                    {{ types.name }}
+                                </option>
+                            }
+                        </select>
+                    </div>
+                 }
+            </div>
+            <div formArrayName="fekDate">
+                <div 
+                    *ngFor="let remit of remitFoundations.controls; let i=index" 
+                    [formGroupName]="i" 
+                    class="d-flex gap-3 align-items-center">
+                    
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία Αρμοδιότητας</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <!-- <option value="eq">=</option> -->
+                            <option value="gt" >&gt;</option>
+                            <option value="gte" >&gt;=</option>
+                            <option value="lt" >&lt;</option>
+                            <option value="lte" >&lt;=</option>
+                        </select>
+                    </div>
+                    <mat-icon
+                        role="button"
+                        class="cursor-pointer"
+                        (click) = removeAddress(i)  
+                    >
+                        delete 
+                    </mat-icon>
+                    <mat-icon
+                        role="button"
+                        class="cursor-pointer"
+                        (click) = addAddress()
+                    >
+                        add
+                    </mat-icon>
                 </div>
             </div>
         </div>
     </div>
-    <div class="mb-3">
+    <div class="d-flex align-items-center gap-2 mb-3">
         <button
             type="button"
             class="btn btn-primary"
@@ -203,6 +452,22 @@
             [disabled]="!formValid() || form.pristine">
             Υποβολή
         </button>
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="resetForm()">
+            Επαναφορά
+        </button>
+        @if (loading) {
+            <span class="d-flex align-items-center gap-2">
+                Αναμονή αποτελεσμάτων...
+                <span
+                    class="spinner-border text-primary"
+                    role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+            </span>
+        }
     </div>
 </form>
         
