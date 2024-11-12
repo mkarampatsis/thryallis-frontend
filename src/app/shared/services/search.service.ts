@@ -6,7 +6,7 @@ import { ISearch, ISearchGridInput, ISearchGridOutput } from '../interfaces/sear
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
 import { take } from 'rxjs';
-import { selectOrganizationalUnitByOrganizationCode$} from 'src/app/shared/state/organizational-units.state';
+import { selectOrganizationalUnitByOrganizationCode$, selectOrganizationalUnitBysupervisorUnitCode$} from 'src/app/shared/state/organizational-units.state';
 import { Organization } from '../interfaces/search/search.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
@@ -23,6 +23,7 @@ export class SearchService {
 
     store = inject(Store<AppState>);
     selectOrganizationalUnitByOrganizationCode$ = selectOrganizationalUnitByOrganizationCode$;
+    selectOrganizationalUnitBysupervisorUnitCode$ = selectOrganizationalUnitBysupervisorUnitCode$;
     
     postSearch(data:any): Observable<any> {
         return this.http.post<ISearch>(APIPREFIX, data);
@@ -114,42 +115,58 @@ export class SearchService {
         let selectedOrganizationalUnits = []
         
         for (let data of selectedOrganizations) {
-            console.log("service", data);
-            this.store
-            .select(this.selectOrganizationalUnitByOrganizationCode$(data.organizationCode))
-            .pipe(take(1))
-            .subscribe((orgCodes) => {
-                  selectedOrganizationalUnits = selectedOrganizationalUnits.concat(...orgCodes)
-                
-            });
+            this.findChildren(data.code, data.code, selectedOrganizationalUnits)
         }
 
         // Group by unitType and organizationCode
         const result = selectedOrganizationalUnits.reduce((acc, item) => {
-            const { unitType, organizationCode } = item;
+            const { unitType, father } = item;
             
-            const unitTypeDescription = this.unitTypes.find(type => type.id.toString() === unitType)?.description || "Unknown Type";
+            const unitTypeDescription = this.unitTypes.find(type =>type.id === unitType)?.description || "Unknown Type";
         
             // Find if this combination already exists in the accumulator
-            const existingEntry = acc.find(entry => entry.unitType === unitType && entry.organizationCode === organizationCode);
-        
+            const existingEntry = acc.find(entry => entry.unitType === unitType && entry.organizationCode === father);
             if (existingEntry) {
-            // If it exists, increment the count
-            existingEntry.count += 1;
+                // If it exists, increment the count
+                existingEntry.count += 1;
             } else {
-            // If it doesn't exist, create a new entry
-            acc.push({
-                description: unitTypeDescription,
-                unitType: unitType,
-                organizationCode: organizationCode,
-                count: 1
-            });
+                // If it doesn't exist, create a new entry
+                acc.push({
+                    description: unitTypeDescription,
+                    unitType: unitType,
+                    organizationCode: father,
+                    count: 1
+                });
             }
-        
+            
             return acc;
         }, []);
           
         return result
+    }
+
+    findChildren(code: string, fatherCode: string, selectedOrganizationalUnits: any[]){
+                
+        this.store
+            .select(this.selectOrganizationalUnitBysupervisorUnitCode$(code))
+            .pipe(take(1))
+            .subscribe((orgCodes) => {
+                orgCodes.filter(doc => doc.supervisorUnitCode === code)
+                .forEach(childDoc => {
+                    // Add the current document with necessary fields to the result
+                    selectedOrganizationalUnits.push({
+                        father: fatherCode,
+                        unitType: childDoc.unitType,
+                        code: childDoc.code,
+                        preferredLabel: childDoc.preferredLabel
+                    });
+
+                    // Recursively find children of the current document
+                    this.findChildren(childDoc.code, fatherCode, selectedOrganizationalUnits);
+                });
+            });
+        
+        return selectedOrganizationalUnits
     }
 
     createGridData(data: ISearchGridInput): ISearchGridOutput[] {

@@ -91,6 +91,15 @@ export const selectOrganizationalUnitByOrganizationCode$ = (organizationCode: st
         return codes ? codes : null;
     });
 
+// A selector to return the organization unit codes for a given supervisorUnitCode
+export const selectOrganizationalUnitBysupervisorUnitCode$ = (code: string) =>
+createSelector(selectOrganizationalUnits$, (organizationalUnits) => {
+    const codes = organizationalUnits
+                .filter(ou => ou.supervisorUnitCode === code)
+    return codes ? codes : null;
+});
+
+
 // Organizational Units Effects
 export const getOrganizationalUnitsEffect = createEffect(
     (

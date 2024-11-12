@@ -41,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (forea of selectedData; track forea ){
+                @for (forea of selectedDataMatrix1; track forea ){
                     <tr>
                         <td>{{forea.preferredLabel}}</td> 
                         <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
@@ -69,6 +69,12 @@
 <div class="mt-4">
     <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
 
+    <ul>
+        @for (unit of selectedDataMatrix2; track unit ){
+            <li><strong>Φορέας: </strong>{{unit.organization}}</li>
+        }
+    </ul>
+
     <div class="d-flex justify-content-between small">
         <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
     </div>
@@ -90,6 +96,13 @@
     @if(showTable2){   
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
+        
+        <ul>
+            @for (unit of selectedDataMatrix2; track unit ){
+                <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+            }
+        </ul>
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -107,19 +120,98 @@
                 </tr>
             </thead>
             <tbody>
-                @for (unit of selectedData; track unit ){
+                @for (unit of selectedDataMatrix2; track unit ){
                     <tr>
                         <td>{{unit.preferredLabel}}</td> 
-                        <td>{{ showMatrixData1(unit.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΑΛΛΟ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΦΟΡΕΑΣ Δ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΦΟΡΕΑΣ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΤΜΗΜΑ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
-                        <td>{{ showMatrixData1(unit.code, "ΓΡΑΦΕΙΟ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΑΛΛΟ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΦΟΡΕΑΣ Δ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΦΟΡΕΑΣ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΤΜΗΜΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΓΡΑΦΕΙΟ") }}</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>
+
+<div class="text-success mt-4">
+    <hr>
+</div>
+  
+<div class="mt-4">
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση των αρμοδιοτήτων δύο Μονάδων</h1>
+
+    <ul>
+        @for (unit of selectedDataMatrix3; track unit ){
+            <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+        }
+    </ul>
+
+    <div class="d-flex justify-content-between small">
+        <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
+    </div>
+
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="remits"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs_Matrix3"
+        [pagination]="true"
+        [paginationPageSize]="10"
+        [loadingOverlayComponent]="loadingOverlayComponentRemit"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParamsRemit"
+        rowSelection="multiple"
+        (rowSelected)="onRowSelected_Matrix3($event)"
+        (gridReady)="onGridReady_Matrix3($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+
+    @if(showTable2){   
+    <div class="mt-4">
+        <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
+        
+        <ul>
+            @for (unit of selectedDataMatrix3; track unit ){
+                <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+            }
+        </ul>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Μονάδα</th>
+                    <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΑΛΛΟ</th>
+                    <th>ΦΟΡΕΑΣ Δ</th>
+                    <th>ΦΟΡΕΑΣ</th>
+                    <th>ΤΜΗΜΑ</th>
+                    <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΓΡΑΦΕΙΟ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (unit of selectedDataMatrix3; track unit ){
+                    <tr>
+                        <td>{{unit.preferredLabel}}</td> 
+                        <td>{{ showMatrixData2(unit.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΑΛΛΟ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΦΟΡΕΑΣ Δ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΦΟΡΕΑΣ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΤΜΗΜΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΓΡΑΦΕΙΟ") }}</td>
                     </tr>
                 }
             </tbody>

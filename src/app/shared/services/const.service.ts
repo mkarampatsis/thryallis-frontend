@@ -6,7 +6,7 @@ import {
     RowClassRules,
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
+    SizeColumnsToFitProvidedWidthStrategy
 } from 'ag-grid-community';
 
 import { IDictionaryType, IOrganizationCode, IOrganizationUnitCode } from 'src/app/shared/interfaces/dictionary';
