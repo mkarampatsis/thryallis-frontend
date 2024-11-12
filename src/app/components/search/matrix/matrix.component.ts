@@ -61,13 +61,11 @@ export class MatrixComponent {
     autoSizeStrategy = this.constService.autoSizeStrategy;
 
     loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
-
-    gridApi: GridApi<IOrganizationList>;
-
+    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
     loadingOverlayComponentRemit = GridLoadingOverlayComponent;
     loadingOverlayComponentParamsRemit = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
+    gridApi: GridApi<IOrganizationList>;
     gridApiRemit: GridApi<IRemitExtended>;
 
     subscriptions: Subscription[] = [];
@@ -127,6 +125,8 @@ export class MatrixComponent {
         this.matrixData1 = this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
         if (this.matrixData1.length>0){
             this.showTable1 = true;
+        } else {
+            this.showTable1= false
         }
     }
 
@@ -145,10 +145,8 @@ export class MatrixComponent {
     onGridReady_Matrix2(params: GridReadyEvent<IOrganizationList>): void {
         this.gridApi = params.api;
         this.gridApi.showLoadingOverlay();
-        this.store
-            .select(this.organizational_units$)
-            .pipe(take(1))
-            .subscribe((data) => {
+        this.subscriptions.push(
+            this.store.select(this.organizational_units$).subscribe((data) => {
                 this.monades = data.map((org) => {
                     return {
                         ...org,
@@ -158,7 +156,8 @@ export class MatrixComponent {
                     };
                 });
                 this.gridApi.hideOverlay();
-            });
+            }),
+        )
     }
 
     onRowSelected_Matrix2(event: any) {
@@ -170,6 +169,8 @@ export class MatrixComponent {
 
         if (this.matrixData2.length>0){
             this.showTable2 = true
+        } else {
+            this.showTable2 = false
         }
         
     }
@@ -193,12 +194,6 @@ export class MatrixComponent {
         this.subscriptions.push(
             this.store.select(this.remits$).subscribe((data) => {
                 this.remits = data.map((remit) => {
-                    // this.store
-                    //     .select(this.selectOrganizationCodeByOrganizationalUnitCode$(remit.organizationalUnitCode))
-                    //     .pipe(take(1))
-                    //     .subscribe((orgCode) => {
-                    //         console.log('orgCode', orgCode);
-                    //     });
                     const orgUnitCode = remit.organizationalUnitCode;
                     const orgCode =
                         this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
@@ -208,14 +203,14 @@ export class MatrixComponent {
                         organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
                     };
                 });
-                this.gridApi.hideOverlay();
+                this.gridApiRemit.hideOverlay();
             }),
         );
     }
 
     onRowSelected_Matrix3(event: any) {
         const selectedNodes = event.api.getSelectedNodes();
-      
+         
         // Disable further selections if the limit is reached
         if (selectedNodes.length >= this.selectedRowLimit) {
           event.api.forEachNode((node) => {
@@ -232,25 +227,26 @@ export class MatrixComponent {
 
         // Log selected rows to the console
         this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
-        this.matrixData2 = this.searchService.transformMatrixData_2(this.selectedDataMatrix3)
-
-        if (this.matrixData2.length>0){
-            this.showTable2 = true
+         this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3)
+        if (this.matrixData3.length>0){
+            this.showTable3 = true
+        } else {
+            this.showTable3 = false
         }
         
     }
 
-    showMatrixData3(code:string, unitType:string){
-        const result =  this.matrixData2.filter((data)=>{
-            if (code===data.organizationCode && data.description===unitType)
-                return data
-        }) 
+    // showMatrixData3(code:string, unitType:string){
+    //     const result =  this.matrixData3.filter((data)=>{
+    //         if (code===data.organizationCode && data.description===unitType)
+    //             return data
+    //     }) 
 
-        if (result.length>0)
-            return result[0]['count']
-        else 
-            return '-'
-    }
+    //     if (result.length>0)
+    //         return result[0]['count']
+    //     else 
+    //         return '-'
+    // }
 }
 
 @Component({

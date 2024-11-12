@@ -54,6 +54,14 @@ export const selectRemitById$ = (id: string) =>
         return remit ? remit : null;
     }); 
 
+// A selector to return remit with organizational unit code
+export const selectRemitByOrganizationalUnitCode$ = (code: string) =>
+    createSelector(selectRemits$, (remits) => {
+        const remit = remits
+            .filter(r => r.organizationalUnitCode === code);
+        return remit ? remit : null;
+    });
+
 // Remits Effects
 export const loadRemitsEffect = createEffect(
     (actions$ = inject(Actions), remitService = inject(RemitService)) => {

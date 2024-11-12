@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
 import { take } from 'rxjs';
 import { selectOrganizationalUnitByOrganizationCode$, selectOrganizationalUnitBysupervisorUnitCode$} from 'src/app/shared/state/organizational-units.state';
+import {selectRemitByOrganizationalUnitCode$} from 'src/app/shared/state/remits.state'; 
 import { Organization } from '../interfaces/search/search.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
@@ -24,6 +25,7 @@ export class SearchService {
     store = inject(Store<AppState>);
     selectOrganizationalUnitByOrganizationCode$ = selectOrganizationalUnitByOrganizationCode$;
     selectOrganizationalUnitBysupervisorUnitCode$ = selectOrganizationalUnitBysupervisorUnitCode$;
+    selectRemitByOrganizationalUnitCod$ = selectRemitByOrganizationalUnitCode$;
     
     postSearch(data:any): Observable<any> {
         return this.http.post<ISearch>(APIPREFIX, data);
@@ -167,6 +169,22 @@ export class SearchService {
             });
         
         return selectedOrganizationalUnits
+    }
+
+    transformMatrixData_3(rowsSelected: any){
+        let selectedRemits = []
+        
+        for (let data of rowsSelected) {
+            this.store
+            .select(this.selectRemitByOrganizationalUnitCod$(data.organizationalUnitCode))
+            .pipe(take(1))
+            .subscribe((orgCodes) => {
+                selectedRemits = selectedRemits.concat(...orgCodes)
+                
+            });
+        }
+
+        return selectedRemits
     }
 
     createGridData(data: ISearchGridInput): ISearchGridOutput[] {

@@ -92,6 +92,7 @@ export class ConstService {
         sortable: true,
         floatingFilter: true,
     };
+    
     autoSizeStrategy:
         | SizeColumnsToFitGridStrategy
         | SizeColumnsToFitProvidedWidthStrategy
