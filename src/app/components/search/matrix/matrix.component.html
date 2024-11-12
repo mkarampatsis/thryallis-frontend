@@ -1,24 +1,129 @@
-<h4 class="govgr-heading-md">Σύγκριση στοιχείων Φορέων/Μονάδων</h4>
+<h4 class="govgr-heading-md">Σύγκριτικά στοιχεία για Φορείς, Μονάδες, Αρμοδιότητες</h4>
 
-<h1 class="govgr-heading-sm">Φορείς του Ελληνικού Δημοσίου</h1>
+<div class="mt-4">
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση δύο Φορέων ως προς τον αριθμό Μονάδων ανά ιεραρχικό επίπεδο</h1>
 
-<div class="d-flex justify-content-between small">
-    <span>Μπορείτε να επιλέξετε μέχρι δύο φορείς</span>
-    @if(selectedData.length===2){
-        <a role="button" class="link-primary link-offset-2" (click)="showMatrix1()">Εμφάνιση στοιχείων</a>
+    <div class="d-flex justify-content-between small">
+        <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
+    </div>
+
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="foreis"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs_Matrix1"
+        [pagination]="true"
+        [paginationPageSize]="10"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        rowSelection="multiple"
+        (rowSelected)="onRowSelected_Matrix1($event)"
+        (gridReady)="onGridReady_Matrix1($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+
+    @if(showTable1){   
+    <div class="mt-4">
+        <h1 class="govgr-heading-sm">Σύγκριση δύο Φορέων ως προς τον αριθμό Μονάδων ανά ιεραρχικό επίπεδο</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Φορείς</th>
+                    <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΑΛΛΟ</th>
+                    <th>ΦΟΡΕΑΣ Δ</th>
+                    <th>ΦΟΡΕΑΣ</th>
+                    <th>ΤΜΗΜΑ</th>
+                    <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΓΡΑΦΕΙΟ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (forea of selectedData; track forea ){
+                    <tr>
+                        <td>{{forea.preferredLabel}}</td> 
+                        <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΑΛΛΟ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΦΟΡΕΑΣ Δ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΦΟΡΕΑΣ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΤΜΗΜΑ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΓΡΑΦΕΙΟ") }}</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
     }
 </div>
 
-<ag-grid-angular
-    [domLayout]="'autoHeight'"
-    [rowData]="foreis"
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs"
-    [pagination]="true"
-    [paginationPageSize]="20"
-    [loadingOverlayComponent]="loadingOverlayComponent"
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    rowSelection="multiple"
-    (rowSelected)="onRowSelected($event)"
-    (gridReady)="onGridReady($event)"
-    class="ag-theme-balham"></ag-grid-angular>
+<div class="text-success mt-4">
+    <hr>
+</div>
+  
+<div class="mt-4">
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
+
+    <div class="d-flex justify-content-between small">
+        <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
+    </div>
+
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="monades"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs_Matrix2"
+        [pagination]="true"
+        [paginationPageSize]="10"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        rowSelection="multiple"
+        (rowSelected)="onRowSelected_Matrix2($event)"
+        (gridReady)="onGridReady_Matrix2($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+
+    @if(showTable2){   
+    <div class="mt-4">
+        <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Μονάδα</th>
+                    <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΑΛΛΟ</th>
+                    <th>ΦΟΡΕΑΣ Δ</th>
+                    <th>ΦΟΡΕΑΣ</th>
+                    <th>ΤΜΗΜΑ</th>
+                    <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΓΡΑΦΕΙΟ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (unit of selectedData; track unit ){
+                    <tr>
+                        <td>{{unit.preferredLabel}}</td> 
+                        <td>{{ showMatrixData1(unit.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΑΛΛΟ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΦΟΡΕΑΣ Δ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΦΟΡΕΑΣ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΤΜΗΜΑ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData1(unit.code, "ΓΡΑΦΕΙΟ") }}</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

@@ -154,6 +154,17 @@ export class ConstService {
         // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
     ];
 
+    ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES: ColDef[] = [
+        { headerName: 'Επιλογή', headerCheckboxSelection: true, checkboxSelection: true, flex: 0.5 },
+        { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
+        { field: 'preferredLabel', headerName: 'Ονομασία', flex: 1 },
+        { field: 'organization', headerName: 'Φορέας', flex: 1 },
+        { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
+        { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
+        { field: 'remitsFinalized', headerName: 'Αρμοδιότητες', flex: 0.5 },
+        // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
+    ];
+
     LEGAL_ACTS_COL_DEFS: ColDef[] = [
         {
             valueGetter: function (params) {
