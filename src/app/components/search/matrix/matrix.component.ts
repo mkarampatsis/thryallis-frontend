@@ -236,17 +236,16 @@ export class MatrixComponent {
         
     }
 
-    // showMatrixData3(code:string, unitType:string){
-    //     const result =  this.matrixData3.filter((data)=>{
-    //         if (code===data.organizationCode && data.description===unitType)
-    //             return data
-    //     }) 
-
-    //     if (result.length>0)
-    //         return result[0]['count']
-    //     else 
-    //         return '-'
-    // }
+    onFilterChanged(event: any) {
+        // let filteredRowCount = 0
+         let filteredRows = []
+         this.gridApiRemit.forEachNodeAfterFilter((data) => {
+             filteredRows.push(data.data);
+            //  filteredRowCount++;
+         });
+        //  console.log(filteredRowCount);
+        console.log(filteredRows);
+     }
 }
 
 @Component({

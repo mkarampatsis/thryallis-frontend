@@ -170,6 +170,7 @@
         rowSelection="multiple"
         (rowSelected)="onRowSelected_Matrix3($event)"
         (gridReady)="onGridReady_Matrix3($event)"
+        (filterChanged)="onFilterChanged($event)"
         class="ag-theme-balham"></ag-grid-angular>
 
     @if(showTable3){   
