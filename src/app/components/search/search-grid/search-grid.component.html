@@ -1,4 +1,7 @@
 <div class="govgr-body mt-3">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class="btn btn-primary btn-sm mb-3" (click)="onBtnExport()">Εξαγωγή στοιχείων σε CSV αρχείο</button>
+    </div>
     <ag-grid-angular
         [domLayout]="'autoHeight'"
         [rowData]="data"

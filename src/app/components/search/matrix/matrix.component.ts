@@ -40,11 +40,6 @@ export class MatrixComponent {
 
     searchService = inject(SearchService)
 
-    selectedRowLimit = 2;
-    selectedDataMatrix1 = []
-    selectedDataMatrix2 = []
-    selectedDataMatrix3 = []
-
     foreis: IOrganizationList[] = [];
     monades: IOrganizationUnitList[] = [];
     remits: IRemitExtended[] = [];
@@ -70,14 +65,20 @@ export class MatrixComponent {
 
     subscriptions: Subscription[] = [];
     
+    selectedRowLimit = 2;
+    
+    selectedDataMatrix1 = []
     matrixData1 = []
     showTable1 = false
     
+    selectedDataMatrix2 = []
     matrixData2 = []
     showTable2 = false
 
+    selectedDataMatrix3 = []
     matrixData3 = []
     showTable3 = false
+    filteredRows = []
 
     ngOnDestroy(): void {
         this.subscriptions.forEach((sub) => sub.unsubscribe());
@@ -227,7 +228,7 @@ export class MatrixComponent {
 
         // Log selected rows to the console
         this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
-         this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3)
+        this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3, this.filteredRows)
         if (this.matrixData3.length>0){
             this.showTable3 = true
         } else {
@@ -237,15 +238,15 @@ export class MatrixComponent {
     }
 
     onFilterChanged(event: any) {
+        this.filteredRows = [];
         // let filteredRowCount = 0
-         let filteredRows = []
          this.gridApiRemit.forEachNodeAfterFilter((data) => {
-             filteredRows.push(data.data);
+             this.filteredRows.push(data.data);
             //  filteredRowCount++;
          });
         //  console.log(filteredRowCount);
-        console.log(filteredRows);
-     }
+        // console.log(">>",this.filteredRows);
+    }
 }
 
 @Component({

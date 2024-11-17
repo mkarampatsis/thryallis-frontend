@@ -85,6 +85,10 @@ export class SearchGridComponent {
             }
         }
     }
+
+    onBtnExport(){
+        this.gridApi.exportDataAsCsv();
+    }
 }
 
 @Component({

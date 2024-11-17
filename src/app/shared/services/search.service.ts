@@ -171,19 +171,28 @@ export class SearchService {
         return selectedOrganizationalUnits
     }
 
-    transformMatrixData_3(rowsSelected: any){
+    transformMatrixData_3(rowsSelected: any, filteredRows: any){
         let selectedRemits = []
         
-        for (let data of rowsSelected) {
-            this.store
-            .select(this.selectRemitByOrganizationalUnitCod$(data.organizationalUnitCode))
-            .pipe(take(1))
-            .subscribe((orgCodes) => {
-                selectedRemits = selectedRemits.concat(...orgCodes)
-                
-            });
+        if (!filteredRows){
+            for (let data of rowsSelected) {
+                this.store
+                .select(this.selectRemitByOrganizationalUnitCod$(data.organizationalUnitCode))
+                .pipe(take(1))
+                .subscribe((orgCodes) => {
+                    selectedRemits = selectedRemits.concat(...orgCodes)
+                    
+                });
+            }
+        } else {
+            for (let data of rowsSelected) {
+                let remits = []
+                // console.log("Service>>",rowsSelected,filteredRows)
+                remits = filteredRows.filter(doc => doc.organizationalUnitCode === data.organizationalUnitCode)
+                selectedRemits = selectedRemits.concat(...remits)
+            }
+            // console.log(selectedRemits)
         }
-
         return selectedRemits
     }
 

@@ -242,5 +242,14 @@ export class ModalService {
         modalRef.componentInstance.data = data;
         modalRef.componentInstance.modalRef = modalRef;
     }
+
+    showChangeDetails(data: { organizationCode: string;}) {
+        const modalRef = this.modalService.open(RemitDetailsComponent, {
+            size: 'xl',
+            centered: true,
+        });
+        modalRef.componentInstance.data = data;
+        modalRef.componentInstance.modalRef = modalRef;
+    }
 }
 

@@ -1,0 +1,15 @@
+<h1 class="govgr-heading-sm">Εμφάνιση Log στοιχείων Φορέων του Ελληνικού Δημοσίου</h1>
+
+<span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω σε μια γραμμή</span>
+<ag-grid-angular
+    [domLayout]="'autoHeight'"
+    [rowData]="foreis"
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs"
+    [pagination]="true"
+    [paginationPageSize]="20"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    (rowDoubleClicked)="onRowDoubleClicked($event)"
+    (gridReady)="onGridReady($event)"
+    class="ag-theme-balham"></ag-grid-angular>

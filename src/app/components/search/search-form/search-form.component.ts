@@ -135,15 +135,15 @@ export class SearchFormComponent {
 
         // console.log(this.form.value);
         const searchQuery = this.transformData(this.form.value);
-        // console.log("searchQuery>>",searchQuery);
+        console.log("searchQuery>>",searchQuery);
 
         this.searchService
             .postSearch(searchQuery)
             .pipe(take(1))
             .subscribe((data) => {
-                // console.log("Data>>",data)
+                console.log("Data>>",data)
                 const gridData = this.searchService.createGridData(data)
-                // console.log("gridData>>",gridData);
+                console.log("gridData>>",gridData);
                 this.rowData = gridData;
                 this.loading = false;
             });
