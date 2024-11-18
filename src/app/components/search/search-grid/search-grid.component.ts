@@ -10,7 +10,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 @Component({
   selector: 'app-search-grid',
   standalone: true,
-  imports: [AgGridAngular, GridLoadingOverlayComponent],
+  imports: [CommonModule, AgGridAngular],
   templateUrl: './search-grid.component.html',
   styleUrl: './search-grid.component.css'
 })

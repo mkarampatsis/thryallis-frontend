@@ -22,7 +22,7 @@ export interface IRemitExtended extends IRemit {
 @Component({
   selector: 'app-log-data',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent],
+  imports: [CommonModule, AgGridAngular],
   templateUrl: './log-data.component.html',
   styleUrl: './log-data.component.css'
 })
