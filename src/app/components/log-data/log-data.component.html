@@ -1,15 +1,28 @@
-<h1 class="govgr-heading-sm">Εμφάνιση Log στοιχείων Φορέων του Ελληνικού Δημοσίου</h1>
+<h1 class="govgr-heading-sm">Εμφάνιση ιστορικών στοιχείων Φορέων/Μονάδων του Ελληνικού Δημοσίου</h1>
 
-<span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω σε μια γραμμή</span>
+@if (loading) {
+    <span class="d-flex align-items-center gap-2">
+        Αναμονή αποτελεσμάτων...
+        <span
+            class="spinner-border text-primary"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+    </span>
+}
+
+@if(!loading){
+<span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα/μονάδας με διπλό κλικ πάνω στο κελλί</span>
 <ag-grid-angular
     [domLayout]="'autoHeight'"
-    [rowData]="foreis"
+    [rowData]="remits"
     [defaultColDef]="defaultColDef"
     [columnDefs]="colDefs"
     [pagination]="true"
     [paginationPageSize]="20"
     [loadingOverlayComponent]="loadingOverlayComponent"
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (rowDoubleClicked)="onRowDoubleClicked($event)"
     (gridReady)="onGridReady($event)"
+    (cellClicked)="onCellClicked($event)"
     class="ag-theme-balham"></ag-grid-angular>
+}

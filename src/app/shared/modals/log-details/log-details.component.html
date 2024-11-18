@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-between m-3">
+    <span class="h5">Ιστορικά στοιχεία αλλαγών Φορέα/Μονάδας</span>
+
+    <button
+        type="button"
+        class="btn-close"
+        (click)="modalRef.dismiss()">
+    </button>
+</div>
+<div class="modal-body">
+    <span class="d-flex justify-content-center fs-5 fw-bolder mb-3">Στοιχεία Αλλαγών</span>
+    <div class="d-flex flex-column gap-2">
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Χρήστης</th>
+                    <th>Λειτουργία</th>
+                    <th>Ημερομηνία</th>
+                    <th>Αλλαγή</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(result of results; track result){
+                <tr>
+                    <td>{{result.who }}</td>
+                    <td>{{result.action}}</td>
+                    <td>{{result.when['$date'] | date: "dd-MM-yyyy HH:mm:ss"}}</td>
+                    <td>{{result.change | json}}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+    <button
+        ngbAutofocus
+        type="button"
+        class="btn btn-primary"
+        (click)="modalRef.close()">
+        Επιστροφή
+    </button>
+</div>

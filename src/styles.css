@@ -27,3 +27,11 @@ i:hover {
 .emphasis em {
     color: red
 }
+
+.organization-text-success {
+    color: green;
+}
+
+.organizationalUnit-text-success {
+    color: green;
+}

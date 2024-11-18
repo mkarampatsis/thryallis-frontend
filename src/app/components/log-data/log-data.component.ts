@@ -1,17 +1,28 @@
 import { Component,inject } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
-import { Observable } from 'rxjs';
-import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
+import { CommonModule, NgIf } from '@angular/common';
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent, CellClassRules } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { LogDataService } from 'src/app/shared/services/log-data.service';
+import { AppState } from 'src/app/shared/state/app.state';
+import { Store } from '@ngrx/store';
+import { selectRemits$, selectRemitsLoading$ } from 'src/app/shared/state/remits.state';
+import { Subscription, take } from 'rxjs';
+import { IRemit } from 'src/app/shared/interfaces/remit/remit.interface';
+import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/state/organizational-units.state';
+
+export interface IRemitExtended extends IRemit {
+    organizationCode: string;
+    organizationLabel: string;
+    organizationUnitLabel: string;
+}
 
 @Component({
   selector: 'app-log-data',
   standalone: true,
-  imports: [AgGridAngular, GridLoadingOverlayComponent],
+  imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent],
   templateUrl: './log-data.component.html',
   styleUrl: './log-data.component.css'
 })
@@ -20,61 +31,161 @@ export class LogDataComponent {
     modalService = inject(ModalService);
     logDataService = inject(LogDataService);
 
-    foreis: Observable<IOrganizationList>
+    loading = false; 
+
+    allOrganizationChanges = [];
+    allOrganizationalUnitChanges = [];
+    allRemitChanges = []; 
+
+    remits: IRemitExtended[] = [];
+    
+    store = inject(Store<AppState>);
+    remits$ = selectRemits$;
+    remitsLoading$ = selectRemitsLoading$;
+    selectOrganizationCodeByOrganizationalUnitCode$ = selectOrganizationCodeByOrganizationalUnitCode$;
+
+    organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+    organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
 
     defaultColDef = this.constService.defaultColDef;
-    colDefs: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS;
+    colDefs: ColDef[]
+
     autoSizeStrategy = this.constService.autoSizeStrategy;
 
     loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
+    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
-    gridApi: GridApi<IOrganizationList>;
+    gridApi: GridApi<IRemitExtended>;
 
-    onGridReady(params: GridReadyEvent<IOrganizationList>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.logDataService.createOrganizationGrid()
-        this.foreis.subscribe(data => {
+    subscriptions: Subscription[] = [];
 
-        })
-        console.log(">>>>", this.foreis);
-        this.gridApi.hideOverlay();
-        // this.store
-        //     .select(selectOrganizations$)
-        //     .pipe(take(1))
-        //     .subscribe((data) => {
-        //         this.userService.getAllUsers().subscribe((users) => {
-        //             this.users = users.map((user) => {
-        //                 // Filter editor roles
-        //                 const editorRoles = user.roles.filter((role) => role.role === "EDITOR");
-        //                 if (editorRoles.length > 0) {
-        //                   return {
-        //                     email: user.email,
-        //                     foreis: editorRoles.flatMap((role) => role.foreas),
-        //                   };
-        //                 }
-        //                 return null; // Ignore users without editor roles
-        //               })
-        //               .filter((entry) => entry !== null); // Remove null entries
-
-        //             console.log(this.users);
-        //             this.foreis = data.map((org) => {
-        //                 return {
-        //                     ...org,
-        //                     organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
-        //                     subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
-        //                 };
-        //             });
-
-        //         });
-                
-        //         this.gridApi.hideOverlay();
-        //     });
+    ngOnDestroy(): void {
+        this.subscriptions.forEach((sub) => sub.unsubscribe());
     }
 
-    onRowDoubleClicked(event: any): void {
-        // console.log(event);
-        this.modalService.showOrganizationDetails(event.data.code);
+    ngOnInit(){
+        this.loading = true;
+        this.logDataService.getAllChangesCodesByType().subscribe((data)=>{
+            this.allOrganizationChanges = data;
+            this.initializeColDefs()
+            this.loading = false;
+        })
+    }
+
+    initializeColDefs() {
+        this.colDefs =  [
+            { field: 'organizationLabel', headerName: 'Φορέας', flex: 1, cellClassRules: this.getCellClassRulesOrganizations()  },
+            { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1, cellClassRules: this.getCellClassRulesOrganizationalUnits() },
+            { field: 'remitType', headerName: 'Τύπος', flex: 1 },
+            {
+                field: 'remitText',
+                headerName: 'Κείμενο',
+                flex: 6,
+                cellRenderer: HtmlCellRenderer,
+                autoHeight: true,
+                cellStyle: { 'white-space': 'normal' },
+            },
+        ];
+    }
+
+    onGridReady(params: GridReadyEvent<IRemitExtended>): void {
+        this.gridApi = params.api;
+        this.gridApi.showLoadingOverlay();
+        this.subscriptions.push(
+            this.store.select(this.remits$).subscribe((data) => {
+                this.remits = data.map((remit) => {
+                    const orgUnitCode = remit.organizationalUnitCode;
+                    const orgCode =
+                        this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
+                    return {
+                        ...remit,
+                        organizationCode: orgCode,
+                        organizationLabel: this.organizationCodesMap.get(orgCode),
+                        organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
+                    };
+                });
+                this.gridApi.hideOverlay();
+            }),
+        );
+    }
+
+    getCellClassRulesOrganizations(): CellClassRules {
+        return {
+            "organization-text-success": (params) => this.allOrganizationChanges["data"]["organizations"].includes(params.data.organizationCode)
+        };
+    }
+
+    getCellClassRulesOrganizationalUnits(): CellClassRules {
+        return {
+            "organizationalUnit-text-success": (params) => this.allOrganizationChanges["data"]["organizationalUnits"].includes(params.data.organizationalUnitCode)
+        };
+    }
+
+    onCellClicked(event: any): void  {
+        console.log(event.colDef.field, event.data['organizationCode'])
+        if (event.colDef.field="organizationLabel") {
+            this.modalService.showChangeDetails(event.data['organizationCode']);
+        } else if (event.colDef.field="organizationUnitLabel") {
+            this.modalService.showChangeDetails(event.data['organizationUnitCode']);
+        } else {
+            console.log("Nothing to show")
+        }
+    }
+
+    // onRowDoubleClicked(event: any): void {
+    //     // console.log(event);
+    //     this.modalService.showOrganizationDetails(event.data.code);
+    // }
+}
+
+@Component({
+    selector: 'app-html-cell-renderer',
+    standalone: true,
+    imports: [NgIf],
+    template: `
+        <div
+            [innerHTML]="shortText"
+            *ngIf="!showFullText"></div>
+        <div
+            [innerHTML]="params.value"
+            *ngIf="showFullText"></div>
+        <button
+            class="btn btn-info btn-sm mb-2"
+            *ngIf="isLongText"
+            (click)="toggleText()">
+            {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
+        </button>
+    `,
+})
+export class HtmlCellRenderer implements ICellRendererAngularComp {
+    params: any;
+    showFullText = false;
+    shortText = '';
+    isLongText = false;
+
+    agInit(params: any): void {
+        this.params = params;
+        if (this.params.value.length > 500) {
+            this.shortText = this.params.value.substr(0, 500);
+            this.isLongText = true;
+        } else {
+            this.shortText = this.params.value;
+        }
+    }
+
+    refresh(params: any): boolean {
+        this.params = params;
+        if (this.params.value.length > 500) {
+            this.shortText = this.params.value.substr(0, 500);
+            this.isLongText = true;
+        } else {
+            this.shortText = this.params.value;
+        }
+        this.showFullText = false; // Reset the text display state
+        return true;
+    }
+
+    toggleText(): void {
+        this.showFullText = !this.showFullText;
     }
 }

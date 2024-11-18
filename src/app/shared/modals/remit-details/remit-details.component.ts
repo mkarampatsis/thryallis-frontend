@@ -2,7 +2,6 @@ import { Component,inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 import { ConstService } from 'src/app/shared/services/const.service';
-// import { RemitService } from '../../services/remit.service';
 import { IRemit } from '../../interfaces/remit/remit.interface'
 import { Store } from '@ngrx/store';
 import { AppState } from '../../state/app.state';
