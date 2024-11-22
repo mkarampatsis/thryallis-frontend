@@ -173,8 +173,8 @@ export class SearchService {
 
     transformMatrixData_3(rowsSelected: any, filteredRows: any){
         let selectedRemits = []
-        
-        if (!filteredRows){
+
+        if (filteredRows.length===0){
             for (let data of rowsSelected) {
                 this.store
                 .select(this.selectRemitByOrganizationalUnitCod$(data.organizationalUnitCode))
@@ -200,71 +200,72 @@ export class SearchService {
         const result: ISearchGridOutput[] = [];
       
         data.organizations.forEach(org => {
-          const orgCode = org.code;
-          const orgScore = org.score;
-          const orgObjectId = org.object_id;
-          const orgPreferredLabel = org.preferredLabel;
-      
-          if (org["organizational_units"].length === 0) {
-            // If organizational_units is empty
-            result.push({
-              organizationCode: orgCode,
-              organizationScore: orgScore,
-              organizationObjectId: orgObjectId,
-              organizationPreferredLabel: orgPreferredLabel,
-              organizationalUnitCode: "",
-              organizationalUnitScore: 0,
-              organizationalUnitObjectId: "",
-              organizationalUnitPreferredLabel: "No Data",
-              remitText: "",
-              remitObjectId: "",
-              remitScore: 0
-            });
-          } else {
-            // Loop through organizational_units
-            org.organizational_units.forEach(unit => {
-              const unitCode = unit.code;
-              const unitScore = unit.score;
-              const unitObjectId = unit.object_id;
-              const unitPreferredLabel = unit.preferredLabel;
-      
-              if (unit["remits"].length === 0) {
-                // If remits is empty
+            const orgCode = org.code;
+            const orgScore = org.score;
+            const orgObjectId = org.object_id;
+            const orgPreferredLabel = org.preferredLabel;
+
+            // console.log(org["organizational_units"], !org["organizational_units"])
+                
+            if (!org["organizational_units"]) {
+                // If organizational_units is empty
                 result.push({
-                  organizationCode: orgCode,
-                  organizationScore: orgScore,
-                  organizationObjectId: orgObjectId,
-                  organizationPreferredLabel: orgPreferredLabel,
-                  organizationalUnitCode: unitCode,
-                  organizationalUnitScore: unitScore,
-                  organizationalUnitObjectId: unitObjectId,
-                  organizationalUnitPreferredLabel: unitPreferredLabel,
-                  remitText: "No Data",
-                  remitObjectId: "",
-                  remitScore: 0
-                });
-              } else {
-                // Loop through remits
-                unit.remits.forEach(remit => {
-                  result.push({
                     organizationCode: orgCode,
                     organizationScore: orgScore,
                     organizationObjectId: orgObjectId,
                     organizationPreferredLabel: orgPreferredLabel,
-                    organizationalUnitCode: unitCode,
-                    organizationalUnitScore: unitScore,
-                    organizationalUnitObjectId: unitObjectId,
-                    organizationalUnitPreferredLabel: unitPreferredLabel,
-                    remitText: remit.remitText,
-                    remitObjectId: remit.object_id,
-                    remitScore: remit.score
-                  });
+                    organizationalUnitCode: "",
+                    organizationalUnitScore: 0,
+                    organizationalUnitObjectId: "",
+                    organizationalUnitPreferredLabel: "--",
+                    remitText: "--",
+                    remitObjectId: "",
+                    remitScore: 0
                 });
-              }
-            });
-          }
+            } else {
+                // Loop through organizational_units
+                org.organizational_units.forEach(unit => {
+                    const unitCode = unit.code;
+                    const unitScore = unit.score;
+                    const unitObjectId = unit.object_id;
+                    const unitPreferredLabel = unit.preferredLabel;
+            
+                    if (!unit["remits"]) {
+                        // If remits is empty
+                        result.push({
+                        organizationCode: orgCode,
+                        organizationScore: orgScore,
+                        organizationObjectId: orgObjectId,
+                        organizationPreferredLabel: orgPreferredLabel,
+                        organizationalUnitCode: unitCode,
+                        organizationalUnitScore: unitScore,
+                        organizationalUnitObjectId: unitObjectId,
+                        organizationalUnitPreferredLabel: unitPreferredLabel,
+                        remitText: "--",
+                        remitObjectId: "",
+                        remitScore: 0
+                        });
+                    } else {
+                        // Loop through remits
+                        unit.remits.forEach(remit => {
+                            result.push({
+                                organizationCode: orgCode,
+                                organizationScore: orgScore,
+                                organizationObjectId: orgObjectId,
+                                organizationPreferredLabel: orgPreferredLabel,
+                                organizationalUnitCode: unitCode,
+                                organizationalUnitScore: unitScore,
+                                organizationalUnitObjectId: unitObjectId,
+                                organizationalUnitPreferredLabel: unitPreferredLabel,
+                                remitText: remit.remitText,
+                                remitObjectId: remit.object_id,
+                                remitScore: remit.score
+                            });
+                        });
+                    }
+                });
+            }
         });
-      
         return result;
     }
 }

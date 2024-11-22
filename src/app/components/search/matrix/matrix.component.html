@@ -2,9 +2,20 @@
 
 <div class="mt-4">
     <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση δύο Φορέων ως προς τον αριθμό Μονάδων ανά ιεραρχικό επίπεδο</h1>
-
+    
+    <ul>
+        @for (unit of selectedDataMatrix1; track unit ){
+            <li><strong>Φορέας: </strong>{{ unit.preferredLabel }}</li>
+        }
+    </ul>
+   
     <div class="d-flex justify-content-between small">
-        <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
+        <div>
+            <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
+        </div>
+        <div>
+            <a (click)="clearSelectionMatrix1()" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" role="button">Καθάρισμα επιλογών</a>
+        </div>
     </div>
 
     <ag-grid-angular
@@ -29,15 +40,13 @@
                 <tr>
                     <th>Φορείς</th>
                     <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
-                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΑΛΛΟ</th>
-                    <th>ΦΟΡΕΑΣ Δ</th>
-                    <th>ΦΟΡΕΑΣ</th>
-                    <th>ΤΜΗΜΑ</th>
+                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
                     <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
                     <th>ΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΤΜΗΜΑ</th>
                     <th>ΓΡΑΦΕΙΟ</th>
+                    <th>ΑΛΛΟ</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,15 +54,13 @@
                     <tr>
                         <td>{{forea.preferredLabel}}</td> 
                         <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΑΛΛΟ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΦΟΡΕΑΣ Δ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΦΟΡΕΑΣ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΤΜΗΜΑ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
                         <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
                         <td>{{ showMatrixData1(forea.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΤΜΗΜΑ") }}</td>
                         <td>{{ showMatrixData1(forea.code, "ΓΡΑΦΕΙΟ") }}</td>
+                        <td>{{ showMatrixData1(forea.code, "ΑΛΛΟ") }}</td>
                     </tr>
                 }
             </tbody>
@@ -71,12 +78,17 @@
 
     <ul>
         @for (unit of selectedDataMatrix2; track unit ){
-            <li><strong>Φορέας: </strong>{{unit.organization}}</li>
+            <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
         }
     </ul>
 
     <div class="d-flex justify-content-between small">
-        <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
+        <div>
+            <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
+        </div>
+        <div>
+            <a (click)="clearSelectionMatrix2()" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" role="button">Καθάρισμα επιλογών</a>
+        </div>
     </div>
 
     <ag-grid-angular
@@ -97,26 +109,18 @@
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
         
-        <ul>
-            @for (unit of selectedDataMatrix2; track unit ){
-                <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
-            }
-        </ul>
-
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Μονάδα</th>
                     <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
-                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΑΛΛΟ</th>
-                    <th>ΦΟΡΕΑΣ Δ</th>
-                    <th>ΦΟΡΕΑΣ</th>
-                    <th>ΤΜΗΜΑ</th>
+                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
                     <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
                     <th>ΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
+                    <th>ΤΜΗΜΑ</th>
                     <th>ΓΡΑΦΕΙΟ</th>
+                    <th>ΑΛΛΟ</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,15 +128,13 @@
                     <tr>
                         <td>{{unit.preferredLabel}}</td> 
                         <td>{{ showMatrixData2(unit.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
-                        <td>{{ showMatrixData2(unit.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData2(unit.code, "ΑΛΛΟ") }}</td>
-                        <td>{{ showMatrixData2(unit.code, "ΦΟΡΕΑΣ Δ") }}</td>
-                        <td>{{ showMatrixData2(unit.code, "ΦΟΡΕΑΣ") }}</td>
-                        <td>{{ showMatrixData2(unit.code, "ΤΜΗΜΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
                         <td>{{ showMatrixData2(unit.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
                         <td>{{ showMatrixData2(unit.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData2(unit.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΤΜΗΜΑ") }}</td>
                         <td>{{ showMatrixData2(unit.code, "ΓΡΑΦΕΙΟ") }}</td>
+                        <td>{{ showMatrixData2(unit.code, "ΑΛΛΟ")}}</td>
                     </tr>
                 }
             </tbody>
@@ -149,13 +151,18 @@
     <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση των αρμοδιοτήτων δύο Μονάδων</h1>
 
     <ul>
-        @for (unit of selectedDataMatrix3; track unit ){
-            <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+        @for (row of selectedDataMatrix3; track row ){
+            <li><strong>Φορέας: </strong>{{row.organizationLabel}}, <strong>Μονάδα: </strong>{{row.organizationUnitLabel}}</li>
         }
     </ul>
 
     <div class="d-flex justify-content-between small">
-        <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε <strong>(μέχρι δύο επιλογές)</strong></span>
+        <div>
+            <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε <strong>(μέχρι δύο επιλογές)</strong></span>
+        </div>
+        <div>
+            <a (click)="clearSelectionMatrix3()" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" role="button">Καθάρισμα επιλογών</a>
+        </div>
     </div>
 
     <ag-grid-angular
@@ -177,12 +184,6 @@
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση όλων των αρμοδιοτήτων δύο Μονάδων και με κριτήριο αναζήτησης</h1>
         
-        <ul>
-            @for (row of selectedDataMatrix3; track row ){
-                <li><strong>Φορέας: </strong>{{row.organizationLabel}}, <strong>Μονάδα: </strong>{{row.organizationUnitLabel}}</li>
-            }
-        </ul>
-
         <div class="d-flex gap-3">
             @if (selectedDataMatrix3.length>=1){
                 <div class="flex-fill">

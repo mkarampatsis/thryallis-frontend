@@ -52,7 +52,7 @@ export interface ISearchGridOutput {
             score: number;
             object_id: string;
             remitText: string;
-          }[];
-        }[];
+          }[] | null;
+        }[] | null;
       }[];
   } 

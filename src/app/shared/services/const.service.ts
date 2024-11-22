@@ -128,7 +128,7 @@ export class ConstService {
     
 
     ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES: ColDef[] = [
-        { headerName: 'Επιλογή', headerCheckboxSelection: true, checkboxSelection: true, flex: 0.5 },
+        { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
         { field: 'code', headerName: 'Κωδικός', flex: 1 },
         {
             field: 'preferredLabel',
@@ -156,7 +156,7 @@ export class ConstService {
     ];
 
     ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES: ColDef[] = [
-        { headerName: 'Επιλογή', headerCheckboxSelection: true, checkboxSelection: true, flex: 0.5 },
+        { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
         { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
         { field: 'preferredLabel', headerName: 'Ονομασία', flex: 1 },
         { field: 'organization', headerName: 'Φορέας', flex: 1 },

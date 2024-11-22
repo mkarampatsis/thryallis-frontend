@@ -60,7 +60,8 @@ export class MatrixComponent {
     loadingOverlayComponentRemit = GridLoadingOverlayComponent;
     loadingOverlayComponentParamsRemit = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
-    gridApi: GridApi<IOrganizationList>;
+    gridApiOrganization: GridApi<IOrganizationList>;
+    gridApiOrganizationalUnit: GridApi<IOrganizationList>;
     gridApiRemit: GridApi<IRemitExtended>;
 
     subscriptions: Subscription[] = [];
@@ -85,7 +86,7 @@ export class MatrixComponent {
     }
 
     colDefs_Matrix3: ColDef[] = [
-        { headerName: 'Επιλογή', headerCheckboxSelection: true, checkboxSelection: true, flex: 0.5 },
+        { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
         { field: 'organizationLabel', headerName: 'Φορέας', flex: 1 },
         { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1 },
         { field: 'remitType', headerName: 'Τύπος', flex: 1 },
@@ -101,8 +102,8 @@ export class MatrixComponent {
 
     //   MATRIX 1 
     onGridReady_Matrix1(params: GridReadyEvent<IOrganizationList>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
+        this.gridApiOrganization = params.api;
+        this.gridApiOrganization.showLoadingOverlay();
         this.store
             .select(this.organizations$)
             .pipe(take(1))
@@ -114,7 +115,7 @@ export class MatrixComponent {
                         subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
                     };
                 });
-                this.gridApi.hideOverlay();
+                this.gridApiOrganization.hideOverlay();
             });
     }
 
@@ -124,7 +125,8 @@ export class MatrixComponent {
         // Log selected rows to the console
         this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
         this.matrixData1 = this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
-        if (this.matrixData1.length>0){
+
+        if (this.selectedDataMatrix1.length>0){
             this.showTable1 = true;
         } else {
             this.showTable1= false
@@ -142,10 +144,16 @@ export class MatrixComponent {
             return '-'
     }
 
+    clearSelectionMatrix1() {
+        if (this.gridApiOrganization) {
+          this.gridApiOrganization.deselectAll(); // Clear all selected rows
+        }
+    }
+
     //   MATRIX 2 
     onGridReady_Matrix2(params: GridReadyEvent<IOrganizationList>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
+        this.gridApiOrganizationalUnit = params.api;
+        this.gridApiOrganizationalUnit.showLoadingOverlay();
         this.subscriptions.push(
             this.store.select(this.organizational_units$).subscribe((data) => {
                 this.monades = data.map((org) => {
@@ -156,7 +164,7 @@ export class MatrixComponent {
                         subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
                     };
                 });
-                this.gridApi.hideOverlay();
+                this.gridApiOrganizationalUnit.hideOverlay();
             }),
         )
     }
@@ -168,7 +176,7 @@ export class MatrixComponent {
         this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
         this.matrixData2 = this.searchService.transformMatrixData_2(this.selectedDataMatrix2)
 
-        if (this.matrixData2.length>0){
+        if (this.selectedDataMatrix2.length>0){
             this.showTable2 = true
         } else {
             this.showTable2 = false
@@ -186,6 +194,12 @@ export class MatrixComponent {
             return result[0]['count']
         else 
             return '-'
+    }
+
+    clearSelectionMatrix2() {
+        if (this.gridApiOrganizationalUnit) {
+          this.gridApiOrganizationalUnit.deselectAll(); // Clear all selected rows
+        }
     }
 
     //   MATRIX 3 
@@ -228,6 +242,7 @@ export class MatrixComponent {
 
         // Log selected rows to the console
         this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
+
         this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3, this.filteredRows)
         if (this.matrixData3.length>0){
             this.showTable3 = true
@@ -246,6 +261,12 @@ export class MatrixComponent {
          });
         //  console.log(filteredRowCount);
         // console.log(">>",this.filteredRows);
+    }
+
+    clearSelectionMatrix3() {
+        if (this.gridApiRemit) {
+          this.gridApiRemit.deselectAll(); // Clear all selected rows
+        }
     }
 }
 
