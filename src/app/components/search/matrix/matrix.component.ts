@@ -147,7 +147,30 @@ export class MatrixComponent {
     clearSelectionMatrix1() {
         if (this.gridApiOrganization) {
           this.gridApiOrganization.deselectAll(); // Clear all selected rows
+          this.gridApiOrganization.setFilterModel(null);
         }
+    }
+
+    onBtnExportMatrix1(){
+        const separator = ',';
+        const keys = Object.keys(this.matrixData1[0]); // Get headers from the first object
+        const csvContent = [
+            keys.join(separator), // Add the headers
+            ...this.matrixData1.map((row) =>
+                keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values
+            )
+        ].join('\n');
+        console.log("Generated CSV:", csvContent);
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'matrix1.csv'); // File name
+        document.body.appendChild(link);
+        link.click(); // Trigger download
+        document.body.removeChild(link);
     }
 
     //   MATRIX 2 
@@ -199,7 +222,30 @@ export class MatrixComponent {
     clearSelectionMatrix2() {
         if (this.gridApiOrganizationalUnit) {
           this.gridApiOrganizationalUnit.deselectAll(); // Clear all selected rows
+          this.gridApiOrganizationalUnit.setFilterModel(null);
         }
+    }
+
+    onBtnExportMatrix2(){
+        const separator = ',';
+        const keys = Object.keys(this.matrixData2[0]); // Get headers from the first object
+        const csvContent = [
+            keys.join(separator), // Add the headers
+            ...this.matrixData2.map((row) =>
+                keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values
+            )
+        ].join('\n');
+        console.log("Generated CSV:", csvContent);
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'matrix2.csv'); // File name
+        document.body.appendChild(link);
+        link.click(); // Trigger download
+        document.body.removeChild(link);
     }
 
     //   MATRIX 3 
@@ -266,8 +312,36 @@ export class MatrixComponent {
     clearSelectionMatrix3() {
         if (this.gridApiRemit) {
           this.gridApiRemit.deselectAll(); // Clear all selected rows
+          this.gridApiRemit.setFilterModel(null);
         }
     }
+
+    onBtnExportMatrix3(){
+        // console.log(this.matrixData3);
+        const separator = ',';
+        
+        const excludeKeys = ['_id', 'cofog', 'status', 'legalProvisionRefs']; // Keys to exclude
+        const keys = Object.keys(this.matrixData3[0]).filter(key => !excludeKeys.includes(key)); // Filter keys
+
+        const csvContent = [
+            keys.join(separator), // Add the headers without excluded keys
+            ...this.matrixData3.map((row) =>
+                keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values without excluded keys
+            )
+        ].join('\n');
+        console.log("Generated CSV:", csvContent);
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'matrix3.csv'); // File name
+        document.body.appendChild(link);
+        link.click(); // Trigger download
+        document.body.removeChild(link);
+    }
+    
 }
 
 @Component({

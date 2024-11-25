@@ -110,6 +110,20 @@
             @if(showMoreOrganizationFields){
                 <div formGroupName="foundationDate" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <!-- <option value="eq">=</option> -->
+                            <!-- <option value="gt" >&gt;</option> -->
+                            <option value="gte" >από</option>
+                            <!-- <option value="lt" >&lt;</option> -->
+                            <option value="lte" >έως</option>
+                        </select>
+                    </div>
+                    <div class="flex-fill mb-3">
                         <label for="date">Ημερομηνία Ίδρυσης</label>
                         <input type="date" 
                             class="form-control"
@@ -117,6 +131,8 @@
                             id="date"  
                             placeholder="Ημερομηνία ίδρυσης"/>
                     </div>
+                </div>
+                <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
                         <label for="range"></label>
                         <select
@@ -125,14 +141,12 @@
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
                             <!-- <option value="eq">=</option> -->
-                            <option value="gt" >&gt;</option>
-                            <option value="gte" >&gt;=</option>
-                            <option value="lt" >&lt;</option>
-                            <option value="lte" >&lt;=</option>
+                            <!-- <option value="gt" >&gt;</option> -->
+                            <option value="gte" >από</option>
+                            <!-- <option value="lt" >&lt;</option> -->
+                            <option value="lte" >έως</option>
                         </select>
                     </div>
-                </div>
-                <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
                         <label for="date">Ημερομηνία Τερματισμού</label>
                         <input type="date" 
@@ -141,6 +155,8 @@
                             id="date"  
                             placeholder="Ημερομηνία ίδρυσης"/>
                     </div>
+                </div>
+                <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
                         <label for="range"></label>
                         <select
@@ -149,14 +165,12 @@
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
                             <!-- <option value="eq">=</option> -->
-                            <option value="gt" >&gt;</option>
-                            <option value="gte" >&gt;=</option>
-                            <option value="lt" >&lt;</option>
-                            <option value="lte" >&lt;=</option>
+                            <!-- <option value="gt" >&gt;</option> -->
+                            <option value="gte" >από</option>
+                            <!-- <option value="lt" >&lt;</option> -->
+                            <option value="lte" >έως</option>
                         </select>
                     </div>
-                </div>
-                <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
                         <label for="date">Ημερομηνία ΦΕΚ</label>
                         <input type="date" 
@@ -164,20 +178,6 @@
                             formControlName="date" 
                             id="date"  
                             placeholder="Ημερομηνία ίδρυσης"/>
-                    </div>
-                    <div class="flex-fill mb-3">
-                        <label for="range"></label>
-                        <select
-                            class="form-select"
-                            id="range"
-                            formControlName="range">
-                            <option value="" disabled>Επιλέξτε όρια</option>
-                            <!-- <option value="eq">=</option> -->
-                            <option value="gt" >&gt;</option>
-                            <option value="gte" >&gt;=</option>
-                            <option value="lt" >&lt;</option>
-                            <option value="lte" >&lt;=</option>
-                        </select>
                     </div>
                 </div>
                 <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
@@ -405,14 +405,6 @@
                     class="d-flex gap-3 align-items-center">
                     
                     <div class="flex-fill mb-3">
-                        <label for="date">Ημερομηνία Αρμοδιότητας</label>
-                        <input type="date" 
-                            class="form-control"
-                            formControlName="date" 
-                            id="date"  
-                            placeholder="Ημερομηνία ίδρυσης"/>
-                    </div>
-                    <div class="flex-fill mb-3">
                         <label for="range"></label>
                         <select
                             class="form-select"
@@ -420,12 +412,21 @@
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option>
                             <!-- <option value="eq">=</option> -->
-                            <option value="gt" >&gt;</option>
-                            <option value="gte" >&gt;=</option>
-                            <option value="lt" >&lt;</option>
-                            <option value="lte" >&lt;=</option>
+                            <!-- <option value="gt" >&gt;</option> -->
+                            <option value="gte" >από</option>
+                            <!-- <option value="lt" >&lt;</option> -->
+                            <option value="lte" >εώς</option>
                         </select>
                     </div>
+                    <div class="flex-fill mb-3">
+                        <label for="date">Ημερομηνία Αρμοδιότητας</label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="date" 
+                            id="date"  
+                            placeholder="Ημερομηνία ίδρυσης"/>
+                    </div>
+                    
                     <mat-icon
                         role="button"
                         class="cursor-pointer"

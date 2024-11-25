@@ -14,7 +14,7 @@
             <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
         </div>
         <div>
-            <a (click)="clearSelectionMatrix1()" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" role="button">Καθάρισμα επιλογών</a>
+            <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix1()">Καθάρισμα επιλογών</button>
         </div>
     </div>
 
@@ -35,6 +35,9 @@
     @if(showTable1){   
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση δύο Φορέων ως προς τον αριθμό Μονάδων ανά ιεραρχικό επίπεδο</h1>
+        
+        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">Εξαγωγή στοιχείων σε CSV αρχείο</button>
+        
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -87,7 +90,7 @@
             <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
         </div>
         <div>
-            <a (click)="clearSelectionMatrix2()" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" role="button">Καθάρισμα επιλογών</a>
+            <a (click)="clearSelectionMatrix2()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
         </div>
     </div>
 
@@ -109,6 +112,7 @@
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
         
+        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix2()" [disabled]="!showTable2">Εξαγωγή στοιχείων σε CSV αρχείο</button>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -161,7 +165,7 @@
             <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε <strong>(μέχρι δύο επιλογές)</strong></span>
         </div>
         <div>
-            <a (click)="clearSelectionMatrix3()" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" role="button">Καθάρισμα επιλογών</a>
+            <a (click)="clearSelectionMatrix3()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
         </div>
     </div>
 
@@ -184,6 +188,8 @@
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση όλων των αρμοδιοτήτων δύο Μονάδων και με κριτήριο αναζήτησης</h1>
         
+        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3()" [disabled]="!showTable3">Εξαγωγή στοιχείων σε CSV αρχείο</button>
+
         <div class="d-flex gap-3">
             @if (selectedDataMatrix3.length>=1){
                 <div class="flex-fill">
