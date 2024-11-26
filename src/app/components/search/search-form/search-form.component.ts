@@ -141,10 +141,13 @@ export class SearchFormComponent {
             .postSearch(searchQuery)
             .pipe(take(1))
             .subscribe((data) => {
-                // console.log("Data>>",data)
-                const gridData = this.searchService.createGridData(data)
-                // console.log("gridData>>",gridData);
-                this.rowData = gridData;
+                console.log("Data>>",data)
+                // const gridData = this.searchService.createGridData(data)
+                this.searchService.createGridData(data).subscribe(gridData => {
+                    console.log("gridData>>",gridData);
+                    this.rowData = gridData;
+                });
+                
                 this.loading = false;
             });
     }
@@ -386,20 +389,5 @@ export class SearchFormComponent {
                 range: new FormControl('', Validators.required),
             })
         )
-    }
-
-    formValid(): boolean {
-        // const legalActType = this.form.get('legalActType').value;
-        // if (legalActType && ['ΝΟΜΟΣ', 'ΠΡΟΕΔΡΙΚΟ ΔΙΑΤΑΓΜΑ'].includes(legalActType)) {
-        //     if (this.emptyFEK()) {
-        //         return this.form.valid;
-        //     } else {
-        //         console.log('>>>>>>>>>>>>', this.form.valid, this.fekYear, this.form.get('legalActDateOrYear').value);
-        //         return this.form.valid && this.fekYear === this.form.get('legalActDateOrYear').value;
-        //     }
-        // } else {
-            // return this.form.valid;
-        // }
-        return true
     }
 }

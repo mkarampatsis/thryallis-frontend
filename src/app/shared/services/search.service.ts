@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, map, forkJoin } from 'rxjs';
 import { ISearch, ISearchGridInput, ISearchGridOutput } from '../interfaces/search/search.interface';
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
@@ -11,6 +11,8 @@ import {selectRemitByOrganizationalUnitCode$} from 'src/app/shared/state/remits.
 import { Organization } from '../interfaces/search/search.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
+import { LegalProvisionService } from './legal-provision.service';
+import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
 
 const APIPREFIX = `${environment.elasticUrl}/search`;
 
@@ -20,6 +22,7 @@ const APIPREFIX = `${environment.elasticUrl}/search`;
 export class SearchService {
     http = inject(HttpClient);
     constService = inject(ConstService);
+    legalProvision = inject(LegalProvisionService)
     unitTypes = this.constService.UNIT_TYPES;
 
     store = inject(Store<AppState>);
@@ -196,8 +199,9 @@ export class SearchService {
         return selectedRemits
     }
 
-    createGridData(data: ISearchGridInput): ISearchGridOutput[] {
+    createGridData(data: ISearchGridInput): Observable<ISearchGridOutput[]> {
         const result: ISearchGridOutput[] = [];
+        const observables: Observable<void>[] = [];
       
         data.organizations.forEach(org => {
             const orgCode = org.code;
@@ -220,7 +224,16 @@ export class SearchService {
                     organizationalUnitPreferredLabel: "--",
                     remitText: "--",
                     remitObjectId: "",
-                    remitScore: 0
+                    remitScore: 0,
+                    remitlegalActKey: "",
+                    remitLegalProvisionSpecs: {
+                        meros:  "",
+                        arthro:  "",
+                        paragrafos: "",
+                        edafio: "",
+                        pararthma: "",
+                    },
+                    remitAda: ""
                 });
             } else {
                 // Loop through organizational_units
@@ -233,39 +246,59 @@ export class SearchService {
                     if (!unit["remits"]) {
                         // If remits is empty
                         result.push({
-                        organizationCode: orgCode,
-                        organizationScore: orgScore,
-                        organizationObjectId: orgObjectId,
-                        organizationPreferredLabel: orgPreferredLabel,
-                        organizationalUnitCode: unitCode,
-                        organizationalUnitScore: unitScore,
-                        organizationalUnitObjectId: unitObjectId,
-                        organizationalUnitPreferredLabel: unitPreferredLabel,
-                        remitText: "--",
-                        remitObjectId: "",
-                        remitScore: 0
+                            organizationCode: orgCode,
+                            organizationScore: orgScore,
+                            organizationObjectId: orgObjectId,
+                            organizationPreferredLabel: orgPreferredLabel,
+                            organizationalUnitCode: unitCode,
+                            organizationalUnitScore: unitScore,
+                            organizationalUnitObjectId: unitObjectId,
+                            organizationalUnitPreferredLabel: unitPreferredLabel,
+                            remitText: "--",
+                            remitObjectId: "",
+                            remitScore: 0,
+                            remitlegalActKey: "",
+                            remitLegalProvisionSpecs: {
+                                meros:  "",
+                                arthro:  "",
+                                paragrafos: "",
+                                edafio: "",
+                                pararthma: "",
+                            },
+                            remitAda: ""
                         });
                     } else {
                         // Loop through remits
                         unit.remits.forEach(remit => {
-                            result.push({
-                                organizationCode: orgCode,
-                                organizationScore: orgScore,
-                                organizationObjectId: orgObjectId,
-                                organizationPreferredLabel: orgPreferredLabel,
-                                organizationalUnitCode: unitCode,
-                                organizationalUnitScore: unitScore,
-                                organizationalUnitObjectId: unitObjectId,
-                                organizationalUnitPreferredLabel: unitPreferredLabel,
-                                remitText: remit.remitText,
-                                remitObjectId: remit.object_id,
-                                remitScore: remit.score
-                            });
+                            const obs = this.legalProvision
+                                .getLegalProvisionsByRegulatedRemit(remit.object_id)
+                                .pipe(
+                                    map(data => {
+                                        console.log(data, data[0]["legalActKey"]);
+                                        result.push({
+                                            organizationCode: orgCode,
+                                            organizationScore: orgScore,
+                                            organizationObjectId: orgObjectId,
+                                            organizationPreferredLabel: orgPreferredLabel,
+                                            organizationalUnitCode: unitCode,
+                                            organizationalUnitScore: unitScore,
+                                            organizationalUnitObjectId: unitObjectId,
+                                            organizationalUnitPreferredLabel: unitPreferredLabel,
+                                            remitText: remit.remitText,
+                                            remitObjectId: remit.object_id,
+                                            remitlegalActKey: data[0]["legalActKey"],
+                                            remitLegalProvisionSpecs: data[0]["legalProvisionSpecs"],
+                                            remitScore: remit.score,
+                                            remitAda: data[0]["ada"]
+                                        });
+                                    })
+                                );
+                            observables.push(obs);
                         });
                     }
                 });
             }
         });
-        return result;
+        return forkJoin(observables).pipe(map(() => result));
     }
 }
