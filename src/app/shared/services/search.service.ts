@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable, map, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ISearch, ISearchGridInput, ISearchGridOutput } from '../interfaces/search/search.interface';
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
@@ -177,6 +177,8 @@ export class SearchService {
     transformMatrixData_3(rowsSelected: any, filteredRows: any){
         let selectedRemits = []
 
+        // console.log(rowsSelected, filteredRows)
+
         if (filteredRows.length===0){
             for (let data of rowsSelected) {
                 this.store
@@ -199,9 +201,8 @@ export class SearchService {
         return selectedRemits
     }
 
-    createGridData(data: ISearchGridInput): Observable<ISearchGridOutput[]> {
+    createGridData(data: ISearchGridInput): ISearchGridOutput[] {
         const result: ISearchGridOutput[] = [];
-        const observables: Observable<void>[] = [];
       
         data.organizations.forEach(org => {
             const orgCode = org.code;
@@ -209,8 +210,6 @@ export class SearchService {
             const orgObjectId = org.object_id;
             const orgPreferredLabel = org.preferredLabel;
 
-            // console.log(org["organizational_units"], !org["organizational_units"])
-                
             if (!org["organizational_units"]) {
                 // If organizational_units is empty
                 result.push({
@@ -224,16 +223,7 @@ export class SearchService {
                     organizationalUnitPreferredLabel: "--",
                     remitText: "--",
                     remitObjectId: "",
-                    remitScore: 0,
-                    remitlegalActKey: "",
-                    remitLegalProvisionSpecs: {
-                        meros:  "",
-                        arthro:  "",
-                        paragrafos: "",
-                        edafio: "",
-                        pararthma: "",
-                    },
-                    remitAda: ""
+                    remitScore: 0
                 });
             } else {
                 // Loop through organizational_units
@@ -256,49 +246,70 @@ export class SearchService {
                             organizationalUnitPreferredLabel: unitPreferredLabel,
                             remitText: "--",
                             remitObjectId: "",
-                            remitScore: 0,
-                            remitlegalActKey: "",
-                            remitLegalProvisionSpecs: {
-                                meros:  "",
-                                arthro:  "",
-                                paragrafos: "",
-                                edafio: "",
-                                pararthma: "",
-                            },
-                            remitAda: ""
+                            remitScore: 0
                         });
                     } else {
                         // Loop through remits
                         unit.remits.forEach(remit => {
-                            const obs = this.legalProvision
-                                .getLegalProvisionsByRegulatedRemit(remit.object_id)
-                                .pipe(
-                                    map(data => {
-                                        console.log(data, data[0]["legalActKey"]);
-                                        result.push({
-                                            organizationCode: orgCode,
-                                            organizationScore: orgScore,
-                                            organizationObjectId: orgObjectId,
-                                            organizationPreferredLabel: orgPreferredLabel,
-                                            organizationalUnitCode: unitCode,
-                                            organizationalUnitScore: unitScore,
-                                            organizationalUnitObjectId: unitObjectId,
-                                            organizationalUnitPreferredLabel: unitPreferredLabel,
-                                            remitText: remit.remitText,
-                                            remitObjectId: remit.object_id,
-                                            remitlegalActKey: data[0]["legalActKey"],
-                                            remitLegalProvisionSpecs: data[0]["legalProvisionSpecs"],
-                                            remitScore: remit.score,
-                                            remitAda: data[0]["ada"]
-                                        });
-                                    })
-                                );
-                            observables.push(obs);
+                            result.push({
+                                organizationCode: orgCode,
+                                organizationScore: orgScore,
+                                organizationObjectId: orgObjectId,
+                                organizationPreferredLabel: orgPreferredLabel,
+                                organizationalUnitCode: unitCode,
+                                organizationalUnitScore: unitScore,
+                                organizationalUnitObjectId: unitObjectId,
+                                organizationalUnitPreferredLabel: unitPreferredLabel,
+                                remitText: remit.remitText,
+                                remitObjectId: remit.object_id,
+                                remitScore: remit.score
+                            });
+                          
                         });
                     }
                 });
             }
         });
-        return forkJoin(observables).pipe(map(() => result));
+        return result;
     }
+
+    onExportCSV(data: any[]) {
+        // Define the CSV headers
+        const headers = ['Φορέας', 'Μονάδα', 'Αρμοδιότητα', 'Τύπος', 'ΦΕΚ', 'Στοιχεία', 'ΑΔΑ'];
+        const separator = ','; // CSV separator
+      
+        // Construct CSV content
+        const csvContent = [
+          headers.join(separator), // Add the headers
+          ...data.flatMap((item) =>
+            item.legalProvisionDetails.map((detail) => {
+              const row = [
+                `"${item.organizationLabel}"`, // Φορέας
+                `"${item.organizationUnitLabel}"`, // Μονάδα
+                `"${item.remitText.replace(/[\r\n]+/g, ' ').replace(/"/g, '""')}"`, // Αρμοδιότητα (cleaned text)
+                `"${item.remitType}"`, // Τύπος
+                `"${detail.legalActKey}"`, // ΦΕΚ
+                `"${JSON.stringify(detail.legalProvisionSpecs).replace(/"/g, '""')}"`, // Στοιχεία (as JSON string)
+                `"${detail.ada}"` // ΑΔΑ
+              ];
+              return row.join(separator); // Join row data with the separator
+            })
+          )
+        ].join('\n');
+      
+        // Create a Blob for the CSV content
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+      
+        // Create a temporary download link
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'export.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      
+        // Revoke the URL to free memory
+        URL.revokeObjectURL(url);
+    }    
 }

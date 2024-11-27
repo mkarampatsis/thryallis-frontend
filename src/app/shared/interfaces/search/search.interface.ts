@@ -35,15 +35,6 @@ export interface ISearchGridOutput {
     remitText: string;
     remitObjectId: string;
     remitScore: number;
-    remitlegalActKey: string;
-    remitLegalProvisionSpecs: {
-      meros:  string;
-      arthro:  string;
-      paragrafos: string;
-      edafio: string;
-      pararthma: string;
-    },
-    remitAda: string;
   }
 
   export interface ISearchGridInput {

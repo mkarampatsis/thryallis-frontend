@@ -33,6 +33,8 @@ export interface IRemitExtended extends IRemit {
 export class MatrixComponent {
     constService = inject(ConstService);
     legalProvisionService = inject(LegalProvisionService)
+
+    loading = false; 
     
     store = inject(Store<AppState>);
     organizations$ = selectOrganizations$;
@@ -309,7 +311,6 @@ export class MatrixComponent {
             //  filteredRowCount++;
          });
         //  console.log(filteredRowCount);
-        // console.log(">>",this.filteredRows);
     }
 
     clearSelectionMatrix3() {
@@ -320,11 +321,9 @@ export class MatrixComponent {
     }
 
     onBtnExportMatrix3(){
-        const separator = ',';
+        this.loading = true;
+        console.log(this.selectedDataMatrix3)
         
-        const excludeKeys = ['_id', 'cofog', 'status', 'legalProvisionRefs']; // Keys to exclude
-        const keys = Object.keys(this.matrixData3[0]).filter(key => !excludeKeys.includes(key)); // Filter keys
-
         const observables = this.matrixData3.map(doc =>
             this.legalProvisionService
                 .getLegalProvisionsByRegulatedRemit(doc._id.$oid)
@@ -332,6 +331,12 @@ export class MatrixComponent {
                     map(legalProvisionData => {
                         // Create a shallow copy of the object to make it mutable
                         const mutableDoc = { ...doc };
+                        this.selectedDataMatrix3.map(row =>{
+                            if (row.organizationalUnitCode===doc.organizationalUnitCode){
+                                mutableDoc.organizationLabel = row.organizationLabel
+                                mutableDoc.organizationUnitLabel = row.organizationUnitLabel
+                            }
+                        })
                         mutableDoc.legalProvisionDetails = legalProvisionData;
                         return mutableDoc;
                     })
@@ -341,77 +346,18 @@ export class MatrixComponent {
         // Use forkJoin to handle all the requests simultaneously
         forkJoin(observables).subscribe(
             updatedArray => {
-              console.log('Updated data array:', updatedArray);
               // Update the original data array if needed
               this.matrixData3.length = 0; // Clear original array
               this.matrixData3.push(...updatedArray); // Push updated objects back
+              console.log('Updated data array:', this.matrixData3);
+              this.searchService.onExportCSV(this.matrixData3);
+              this.loading = false;
             },
             error => {
               console.error('Error fetching legal provisions:', error);
-            }
+            }           
         );
-
-        // const csvContent = [
-        //     keys.join(separator), // Add the headers without excluded keys
-        //     ...this.matrixData3.map((row) => {
-        //         console.log(">>>>",row._id['$oid'])
-        //         this.legalProvisionService
-        //             .getLegalProvisionsByRegulatedRemit(row._id['$oid'])
-        //             .pipe(
-        //                 map(data => {
-        //                     console.log(data, data[0]["legalActKey"]);
-        //                     row["remitlegalActKey"] = data[0]["legalActKey"];
-        //                     row["legalProvisionSpecs"] = data[0]["legalProvisionSpecs"];
-        //                     row["remitAda"] = data[0]["ada"]
-        //                     console.log(row);
-        //                     return keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values without excluded keys
-        //                 })
-        //             ).subscribe ((data) => {
-        //                 console.log(">>>", data);
-        //             })
-        //         }
-        //     )
-        // ].join('\n');
-        // console.log("Generated CSV:", csvContent);
-
-        // const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        // const url = URL.createObjectURL(blob);
-
-        // const link = document.createElement('a');
-        // link.href = url;
-        // link.setAttribute('download', 'matrix3.csv'); // File name
-        // document.body.appendChild(link);
-        // link.click(); // Trigger download
-        // document.body.removeChild(link);
-
-        // unit.remits.forEach(remit => {
-        //     const obs = this.legalProvision
-        //         .getLegalProvisionsByRegulatedRemit(remit.object_id)
-        //         .pipe(
-        //             map(data => {
-        //                 console.log(data, data[0]["legalActKey"]);
-        //                 result.push({
-        //                     organizationCode: orgCode,
-        //                     organizationScore: orgScore,
-        //                     organizationObjectId: orgObjectId,
-        //                     organizationPreferredLabel: orgPreferredLabel,
-        //                     organizationalUnitCode: unitCode,
-        //                     organizationalUnitScore: unitScore,
-        //                     organizationalUnitObjectId: unitObjectId,
-        //                     organizationalUnitPreferredLabel: unitPreferredLabel,
-        //                     remitText: remit.remitText,
-        //                     remitObjectId: remit.object_id,
-        //                     remitlegalActKey: data[0]["legalActKey"],
-        //                     remitLegalProvisionSpecs: data[0]["legalProvisionSpecs"],
-        //                     remitScore: remit.score,
-        //                     remitAda: data[0]["ada"]
-        //                 });
-        //             })
-        //         );
-        //     observables.push(obs);
-        // });
     }
-    
 }
 
 @Component({

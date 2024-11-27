@@ -142,12 +142,9 @@ export class SearchFormComponent {
             .pipe(take(1))
             .subscribe((data) => {
                 console.log("Data>>",data)
-                // const gridData = this.searchService.createGridData(data)
-                this.searchService.createGridData(data).subscribe(gridData => {
-                    console.log("gridData>>",gridData);
-                    this.rowData = gridData;
-                });
-                
+                const gridData = this.searchService.createGridData(data)
+                console.log("gridData>>",gridData);
+                this.rowData = gridData;
                 this.loading = false;
             });
     }

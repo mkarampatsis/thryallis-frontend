@@ -6,6 +6,9 @@ import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-
 import { ConstService } from 'src/app/shared/services/const.service';
 import { ISearchGridOutput } from 'src/app/shared/interfaces/search/search.interface';
 import { ModalService } from 'src/app/shared/services/modal.service';
+import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
+import { SearchService } from 'src/app/shared/services/search.service';
+import { map, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-search-grid',
@@ -19,6 +22,10 @@ export class SearchGridComponent {
     
     constService = inject(ConstService);
     modalService = inject(ModalService);
+    legalProvisionService = inject(LegalProvisionService);
+    searchService = inject(SearchService)
+
+    loading = false; 
 
     defaultColDef = this.constService.defaultColDef;
 
@@ -87,8 +94,37 @@ export class SearchGridComponent {
     }
 
     onBtnExport(){
-        console.log(this.data);
         // this.gridApi.exportDataAsCsv();
+        this.loading = true;
+        console.log(this.data)
+        
+        const observables = this.data.map(doc =>
+            this.legalProvisionService
+                .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
+                .pipe(
+                    map(legalProvisionData => {
+                        // Create a shallow copy of the object to make it mutable
+                        const mutableDoc = { ...doc };
+                        mutableDoc["legalProvisionDetails"] = legalProvisionData;
+                        return mutableDoc;
+                    })
+                )
+        );
+
+        // Use forkJoin to handle all the requests simultaneously
+        forkJoin(observables).subscribe(
+            updatedArray => {
+              // Update the original data array if needed
+              this.data.length = 0; // Clear original array
+              this.data.push(...updatedArray); // Push updated objects back
+              console.log('Updated data array:', this.data);
+            //   this.searchService.onExportCSV(this.data);
+              this.loading = false;
+            },
+            error => {
+              console.error('Error fetching legal provisions:', error);
+            }           
+        );
     }
 }
 
