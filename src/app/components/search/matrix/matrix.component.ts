@@ -320,7 +320,6 @@ export class MatrixComponent {
     }
 
     onBtnExportMatrix3(){
-        console.log("1>>",this.matrixData3);
         const separator = ',';
         
         const excludeKeys = ['_id', 'cofog', 'status', 'legalProvisionRefs']; // Keys to exclude
@@ -330,22 +329,25 @@ export class MatrixComponent {
             this.legalProvisionService
                 .getLegalProvisionsByRegulatedRemit(doc._id.$oid)
                 .pipe(
-                    map(legalProvisionData => ({ doc, legalProvisionData })) // Map the result to include the original document
+                    map(legalProvisionData => {
+                        // Create a shallow copy of the object to make it mutable
+                        const mutableDoc = { ...doc };
+                        mutableDoc.legalProvisionDetails = legalProvisionData;
+                        return mutableDoc;
+                    })
                 )
         );
 
         // Use forkJoin to handle all the requests simultaneously
         forkJoin(observables).subscribe(
-            results => {
-                results.forEach(({ doc, legalProvisionData }) => {
-                    console.log(doc, legalProvisionData)
-                    // Merge the retrieved legalProvisionData into the original document
-                    doc.legalProvisionDetails = legalProvisionData;
-                });
-                console.log('Updated data array:', this.matrixData3);
+            updatedArray => {
+              console.log('Updated data array:', updatedArray);
+              // Update the original data array if needed
+              this.matrixData3.length = 0; // Clear original array
+              this.matrixData3.push(...updatedArray); // Push updated objects back
             },
             error => {
-                console.error('Error fetching legal provisions:', error);
+              console.error('Error fetching legal provisions:', error);
             }
         );
 
