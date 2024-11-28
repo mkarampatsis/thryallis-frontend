@@ -275,7 +275,8 @@ export class SearchService {
 
     onExportCSV(data: any[]) {
         // Define the CSV headers
-        const headers = ['Φορέας', 'Μονάδα', 'Αρμοδιότητα', 'Τύπος', 'ΦΕΚ', 'Στοιχεία', 'ΑΔΑ'];
+        // const headers = ['Φορέας', 'Μονάδα', 'Αρμοδιότητα', 'Τύπος', 'ΦΕΚ', 'Στοιχεία', 'ΑΔΑ'];
+        const headers = ['Φορέας', 'Μονάδα', 'Αρμοδιότητα', 'ΦΕΚ', 'Στοιχεία', 'ΑΔΑ'];
         const separator = ','; // CSV separator
       
         // Construct CSV content
@@ -284,10 +285,10 @@ export class SearchService {
           ...data.flatMap((item) =>
             item.legalProvisionDetails.map((detail) => {
               const row = [
-                `"${item.organizationLabel}"`, // Φορέας
-                `"${item.organizationUnitLabel}"`, // Μονάδα
+                `"${item.organizationPreferredLabel}"`, // Φορέας
+                `"${item.organizationalUnitPreferredLabel}"`, // Μονάδα
                 `"${item.remitText.replace(/[\r\n]+/g, ' ').replace(/"/g, '""')}"`, // Αρμοδιότητα (cleaned text)
-                `"${item.remitType}"`, // Τύπος
+                // `"${item.remitType}"`, // Τύπος
                 `"${detail.legalActKey}"`, // ΦΕΚ
                 `"${JSON.stringify(detail.legalProvisionSpecs).replace(/"/g, '""')}"`, // Στοιχεία (as JSON string)
                 `"${detail.ada}"` // ΑΔΑ

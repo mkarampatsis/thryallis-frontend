@@ -322,7 +322,7 @@ export class MatrixComponent {
 
     onBtnExportMatrix3(){
         this.loading = true;
-        console.log(this.selectedDataMatrix3)
+        // console.log(this.selectedDataMatrix3)
         
         const observables = this.matrixData3.map(doc =>
             this.legalProvisionService
@@ -333,8 +333,8 @@ export class MatrixComponent {
                         const mutableDoc = { ...doc };
                         this.selectedDataMatrix3.map(row =>{
                             if (row.organizationalUnitCode===doc.organizationalUnitCode){
-                                mutableDoc.organizationLabel = row.organizationLabel
-                                mutableDoc.organizationUnitLabel = row.organizationUnitLabel
+                                mutableDoc.organizationPreferredLabel = row.organizationLabel
+                                mutableDoc.organizationalUnitPreferredLabel = row.organizationUnitLabel
                             }
                         })
                         mutableDoc.legalProvisionDetails = legalProvisionData;
@@ -349,7 +349,7 @@ export class MatrixComponent {
               // Update the original data array if needed
               this.matrixData3.length = 0; // Clear original array
               this.matrixData3.push(...updatedArray); // Push updated objects back
-              console.log('Updated data array:', this.matrixData3);
+            //   console.log('Updated data array:', this.matrixData3);
               this.searchService.onExportCSV(this.matrixData3);
               this.loading = false;
             },
