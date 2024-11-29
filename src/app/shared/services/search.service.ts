@@ -12,7 +12,8 @@ import { Organization } from '../interfaces/search/search.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
 import { LegalProvisionService } from './legal-provision.service';
-import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const APIPREFIX = `${environment.elasticUrl}/search`;
 
@@ -312,5 +313,42 @@ export class SearchService {
       
         // Revoke the URL to free memory
         URL.revokeObjectURL(url);
-    }    
+    }
+    
+    onExportToExcel(jsonData: any[]): void {
+        // Define headers
+        const headers = ['Φορέας', 'Μονάδα', 'Αρμοδιότητα', 'ΦΕΚ', 'Στοιχεία', 'ΑΔΑ'];
+
+        // Flatten the data
+        const flattenedData = jsonData.flatMap(item =>
+            item.legalProvisionDetails.map(detail => ({
+                Φορέας: item.organizationPreferredLabel,
+                Μονάδα: item.organizationalUnitPreferredLabel,
+                Αρμοδιότητα: item.remitText.replace(/<\/?[^>]+(>|$)/g, ''), // Remove HTML tags
+                ΦΕΚ: detail.legalActKey,
+                Στοιχεία: [
+                    detail.legalProvisionSpecs.meros,
+                    detail.legalProvisionSpecs.arthro,
+                    detail.legalProvisionSpecs.paragrafos,
+                    detail.legalProvisionSpecs.edafio,
+                    detail.legalProvisionSpecs.pararthma,
+                ]
+                    .filter(part => part) // Remove empty fields
+                    .join(', '), // Concatenate specs
+                ΑΔΑ: detail.ada,
+            }))
+        );
+
+        // Convert to worksheet
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData, { header: headers });
+
+        // Create workbook and add the worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Exported Data');
+
+        // Write workbook and save
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, `export.xlsx`);
+    }
 }

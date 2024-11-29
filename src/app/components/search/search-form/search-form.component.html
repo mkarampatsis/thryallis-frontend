@@ -109,75 +109,93 @@
             }
             @if(showMoreOrganizationFields){
                 <div formGroupName="foundationDate" class="d-flex gap-3 align-items-center" >
-                    <div class="flex-fill mb-3">
+                    <!-- <div class="flex-fill mb-3">
                         <label for="range"></label>
                         <select
                             class="form-select"
                             id="range"
                             formControlName="range">
-                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="" disabled>Επιλέξτε όρια</option> -->
                             <!-- <option value="eq">=</option> -->
                             <!-- <option value="gt" >&gt;</option> -->
-                            <option value="gte" >από</option>
+                            <!-- <option value="gte" >από</option> -->
                             <!-- <option value="lt" >&lt;</option> -->
-                            <option value="lte" >έως</option>
-                        </select>
-                    </div>
+                            <!-- <option value="lte" >έως</option> -->
+                        <!-- </select> -->
+                    <!-- </div> -->
                     <div class="flex-fill mb-3">
-                        <label for="date">Ημερομηνία Ίδρυσης</label>
+                        <label for="foundationDateFrom">Ημερομηνία Ίδρυσης: <strong>από</strong></label>
                         <input type="date" 
                             class="form-control"
-                            formControlName="date" 
-                            id="date"  
-                            placeholder="Ημερομηνία ίδρυσης"/>
+                            formControlName="from" 
+                            id="foundationDateFrom"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="foundationDateUntil"><strong>έως</strong></label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="until" 
+                            id="foundationDateUntil"/>
                     </div>
                 </div>
                 <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center" >
-                    <div class="flex-fill mb-3">
-                        <label for="range"></label>
+                    <!-- <div class="flex-fill mb-3"> -->
+                        <!-- <label for="range"></label>
                         <select
                             class="form-select"
                             id="range"
                             formControlName="range">
-                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="" disabled>Επιλέξτε όρια</option> -->
                             <!-- <option value="eq">=</option> -->
                             <!-- <option value="gt" >&gt;</option> -->
-                            <option value="gte" >από</option>
+                            <!-- <option value="gte" >από</option> -->
                             <!-- <option value="lt" >&lt;</option> -->
-                            <option value="lte" >έως</option>
-                        </select>
-                    </div>
+                            <!-- <option value="lte" >έως</option> -->
+                        <!-- </select> -->
+                    <!-- </div> -->
                     <div class="flex-fill mb-3">
-                        <label for="date">Ημερομηνία Τερματισμού</label>
+                        <label for="terminationDateFrom">Ημερομηνία Τερματισμού: <strong>από</strong></label>
                         <input type="date" 
                             class="form-control"
-                            formControlName="date" 
-                            id="date"  
-                            placeholder="Ημερομηνία ίδρυσης"/>
+                            formControlName="from" 
+                            id="terminationDateFrom"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="terminationDateUntil"><strong>έως</strong></label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="until" 
+                            id="terminationDateUntil"/>
                     </div>
                 </div>
                 <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center" >
-                    <div class="flex-fill mb-3">
+                    <!-- <div class="flex-fill mb-3">
                         <label for="range"></label>
                         <select
                             class="form-select"
                             id="range"
                             formControlName="range">
-                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="" disabled>Επιλέξτε όρια</option> -->
                             <!-- <option value="eq">=</option> -->
                             <!-- <option value="gt" >&gt;</option> -->
-                            <option value="gte" >από</option>
+                            <!-- <option value="gte" >από</option> -->
                             <!-- <option value="lt" >&lt;</option> -->
-                            <option value="lte" >έως</option>
-                        </select>
-                    </div>
+                            <!-- <option value="lte" >έως</option> -->
+                        <!-- </select> -->
+                    <!-- </div> -->
                     <div class="flex-fill mb-3">
-                        <label for="date">Ημερομηνία ΦΕΚ</label>
+                        <label for="foundationFekFrom">Ημερομηνία ΦΕΚ: <strong>από</strong></label>
                         <input type="date" 
                             class="form-control"
-                            formControlName="date" 
-                            id="date"  
-                            placeholder="Ημερομηνία ίδρυσης"/>
+                            formControlName="from" 
+                            id="foundationFekFrom"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="foundationFekUntil"><strong>έως</strong></label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="until" 
+                            id="foundationFekUntil"/>
                     </div>
                 </div>
                 <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
@@ -261,9 +279,9 @@
                 <div class="flex-fill mb-3">
                     <input type="text" 
                         class="form-control" 
-                        formControlName="numOfSubunits" 
-                        id="numOfSubunits"  
-                        placeholder="Πληκτρολογήστε Αριθμό Υποκείμενων Μονάδων"/>
+                        formControlName="supervisorUnitCode" 
+                        id="supervisorUnitCode"  
+                        placeholder="Πληκτρολογήστε Προϊστάμενη Μονάδα"/>
                 </div>
             </div>
             @if(!showMoreOrganizationUnitFields) {
@@ -404,40 +422,46 @@
                     [formGroupName]="i" 
                     class="d-flex gap-3 align-items-center">
                     
-                    <div class="flex-fill mb-3">
+                    <!-- <div class="flex-fill mb-3">
                         <label for="range"></label>
                         <select
                             class="form-select"
                             id="range"
                             formControlName="range">
-                            <option value="" disabled>Επιλέξτε όρια</option>
+                            <option value="" disabled>Επιλέξτε όρια</option> -->
                             <!-- <option value="eq">=</option> -->
                             <!-- <option value="gt" >&gt;</option> -->
-                            <option value="gte" >από</option>
+                            <!-- <option value="gte" >από</option> -->
                             <!-- <option value="lt" >&lt;</option> -->
-                            <option value="lte" >εώς</option>
-                        </select>
-                    </div>
+                            <!-- <option value="lte" >εώς</option> -->
+                        <!-- </select> -->
+                    <!-- </div> -->
                     <div class="flex-fill mb-3">
-                        <label for="date">Ημερομηνία Αρμοδιότητας</label>
+                        <label for="fekDateFrom">Ημερομηνία Αρμοδιότητας: <strong>από</strong></label>
                         <input type="date" 
                             class="form-control"
-                            formControlName="date" 
-                            id="date"  
-                            placeholder="Ημερομηνία ίδρυσης"/>
+                            formControlName="from" 
+                            id="fekDateFrom"/>
+                    </div>
+                    <div class="flex-fill mb-3">
+                        <label for="fekDateUntil"><strong>έως</strong></label>
+                        <input type="date" 
+                            class="form-control"
+                            formControlName="until" 
+                            id="fekDateUntil"/>
                     </div>
                     
                     <mat-icon
                         role="button"
                         class="cursor-pointer"
-                        (click) = removeAddress(i)  
+                        (click) = removeDate(i)  
                     >
                         delete 
                     </mat-icon>
                     <mat-icon
                         role="button"
                         class="cursor-pointer"
-                        (click) = addAddress()
+                        (click) = addDate()
                     >
                         add
                     </mat-icon>

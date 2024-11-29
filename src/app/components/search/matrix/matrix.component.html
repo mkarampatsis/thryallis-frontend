@@ -189,7 +189,8 @@
         <h1 class="govgr-heading-sm">Σύγκριση όλων των αρμοδιοτήτων δύο Μονάδων και με κριτήριο αναζήτησης</h1>
         
         <div class="d-flex align-items-center gap-2 mb-3">
-            <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3()" [disabled]="!showTable3">Εξαγωγή στοιχείων σε CSV αρχείο</button>
+            <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3CSV()" [disabled]="!showTable3">Εξαγωγή σε CSV</button>
+            <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3Excel()" [disabled]="!showTable3">Εξαγωγή σε Excel</button>
             @if (loading) {
                 <span class="d-flex align-items-center gap-2">
                     Αναμονή αποτελεσμάτων...

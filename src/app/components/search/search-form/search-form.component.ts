@@ -54,16 +54,18 @@ export class SearchFormComponent {
             statusActive: new FormControl(true, Validators.required),
             statusInactive: new FormControl(false, Validators.required),
             foundationDate: new FormGroup({
-                date: new FormControl('', Validators.required),
-                range: new FormControl('', Validators.required),
+                from: new FormControl('', Validators.required),
+                until: new FormControl('', Validators.required),
             }),
             terminationDate: new FormGroup({
-                date: new FormControl('', Validators.required),
-                range: new FormControl('', Validators.required),
+                from: new FormControl('', Validators.required),
+                until: new FormControl('', Validators.required),
+                // date: new FormControl('', Validators.required),
+                // range: new FormControl('', Validators.required),
             }),
             foundationFek: new FormGroup({
-                date: new FormControl('', Validators.required),
-                range: new FormControl('', Validators.required),
+                from: new FormControl('', Validators.required),
+                until: new FormControl('', Validators.required),
             }),
             mainAddress: new FormGroup({
                 postCode: new FormControl('', Validators.required)
@@ -74,7 +76,7 @@ export class SearchFormComponent {
             preferredLabelSearch: new FormControl(''),
             typesMap: new FormControl('', Validators.required),
             functionsMap: new FormControl('', Validators.required),
-            numOfSubunits: new FormControl('', Validators.required),
+            supervisorUnitCode: new FormControl('', Validators.required),
             mainAddress: new FormGroup({
                 postCode: new FormControl('', Validators.required)
             })
@@ -90,8 +92,10 @@ export class SearchFormComponent {
             statusInactive: new FormControl(false, Validators.required),
             fekDate: new FormArray([
                 new FormGroup({
-                    date: new FormControl('', Validators.required),
-                    range: new FormControl('', Validators.required), 
+                    // date: new FormControl('', Validators.required),
+                    // range: new FormControl('', Validators.required), 
+                    from: new FormControl('', Validators.required),
+                    until: new FormControl('', Validators.required),
                 })
             ])
         })
@@ -133,9 +137,9 @@ export class SearchFormComponent {
     onSubmit() {
         this.loading = true;
 
-        // console.log(this.form.value);
+        console.log(this.form.value);
         const searchQuery = this.transformData(this.form.value);
-        // console.log("searchQuery>>",searchQuery);
+        console.log("searchQuery>>",searchQuery);
 
         this.searchService
             .postSearch(searchQuery)
@@ -170,19 +174,19 @@ export class SearchFormComponent {
             functionsMap: "",
             levels:"",
             foundationDate: {
-                date: "",
-                range: ""
+                from: "",
+                until: ""
             },
             terminationDate: {
-                date: "",
-                range: ""
+                from: "",
+                until: ""
             },
             mainAddress:{
                 postCode:""
             },
             foundationFek:{
-                date:"",
-                range:""
+                from: "",
+                until: ""
             }
 
         });
@@ -192,7 +196,7 @@ export class SearchFormComponent {
             preferredLabelSearch:"phrase",
             typesMap: "",
             functionsMap: "",
-            numOfSubunits: "",
+            supervisorUnitCode: "",
             mainAddress:{
                 postCode:""
             },
@@ -215,8 +219,10 @@ export class SearchFormComponent {
         // Add a single empty group (like the one in the initial form definition)
         remitFoundationArray.push(
             new FormGroup({
-                date: new FormControl('', Validators.required),
-                range: new FormControl('', Validators.required),
+                // date: new FormControl('', Validators.required),
+                // range: new FormControl('', Validators.required),
+                from: new FormControl('', Validators.required),
+                until: new FormControl('', Validators.required),
             })
         );
     }
@@ -272,36 +278,70 @@ export class SearchFormComponent {
                 const value = section[key];
                 
                 // Check if value is an object with date and range fields (i.e., date field)
-                if (typeof value === 'object' && value.date && value.range) {
-                mustArray.push({
-                    field: key,
-                    // type: "date",
-                    query: { [value.range]: new Date(value.date).toISOString() }
-                });
+                // if (typeof value === 'object' && value.date && value.range) {
+                //     mustArray.push({
+                //         field: key,
+                //         // type: "date",
+                //         query: { [value.range]: new Date(value.date).toISOString() }
+                //     });
+                // }
+                // Check if value is an object with date and from fields (i.e., date field)
+                if (typeof value === 'object' && value.from) {
+                    mustArray.push({
+                        field: key,
+                        // type: "date",
+                        query: { "gte": new Date(value.from).toISOString() }
+                    });
+                }
+                // Check if value is an object with date and until fields (i.e., date field)
+                if (typeof value === 'object' && value.until) {
+                    mustArray.push({
+                        field: key,
+                        // type: "date",
+                        query: { "lte": new Date(value.until).toISOString() }
+                    });
                 }
                 // If it's a nested object with specific fields, like foundationFek or mainAddress
                 else if (typeof value === 'object' && !Array.isArray(value)) {
-                for (const nestedKey in value) {
-                    if (value[nestedKey]) {  // Check if the nested field has a value
-                    mustArray.push({
-                        field: `${key}.${nestedKey}`,
-                        type: "words",
-                        query: value[nestedKey]
-                    });
+                    for (const nestedKey in value) {
+                        if (value[nestedKey]) {  // Check if the nested field has a value
+                        mustArray.push({
+                            field: `${key}.${nestedKey}`,
+                            type: "words",
+                            query: value[nestedKey]
+                        });
+                        }
                     }
-                }
                 }
                 // If it's an array (for remitFoundation in remits), iterate over each element
                 else if (Array.isArray(value)) {
-                value.forEach((item) => {
-                    if (item.date && item.range) {
-                    mustArray.push({
-                        field: `${key}`,
-                        // type: "date",
-                        query: { [item.range]: new Date(item.date).toISOString() }
+                    value.forEach((item) => {
+                        // if (item.date && item.range) {
+                        //     mustArray.push({
+                        //         field: `${key}`,
+                        //         // type: "date",
+                        //         query: { [item.range]: new Date(item.date).toISOString() }
+                        //     });
+                        // }
+                        if (item.from || item.until) {
+                            
+                            if ("from" in item) {
+                                mustArray.push({
+                                    field: `${key}`,
+                                    // type: "date",
+                                    query: { "gte" : new Date(item.from).toISOString() }
+                                });
+                            }
+
+                            if ("until" in item) {
+                                mustArray.push({
+                                    field: `${key}`,
+                                    // type: "date",
+                                    query: { "lte" : new Date(item.until).toISOString() }
+                                });
+                            }
+                        }
                     });
-                    }
-                });
                 }
                 // Handle regular fields with non-empty values
                 else if (value) {
@@ -373,17 +413,17 @@ export class SearchFormComponent {
 
     }
 
-    removeAddress(index:number){
+    removeDate(index:number){
         if (this.remitFoundations.length>0) {
             this.remitFoundations.removeAt(index);
         }
     }
 
-    addAddress(){
+    addDate(){
         this.remitFoundations.push(
             new FormGroup({
-                date: new FormControl('', Validators.required),
-                range: new FormControl('', Validators.required),
+                from: new FormControl('', Validators.required),
+                until: new FormControl('', Validators.required),
             })
         )
     }

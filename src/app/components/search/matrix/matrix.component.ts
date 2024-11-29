@@ -26,7 +26,7 @@ export interface IRemitExtended extends IRemit {
 @Component({
   selector: 'app-matrix',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent],
+  imports: [CommonModule, AgGridAngular],
   templateUrl: './matrix.component.html',
   styleUrl: './matrix.component.css'
 })
@@ -320,7 +320,7 @@ export class MatrixComponent {
         }
     }
 
-    onBtnExportMatrix3(){
+    onBtnExportMatrix3CSV(){
         this.loading = true;
         // console.log(this.selectedDataMatrix3)
         
@@ -351,6 +351,45 @@ export class MatrixComponent {
               this.matrixData3.push(...updatedArray); // Push updated objects back
             //   console.log('Updated data array:', this.matrixData3);
               this.searchService.onExportCSV(this.matrixData3);
+              this.loading = false;
+            },
+            error => {
+              console.error('Error fetching legal provisions:', error);
+            }           
+        );
+    }
+
+    onBtnExportMatrix3Excel(){
+        this.loading = true;
+        // console.log(this.selectedDataMatrix3)
+        
+        const observables = this.matrixData3.map(doc =>
+            this.legalProvisionService
+                .getLegalProvisionsByRegulatedRemit(doc._id.$oid)
+                .pipe(
+                    map(legalProvisionData => {
+                        // Create a shallow copy of the object to make it mutable
+                        const mutableDoc = { ...doc };
+                        this.selectedDataMatrix3.map(row =>{
+                            if (row.organizationalUnitCode===doc.organizationalUnitCode){
+                                mutableDoc.organizationPreferredLabel = row.organizationLabel
+                                mutableDoc.organizationalUnitPreferredLabel = row.organizationUnitLabel
+                            }
+                        })
+                        mutableDoc.legalProvisionDetails = legalProvisionData;
+                        return mutableDoc;
+                    })
+                )
+        );
+
+        // Use forkJoin to handle all the requests simultaneously
+        forkJoin(observables).subscribe(
+            updatedArray => {
+              // Update the original data array if needed
+              this.matrixData3.length = 0; // Clear original array
+              this.matrixData3.push(...updatedArray); // Push updated objects back
+            //   console.log('Updated data array:', this.matrixData3);
+              this.searchService.onExportToExcel(this.matrixData3);
               this.loading = false;
             },
             error => {

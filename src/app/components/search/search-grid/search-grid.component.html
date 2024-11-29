@@ -1,7 +1,8 @@
 <div class="govgr-body mt-3">
 
     <div class="d-flex align-items-center gap-2 mb-3">
-        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExport()">Εξαγωγή στοιχείων σε CSV αρχείο</button>
+        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportCSV()">Εξαγωγή σε CSV</button>
+        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
         @if (loading) {
             <span class="d-flex align-items-center gap-2">
                 Αναμονή αποτελεσμάτων...

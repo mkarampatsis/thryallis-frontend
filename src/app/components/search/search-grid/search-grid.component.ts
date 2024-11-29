@@ -93,7 +93,7 @@ export class SearchGridComponent {
         }
     }
 
-    onBtnExport(){
+    onBtnExportCSV(){
         this.loading = true;
         // console.log(this.data)
         if (this.data[0].remitObjectId===""){
@@ -116,15 +116,51 @@ export class SearchGridComponent {
             // Use forkJoin to handle all the requests simultaneously
             forkJoin(observables).subscribe(
                 updatedArray => {
-                // Update the original data array if needed
-                this.data.length = 0; // Clear original array
-                this.data.push(...updatedArray); // Push updated objects back
-                //   console.log('Updated data array:', this.data);
-                this.searchService.onExportCSV(this.data);
-                this.loading = false;
+                    // Update the original data array if needed
+                    this.data.length = 0; // Clear original array
+                    this.data.push(...updatedArray); // Push updated objects back
+                    //   console.log('Updated data array:', this.data);
+                    this.searchService.onExportCSV(this.data);
+                    this.loading = false;
                 },
                 error => {
-                console.error('Error fetching legal provisions:', error);
+                    console.error('Error fetching legal provisions:', error);
+                }           
+            );
+        }
+    }
+
+    onBtnExportExcel(){
+        this.loading = true;
+        if (this.data[0].remitObjectId===""){
+            this.searchService.onExportToExcel(this.data)
+            this.loading = false;
+        } else {
+            const observables = this.data.map(doc =>
+                this.legalProvisionService
+                    .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
+                    .pipe(
+                        map(legalProvisionData => {
+                            // Create a shallow copy of the object to make it mutable
+                            const mutableDoc = { ...doc };
+                            mutableDoc["legalProvisionDetails"] = legalProvisionData;
+                            return mutableDoc;
+                        })
+                    )
+            );
+
+            // Use forkJoin to handle all the requests simultaneously
+            forkJoin(observables).subscribe(
+                updatedArray => {
+                    // Update the original data array if needed
+                    this.data.length = 0; // Clear original array
+                    this.data.push(...updatedArray); // Push updated objects back
+                    //   console.log('Updated data array:', this.data);
+                    this.searchService.onExportToExcel(this.data);
+                    this.loading = false;
+                },
+                error => {
+                    console.error('Error fetching legal provisions:', error);
                 }           
             );
         }
