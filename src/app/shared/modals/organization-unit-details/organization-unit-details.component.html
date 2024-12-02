@@ -41,12 +41,12 @@
                         <app-card-row-right-left
                             [keyValue]="{
                                 key: 'Προϊστάμενη μονάδα',
-                                value: organizationUnitPrefferedLabel(organizationalUnit?.supervisorUnitCode)
+                                value: organizationUnitPrefferedLabel(organizationalUnit?.supervisorUnit.code)
                             }"></app-card-row-right-left>
                         <app-card-row-right-left
                             [keyValue]="{
                                 key: 'Τύπος Μονάδας',
-                                value: organizationalUnit?.description
+                                value: organizationalUnit?.unitType.description
                             }"></app-card-row-right-left>
                         <app-card-row-right-left
                             [keyValue]="{
