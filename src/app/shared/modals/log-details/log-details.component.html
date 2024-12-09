@@ -17,6 +17,7 @@
                     <th>Χρήστης</th>
                     <th>Λειτουργία</th>
                     <th>Ημερομηνία</th>
+                    <th>Τύπος</th>
                     <th>Αλλαγή</th>
                 </tr>
             </thead>
@@ -26,7 +27,18 @@
                     <td>{{result.who }}</td>
                     <td>{{result.action}}</td>
                     <td>{{result.when['$date'] | date: "dd-MM-yyyy HH:mm:ss"}}</td>
-                    <td><pre>{{result.change | json}}</pre></td>
+                    <td>{{result.what['entity'] }}</td>
+                    <td>{{ result.change | json}}</td>
+                    <!-- <td>
+                        <div *ngIf="result.change.provisionText" [innerHTML]="result.change.provisionText"></div>
+
+                        <div *ngIf="result.change.legalProvisions.inserts.length > 0">
+                        <h4>Legal Provisions:</h4>
+                        <div *ngFor="let insert of result.change.legalProvisions.inserts">
+                            <div [innerHTML]="insert.legalProvisionText"></div>
+                        </div>
+                        </div>
+                    </td> -->
                 </tr>
                 }
             </tbody>

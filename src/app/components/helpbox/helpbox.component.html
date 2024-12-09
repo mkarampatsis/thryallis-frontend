@@ -1,0 +1,20 @@
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+	@if(hasHelpDeskRole()){
+		<li [ngbNavItem]="1">
+			<button ngbNavLink>Helpdesk</button>
+			<ng-template ngbNavContent>
+				<app-helpdesk></app-helpdesk>
+			</ng-template>
+		</li>
+	}
+	@if (hasEditorRole()) {
+		<li [ngbNavItem]="2">
+			<button ngbNavLink>Υποβολή Ερωτημάτων</button>
+			<ng-template ngbNavContent>
+				<app-editors></app-editors>
+			</ng-template>
+		</li>
+	}
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

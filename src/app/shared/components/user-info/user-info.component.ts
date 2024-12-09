@@ -27,4 +27,8 @@ export class UserInfoComponent {
     hasHelpDeskRole() {
         return this.userService.hasHelpDeskRole();
     }
+
+    hasEditorRole() {
+        return this.userService.hasEditorRole();
+    }
 }

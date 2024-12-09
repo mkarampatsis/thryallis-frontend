@@ -1,0 +1,39 @@
+<h4 class="govgr-heading-md">Εισαγωγή ερωτήματος</h4>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between">
+          <span class="fw-semibold">Στοιχεία ερωτήματος</span>
+      </div>
+      <div class="mb-3">
+        <div>
+            <input type="text" 
+            class="form-control" 
+            formControlName="email" 
+            id="email"  
+            placeholder="Πληκτρολογήστε Στοιχεία Φορέα"/>
+        </div>
+        <div class="row row-cols-lg-auto">
+            <span>Αναζήτηση στοιχείων φορέα ως:</span>
+            <div class="form-check">
+                <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    formControlName="firstName" 
+                    id="preferredLabelSearch_Org1"
+                    value="words">
+                <label class="form-check-label" for="preferredLabelSearch_Org1">ξεχωριστές λέξεις</label>,
+            </div>
+            <div class="form-check">
+                <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    formControlName="lastName" 
+                    id="preferredLabelSearch_Org2"
+                    value="phrase">
+                <label class="form-check-label" for="preferredLabelSearch_Org2">ολόκληρη φράση</label>
+            </div>
+        </div>
+    </div>
+  </div>
+</form>
