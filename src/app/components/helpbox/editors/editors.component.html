@@ -1,39 +1,83 @@
-<h4 class="govgr-heading-md">Εισαγωγή ερωτήματος</h4>
+<!-- <h4 class="govgr-heading-md">Εισαγωγή ερωτήματος</h4> -->
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between">
-          <span class="fw-semibold">Στοιχεία ερωτήματος</span>
-      </div>
-      <div class="mb-3">
-        <div>
-            <input type="text" 
-            class="form-control" 
-            formControlName="email" 
-            id="email"  
-            placeholder="Πληκτρολογήστε Στοιχεία Φορέα"/>
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <span class="fw-semibold">Στοιχεία Χρήστη</span>
         </div>
-        <div class="row row-cols-lg-auto">
-            <span>Αναζήτηση στοιχείων φορέα ως:</span>
-            <div class="form-check">
-                <input 
-                    class="form-check-input" 
-                    type="radio" 
-                    formControlName="firstName" 
-                    id="preferredLabelSearch_Org1"
-                    value="words">
-                <label class="form-check-label" for="preferredLabelSearch_Org1">ξεχωριστές λέξεις</label>,
+        <div class="mb-3 mt-3 p-2">
+            <p><strong>Ηλεκτρονική διεύθυνση:</strong> {{user().email}}</p>
+            <p><strong>Όνομα:</strong> {{user().firstName}}</p>
+            <p><strong>Επίθετο:</strong> {{user().lastName}}</p>
+            <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
+        </div>
+    
+        <div class="mb-3 p-2">
+            <label
+                for="provisionText"
+                class="form-label">
+                Κείμενο Ερωτήματος:
+            </label>
+            <div class="NgxEditor__Wrapper">
+                <ngx-editor-menu
+                    [editor]="editor"
+                    [toolbar]="toolbar">
+                </ngx-editor-menu>
+                <ngx-editor
+                    [editor]="editor"
+                    id="questionText"
+                    formControlName = "questionText"
+                    (ngModelChange)="onQuestionTextChange($event)">
+                </ngx-editor>
             </div>
-            <div class="form-check">
-                <input 
-                    class="form-check-input" 
-                    type="radio" 
-                    formControlName="lastName" 
-                    id="preferredLabelSearch_Org2"
-                    value="phrase">
-                <label class="form-check-label" for="preferredLabelSearch_Org2">ολόκληρη φράση</label>
-            </div>
+        </div>
+
+        <!-- <div class="mb-3 p-2">
+            <label class="form-label">Αρχείο PDF (16MB maximum):</label>
+            <input
+                class="form-control"
+                type="file"
+                (change)="selectFile($event)" /> -->
+            <!-- @if (form.controls.questionFile.invalid) {
+                <div class="invalid-feedback">Πρέπει να μεταφορτώσετε ένα αρχείο PDF</div>
+            } -->
+            <!-- @if (hasUploadedFile()) {
+                <ngb-alert
+                    type="info"
+                    [dismissible]="false"
+                    class="mt-2">
+                    Υπάρχει ήδη μεταφορτωμένο αρχείο.
+                </ngb-alert>
+            }
+            @if (progress) {
+                <div class="progress mt-2">
+                    <div
+                        class="progress-bar progress-bar-info"
+                        role="progressbar"
+                        attr.aria-valuenow="{{ progress }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        [ngStyle]="{ width: progress + '%' }">
+                        {{ progress }}%
+                    </div>
+                </div>
+            }
+        </div> -->
+
+        <div class="d-flex align-items-center gap-2 mb-3 p-2">
+            <button
+                type="button"
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="form.invalid">
+                Υποβολή
+            </button>
+            <button
+                type="button"
+                class="btn btn-danger"
+                (click)="resetForm()">
+                Επαναφορά
+            </button>
         </div>
     </div>
-  </div>
 </form>
