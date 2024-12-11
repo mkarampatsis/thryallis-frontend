@@ -14,9 +14,17 @@
     
         <div class="mb-3 p-2">
             <label
-                for="provisionText"
+                for="questionTitle"
                 class="form-label">
-                Κείμενο Ερωτήματος:
+                Τίτλος ερωτήματος:
+            </label>
+            <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle">
+        </div>
+        <div class="mb-3 p-2">
+            <label
+                for="questionText"
+                class="form-label">
+                Κείμενο ερωτήματος:
             </label>
             <div class="NgxEditor__Wrapper">
                 <ngx-editor-menu

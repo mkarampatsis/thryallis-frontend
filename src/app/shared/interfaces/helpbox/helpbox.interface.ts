@@ -3,6 +3,7 @@ export interface IHelpbox {
   lastName?: string;
   firstName?: string;
   organizations?: string[];
+  questionTitle?: string;
   questionText?: string;
   answerText?: string | null;
   toWhom?: string | null;

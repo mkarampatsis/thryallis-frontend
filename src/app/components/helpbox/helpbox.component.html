@@ -1,5 +1,5 @@
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-	@if(hasHelpDeskRole()){
+	@if(hasHelpDeskRole() || hasEditorRole()){
 		<li [ngbNavItem]="1">
 			<button ngbNavLink>Ερωτήματα</button>
 			<ng-template ngbNavContent>
@@ -18,4 +18,3 @@
 </ul>
 
 <div [ngbNavOutlet]="nav" class="mt-2"></div>
-<pre>Active: {{ active }}</pre>

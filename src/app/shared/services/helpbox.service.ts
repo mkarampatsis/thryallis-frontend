@@ -11,11 +11,15 @@ const APIPREFIX = `${environment.apiUrl}/helpbox`;
 })
 export class HelpboxService {
 
-  http = inject(HttpClient);
+    http = inject(HttpClient);
 
-  newQuestion(data: IHelpbox): Observable<{ msg: string; index: IHelpbox }> {
-    console.log(APIPREFIX);
-    return this.http.post<{ msg: string; index: IHelpbox }>(APIPREFIX, data);
-  }
+    getAllHelpbox(): Observable<IHelpbox[]> {
+        const url = `${APIPREFIX}`;
+        return this.http.get<IHelpbox[]>(url);
+    }
+
+    newQuestion(data: IHelpbox): Observable<{ msg: string; index: IHelpbox }> {
+        return this.http.post<{ msg: string; index: IHelpbox }>(APIPREFIX, data);
+    }
   
 }

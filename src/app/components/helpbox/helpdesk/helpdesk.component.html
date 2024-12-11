@@ -1,1 +1,21 @@
-<p>helpdesk works!</p>
+<h1 class="govgr-heading-sm">Eρωτήματα χρηστών</h1>
+
+<div class="d-flex justify-content-end small">
+    <div>
+        <span>Eπιλέξτε το ερώτημα που επιθυμείτε</span>
+    </div>
+</div>
+<div class="govgr-body">
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="helpbox"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="50"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        (rowClicked)="onRowClicked($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+</div>

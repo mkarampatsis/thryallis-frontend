@@ -27,6 +27,7 @@ import { UserAccessesComponent } from '../modals/user-accesses/user-accesses.com
 import { IUser } from '../interfaces/auth';
 import { RemitDetailsComponent } from '../modals/remit-details/remit-details.component';
 import { LogDetailsComponent } from '../modals/log-details/log-details.component';
+import { HelpboxAnswerComponent } from '../modals/helpbox-answer/helpbox-answer.component';
 
 @Injectable({
     providedIn: 'root',
@@ -250,6 +251,15 @@ export class ModalService {
             centered: true,
         });
         modalRef.componentInstance.code = code;
+        modalRef.componentInstance.modalRef = modalRef;
+    }
+
+    showHelpboxAnswer(id: string) {
+        const modalRef = this.modalService.open(HelpboxAnswerComponent, {
+            size: 'xl',
+            centered: true,
+        });
+        modalRef.componentInstance.id = id;
         modalRef.componentInstance.modalRef = modalRef;
     }
 }

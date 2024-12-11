@@ -9,7 +9,6 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-editors',
@@ -24,7 +23,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
     constService = inject(ConstService);
     uploadService = inject(FileUploadService);
     helpboxService = inject(HelpboxService);
-    router = inject(Router);
 
     user = this.authService.user;
     organizationPreferedLabel:string[] = [];
@@ -42,6 +40,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         firstName: new FormControl(''),
         lastName: new FormControl(''),
         organizations : new FormControl([]),
+        questionTitle: new FormControl('', Validators.required),
         questionText: new FormControl('', Validators.required),
         // questionFile: new FormControl(null, Validators.required),
     });
@@ -59,13 +58,14 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.form.controls.email.patchValue(this.user().email);
         this.form.controls.firstName.patchValue(this.user().firstName);
         this.form.controls.lastName.patchValue(this.user().lastName);
+        this.form.controls.questionTitle.patchValue('');
         this.form.controls.questionText.patchValue(this.questionText);
 
         const foreas = this.user().roles.filter(data => data.role==="EDITOR")[0].foreas
         this.form.controls.organizations.patchValue(foreas);
             
         foreas.every(data=> {
-        this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
+            this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
         });    
     }
 
@@ -80,15 +80,14 @@ export class EditorsComponent implements OnInit, OnDestroy {
             lastName: this.form.controls.lastName.value,
             firstName: this.form.controls.firstName.value,
             organizations: this.form.controls.organizations.value,
+            questionTitle: this.form.controls.questionTitle.value,
             questionText: this.questionText,
         } as IHelpbox;
 
 
         this.helpboxService.newQuestion(helpQuestion)
             .subscribe(data => {
-                console.log(">>",data);
                 this.goToTab(1);
-                
             });
     }
 
@@ -97,8 +96,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.questionText = '';
         this.initializeForm(); 
     }
-
-    
 
     goToTab(tabIndex: number): void {
         this.changeTab.emit(tabIndex); // Emit the tab index to parent
