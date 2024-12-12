@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
@@ -24,10 +24,10 @@ export class HelpdeskComponent {
 
     defaultColDef = this.constService.defaultColDef;
     colDefs: ColDef[] = [
-        { field: 'questionTitle', headerName: 'Τίτλος' },
-        { field: 'email', headerName: 'Χρήστης' },
-        { field: 'firstName', headerName: 'Όνομσ' },
-        { field: 'lastName', headerName: 'Επίθετο' },
+        { field: 'questionTitle', headerName: 'Τίτλος', flex:1 },
+        { field: 'email', headerName: 'Χρήστης', flex:1 },
+        { field: 'firstName', headerName: 'Όνομα', flex:1 },
+        { field: 'lastName', headerName: 'Επίθετο', flex:1 },
         {
             field: 'organizations',
             headerName: 'Φορείς',
@@ -37,16 +37,18 @@ export class HelpdeskComponent {
                     organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data));
                 });
                 return organizationPreferedLabel.join(', ');
-            }
+            }, 
+            flex:1
         },
         { 
             field: 'when.$date', 
             headerName: 'Ημερομηνία', 
             cellRenderer: function (params) {
                 return (new Date(params.value)).toLocaleDateString();
-            }, 
+            }
+            , flex:1 
         },
-        { field: 'toWhom', headerName: 'Υπεύθυνος'},
+        { field: 'toWhom', headerName: 'Υπεύθυνος', flex:1},
         { 
             field: 'status', 
             headerName: 'Κατάσταση', 
@@ -59,7 +61,8 @@ export class HelpdeskComponent {
                 } else {
                     return {color: 'red'};
                 }
-            }
+            }, 
+            flex:1
         },
     ];
 
@@ -70,9 +73,25 @@ export class HelpdeskComponent {
 
     gridApi: GridApi<IHelpbox>;
 
+    constructor() {
+        effect(
+            () => {
+                if (this.helpboxService.helpboxNeedUpdate()){
+                    this.loadData();
+                }
+                this.helpboxService.helpboxNeedUpdate.set(false)
+            },
+            { allowSignalWrites: true }
+        );
+    }
+
     onGridReady(params: GridReadyEvent<IHelpbox>): void {
         this.gridApi = params.api;
         this.gridApi.showLoadingOverlay();
+        this.loadData();
+    }
+
+    loadData(){
         this.helpboxService.getAllHelpbox().subscribe((helpbox) => {
             this.helpbox = helpbox;
             this.gridApi.hideOverlay();
@@ -80,7 +99,6 @@ export class HelpdeskComponent {
     }
 
     onRowClicked(event: any): void {
-        console.log(event.data);
         this.modalService.showHelpboxAnswer(event.data._id.$oid);
     }
 

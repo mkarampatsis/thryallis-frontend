@@ -1,6 +1,5 @@
 <div class="d-flex justify-content-between m-3">
-    <span class="h5">Ιστορικά στοιχεία αλλαγών Φορέα/Μονάδας</span>
-
+    <span class="h5">Κυτίο Βοήθειας</span>
     <button
         type="button"
         class="btn-close"
@@ -8,11 +7,58 @@
     </button>
 </div>
 <div class="modal-body">
-    <span class="d-flex justify-content-center fs-5 fw-bolder mb-3">Στοιχεία Αλλαγών</span>
-    <div class="d-flex flex-column gap-2">
-        
-       
-
+    <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Χρήστη</span>
+    <div class="mb-3 mt-3 p-2">
+        @if (question) {
+            <p><strong>Ηλεκτρονική διεύθυνση:</strong> {{question.email}}</p>
+            <p><strong>Όνομα:</strong> {{question.firstName}}</p>
+            <p><strong>Επίθετο:</strong> {{question.lastName}}</p>
+            <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
+        }
+    </div>
+    <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Ερωτήματος</span>
+    <div class="mb-3 p-2">
+        @if (question) {
+            <p><strong>Τίτλος:</strong> {{question.questionTitle}}</p>
+            <p><strong>Ερώτημα:</strong></p>
+            <p class="mb-3" [innerHTML]="question.questionText"></p>
+            @if(hasEditorRole()){
+                <p><strong>Απάντηση:</strong></p>
+                <p [innerHTML]="question.answerText"></p>
+            }
+            @if(hasHelpDeskRole()){
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="mb-3">
+                        <label
+                            for="answerText"
+                            class="form-label">
+                            <strong>Απάντηση:</strong>
+                        </label>
+                        <div class="NgxEditor__Wrapper">
+                            <ngx-editor-menu
+                                [editor]="editor"
+                                [toolbar]="toolbar">
+                            </ngx-editor-menu>
+                            <ngx-editor
+                                [editor]="editor"
+                                id="answerText"
+                                formControlName = "answerText"
+                                (ngModelChange)="onAnswerTextChange($event)">
+                            </ngx-editor>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            type="submit"
+                            [disabled]="form.invalid">
+                            Υποβολή
+                        </button>
+                    </div>
+                </form>
+            }
+        }
     </div>
 </div>
 

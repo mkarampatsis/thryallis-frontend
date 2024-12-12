@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
@@ -13,13 +13,22 @@ export class HelpboxService {
 
     http = inject(HttpClient);
 
+    helpboxNeedUpdate = signal<boolean>(false);
+
     getAllHelpbox(): Observable<IHelpbox[]> {
-        const url = `${APIPREFIX}`;
-        return this.http.get<IHelpbox[]>(url);
+        return this.http.get<IHelpbox[]>(APIPREFIX);
+    }
+
+    getHelpboxById(id:string): Observable<IHelpbox> {
+        return this.http.get<IHelpbox>(`${APIPREFIX}/id/${id}`);
     }
 
     newQuestion(data: IHelpbox): Observable<{ msg: string; index: IHelpbox }> {
         return this.http.post<{ msg: string; index: IHelpbox }>(APIPREFIX, data);
+    }
+
+    answerQuestion(data: IHelpbox): Observable<{ msg: string; index: IHelpbox }> {
+        return this.http.put<{ msg: string; index: IHelpbox }>(APIPREFIX, data);
     }
   
 }
