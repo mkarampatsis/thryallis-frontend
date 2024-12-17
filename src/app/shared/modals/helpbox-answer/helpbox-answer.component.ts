@@ -40,8 +40,12 @@ export class HelpboxAnswerComponent {
           this.question.organizations.every(data=> {
             this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
           });  
-          if (this.question.answerText) {
-            this.answerText=this.question.answerText;
+          // if (this.question.answerText) {
+            // this.answerText=this.question.answerText;
+            // this.initializeForm();
+          // }
+          if (this.hasHelpDeskRole()) {
+            // this.answerText=this.question.answerText;
             this.initializeForm();
           }
         })

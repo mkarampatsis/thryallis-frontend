@@ -79,12 +79,13 @@ export class LogDataComponent {
             { field: 'remitType', headerName: 'Τύπος', flex: 1 },
             {
                 field: 'remitText',
-                headerName: 'Κείμενο',
+                headerName: 'Αρμοδιότητα',
                 flex: 6,
                 cellRenderer: HtmlCellRenderer,
                 autoHeight: true,
                 cellStyle: { 'white-space': 'normal' },
             },
+            // { field: 'who', headerName: 'Χρήστης', flex: 1 },
         ];
     }
 
@@ -104,6 +105,7 @@ export class LogDataComponent {
                         organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
                     };
                 });
+                console.log(">>",this.remits)
                 this.gridApi.hideOverlay();
             }),
         );

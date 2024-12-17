@@ -11,7 +11,7 @@
             <p><strong>Επίθετο:</strong> {{user().lastName}}</p>
             <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
         </div>
-    
+        
         <div class="mb-3 p-2">
             <label
                 for="questionTitle"
@@ -20,7 +20,7 @@
             </label>
             <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle">
         </div>
-        <div class="mb-3 p-2">
+        <div formGroupName="question" class="mb-3 p-2">
             <label
                 for="questionText"
                 class="form-label">
@@ -39,6 +39,7 @@
                 </ngx-editor>
             </div>
         </div>
+        
 
         <!-- <div class="mb-3 p-2">
             <label class="form-label">Αρχείο PDF (16MB maximum):</label>
@@ -89,3 +90,5 @@
         </div>
     </div>
 </form>
+
+{{form.value | json}}

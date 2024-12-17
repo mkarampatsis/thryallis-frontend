@@ -137,9 +137,9 @@ export class SearchFormComponent {
     onSubmit() {
         this.loading = true;
 
-        console.log(this.form.value);
+        // console.log(this.form.value);
         const searchQuery = this.transformData(this.form.value);
-        console.log("searchQuery>>",searchQuery);
+        // console.log("searchQuery>>",searchQuery);
 
         this.searchService
             .postSearch(searchQuery)

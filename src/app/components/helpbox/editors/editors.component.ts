@@ -1,12 +1,12 @@
 import { Component, inject, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common'
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 // import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 
@@ -41,10 +41,11 @@ export class EditorsComponent implements OnInit, OnDestroy {
         lastName: new FormControl(''),
         organizations : new FormControl([]),
         questionTitle: new FormControl('', Validators.required),
-        questionText: new FormControl('', Validators.required),
-        // questionFile: new FormControl(null, Validators.required),
+        question: new FormGroup({
+            questionText: new FormControl('', Validators.required),
+            // file?: string | null;
+        }),
     });
-
 
     ngOnInit() {
         this.initializeForm();
@@ -58,15 +59,17 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.form.controls.email.patchValue(this.user().email);
         this.form.controls.firstName.patchValue(this.user().firstName);
         this.form.controls.lastName.patchValue(this.user().lastName);
-        this.form.controls.questionTitle.patchValue('');
-        this.form.controls.questionText.patchValue(this.questionText);
-
+        this.form.controls.questionTitle.patchValue("")
+        this.form.controls.question.patchValue({
+            questionText: this.questionText,
+        });
+        
         const foreas = this.user().roles.filter(data => data.role==="EDITOR")[0].foreas
         this.form.controls.organizations.patchValue(foreas);
             
         foreas.every(data=> {
             this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
-        });    
+        });
     }
 
     onQuestionTextChange(html: object) {
@@ -81,10 +84,12 @@ export class EditorsComponent implements OnInit, OnDestroy {
             firstName: this.form.controls.firstName.value,
             organizations: this.form.controls.organizations.value,
             questionTitle: this.form.controls.questionTitle.value,
-            questionText: this.questionText,
-        } as IHelpbox;
+            question: {
+                questionText: this.questionText,
+            },
+        } as unknown as IHelpbox;
 
-
+        console.log(helpQuestion);
         this.helpboxService.newQuestion(helpQuestion)
             .subscribe(data => {
                 this.goToTab(1);
