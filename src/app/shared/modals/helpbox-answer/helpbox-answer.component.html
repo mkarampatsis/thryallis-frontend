@@ -17,17 +17,49 @@
         }
     </div>
     <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Ερωτήματος</span>
-    <!-- <div class="mb-3 p-2">
+    <div class="mb-3 p-2">
         @if (question) {
             <p><strong>Τίτλος:</strong> {{question.questionTitle}}</p>
-            <p><strong>Ερώτημα:</strong></p>
-            <p class="mb-3" [innerHTML]="question.questionText"></p>
-            @if(hasEditorRole()){
-                <p><strong>Απάντηση:</strong></p>
-                <p [innerHTML]="question.answerText"></p>
-            }
-            @if(hasHelpDeskRole()){
-                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+           
+            <table class="table table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ερώτημα</th>
+                        <th>Απάντηση</th>
+                        <th>Ημερ. ερωτήματος</th>
+                        <th>Ημερ. απάντησης</th>
+                        <th>Χρήστης</th>
+                        <th>Επεξεργασία</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (q of question.questions; track q; let i = $index) {
+                    <tr>
+                        <td>{{i + 1}}</td>
+                        <td><span [innerHTML]="sanitizeHtml(q.questionText)"></span></td>
+                        <td><span [innerHTML]="sanitizeHtml(q.answerText)"></span></td>
+                        <td>{{q.whenAsked['$date'] | date: "dd-MM-yyyy HH:mm:ss"}}</td>
+                        @if (q.whenAnswered) {
+                            <td>{{q.whenAnswered['$date'] | date: "dd-MM-yyyy HH:mm:ss"}}</td>
+                        } @else {
+                            <td>{{q.whenAnswered}}</td>
+                        }
+                        <td>{{q.fromWhom }}</td>
+                        <td>
+                            @if (q.answered) {
+                                <button class="btn btn-secondary btn-sm">απαντήθηκε</button>
+                            } @else {
+                                <button class="btn btn-success btn-sm" (click)="answerQuestion(q.id)">απάντηση</button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+           
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                @if(showForm){
                     <div class="mb-3">
                         <label
                             for="answerText"
@@ -47,19 +79,25 @@
                             </ngx-editor>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            type="submit"
-                            [disabled]="form.invalid">
-                            Υποβολή
-                        </button>
-                    </div>
-                </form>
-            }
+                }
+                <div class="mb-3 form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" formControlName="finalized">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Επιλέξτε το πεδίο στην περίπτωση που η συνομιλία έχει ολοκληρωθεί
+                    </label>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        type="submit"
+                        [disabled]="form.invalid">
+                        Υποβολή
+                    </button>
+                </div>
+            </form>
         }
-    </div> -->
+    </div>
 </div>
 
 <div class="d-flex justify-content-end m-3">

@@ -50,10 +50,30 @@ export class HelpdeskComponent {
         },
         { field: 'toWhom', headerName: 'Υπεύθυνος', flex:1},
         { 
-            field: 'status', 
-            headerName: 'Κατάσταση', 
+            field: 'questions', 
+            headerName: 'Απάντηση', 
             cellRenderer: function (params) {
-                return params.value ? "Απαντήθηκε" : 'Εκκρεμεί';
+                let checker = params.value.every(value => value.answered === true);
+                // console.log(checker);
+                // return params.value ? "Απαντήθηκε" : 'Εκκρεμεί';
+                return checker ? "Απαντήθηκε" : 'Εκκρεμεί';
+            },
+            cellStyle: params => {
+                let checker = params.value.every(value => value.answered === true);
+                // if (params.value) {
+                if (checker) {
+                    return {color: 'green'};
+                } else {
+                    return {color: 'red'};
+                }
+            }, 
+            flex:1
+        },
+        { 
+            field: 'finalized', 
+            headerName: 'Συνομιλία', 
+            cellRenderer: function (params) {
+                return params.value ? "Ολοκληρώθηκε" : 'Ανοιχτή';
             },
             cellStyle: params => {
                 if (params.value) {

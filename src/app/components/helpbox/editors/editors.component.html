@@ -14,11 +14,20 @@
         
         <div class="mb-3 p-2">
             <label
-                for="questionTitle"
+                for="questionSelect"
                 class="form-label">
                 Τίτλος ερωτήματος:
             </label>
-            <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle">
+            <select class="mb-3 form-control" type="text" id="questionSelect" formControlName="questionSelect" (change)="showSelectValue()">
+                <option value="" disabled selected>Επιλεξτε ερώτημα</option>
+                <option value="new">Νέο ερώτημα</option>
+                @for (doc of notFinalized; track doc) {
+                    <option value="{{doc.questionTitle}}_{{doc['_id']['$oid']}}">{{doc.questionTitle}}</option>
+                }
+            </select>
+            @if (showInputField) {
+                <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle" placeholder="Πληκτρολογείστε το ερώτημα σας">
+            }
         </div>
         <div formGroupName="question" class="mb-3 p-2">
             <label
@@ -91,4 +100,4 @@
     </div>
 </form>
 
-{{form.value | json}}
+<!-- {{form.value | json}} -->

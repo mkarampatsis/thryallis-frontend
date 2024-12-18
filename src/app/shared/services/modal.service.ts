@@ -259,7 +259,7 @@ export class ModalService {
             size: 'xl',
             centered: true,
         });
-        modalRef.componentInstance.id = id;
+        modalRef.componentInstance.helpboxId = id;
         modalRef.componentInstance.modalRef = modalRef;
     }
 }

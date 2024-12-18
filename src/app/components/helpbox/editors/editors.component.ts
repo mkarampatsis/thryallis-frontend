@@ -30,6 +30,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
     editor: Editor = new Editor();
     toolbar: Toolbar = DEFAULT_TOOLBAR;
     questionText: string;
+    notFinalized: IHelpbox[] = [];
+    showInputField = false;
 
     progress = 0;
     currentFile: File;
@@ -45,9 +47,13 @@ export class EditorsComponent implements OnInit, OnDestroy {
             questionText: new FormControl('', Validators.required),
             // file?: string | null;
         }),
+        questionSelect: new FormControl('')
     });
 
     ngOnInit() {
+        this.helpboxService.getAllHelpboxNotFinalized().subscribe((data) => {
+            this.notFinalized = data;
+        })
         this.initializeForm();
     }
 
@@ -78,6 +84,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
 
 
     onSubmit() {
+        
         const helpQuestion = {
             email: this.form.controls.email.value,
             lastName: this.form.controls.lastName.value,
@@ -89,11 +96,20 @@ export class EditorsComponent implements OnInit, OnDestroy {
             },
         } as unknown as IHelpbox;
 
-        console.log(helpQuestion);
-        this.helpboxService.newQuestion(helpQuestion)
+        const value = this.form.controls.questionSelect.value.split('_');
+
+        if (value[0]==="new"){ 
+            this.helpboxService.newQuestion(helpQuestion)
+                .subscribe(data => {
+                    this.goToTab(1);
+                });
+        } else {
+            const id = value[1];
+            this.helpboxService.updateQuestion(helpQuestion, id)
             .subscribe(data => {
                 this.goToTab(1);
             });
+        }
     }
 
     resetForm(){
@@ -106,6 +122,18 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.changeTab.emit(tabIndex); // Emit the tab index to parent
     }
 
+    showSelectValue() {
+        const value = this.form.controls.questionSelect.value.split('_');
+
+        if (value[0] === "new") {
+            this.showInputField = true
+            this.form.controls.questionTitle.patchValue('')
+        }
+        else {
+            this.showInputField = false
+            this.form.controls.questionTitle.patchValue(value[0])
+        }
+    }
   // selectFile(event: any): void {
   //   if (event.target.files.length === 0) {
   //       console.log('No file selected!');

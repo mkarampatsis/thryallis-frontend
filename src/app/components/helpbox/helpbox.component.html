@@ -9,7 +9,7 @@
 	}
 	@if (hasEditorRole()) {
 		<li [ngbNavItem]="2">
-			<button ngbNavLink>Υποβολή Ερωτημάτων</button>
+			<button ngbNavLink>Υποβολή ερωτήματος</button>
 			<ng-template ngbNavContent>
 				<app-editors (changeTab)="changeTab($event)"></app-editors>
 			</ng-template>
