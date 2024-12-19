@@ -38,5 +38,8 @@ export class HelpboxService {
     answerQuestion(data: IHelpbox): Observable<{ msg: string; index: IHelpbox }> {
         return this.http.put<{ msg: string; index: IHelpbox }>(APIPREFIX, data);
     }
-  
+
+    finalizeHelpBoxById(data: {id:string, finalized:boolean}): Observable<{ msg: string; index: IHelpbox }> {
+        return this.http.put<{ msg: string; index: IHelpbox }>(`${APIPREFIX}/finalize`, data);
+    }
 }

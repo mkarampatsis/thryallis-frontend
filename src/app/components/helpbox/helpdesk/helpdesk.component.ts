@@ -73,6 +73,7 @@ export class HelpdeskComponent {
             field: 'finalized', 
             headerName: 'Συνομιλία', 
             cellRenderer: function (params) {
+                console.log(">>",params)
                 return params.value ? "Ολοκληρώθηκε" : 'Ανοιχτή';
             },
             cellStyle: params => {

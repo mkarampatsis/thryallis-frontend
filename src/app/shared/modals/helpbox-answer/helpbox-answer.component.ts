@@ -41,22 +41,7 @@ export class HelpboxAnswerComponent {
   });
   
   ngOnInit() : void {
-      this.helpboxService.getHelpboxById(this.helpboxId)
-        .subscribe((data)=>{
-            console.log(data)
-            this.question = data[0];
-            this.question.organizations.every(data=> {
-            this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
-          });  
-          // if (this.question.answerText) {
-            // this.answerText=this.question.answerText;
-            // this.initializeForm();
-          // }
-          if (this.hasHelpDeskRole()) {
-            // this.answerText=this.question.answerText;
-            this.initializeForm();
-          }
-        })
+      this.getHelpBox();
   }
 
   initializeForm(){
@@ -66,7 +51,6 @@ export class HelpboxAnswerComponent {
   onAnswerTextChange(html: object) {
     this.answerText = toHTML(html);
   }
-
 
   onSubmit() {
     const helpQuestion = {
@@ -100,6 +84,33 @@ export class HelpboxAnswerComponent {
         this.questionId = id['$oid']
     }
   }
+
+  finalizeConversation(){
+    console.log("Finalize", this.question);
+    console.log("Finalize", !this.question.finalized);
+    const finalized = !this.question.finalized
+    this.helpboxService.finalizeHelpBoxById({id: this.helpboxId, finalized: finalized})
+        .subscribe((data) => {
+            // console.log(data);
+            // this.getHelpBox();
+            this.helpboxService.helpboxNeedUpdate.set(true);
+            this.modalRef.close()
+        });    
+  }
+
+  getHelpBox(){
+    this.helpboxService.getHelpboxById(this.helpboxId)
+        .subscribe((data)=>{
+            this.question = data[0];
+            this.question.organizations.every(data=> {
+            this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
+          });  
+          if (this.hasHelpDeskRole()) {
+            // this.answerText=this.question.answerText;
+            this.initializeForm();
+          }
+        })
+    }
 
   hasHelpDeskRole() {
     return this.userService.hasHelpDeskRole();
