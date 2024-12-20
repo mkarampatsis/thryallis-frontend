@@ -86,13 +86,9 @@ export class HelpboxAnswerComponent {
   }
 
   finalizeConversation(){
-    console.log("Finalize", this.question);
-    console.log("Finalize", !this.question.finalized);
     const finalized = !this.question.finalized
     this.helpboxService.finalizeHelpBoxById({id: this.helpboxId, finalized: finalized})
         .subscribe((data) => {
-            // console.log(data);
-            // this.getHelpBox();
             this.helpboxService.helpboxNeedUpdate.set(true);
             this.modalRef.close()
         });    
@@ -103,7 +99,7 @@ export class HelpboxAnswerComponent {
         .subscribe((data)=>{
             this.question = data[0];
             this.question.organizations.every(data=> {
-            this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
+                this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
           });  
           if (this.hasHelpDeskRole()) {
             // this.answerText=this.question.answerText;

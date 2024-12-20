@@ -52,7 +52,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.helpboxService.getAllHelpboxNotFinalized().subscribe((data) => {
-            this.notFinalized = data;
+            this.notFinalized = data.filter(item => item.email===this.user().email);
         })
         this.initializeForm();
     }

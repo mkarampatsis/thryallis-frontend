@@ -7,6 +7,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { ConstService } from 'src/app/shared/services/const.service';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-helpdesk',
@@ -19,6 +20,9 @@ export class HelpdeskComponent {
     modalService = inject(ModalService);
     constService = inject(ConstService);
     helpboxService = inject(HelpboxService);
+    userService = inject(UserService);
+
+    userEmail = this.userService.user().email
 
     helpbox: IHelpbox[] = [];
 
@@ -40,14 +44,14 @@ export class HelpdeskComponent {
             }, 
             flex:1
         },
-        { 
-            field: 'when.$date', 
-            headerName: 'Ημερομηνία', 
-            cellRenderer: function (params) {
-                return (new Date(params.value)).toLocaleDateString();
-            }
-            , flex:1 
-        },
+        // { 
+        //     field: 'when.$date', 
+        //     headerName: 'Ημερομηνία', 
+        //     cellRenderer: function (params) {
+        //         return (new Date(params.value)).toLocaleDateString();
+        //     }
+        //     , flex:1 
+        // },
         { field: 'toWhom', headerName: 'Υπεύθυνος', flex:1},
         { 
             field: 'questions', 
@@ -56,7 +60,7 @@ export class HelpdeskComponent {
                 let checker = params.value.every(value => value.answered === true);
                 // console.log(checker);
                 // return params.value ? "Απαντήθηκε" : 'Εκκρεμεί';
-                return checker ? "Απαντήθηκε" : 'Εκκρεμεί';
+                return checker ? "Απαντήθηκε ("+params.value.length+")" : "Εκκρεμεί ("+params.value.length+")";
             },
             cellStyle: params => {
                 let checker = params.value.every(value => value.answered === true);
@@ -73,7 +77,6 @@ export class HelpdeskComponent {
             field: 'finalized', 
             headerName: 'Συνομιλία', 
             cellRenderer: function (params) {
-                console.log(">>",params)
                 return params.value ? "Ολοκληρώθηκε" : 'Ανοιχτή';
             },
             cellStyle: params => {
@@ -113,10 +116,17 @@ export class HelpdeskComponent {
     }
 
     loadData(){
-        this.helpboxService.getAllHelpbox().subscribe((helpbox) => {
-            this.helpbox = helpbox;
-            this.gridApi.hideOverlay();
-        });
+        if (this.userService.hasEditorRole()) {
+            this.helpboxService.getHelpboxByEmail(this.userEmail).subscribe((helpbox) => {
+                this.helpbox = helpbox;
+                this.gridApi.hideOverlay();
+            });
+        } else {
+            this.helpboxService.getAllHelpbox().subscribe((helpbox) => {
+                this.helpbox = helpbox;
+                this.gridApi.hideOverlay();
+            });
+        }
     }
 
     onRowClicked(event: any): void {

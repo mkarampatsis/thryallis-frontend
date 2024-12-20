@@ -18,6 +18,10 @@ export class HelpboxService {
     getAllHelpbox(): Observable<IHelpbox[]> {
         return this.http.get<IHelpbox[]>(APIPREFIX);
     }
+    
+    getHelpboxByEmail(email:string): Observable<IHelpbox[]> {
+        return this.http.get<IHelpbox[]>(`${APIPREFIX}/email/${email}`);
+    }
 
     getHelpboxById(id:string): Observable<IHelpbox> {
         return this.http.get<IHelpbox>(`${APIPREFIX}/id/${id}`);

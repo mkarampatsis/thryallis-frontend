@@ -46,6 +46,7 @@
                             <td>{{q.whenAnswered}}</td>
                         }
                         <td>{{q.fromWhom }}</td>
+                        
                         <td>
                             @if (q.answered) {
                                 <button class="btn btn-secondary btn-sm">απαντήθηκε</button>
@@ -88,12 +89,18 @@
                         [disabled]="form.invalid">
                         Υποβολή
                     </button>
-                    <button
-                        type="button"
-                        class="btn btn-success"
-                        (click)="finalizeConversation()">
-                        Ολοκλήρωση συνομιλίας
-                    </button>
+                    @if(hasHelpDeskRole()){
+                        <button
+                            type="button"
+                            class="btn btn-success"
+                            (click)="finalizeConversation()">
+                            @if (question.finalized) {
+                                Άνοιγμα συνομιλίας
+                            } @else {
+                                Ολοκλήρωση συνομιλίας
+                            }
+                        </button>
+                    }
                 </div>
             </form>
         }
