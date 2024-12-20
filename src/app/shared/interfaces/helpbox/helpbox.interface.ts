@@ -20,3 +20,13 @@ export interface IHelpbox {
     toWhom?: string | null;
     finalized?: boolean | null;
 }
+
+export interface IGeneralInfo {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    title?: string;
+    text?: string | null;
+    // file?: string | null;
+    when?: Date | null;
+}

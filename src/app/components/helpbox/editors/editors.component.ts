@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common'
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';

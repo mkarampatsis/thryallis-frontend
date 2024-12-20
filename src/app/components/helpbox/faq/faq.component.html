@@ -1,0 +1,11 @@
+@if (!publishedQuestions) {
+    <p>Δεν υπάρχουν στοιχεία</p>
+} @else {
+    @for (item of publishedQuestions; track item; let i = $index ) {
+        <div>
+            <strong><span [innerHTML]="sanitizeHtml(item.questions.questionText)"></span></strong>
+        </div>
+
+        <div class="mb-3"><span [innerHTML]="sanitizeHtml(item.questions.answerText)"></span></div>
+    }
+}

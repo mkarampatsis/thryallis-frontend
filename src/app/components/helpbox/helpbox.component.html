@@ -1,12 +1,10 @@
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-	@if(hasHelpDeskRole() || hasEditorRole()){
-		<li [ngbNavItem]="1">
-			<button ngbNavLink>Ερωτήματα</button>
-			<ng-template ngbNavContent>
-				<app-helpdesk></app-helpdesk>
-			</ng-template>
-		</li>
-	}
+	<li [ngbNavItem]="1">
+        <button ngbNavLink>Ερωτήματα</button>
+        <ng-template ngbNavContent>
+            <app-helpdesk></app-helpdesk>
+        </ng-template>
+    </li>
 	@if (hasEditorRole()) {
 		<li [ngbNavItem]="2">
 			<button ngbNavLink>Υποβολή ερωτήματος</button>
@@ -15,6 +13,18 @@
 			</ng-template>
 		</li>
 	}
+    <li [ngbNavItem]="3">
+        <button ngbNavLink>Συχνές ερωτήσεις</button>
+        <ng-template ngbNavContent>
+            <app-faq></app-faq>
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="4">
+        <button ngbNavLink>Χρήσιμες Πληροφορίες</button>
+        <ng-template ngbNavContent>
+            <app-general-info></app-general-info>
+        </ng-template>
+    </li>
 </ul>
 
 <div [ngbNavOutlet]="nav" class="mt-2"></div>

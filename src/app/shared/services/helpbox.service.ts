@@ -19,6 +19,10 @@ export class HelpboxService {
         return this.http.get<IHelpbox[]>(APIPREFIX);
     }
 
+    getAllPublishedHelpbox(): Observable<IHelpbox[]> {
+        return this.http.get<IHelpbox[]>(`${APIPREFIX}/all/published`);
+    }
+
     getHelpboxById(id:string): Observable<IHelpbox> {
         return this.http.get<IHelpbox>(`${APIPREFIX}/id/${id}`);
     }
@@ -39,7 +43,7 @@ export class HelpboxService {
         return this.http.put<{ msg: string; index: IHelpbox }>(`${APIPREFIX}/finalize`, data);
     }
 
-    publishHelpBoxById(data: {helpBoxId:string, questionId:string, publish:boolean}): Observable<{ msg: string; index: IHelpbox }> {
+    publishHelpBoxById(data: {helpBoxId:string, questionId:string, published:boolean}): Observable<{ msg: string; index: IHelpbox }> {
         return this.http.put<{ msg: string; index: IHelpbox }>(`${APIPREFIX}/publish`, data);
     }
 }
