@@ -7,6 +7,7 @@ export interface IQuestion {
     whenAsked?: Date | null;
     whenAnswered?: Date | null;
     answered?: boolean | null;
+    published?: boolean | null;
 }
 
 export interface IHelpbox {

@@ -85,6 +85,15 @@ export class HelpboxAnswerComponent {
     }
   }
 
+  publishQuestion(questionId:string, publish:boolean) {
+    this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId['$oid'], publish:!publish})
+        .subscribe((data) => {
+            console.log(data)
+            this.helpboxService.helpboxNeedUpdate.set(true);
+            this.modalRef.close()
+        });    
+  }
+
   finalizeConversation(){
     const finalized = !this.question.finalized
     this.helpboxService.finalizeHelpBoxById({id: this.helpboxId, finalized: finalized})

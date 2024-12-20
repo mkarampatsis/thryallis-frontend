@@ -18,17 +18,9 @@ export class HelpboxService {
     getAllHelpbox(): Observable<IHelpbox[]> {
         return this.http.get<IHelpbox[]>(APIPREFIX);
     }
-    
-    getHelpboxByEmail(email:string): Observable<IHelpbox[]> {
-        return this.http.get<IHelpbox[]>(`${APIPREFIX}/email/${email}`);
-    }
 
     getHelpboxById(id:string): Observable<IHelpbox> {
         return this.http.get<IHelpbox>(`${APIPREFIX}/id/${id}`);
-    }
-
-    getAllHelpboxNotFinalized(): Observable<IHelpbox[]> {
-        return this.http.get<IHelpbox[]>(`${APIPREFIX}/not-finalized`);
     }
 
     newQuestion(data: IHelpbox): Observable<{ msg: string; index: IHelpbox }> {
@@ -45,5 +37,9 @@ export class HelpboxService {
 
     finalizeHelpBoxById(data: {id:string, finalized:boolean}): Observable<{ msg: string; index: IHelpbox }> {
         return this.http.put<{ msg: string; index: IHelpbox }>(`${APIPREFIX}/finalize`, data);
+    }
+
+    publishHelpBoxById(data: {helpBoxId:string, questionId:string, publish:boolean}): Observable<{ msg: string; index: IHelpbox }> {
+        return this.http.put<{ msg: string; index: IHelpbox }>(`${APIPREFIX}/publish`, data);
     }
 }

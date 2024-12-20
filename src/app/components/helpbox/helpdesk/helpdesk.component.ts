@@ -22,8 +22,6 @@ export class HelpdeskComponent {
     helpboxService = inject(HelpboxService);
     userService = inject(UserService);
 
-    userEmail = this.userService.user().email
-
     helpbox: IHelpbox[] = [];
 
     defaultColDef = this.constService.defaultColDef;
@@ -116,17 +114,14 @@ export class HelpdeskComponent {
     }
 
     loadData(){
-        if (this.userService.hasEditorRole()) {
-            this.helpboxService.getHelpboxByEmail(this.userEmail).subscribe((helpbox) => {
+        this.helpboxService.getAllHelpbox().subscribe((helpbox) => {
+            if (this.userService.hasEditorRole()) {
+                this.helpbox = helpbox.filter(item => item.email===this.userService.user().email);
+            } else {
                 this.helpbox = helpbox;
-                this.gridApi.hideOverlay();
-            });
-        } else {
-            this.helpboxService.getAllHelpbox().subscribe((helpbox) => {
-                this.helpbox = helpbox;
-                this.gridApi.hideOverlay();
-            });
-        }
+            }
+            this.gridApi.hideOverlay();
+        });
     }
 
     onRowClicked(event: any): void {

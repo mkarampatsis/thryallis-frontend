@@ -47,11 +47,16 @@
                         }
                         <td>{{q.fromWhom }}</td>
                         
-                        <td>
+                        <td class="d-flex gap-2 fs-5">
                             @if (q.answered) {
-                                <button class="btn btn-secondary btn-sm">απαντήθηκε</button>
+                                <i class="bi bi-pencil-square text-success"  title="Απαντήθηκε"></i>
                             } @else {
-                                <button class="btn btn-success btn-sm" (click)="answerQuestion(q.id)">απάντηση</button>
+                                <i class="bi bi-pencil-square text-danger" role="button" (click)="answerQuestion(q.id)" title="Δεν απαντήθηκε"></i>
+                            }
+                            @if (q.published) {
+                                <i class="bi bi-instagram text-success" role="button"  title="Δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
+                            } @else {
+                                <i class="bi bi-instagram text-danger" role="button"  title="Δεν δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
                             }
                         </td>
                     </tr>
