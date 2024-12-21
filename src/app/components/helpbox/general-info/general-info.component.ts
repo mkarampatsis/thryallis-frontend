@@ -7,7 +7,9 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 // import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
+import { UserService } from 'src/app/shared/services/user.service';
 import { IGeneralInfo } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-general-info',
@@ -20,6 +22,8 @@ export class GeneralInfoComponent {
     authService = inject(AuthService);
     uploadService = inject(FileUploadService);
     helpboxService = inject(HelpboxService);
+    userService = inject(UserService);
+    sanitizer = inject(DomSanitizer);
 
     user = this.authService.user;
     editor: Editor = new Editor();
@@ -45,6 +49,7 @@ export class GeneralInfoComponent {
         // this.helpboxService.getAllGeneralInfo().subscribe((data) => {
         //     this.generalInfo = data
         // })
+        this.getAllGeneralInfo();
         this.initializeForm();
     }
 
@@ -61,12 +66,14 @@ export class GeneralInfoComponent {
     }
 
     onTextChange(html: object) {
-        this.text = toHTML(html);
+        // console.log(html);
+        // this.text = toHTML(html);
+        this.text = html.toString()
     }
 
     onSubmit() {
             
-        const helpQuestion = {
+        const infoText = {
             email: this.form.controls.email.value,
             lastName: this.form.controls.lastName.value,
             firstName: this.form.controls.firstName.value,
@@ -75,9 +82,39 @@ export class GeneralInfoComponent {
            
         } as IGeneralInfo;
 
-        // this.helpboxService.newQuestion(helpQuestion)
-        //         .subscribe(data => {
-        //             this.goToTab(1);
-        //         });
+        this.helpboxService.newGeneralInfo(infoText)
+                .subscribe(data => {
+                    // this.goToTab(1);
+                    this.initializeForm()
+                    this.getAllGeneralInfo();
+                });
+    }
+
+    getAllGeneralInfo(){
+        this.helpboxService.getGeneralInfo()
+            .subscribe((data)=>{
+                this.generalInfo = data
+            })
+    }
+
+    resetForm(){
+        this.text = '';
+        this.initializeForm(); 
+    }
+
+    sanitizeHtml(html) : SafeHtml {
+        if (html) {
+            return this.sanitizer.bypassSecurityTrustHtml(html);
+        } else {
+            return ""
+        }
+    }
+
+    hasHelpDeskRole() {
+        return this.userService.hasHelpDeskRole();
+    }
+    
+    hasEditorRole() {
+        return this.userService.hasEditorRole();
     }
 }
