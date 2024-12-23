@@ -60,17 +60,28 @@
 
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between mb-2">
-      <span class="fw-semibold">Εισαγωγή ενημέρωσης</span>
+      <span class="fw-semibold">Ενημερώσεις</span>
     </div>
 
     @if (!generalInfo) {
         <div class="p-2">Δεν υπάρχουν στοιχεία</div>
     } @else {
-        @for (item of generalInfo; track item; let i = $index ) {
-            <div class="ps-2">
-                <strong><span [innerHTML]="sanitizeHtml(item.title)"></span></strong>
-            </div>
-            <div class="p-2"><span [innerHTML]="sanitizeHtml(item.text)"></span></div>
-        }
+        <ol class="list-group list-group-numbered mb-2">
+            @for (item of generalInfo; track item) {
+                <li class="list-group-item d-flex justify-content-between align-items-start"> 
+                    <div class="ms-2 me-auto">
+                        <span class="fw-bold" [innerHTML]="sanitizeHtml(item.title)"></span>
+                        <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(item.text)"></div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div>
+                            <p><span class="fw-bold">Ημερ. ενημέρωσης:</span> {{item.when['$date'] | date: "dd-MM-yyyy HH:mm:ss"}}</p>
+                            <p><span class="fw-bold">Χειριστής Helpdesk:</span> {{item.email }}</p>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ol>
     }
+
 </div>

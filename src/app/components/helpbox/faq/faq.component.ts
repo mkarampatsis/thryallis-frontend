@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-faq',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.css'
 })

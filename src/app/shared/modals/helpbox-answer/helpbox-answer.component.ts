@@ -107,6 +107,7 @@ export class HelpboxAnswerComponent {
         this.helpboxService.getHelpboxById(this.helpboxId)
             .subscribe((data)=>{
                 this.question = data[0];
+                // console.log(this.question);
                 this.question.organizations.every(data=> {
                     this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
             });  

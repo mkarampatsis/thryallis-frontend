@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
-// import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
@@ -45,7 +45,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         questionTitle: new FormControl('', Validators.required),
         question: new FormGroup({
             questionText: new FormControl('', Validators.required),
-            // file?: string | null;
+            // file: new FormControl('', Validators.required),
         }),
         questionSelect: new FormControl('')
     });
@@ -54,9 +54,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.helpboxService.getAllHelpbox().subscribe((data) => {
             this.notFinalized = data.filter(item => item.finalized===false && item.email===this.user().email);
         })
-        // this.helpboxService.getAllHelpboxNotFinalized().subscribe((data) => {
-        //     this.notFinalized = data.filter(item => item.email===this.user().email);
-        // })
         this.initializeForm();
     }
 
@@ -137,32 +134,32 @@ export class EditorsComponent implements OnInit, OnDestroy {
             this.form.controls.questionTitle.patchValue(value[0])
         }
     }
-  // selectFile(event: any): void {
-  //   if (event.target.files.length === 0) {
-  //       console.log('No file selected!');
-  //       return;
-  //   }
-  //   this.currentFile = event.target.files[0];
-  //   this.uploadService.upload(this.currentFile).subscribe({
-  //       next: (event: any) => {
-  //           if (event.type === HttpEventType.UploadProgress) {
-  //               this.progress = Math.round((100 * event.loaded) / event.total);
-  //           } else if (event instanceof HttpResponse) {
-  //               this.uploadObjectID = event.body.id;
-  //               this.form.controls.questionFile.setValue(this.uploadObjectID);
-  //               this.form.markAsDirty();
-  //           }
-  //       },
-  //       error: (err: any) => {
-  //           console.log(err);
-  //       },
-  //       complete: () => {
-  //           console.log('Upload complete');
-  //       },
-  //   });
-  // }
+    selectFile(event: any): void {
+        if (event.target.files.length === 0) {
+            console.log('No file selected!');
+            return;
+        }
+        this.currentFile = event.target.files[0];
+        this.uploadService.upload(this.currentFile).subscribe({
+            next: (event: any) => {
+                if (event.type === HttpEventType.UploadProgress) {
+                    this.progress = Math.round((100 * event.loaded) / event.total);
+                } else if (event instanceof HttpResponse) {
+                    this.uploadObjectID = event.body.id;
+                    // this.form.controls.question.controls.file.setValue(this.uploadObjectID);
+                    this.form.markAsDirty();
+                }
+            },
+            error: (err: any) => {
+                console.log(err);
+            },
+            complete: () => {
+                console.log('Upload complete');
+            },
+        });
+    }
 
-  // hasUploadedFile(): boolean {
-  //   return this.form.get('questionFile').value !== null;
-  // }
+    // hasUploadedFile(): boolean {
+    //     return this.form.controls.question.controls.file !== null;
+    // }
 }

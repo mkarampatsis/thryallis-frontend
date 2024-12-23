@@ -2,7 +2,7 @@ export interface IQuestion {
     id?: string | null;    
     questionText?: string;
     answerText?: string | null;
-    // file?: string | null;
+    file?: string | null;
     fromWhom?: string | null;
     whenAsked?: Date | null;
     whenAnswered?: Date | null;

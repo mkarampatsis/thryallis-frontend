@@ -26,7 +26,7 @@ export class HelpdeskComponent {
 
     defaultColDef = this.constService.defaultColDef;
     colDefs: ColDef[] = [
-        { field: 'questionTitle', headerName: 'Τίτλος', flex:1 },
+        { field: 'questionTitle', headerName: 'Τίτλος Συνομιλίας', flex:1 },
         { field: 'email', headerName: 'Χρήστης', flex:1 },
         { field: 'firstName', headerName: 'Όνομα', flex:1 },
         { field: 'lastName', headerName: 'Επίθετο', flex:1 },
@@ -50,15 +50,16 @@ export class HelpdeskComponent {
         //     }
         //     , flex:1 
         // },
-        { field: 'toWhom', headerName: 'Υπεύθυνος', flex:1},
+        { field: 'toWhom', headerName: 'Χειριστής Helpdesk', flex:1},
         { 
             field: 'questions', 
-            headerName: 'Απάντηση', 
+            headerName: 'Ερωτήσεις/Απαντήσεις', 
             cellRenderer: function (params) {
-                let checker = params.value.every(value => value.answered === true);
+                let answered = params.value.filter(value => value.answered === true);
+                // let checker = params.value.every(value => value.answered === true);
                 // console.log(checker);
                 // return params.value ? "Απαντήθηκε" : 'Εκκρεμεί';
-                return checker ? "Απαντήθηκε ("+params.value.length+")" : "Εκκρεμεί ("+params.value.length+")";
+                return params.value.length + "/" + answered.length;
             },
             cellStyle: params => {
                 let checker = params.value.every(value => value.answered === true);
@@ -73,7 +74,7 @@ export class HelpdeskComponent {
         },
         { 
             field: 'finalized', 
-            headerName: 'Συνομιλία', 
+            headerName: 'Κατάσταση συνομιλίας', 
             cellRenderer: function (params) {
                 return params.value ? "Ολοκληρώθηκε" : 'Ανοιχτή';
             },
