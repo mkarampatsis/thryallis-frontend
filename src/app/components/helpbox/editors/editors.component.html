@@ -56,17 +56,7 @@
                 class="form-control"
                 type="file"
                 (change)="selectFile($event)" />
-            <!-- @if (form.controls.questionFile.invalid) {
-                <div class="invalid-feedback">Πρέπει να μεταφορτώσετε ένα αρχείο PDF</div>
-            } -->
-            <!-- @if (hasUploadedFile()) {
-                <ngb-alert
-                    type="info"
-                    [dismissible]="false"
-                    class="mt-2">
-                    Υπάρχει ήδη μεταφορτωμένο αρχείο.
-                </ngb-alert>
-            } -->
+                <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
             @if (progress) {
                 <div class="progress mt-2">
                     <div

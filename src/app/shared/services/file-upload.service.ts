@@ -28,10 +28,6 @@ export class FileUploadService {
         return this.http.get(`${APIPREFIX}/upload/getfiles`);
     }
 
-    // renameFileName(uuid: string, file_name: string): Observable<any> {
-    //     return this.http.patch(`${APIPREFIX}/${uuid}`, { file_name });
-    // }
-
     getUploadByID(id: string): Observable<Blob> {
         const headers = new HttpHeaders().set('Accept', 'application/pdf');
         return this.http.get(`${APIPREFIX}/upload/${id}`, { headers, responseType: 'blob' });

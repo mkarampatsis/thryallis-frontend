@@ -1,15 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
-// import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { IGeneralInfo } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { take } from 'rxjs';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
   selector: 'app-general-info',
@@ -23,6 +25,7 @@ export class GeneralInfoComponent {
     uploadService = inject(FileUploadService);
     helpboxService = inject(HelpboxService);
     userService = inject(UserService);
+    modalService = inject(ModalService);
     sanitizer = inject(DomSanitizer);
 
     user = this.authService.user;
@@ -35,6 +38,7 @@ export class GeneralInfoComponent {
 
     generalInfo: IGeneralInfo[];
     text: string;
+    tags: string[];
 
     form = new FormGroup({
         email: new FormControl(''),
@@ -42,13 +46,11 @@ export class GeneralInfoComponent {
         lastName: new FormControl(''),
         title: new FormControl('', Validators.required),
         text: new FormControl('', Validators.required),
-        // file?: string | null;
+        file: new FormControl(''),
+        tags: new FormControl("")
     });
 
     ngOnInit() {
-        // this.helpboxService.getAllGeneralInfo().subscribe((data) => {
-        //     this.generalInfo = data
-        // })
         this.getAllGeneralInfo();
         this.initializeForm();
     }
@@ -61,13 +63,13 @@ export class GeneralInfoComponent {
         this.form.controls.email.patchValue(this.user().email);
         this.form.controls.firstName.patchValue(this.user().firstName);
         this.form.controls.lastName.patchValue(this.user().lastName);
-        this.form.controls.title.patchValue("")
+        this.form.controls.title.patchValue("");
         this.form.controls.text.patchValue("");
+        this.form.controls.file.patchValue("");
+        this.form.controls.tags.patchValue("");
     }
 
     onTextChange(html: object) {
-        // console.log(html);
-        // this.text = toHTML(html);
         this.text = html.toString()
     }
 
@@ -79,6 +81,8 @@ export class GeneralInfoComponent {
             firstName: this.form.controls.firstName.value,
             title: this.form.controls.title.value,
             text: this.text,
+            file: this.uploadObjectID,
+            // tags: this.form.controls.tags.value
            
         } as IGeneralInfo;
 
@@ -94,6 +98,9 @@ export class GeneralInfoComponent {
         this.helpboxService.getGeneralInfo()
             .subscribe((data)=>{
                 this.generalInfo = data
+                // this.tags = data.map((data) => {
+                //     return data.tags
+                // })
             })
     }
 
@@ -108,6 +115,46 @@ export class GeneralInfoComponent {
         } else {
             return ""
         }
+    }
+
+    selectFile(event: any): void {
+
+        if (event.target.files.length === 0) {
+            console.log('No file selected!');
+            return;
+        }
+        this.currentFile = event.target.files[0];
+
+        this.uploadService.upload(this.currentFile).subscribe({
+            next: (event: any) => {
+                if (event.type === HttpEventType.UploadProgress) {
+                    this.progress = Math.round((100 * event.loaded) / event.total);
+                } else if (event instanceof HttpResponse) {
+                    this.uploadObjectID = event.body.id;
+                    this.form.controls.file.setValue(this.uploadObjectID);
+                    this.form.markAsDirty();
+                }
+            },
+            error: (err: any) => {
+                console.log(err);
+            },
+            complete: () => {
+                console.log('Upload complete');
+            },
+        });
+    }
+
+    displayPDF(fileId:string) {
+        this.uploadService
+            .getUploadByID(fileId)
+            .pipe(take(1))
+            .subscribe((data) => {
+                const url = window.URL.createObjectURL(data);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'document.pdf';
+                this.modalService.showPdfViewer(link);
+            });
     }
 
     hasHelpDeskRole() {
