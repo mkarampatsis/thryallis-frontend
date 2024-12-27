@@ -12,6 +12,7 @@ import { IGeneralInfo } from 'src/app/shared/interfaces/helpbox/helpbox.interfac
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { take } from 'rxjs';
 import { ModalService } from 'src/app/shared/services/modal.service';
+import { set } from 'lodash-es';
 
 @Component({
   selector: 'app-general-info',
@@ -38,7 +39,8 @@ export class GeneralInfoComponent {
 
     generalInfo: IGeneralInfo[];
     text: string;
-    tags: string[];
+    tags: string[] | null = [];
+    selectedValues: string[] = [];
 
     form = new FormGroup({
         email: new FormControl(''),
@@ -97,10 +99,11 @@ export class GeneralInfoComponent {
     getAllGeneralInfo(){
         this.helpboxService.getGeneralInfo()
             .subscribe((data)=>{
-                this.generalInfo = data
-                // this.tags = data.map((data) => {
-                //     return data.tags
-                // })
+                this.generalInfo = data;
+                data.forEach(data => {
+                    this.tags = this.tags.concat(data.tags);
+                })
+                this.tags = [...new Set(this.tags)];
             })
     }
 
@@ -155,6 +158,30 @@ export class GeneralInfoComponent {
                 link.download = 'document.pdf';
                 this.modalService.showPdfViewer(link);
             });
+    }
+
+    onCheckboxChange(event:Event){
+        const checkbox = event.target as HTMLInputElement;
+        const value = checkbox.value;
+
+        if (checkbox.checked) {
+            // Add value to selectedValues if checked
+            this.selectedValues.push(value);
+        } else {
+            // Remove value from selectedValues if unchecked
+            this.selectedValues = this.selectedValues.filter((item) => item !== value);
+        }
+        console.log(this.selectedValues);
+    }
+
+    onInputChange(event: Event){
+        const input = event.target as HTMLInputElement;
+        const value = input.value.split(",");
+        for (let item in value){
+            console.log(item);
+            this.selectedValues.push(item)
+        }
+        console.log(this.selectedValues);
     }
 
     hasHelpDeskRole() {
