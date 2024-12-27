@@ -76,7 +76,10 @@ export class GeneralInfoComponent {
     }
 
     onSubmit() {
-            
+
+        const inputValues = this.form.controls.tags.value.split(",")
+        this.selectedValues = this.selectedValues.concat(inputValues);
+           
         const infoText = {
             email: this.form.controls.email.value,
             lastName: this.form.controls.lastName.value,
@@ -84,7 +87,7 @@ export class GeneralInfoComponent {
             title: this.form.controls.title.value,
             text: this.text,
             file: this.uploadObjectID,
-            // tags: this.form.controls.tags.value
+            tags: this.selectedValues
            
         } as IGeneralInfo;
 
@@ -171,18 +174,17 @@ export class GeneralInfoComponent {
             // Remove value from selectedValues if unchecked
             this.selectedValues = this.selectedValues.filter((item) => item !== value);
         }
-        console.log(this.selectedValues);
     }
 
-    onInputChange(event: Event){
-        const input = event.target as HTMLInputElement;
-        const value = input.value.split(",");
-        for (let item in value){
-            console.log(item);
-            this.selectedValues.push(item)
-        }
-        console.log(this.selectedValues);
-    }
+    // onInputChange(event: Event){
+    //     const input = event.target as HTMLInputElement;
+    //     const value = input.value.split(",");
+    //     for (let item in value){
+    //         console.log(item);
+    //         this.selectedValues.push(item)
+    //     }
+    //     console.log(this.selectedValues);
+    // }
 
     hasHelpDeskRole() {
         return this.userService.hasHelpDeskRole();
