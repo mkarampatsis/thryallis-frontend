@@ -35,6 +35,19 @@
                     class="text-truncate">
                     {{ node.monada.preferredLabel }}
                 </span>
+                <span class="ms-2" ngbTooltip="επεξεργασία">
+                    <i
+                        class="bi bi-pencil-square"
+                        role="button"
+                        (click)="editMonada(node.monada.code)">
+                    </i>
+                </span>
+                @if (node.remitsFinalized){
+                    <span class="ms-2" ngbTooltip="αρμοδιοτήτες ολοκληρωμένες"><i class="bi bi-check-circle text-success"></i></span>
+                } @else {
+                    <span class="ms-2" ngbTooltip="αρμοδιοτήτες μη ολοκληρωμένες"><i class="bi bi-x-circle text-danger"></i></span>
+                }
+                
             </cdk-tree-node>
 
             <!-- This is the tree node template for expandable nodes -->
@@ -63,6 +76,18 @@
                     class="text-truncate">
                     {{ node.monada.preferredLabel }}
                 </span>
+                <span class="ms-2" ngbTooltip="επεξεργασία">
+                    <i
+                        class="bi bi-pencil-square"
+                        role="button"
+                        (click)="editMonada(node.monada.code)">
+                    </i>
+                </span>
+                @if (node.remitsFinalized){
+                    <span class="ms-2" ngbTooltip="αρμοδιοτήτες ολοκληρωμένες"><i class="bi bi-check-circle text-success"></i></span>
+                } @else {
+                    <span class="ms-2" ngbTooltip="αρμοδιοτήτες μη ολοκληρωμένες"><i class="bi bi-x-circle text-danger"></i></span>
+                }
             </cdk-tree-node>
         </cdk-tree>
     }

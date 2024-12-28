@@ -57,16 +57,13 @@ export class OrganizationUnitDetailsComponent {
             .getOrganizationalUnitDetails(this.organizationalUnitCode)
             .pipe(take(1))
             .subscribe((data) => {
-                // console.log("1>>",data);
                 this.organizationalUnit = data;
-                // console.log("2>>",this.organizationalUnit);
             });
 
         this.remitService
             .getRemitsByCode(this.organizationalUnitCode)
             .pipe(take(1))
             .subscribe((data) => {
-                // console.log(data);
                 this.remits = data;
             });
 

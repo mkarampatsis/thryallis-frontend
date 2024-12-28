@@ -50,6 +50,7 @@ export class OrganizationTreeComponent implements OnInit {
             .pipe(take(1))
             .subscribe((data) => {
                 this.organizationTree = data as FlatNode[];
+                console.log(this.organizationTree)
                 this.dataSource = new ArrayDataSource(this.organizationTree);
                 this.isLoading = false;
             });
@@ -80,5 +81,10 @@ export class OrganizationTreeComponent implements OnInit {
 
     showOrganizationUnitDetails(code: string): void {
         this.modalService.showOrganizationUnitDetails(code);
+    }
+
+    editMonada(code: string) {
+        // console.log('editMonada >>>>>>>>>>>>>>>>', code);
+        this.modalService.monadaEdit(code);
     }
 }

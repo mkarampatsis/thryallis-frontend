@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit {
     }
 
     editMonada(code: string) {
-        console.log('editMonada >>>>>>>>>>>>>>>>', code);
+        // console.log('editMonada >>>>>>>>>>>>>>>>', code);
         this.modalService.monadaEdit(code);
     }
 
