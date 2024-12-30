@@ -38,9 +38,11 @@ export class GeneralInfoComponent {
     uploadObjectID: string | null = null;
 
     generalInfo: IGeneralInfo[];
+    showGeneralInfo: IGeneralInfo[];
     text: string;
     tags: string[] | null = [];
     selectedValues: string[] = [];
+    showSelectedValues: string[] = [];
 
     form = new FormGroup({
         email: new FormControl(''),
@@ -103,6 +105,7 @@ export class GeneralInfoComponent {
         this.helpboxService.getGeneralInfo()
             .subscribe((data)=>{
                 this.generalInfo = data;
+                this.showGeneralInfo = this.generalInfo;
                 data.forEach(data => {
                     this.tags = this.tags.concat(data.tags);
                 })
@@ -176,15 +179,25 @@ export class GeneralInfoComponent {
         }
     }
 
-    // onInputChange(event: Event){
-    //     const input = event.target as HTMLInputElement;
-    //     const value = input.value.split(",");
-    //     for (let item in value){
-    //         console.log(item);
-    //         this.selectedValues.push(item)
-    //     }
-    //     console.log(this.selectedValues);
-    // }
+    onCheckboxSelected(event:Event){
+        const checkbox = event.target as HTMLInputElement;
+        const value = checkbox.value;
+        this.showGeneralInfo = this.generalInfo;
+
+        if (checkbox.checked) {
+            // Add value to selectedValues if checked
+            this.showSelectedValues.push(value);
+            this.showSelectedValues.forEach((data) => {
+                this.showGeneralInfo = this.generalInfo.filter((item)=>item.tags.includes(data));
+            })
+        } else {
+            // Remove value from selectedValues if unchecked
+            this.showSelectedValues = this.showSelectedValues.filter((item) => item !== value);
+            this.showSelectedValues.forEach((data) => {
+                this.showGeneralInfo = this.generalInfo.filter((item)=>item.tags.includes(data));
+            })
+        }
+    }
 
     hasHelpDeskRole() {
         return this.userService.hasHelpDeskRole();
