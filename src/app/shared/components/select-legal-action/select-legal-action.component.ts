@@ -69,6 +69,10 @@ export class SelectLegalActionComponent {
         this.selectedLegalAct.emit(this.currentLegalAct.legalActKey);
     }
 
+    onRowDoubleClicked(event: any): void {
+        this.selectedLegalAct.emit(event.data.legalActKey);
+    }
+
     newLegalAct(): void {
         this.modalService.newLegalAct().subscribe((data) => {
             if (data) {

@@ -79,7 +79,7 @@ export class GeneralInfoComponent {
 
     onSubmit() {
 
-        const inputValues = this.form.controls.tags.value.split(",")
+        const inputValues = this.form.controls.tags.value.split(",").map(item => item.trim())
         this.selectedValues = this.selectedValues.concat(inputValues);
            
         const infoText = {

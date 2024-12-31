@@ -14,6 +14,7 @@ import { ListLegalProvisionsComponent } from '../../components/list-legal-provis
 import { cloneDeep, isEqual, uniqWith } from 'lodash-es';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { LegalProvisionService } from '../../services/legal-provision.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-new-remit',
@@ -35,6 +36,7 @@ export class RemitModalComponent implements OnInit, OnDestroy {
     remitService = inject(RemitService);
     modalService = inject(ModalService);
     legalProvisionService = inject(LegalProvisionService);
+    sanitizer = inject(DomSanitizer);
 
     editor: Editor = new Editor();
     toolbar: Toolbar = DEFAULT_TOOLBAR;
@@ -51,6 +53,8 @@ export class RemitModalComponent implements OnInit, OnDestroy {
 
     legalProvisions: ILegalProvision[] = [];
     originalLegalProvisions: ILegalProvision[] = [];
+
+    showInfoText: string = '';
 
     get canAddLegalProvision() {
         return (
@@ -180,7 +184,11 @@ export class RemitModalComponent implements OnInit, OnDestroy {
 
     updateRemitTextWithNewProvision(newText: string) {
         const remitText = this.form.get('remitText').value;
-        const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
+        
+        this.showInfoText = "<p style='color:red'><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>";
+        
+        // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
+        const updatedtext = `${newText}${remitText}`;
 
         this.form.get('remitText').setValue(updatedtext);
     }
@@ -190,11 +198,23 @@ export class RemitModalComponent implements OnInit, OnDestroy {
             let remitText = this.legalProvisions.reduce((acc, legalProvision) => {
                 return acc + this.legalProvisionHeader(legalProvision);
             }, '');
-            remitText = `<p style="color:red"><strong>
-            Το κείμενο ενημερώνεται αυτόματα όσο προσθέτετε Διατάξεις.<br>
-            Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης και πριν την υποβολή της Αρμοδιότητας. (Τουλάχιστον διαγράψτε το κόκκινο σχόλιο)
-            </strong></p>${remitText}`;
+            
+            this.showInfoText = "<p style='color:red'><strong> Το κείμενο ενημερώνεται αυτόματα όσο προσθέτετε Διατάξεις.<br>      Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης και πριν την υποβολή της Αρμοδιότητας. (Τουλάχιστον διαγράψτε το κόκκινο σχόλιο) </strong></p>"
+
+            // remitText = `<p style="color:red"><strong>
+            // Το κείμενο ενημερώνεται αυτόματα όσο προσθέτετε Διατάξεις.<br>
+            // Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης και πριν την υποβολή της Αρμοδιότητας. (Τουλάχιστον διαγράψτε το κόκκινο σχόλιο)
+            // </strong></p>${remitText}`;
+            remitText = `${remitText}`;
             this.form.get('remitText').setValue(remitText);
+        }
+    }
+
+    sanitizeHtml(html) : SafeHtml {
+        if (html) {
+            return this.sanitizer.bypassSecurityTrustHtml(html);
+        } else {
+            return ""
         }
     }
 

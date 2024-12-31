@@ -12,6 +12,7 @@ import { ListLegalProvisionsComponent } from '../../components/list-legal-provis
 import { LegalProvisionService } from '../../services/legal-provision.service';
 import { cloneDeep, isEqual, uniqWith } from 'lodash-es';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-foreas-edit',
@@ -26,6 +27,7 @@ export class ForeasEditComponent implements OnInit, OnDestroy {
     constService = inject(ConstService);
     modalService = inject(ModalService);
     legalProvisionService = inject(LegalProvisionService);
+    sanitizer = inject(DomSanitizer);
 
     legalProvisionsNeedUpdate = this.legalProvisionService.legalProvisionsNeedUpdate;
 
@@ -43,6 +45,7 @@ export class ForeasEditComponent implements OnInit, OnDestroy {
     modalRef: any;
 
     foreas: IForeas;
+    showInfoText: string = '';
 
     organizationLevels = this.constService.ORGANIZATION_LEVELS;
 
@@ -128,13 +131,13 @@ export class ForeasEditComponent implements OnInit, OnDestroy {
             legalProvisions: newLegalProvisions,
         } as IForeas;
 
-        console.log(organization);
+        // console.log(organization);
 
         this.foreasService
             .updateForeas(organization)
             .pipe(take(1))
             .subscribe((response) => {
-                console.log(response);
+                // console.log(response);
                 this.modalRef.dismiss();
             });
     }
@@ -147,8 +150,27 @@ export class ForeasEditComponent implements OnInit, OnDestroy {
                 this.legalProvisions = uniqWith(tempLegalProvision, (a, b) => {
                     return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
                 });
+                this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
             }
         });
+    }
+
+    updateRemitTextWithNewProvision(newText: string) {
+        const remitText = this.provisionText;
+        
+        this.showInfoText = "<p style='color:red'><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της πρόβλεψης μετά την τελευταία προσθήκη Διάταξης:</strong></p>";
+        
+        // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
+        this.provisionText = `${newText}${remitText}`;
+
+    }
+
+    sanitizeHtml(html) : SafeHtml {
+        if (html) {
+            return this.sanitizer.bypassSecurityTrustHtml(html);
+        } else {
+            return ""
+        }
     }
 
     hasChanges(): boolean {

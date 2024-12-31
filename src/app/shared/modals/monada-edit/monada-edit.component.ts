@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { ListLegalProvisionsComponent } from '../../components/list-legal-provisions/list-legal-provisions.component';
 import { MonadesService } from '../../services/monades.service';
 import { OrganizationalUnitService } from '../../services/organizational-unit.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-monada-edit',
@@ -26,6 +27,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
     constService = inject(ConstService);
     modalService = inject(ModalService);
     legalProvisionService = inject(LegalProvisionService);
+    sanitizer = inject(DomSanitizer);
 
     legalProvisionsNeedUpdate = this.legalProvisionService.legalProvisionsNeedUpdate;
 
@@ -41,6 +43,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
     modalRef: any;
 
     monada: IMonada;
+    showInfoText: string = '';
 
     legalProvisions: ILegalProvision[] = [];
     originalLegalProvisions: ILegalProvision[] = [];
@@ -103,13 +106,13 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
             legalProvisions: newLegalProvisions,
         } as IMonada;
 
-        console.log(organizationalUnit);
+        // console.log(organizationalUnit);
 
         this.monadesService
             .updateMonada(organizationalUnit)
             .pipe(take(1))
             .subscribe((response) => {
-                console.log(response);
+                // console.log(response);
                 this.modalRef.dismiss();
             });
     }
@@ -122,8 +125,27 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
                 this.legalProvisions = uniqWith(tempLegalProvision, (a, b) => {
                     return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
                 });
+                this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
             }
         });
+    }
+
+    updateRemitTextWithNewProvision(newText: string) {
+        const remitText = this.provisionText;
+        
+        this.showInfoText = "<p style='color:red'><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της πρόβλεψης μετά την τελευταία προσθήκη Διάταξης:</strong></p>";
+        
+        // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
+        this.provisionText = `${newText}${remitText}`;
+
+    }
+
+    sanitizeHtml(html) : SafeHtml {
+        if (html) {
+            return this.sanitizer.bypassSecurityTrustHtml(html);
+        } else {
+            return ""
+        }
     }
 
     hasChanges(): boolean {
