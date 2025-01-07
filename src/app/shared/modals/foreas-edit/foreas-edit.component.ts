@@ -38,7 +38,7 @@ export class ForeasEditComponent implements OnInit, OnDestroy {
     level: string;
     originalLevel: string;
 
-    provisionText: string;
+    provisionText: string = '';
     originalProvisionText: string;
 
     organization: IOrganization;

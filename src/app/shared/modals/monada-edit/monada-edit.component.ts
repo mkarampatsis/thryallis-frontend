@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, effect, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ConstService } from '../../services/const.service';
 import { ModalService } from '../../services/modal.service';
 import { LegalProvisionService } from '../../services/legal-provision.service';
@@ -17,7 +18,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
     selector: 'app-monada-edit',
     standalone: true,
-    imports: [FormsModule, NgxEditorModule, ListLegalProvisionsComponent],
+    imports: [CommonModule,FormsModule, NgxEditorModule, ListLegalProvisionsComponent],
     templateUrl: './monada-edit.component.html',
     styleUrl: './monada-edit.component.css',
 })
@@ -36,7 +37,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
 
     monada_id: string;
 
-    provisionText: string;
+    provisionText: string = '';
     originalProvisionText: string;
 
     organizationalUnit: IOrganizationUnit;
@@ -136,7 +137,11 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
         this.showInfoText = "<p style='color:red'><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της πρόβλεψης μετά την τελευταία προσθήκη Διάταξης:</strong></p>";
         
         // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
-        this.provisionText = `${newText}${remitText}`;
+        if (remitText) {
+            this.provisionText = `${newText}${remitText}`;
+        } else {
+            this.provisionText = `${newText}`;
+        }
 
     }
 

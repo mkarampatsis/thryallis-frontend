@@ -44,7 +44,10 @@ export class OrganizationUnitDetailsComponent {
     legalProvisionsNeedUpdate = this.legalProvisionService.legalProvisionsNeedUpdate;
     remitsNeedUpdate = this.remitService.remitsNeedUpdate;
 
-    remits: IRemit[] = [];
+    // remits: IRemit[] = [];
+    remitsEnabled: IRemit[] = [];
+    remitsDisabled: IRemit[] = [];
+    showDisabled: Boolean = false;
 
     organizationalUnitCode: string | null = null;
     // organizationalUnit: IOrganizationUnit | null = null;
@@ -59,13 +62,14 @@ export class OrganizationUnitDetailsComponent {
             .subscribe((data) => {
                 this.organizationalUnit = data;
             });
-
-        this.remitService
-            .getRemitsByCode(this.organizationalUnitCode)
-            .pipe(take(1))
-            .subscribe((data) => {
-                this.remits = data;
-            });
+        
+        this.getRemits(this.organizationalUnitCode)
+        // this.remitService
+        //     .getRemitsByCode(this.organizationalUnitCode)
+        //     .pipe(take(1))
+        //     .subscribe((data) => {
+        //         this.remits = data;
+        //     });
 
         this.organizationalUnitService
             .getMonadaPsped(this.organizationalUnitCode)
@@ -79,22 +83,24 @@ export class OrganizationUnitDetailsComponent {
         effect(
             () => {
                 if (this.legalProvisionsNeedUpdate()) {
-                    this.remitService
-                        .getRemitsByCode(this.organizationalUnitCode)
-                        .pipe(take(1))
-                        .subscribe((data) => {
-                            this.remits = data;
-                        });
+                    this.getRemits(this.organizationalUnitCode)
+                    // this.remitService
+                    //     .getRemitsByCode(this.organizationalUnitCode)
+                    //     .pipe(take(1))
+                    //     .subscribe((data) => {
+                    //         this.remits = data;
+                    //     });
                     this.legalProvisionsNeedUpdate.set(false);
                 }
 
                 if (this.remitsNeedUpdate()) {
-                    this.remitService
-                        .getRemitsByCode(this.organizationalUnitCode)
-                        .pipe(take(1))
-                        .subscribe((data) => {
-                            this.remits = data;
-                        });
+                    this.getRemits(this.organizationalUnitCode)
+                    // this.remitService
+                    //     .getRemitsByCode(this.organizationalUnitCode)
+                    //     .pipe(take(1))
+                    //     .subscribe((data) => {
+                    //         this.remits = data;
+                    //     });
                     this.remitsNeedUpdate.set(false);
                 }
             },
@@ -157,6 +163,21 @@ export class OrganizationUnitDetailsComponent {
                         remitsFinalized: data.remitsFinalized,
                     }),
                 );
+            });
+    }
+
+    showDisabledRemits(status:boolean){
+        this.showDisabled = status
+    }
+
+    getRemits(code:string){
+        this.remitService
+            .getRemitsByCode(code)
+            .pipe(take(1))
+            .subscribe((data) => {
+                this.remitsEnabled = data.filter(item => item.status==="ΕΝΕΡΓΗ")
+                this.remitsDisabled = data.filter(item => item.status==="ΑΝΕΝΕΡΓΗ")
+                // this.remits = data;
             });
     }
 }
