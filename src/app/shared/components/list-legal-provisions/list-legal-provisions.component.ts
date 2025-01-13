@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-
+import { CommonModule } from '@angular/common';
 import { ILegalProvision } from '../../interfaces/legal-provision/legal-provision.interface';
 import { ModalService } from '../../services/modal.service';
 import { LegalProvisionService } from '../../services/legal-provision.service';
 import { indexOf } from 'lodash-es';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-list-legal-provisions',
     standalone: true,
-    imports: [ClipboardModule],
+    imports: [CommonModule, ClipboardModule, NgbTooltipModule],
     templateUrl: './list-legal-provisions.component.html',
     styleUrl: './list-legal-provisions.component.css',
 })

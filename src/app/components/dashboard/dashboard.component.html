@@ -56,12 +56,14 @@
                             <i
                                 class="bi bi-info-circle"
                                 role="button"
-                                (click)="showOrganizationDetails(organization.code)"></i>
+                                (click)="showOrganizationDetails(organization.code)"
+                                ngbTooltip="Στοιχεία Φορέα"></i>
 
                             <i
                                 class="bi bi-pencil-square"
                                 role="button"
-                                (click)="editForeas(organization.code)"></i>
+                                (click)="editForeas(organization.code)"
+                                ngbTooltip="Επεξεργασία Φορέα"></i>
                         </td>
                     </tr>
                 }
@@ -108,12 +110,14 @@
                             <i
                                 class="bi bi-info-circle"
                                 role="button"
-                                (click)="showOrganizationalUnitDetails(organizational_unit.code)"></i>
+                                (click)="showOrganizationalUnitDetails(organizational_unit.code)"
+                                ngbTooltip="Στοιχεία Μονάδας"></i>
 
                             <i
                                 class="bi bi-pencil-square"
                                 role="button"
-                                (click)="editMonada(organizational_unit.code)"></i>
+                                (click)="editMonada(organizational_unit.code)"
+                                ngbTooltip="Επεξεργασία Μονάδας"></i>
 
                             <!-- <i
                                 class="bi bi-gear"
