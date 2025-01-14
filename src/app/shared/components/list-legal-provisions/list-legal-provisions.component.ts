@@ -6,6 +6,9 @@ import { ModalService } from '../../services/modal.service';
 import { LegalProvisionService } from '../../services/legal-provision.service';
 import { indexOf } from 'lodash-es';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { LegalActService } from '../../services/legal-act.service';
+import { FileUploadService } from 'src/app/shared/services/file-upload.service';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-list-legal-provisions',
@@ -23,6 +26,9 @@ export class ListLegalProvisionsComponent implements OnChanges {
     @Input() actionColumnVisible = false;
     modalService = inject(ModalService);
     legalProvisionService = inject(LegalProvisionService);
+    legalActService = inject(LegalActService);
+    uploadService = inject(FileUploadService);
+
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.legalProvisions) {
@@ -56,7 +62,7 @@ export class ListLegalProvisionsComponent implements OnChanges {
     }
 
     removeLegalProvision(i: number) {
-        console.log(this.legalProvisions);
+        // console.log(this.legalProvisions);
         this.modalService
             .getUserConsent(
                 `Πρόκειται να διαγράψετε τη διάταξη που βασίζεται στο <strong>${this.legalProvisions[i].legalActKey}</strong>. Παρακαλούμε επιβεβαιώστε ότι επιθυμείτε να συνεχίσετε.`,
@@ -117,5 +123,23 @@ export class ListLegalProvisionsComponent implements OnChanges {
 
     get countAllLegalProvisionsExceptNew() {
         return this.legalProvisions.filter((provision) => !provision.isNew).length;
+    }
+
+    displayPDF(legalActKey:string){
+        this.legalActService
+            .getLegalActByActKey(legalActKey)
+            .pipe(take(1))
+            .subscribe((data) => {
+                this.uploadService
+                    .getUploadByID(data.legalActFile.$oid)
+                    .pipe(take(1))
+                    .subscribe((data) => {
+                        const url = window.URL.createObjectURL(data);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'document.pdf';
+                        this.modalService.showPdfViewer(link);
+                    });
+            });
     }
 }

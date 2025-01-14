@@ -151,7 +151,17 @@
                                                     [ngClass]="{
                                                         'bg-warning': remit.status === 'ΑΝΕΝΕΡΓΗ'
                                                     }">
-                                                    <div [innerHTML]="remit.remitText"></div>
+                                                    <div class="d-flex flex-row">
+                                                        <div class="flex-grow-1" [innerHTML]="remit.remitText"></div>
+                                                        <div>
+                                                            <i 
+                                                                role="button"
+                                                                (click)="deleteRemit(remit._id)"
+                                                                class="bi bi-trash text-danger"
+                                                                ngbTooltip="Διαγραφή αρμοδιότητας"></i>
+                                                        </div>
+                                                    </div>
+                                                    
                                                     <table class="table table-bordered">
                                                         <tr>
                                                             <td class="fw-semibold">Τύπος Αρμοδιότητας</td>

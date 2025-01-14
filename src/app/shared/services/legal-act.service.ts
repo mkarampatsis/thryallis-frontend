@@ -31,6 +31,12 @@ export class LegalActService {
         return this.http.get<ILegalAct>(url);
     }
 
+    getLegalActByActKey(id: string): Observable<ILegalAct> {
+        const encodedId = encodeURIComponent(id);
+        const url = `${APIPREFIX}/by-act-key/${encodedId}`;
+        return this.http.get<ILegalAct>(url);
+    }
+
     count(): Observable<{ count: number }> {
         const url = `${APIPREFIX}/count`;
         return this.http.get<{ count: number }>(url);

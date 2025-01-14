@@ -16,6 +16,7 @@ import { ICofog } from '../../interfaces/cofog/cofog.interface';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../state/app.state';
 import { setOrgnizationalUnitremitsFinalized } from '../../state/organizational-units.state';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-organization-unit-details',
@@ -27,6 +28,7 @@ import { setOrgnizationalUnitremitsFinalized } from '../../state/organizational-
         ListLegalProvisionsComponent,
         NgbAccordionModule,
         NgbAlertModule,
+        NgbTooltipModule,
     ],
     templateUrl: './organization-unit-details.component.html',
     styleUrl: './organization-unit-details.component.css',
@@ -178,6 +180,25 @@ export class OrganizationUnitDetailsComponent {
                 this.remitsEnabled = data.filter(item => item.status==="ΕΝΕΡΓΗ")
                 this.remitsDisabled = data.filter(item => item.status==="ΑΝΕΝΕΡΓΗ")
                 // this.remits = data;
+            });
+    }
+
+    deleteRemit(id:string){
+        console.log(id);
+        this.modalService
+            .getUserConsent(
+                `Θέλετε να διαγράψετε μια αρμοδιότητα! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
+            )
+            .pipe(take(1))
+            .subscribe((consent) => {
+                console.log(">>>", consent)
+                if (consent) {
+                    this.modalRef.dismiss();
+                    this.remitService.deleteRemitByID(id)
+                        .subscribe(data => {
+                            console.log(data)
+                        })
+                }
             });
     }
 }

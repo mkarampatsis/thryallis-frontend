@@ -40,4 +40,9 @@ export class RemitService {
         const url = `${APIPREFIX}/status/${id}`;
         return this.http.put<{ msg: string }>(url, { status });
     }
+
+    deleteRemitByID(remitID: string): Observable<{message: string}> {
+        const url = `${APIPREFIX}/${remitID}`;
+        return this.http.delete<{ message: string }>(url);
+    }
 }

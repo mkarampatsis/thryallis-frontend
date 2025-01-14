@@ -21,7 +21,7 @@
             @for (legalProvision of legalProvisions; let i = $index; track i) {
                 <tr>
                     <td class="text-center align-content-center">
-                        {{ i + 1 }} {{legalProvision | json}}
+                        {{ i + 1 }}
                     </td>
                     <td class="align-content-center">
                         {{ legalProvision.legalActKey }}
@@ -44,6 +44,11 @@
                             role="button"
                             class="bi bi-copy fs-5"
                             ngbTooltip="Αντιγραφή κειμένου"></i>
+                        <i
+                            (click)="displayPDF(legalProvision.legalActKey)"
+                            role="button"
+                            class="bi bi-file-earmark-pdf fs-5"
+                            ngbTooltip="Εμφάνιση διάταξης"></i>
                     </td>
                     @if (actionColumnVisible) {
                         <td class="text-center align-content-center">
