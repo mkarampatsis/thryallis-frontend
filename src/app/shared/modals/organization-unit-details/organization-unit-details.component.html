@@ -141,7 +141,7 @@
                                     </button>
                                 }
                             </div>
-                            @if (remitsEnabled?.length > 0) {
+                            @if (remitsEnabled?.length > 0 || showDisabled) {
                                 <table class="table table-striped">
                                     <tbody>
                                         @for (remit of remitsEnabled; track remit) {
@@ -159,6 +159,11 @@
                                                                 (click)="deleteRemit(remit._id)"
                                                                 class="bi bi-trash text-danger"
                                                                 ngbTooltip="Διαγραφή αρμοδιότητας"></i>
+                                                            <i 
+                                                                role="button"
+                                                                (click)="copyRemit(remit._id)"
+                                                                class="bi bi-copy text-success ms-2"
+                                                                ngbTooltip="Αντιγραφή αρμοδιότητας"></i>    
                                                         </div>
                                                     </div>
                                                     

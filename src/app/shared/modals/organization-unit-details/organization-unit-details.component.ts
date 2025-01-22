@@ -184,17 +184,36 @@ export class OrganizationUnitDetailsComponent {
     }
 
     deleteRemit(id:string){
-        console.log(id);
+        // console.log(id);
         this.modalService
             .getUserConsent(
                 `Θέλετε να διαγράψετε μια αρμοδιότητα! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
             )
             .pipe(take(1))
             .subscribe((consent) => {
-                console.log(">>>", consent)
+                // console.log(">>>", consent)
                 if (consent) {
                     this.modalRef.dismiss();
                     this.remitService.deleteRemitByID(id)
+                        .subscribe(data => {
+                            console.log(data)
+                        })
+                }
+            });
+    }
+
+    copyRemit(id:string){
+        // console.log(id);
+        this.modalService
+            .getUserConsent(
+                `Θέλετε να αντιγράψετε την συγκεκριμένη αρμοδιότητα! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
+            )
+            .pipe(take(1))
+            .subscribe((consent) => {
+                // console.log(">>>", consent)
+                if (consent) {
+                    this.modalRef.dismiss();
+                    this.remitService.copyRemit(id)
                         .subscribe(data => {
                             console.log(data)
                         })

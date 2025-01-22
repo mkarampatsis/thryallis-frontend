@@ -31,6 +31,11 @@ export class RemitService {
         return this.http.get<IRemit[]>(url);
     }
 
+    copyRemit(id: string): Observable<IRemit> {
+        const url = `${APIPREFIX}/copy/${id}`;
+        return this.http.get<IRemit>(url);
+    }
+
     count(): Observable<{ count: number }> {
         const url = `${APIPREFIX}/count`;
         return this.http.get<{ count: number }>(url);
