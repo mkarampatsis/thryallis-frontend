@@ -84,7 +84,7 @@ export class ListLegalProvisionsComponent implements OnChanges {
     }
 
     editLegalProvision(currentProvision: ILegalProvision): void {
-        console.log('CURRENT PROVISION >>>>>>>>>>>>>>>>', currentProvision);
+        // console.log('CURRENT PROVISION >>>>>>>>>>>>>>>>', currentProvision);
         this.modalService.editLegalProvision(currentProvision).subscribe((data) => {
             if (data) {
                 const updatedProvision = data.legalProvision;

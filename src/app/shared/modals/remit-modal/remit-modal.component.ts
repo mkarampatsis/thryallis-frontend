@@ -92,7 +92,7 @@ export class RemitModalComponent implements OnInit, OnDestroy {
             });
 
         if (this.remit) {
-            console.log('UPDATING REMIT', this.remit);
+            // console.log('UPDATING REMIT', this.remit);
             // populate form with remit data
             this.form.get('remitText').setValue(this.remit.remitText);
             this.form.get('remitType').setValue(this.remit.remitType);

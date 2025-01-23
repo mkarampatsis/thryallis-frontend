@@ -127,7 +127,7 @@ export class OrganizationUnitDetailsComponent {
     }
 
     updateRemit(remit: IRemit) {
-        console.log(this.organizationalUnitCode, this.organizationUnitPrefferedLabel(this.organizationalUnitCode));
+        // console.log(this.organizationalUnitCode, this.organizationUnitPrefferedLabel(this.organizationalUnitCode));
         this.modalService.editRemit(
             {
                 preferredLabel: this.organizationUnitPrefferedLabel(this.organizationalUnitCode),
@@ -212,10 +212,17 @@ export class OrganizationUnitDetailsComponent {
             .subscribe((consent) => {
                 // console.log(">>>", consent)
                 if (consent) {
-                    this.modalRef.dismiss();
+                    // this.modalRef.dismiss();
                     this.remitService.copyRemit(id)
                         .subscribe(data => {
-                            console.log(data)
+                            // console.log(data)
+                            this.modalService.editRemit(
+                                {
+                                    preferredLabel: this.organizationUnitPrefferedLabel(this.organizationalUnitCode),
+                                    code: this.organizationalUnitCode,
+                                },
+                                data.remit,
+                            );
                         })
                 }
             });

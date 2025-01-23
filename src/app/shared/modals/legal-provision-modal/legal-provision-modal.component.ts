@@ -37,6 +37,7 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
             legalActText: new FormControl('', Validators.required),
             legalProvisionSpecs: new FormGroup({
                 meros: new FormControl(''),
+                kefalaio: new FormControl(''),
                 arthro: new FormControl(''),
                 paragrafos: new FormControl(''),
                 edafio: new FormControl(''),
@@ -49,10 +50,13 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         if (this.legalProvision) {
+            // if (!this.legalProvision.legalProvisionSpecs.kefalaio) {
+            //     this.legalProvision.legalProvisionSpecs.kefalaio = "-";
+            // }
             this.selectedLegalActKey = this.legalProvision.legalActKey;
-            this.form.get('legalActText').setValue(this.legalProvision.legalProvisionText);
-            this.form.get('legalProvisionSpecs').setValue(this.legalProvision.legalProvisionSpecs);
-            this.form.get('legalActKey').setValue(this.legalProvision.legalActKey);
+            this.form.get('legalActText')?.setValue(this.legalProvision.legalProvisionText);
+            this.form.get('legalProvisionSpecs')?.setValue(this.legalProvision.legalProvisionSpecs);
+            this.form.get('legalActKey')?.setValue(this.legalProvision.legalActKey);
         }
     }
 
@@ -63,6 +67,7 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
     checkLegalProvision(form: FormGroup): { [key: string]: boolean } | null {
         if (
             form.get('legalProvisionSpecs').get('meros').value.trim() !== '' ||
+            form.get('legalProvisionSpecs').get('kefalaio').value.trim() !== '' ||
             form.get('legalProvisionSpecs').get('arthro').value.trim() !== '' ||
             form.get('legalProvisionSpecs').get('paragrafos').value.trim() !== '' ||
             form.get('legalProvisionSpecs').get('edafio').value.trim() !== '' ||

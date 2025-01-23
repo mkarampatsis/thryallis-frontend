@@ -19,6 +19,11 @@
                         Μέρος
                     </th>
                     <th
+                        *ngIf="legalProvision.legalProvisionSpecs.kefalaio"
+                        class="text-center">
+                        Κεφάλαιο
+                    </th>
+                    <th
                         *ngIf="legalProvision.legalProvisionSpecs.arthro"
                         class="text-center">
                         Άρθρο
