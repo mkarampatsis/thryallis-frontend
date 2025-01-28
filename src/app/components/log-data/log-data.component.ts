@@ -125,9 +125,9 @@ export class LogDataComponent {
 
     onCellClicked(event: any): void  {
         console.log(event.colDef.field, event.data['organizationCode'])
-        if (event.colDef.field="organizationLabel") {
+        if (event.colDef.field=="organizationLabel") {
             this.modalService.showChangeDetails(event.data['organizationCode']);
-        } else if (event.colDef.field="organizationUnitLabel") {
+        } else if (event.colDef.field=="organizationUnitLabel") {
             this.modalService.showChangeDetails(event.data['organizationUnitCode']);
         } else {
             console.log("Nothing to show")

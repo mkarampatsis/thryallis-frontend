@@ -5,7 +5,7 @@
     
     <div class="d-flex justify-content-between small">
         <div>
-            <span>Eπιλέξτε φορέα που επιθυμείτε</span>
+            <span>Eπιλέξτε φορέα/μονάδα που επιθυμείτε</span>
         </div>
         <div>
             <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix1()">Καθάρισμα επιλογών</button>
@@ -16,13 +16,18 @@
         [domLayout]="'autoHeight'"
         [rowData]="monades"
         [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Matrix1"
+        [columnDefs]="colDefs"
         [pagination]="true"
         [paginationPageSize]="10"
         [loadingOverlayComponent]="loadingOverlayComponent"
         [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        rowSelection="multiple"
-        (rowSelected)="onRowSelected_Matrix1($event)"
-        (gridReady)="onGridReady_Matrix1($event)"
-        class="ag-theme-balham"></ag-grid-angular>
+        rowSelection="single"
+        (cellClicked)="onCellClicked($event)"
+        (gridReady)="onGridReady($event)"
+        class="ag-theme-balham">
+    </ag-grid-angular>
 </div>
+
+@if (organizationCode) {
+    <app-organization-tree [organizationCode]="organizationCode"></app-organization-tree>
+}
