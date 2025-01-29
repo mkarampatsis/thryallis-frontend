@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { CdkTreeModule, FlatTreeControl } from '@angular/cdk/tree';
 import { Component, Input, OnInit, inject } from '@angular/core';
@@ -5,54 +6,79 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { take } from 'rxjs';
+import { forkJoin, map, switchMap, take } from 'rxjs';
 
 import { IOrganizationTreeNode } from 'src/app/shared/interfaces/organization/organization-tree-node.interface';
 import { OrganizationService } from 'src/app/shared/services/organization.service';
 import { ModalService } from '../../services/modal.service';
+import { RemitService } from '../../services/remit.service';
+import { IRemit } from '../../interfaces/remit/remit.interface';
 
 interface FlatNode extends IOrganizationTreeNode {
     isExpanded?: boolean;
 }
 
 @Component({
-    selector: 'app-organization-tree',
+    selector: 'app-organization-tree-report',
     standalone: true,
     imports: [
+        CommonModule,
         CdkTreeModule,
         MatIconModule,
         MatButtonModule,
         MatProgressSpinnerModule,
         NgbAlertModule,
-        NgbTooltipModule,
+        NgbTooltipModule
     ],
-    templateUrl: './organization-tree.component.html',
-    styleUrl: './organization-tree.component.css',
+    templateUrl: './organization-tree-report.component.html',
+    styleUrl: './organization-tree-report.component.css'
 })
-export class OrganizationTreeComponent implements OnInit {
+export class OrganizationTreeReportComponent implements OnInit {
     @Input() organizationCode: string | null = null;
+    @Input() code: string | null = null;
+
     organizationService = inject(OrganizationService);
     modalService = inject(ModalService);
+    remitService = inject(RemitService)
+
+    remits: IRemit[] = []
 
     organizationTree: IOrganizationTreeNode[] | null = null;
-    dataSource: ArrayDataSource<FlatNode> | null = null;
-    treeControl = new FlatTreeControl<FlatNode>(
-        (node) => node.level,
-        (node) => node.expandable,
-    );
-    hasChild = (_: number, node: FlatNode) => node.expandable;
 
     isLoading = true;
 
     ngOnInit(): void {
+        console.log(">>>", this.organizationCode, this.code)
+        // this.organizationService
+        //     .getOrganizationTree(this.organizationCode)
+        //     .pipe(take(1))
+        //     .subscribe((data) => {
+        //         this.organizationTree = data as FlatNode[];
+        //         this.organizationTree.forEach(data=>{
+
+        //         })
+        //         console.log(this.organizationTree)
+        //         this.isLoading = false;
+        //     });
         this.organizationService
-            .getOrganizationTree(this.organizationCode)
-            .pipe(take(1))
-            .subscribe((data) => {
-                this.organizationTree = data as FlatNode[];
-                this.dataSource = new ArrayDataSource(this.organizationTree);
-                this.isLoading = false;
-            });
+        .getOrganizationTree(this.organizationCode)
+        .pipe(
+            take(1),
+            switchMap((data: FlatNode[]) => {
+            this.organizationTree = data; // Save the organization tree
+            const remitRequests = data.map(node =>
+                this.remitService.getRemitsByCode(node.monada.code).pipe(
+                map(remits => ({ ...node, remits })) // Add remits to each node
+                )
+            );
+            return forkJoin(remitRequests); // Wait for all requests to complete
+            })
+        )
+        .subscribe(updatedTree => {
+            this.organizationTree = updatedTree; // Update the tree with remits
+            console.log(this.organizationTree);
+            this.isLoading = false;
+        });
     }
 
     getParentNode(node: FlatNode): FlatNode | null {
@@ -85,5 +111,14 @@ export class OrganizationTreeComponent implements OnInit {
     editMonada(code: string) {
         // console.log('editMonada >>>>>>>>>>>>>>>>', code);
         this.modalService.monadaEdit(code);
+    }
+
+    getRemits(code: string){
+        this.remitService.getRemitsByCode(code)
+            .subscribe(data => {
+                this.remits = data;
+                console.log(this.remits);
+                return this.remits;
+            })
     }
 }

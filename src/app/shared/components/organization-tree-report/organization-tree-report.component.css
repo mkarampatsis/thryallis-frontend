@@ -1,0 +1,6 @@
+.tree-node {
+    display: flex;
+    align-items: center;
+    font-size: small;
+    height: 1.9rem;
+}

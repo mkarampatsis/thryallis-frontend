@@ -1,0 +1,51 @@
+@if (isLoading) {
+    <div
+        class="d-flex justify-content-center align-items-center"
+        style="height: 100%">
+        <mat-spinner></mat-spinner>
+    </div>
+} @else {
+    @if (organizationTree?.length === 0) {
+        <ngb-alert
+            [type]="'info'"
+            [dismissible]="false">
+            Δεν υπάρχουν μονάδες στο φορέα.
+        </ngb-alert>
+    } @else {
+        @for (item of organizationTree; track item) {
+            @if (item.level==0) {
+                <h1 class="govgr-heading-xl">{{item.monada.preferredLabel}}</h1>
+                @if (item.monada.code == code) {
+                    <p class="text-danger">FOUND</p>
+                }
+            } @else if (item.level==1) {
+                <h2 class="govgr-heading-lg bg-secondary-subtle">{{item.monada.preferredLabel}}</h2>
+                @if (item.monada.code == code) {
+                    <p class="text-danger">FOUND</p>
+                }
+            }  @else if (item.level==2) {
+                <h3 class="govgr-heading-md">{{item.monada.preferredLabel}}</h3>
+                @if (item.monada.code == code) {
+                    <p class="text-danger">FOUND</p>
+                }
+            } @else if (item.level==3) {
+                <h4 class="govgr-heading-sm">{{item.monada.preferredLabel}}</h4>
+                @if (item.monada.code == code) {
+                    <p class="text-danger">FOUND</p>
+                }
+            } @else if (item.level==4) {
+                <h5>{{item.monada.preferredLabel}}</h5>
+                @if (item.monada.code == code) {
+                    <p class="text-danger">FOUND</p>
+                }
+            } @else {
+                <p>{{item.monada.preferredLabel}}</p>
+                @if (item.monada.code == code) {
+                    <p class="text-danger">FOUND</p>
+                }
+            } 
+            <!-- {{item | json}} -->
+        } 
+    }
+}
+

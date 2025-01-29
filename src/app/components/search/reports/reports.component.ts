@@ -10,12 +10,12 @@ import { Subscription, take } from 'rxjs';
 
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
-import { OrganizationTreeComponent } from 'src/app/shared/components/organization-tree/organization-tree.component';
+import { OrganizationTreeReportComponent } from 'src/app/shared/components/organization-tree-report/organization-tree-report.component';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [AgGridAngular, OrganizationTreeComponent],
+  imports: [AgGridAngular, OrganizationTreeReportComponent],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css'
 })
@@ -70,6 +70,7 @@ export class ReportsComponent {
     matrixData = []
     showTable = false
     organizationCode: string | null = null;
+    code: string | null = null;
 
     onGridReady(params: GridReadyEvent<IOrganizationList>): void {
         this.gridApiOrganizationalUnit = params.api;
@@ -90,16 +91,15 @@ export class ReportsComponent {
     }
 
     onCellClicked(event: any): void  {
-        const selectedNodes = event.api.getSelectedNodes();
-        console.log(selectedNodes[0].data);
-        console.log(event.colDef.field)
+
+        this.organizationCode = event.data['organizationCode']
+
         if (event.colDef.field=="preferredLabel") {
-            console.log("1>>>",event.data['code'])
+            this.code = event.data['code']
         } else if (event.colDef.field=="organization") {
-            console.log("2>>>",event.data['organizationCode'])
-            this.organizationCode = event.data['organizationCode']
+            this.code = event.data['organizationCode']
         } else if (event.colDef.field=="subOrganizationOf") {
-            console.log("3>>>",event.data['supervisorUnitCode'])
+            this.code = event.data['supervisorUnitCode']
         } else {
             console.log("Nothing to show")
         }
