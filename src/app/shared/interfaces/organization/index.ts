@@ -8,3 +8,4 @@ export * from './purpose.interface';
 export * from './sub-organization.interface';
 export * from './organization-list.interface';
 export * from './organization-tree-node.interface';
+export * from './organization-tree-report.interface';

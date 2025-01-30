@@ -105,13 +105,6 @@ export class ReportsComponent {
         }
     }
 
-    clearSelectionMatrix1() {
-        if (this.gridApiOrganization) {
-            this.gridApiOrganization.deselectAll(); // Clear all selected rows
-            this.gridApiOrganization.setFilterModel(null);
-        }
-    }
-
     ngOnDestroy(): void {
         this.subscriptions.forEach((sub) => sub.unsubscribe());
     }

@@ -8,13 +8,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin, map, switchMap, take } from 'rxjs';
 
-import { IOrganizationTreeNode } from 'src/app/shared/interfaces/organization/organization-tree-node.interface';
+import { IOrganizationTreeReport } from 'src/app/shared/interfaces/organization/organization-tree-report.interface';
 import { OrganizationService } from 'src/app/shared/services/organization.service';
 import { ModalService } from '../../services/modal.service';
 import { RemitService } from '../../services/remit.service';
 import { IRemit } from '../../interfaces/remit/remit.interface';
+import { ShowTreeReportComponent } from './show-tree-report/show-tree-report.component';
+import { OrganizationNode } from '../../interfaces/search/search.interface';
+import { SearchService } from '../../services/search.service';
 
-interface FlatNode extends IOrganizationTreeNode {
+interface FlatNode extends IOrganizationTreeReport {
     isExpanded?: boolean;
 }
 
@@ -28,7 +31,8 @@ interface FlatNode extends IOrganizationTreeNode {
         MatButtonModule,
         MatProgressSpinnerModule,
         NgbAlertModule,
-        NgbTooltipModule
+        NgbTooltipModule,
+        ShowTreeReportComponent
     ],
     templateUrl: './organization-tree-report.component.html',
     styleUrl: './organization-tree-report.component.css'
@@ -40,26 +44,18 @@ export class OrganizationTreeReportComponent implements OnInit {
     organizationService = inject(OrganizationService);
     modalService = inject(ModalService);
     remitService = inject(RemitService)
+    searchService = inject(SearchService)
 
     remits: IRemit[] = []
 
-    organizationTree: IOrganizationTreeNode[] | null = null;
+    organizationTree: IOrganizationTreeReport[] | null = null;
+    hierarchicalData: OrganizationNode[] = [];
 
     isLoading = true;
 
     ngOnInit(): void {
-        console.log(">>>", this.organizationCode, this.code)
-        // this.organizationService
-        //     .getOrganizationTree(this.organizationCode)
-        //     .pipe(take(1))
-        //     .subscribe((data) => {
-        //         this.organizationTree = data as FlatNode[];
-        //         this.organizationTree.forEach(data=>{
-
-        //         })
-        //         console.log(this.organizationTree)
-        //         this.isLoading = false;
-        //     });
+        // console.log(">>>", this.organizationCode, this.code)
+        
         this.organizationService
         .getOrganizationTree(this.organizationCode)
         .pipe(
@@ -76,41 +72,34 @@ export class OrganizationTreeReportComponent implements OnInit {
         )
         .subscribe(updatedTree => {
             this.organizationTree = updatedTree; // Update the tree with remits
-            console.log(this.organizationTree);
+            this.hierarchicalData = this.buildHierarchy(this.organizationTree);
             this.isLoading = false;
         });
     }
 
-    getParentNode(node: FlatNode): FlatNode | null {
-        const nodeIndex = this.organizationTree.indexOf(node);
-
-        for (let i = nodeIndex - 1; i >= 0; i--) {
-            if (this.organizationTree[i].level === node.level - 1) {
-                return this.organizationTree[i];
-            }
+    buildHierarchy(flatList: OrganizationNode[]): OrganizationNode[] {
+        const rootNodes: OrganizationNode[] = [];
+        const stack: OrganizationNode[] = [];
+    
+        for (const node of flatList) {
+          node.children = []; // Ensure every node has a `children` array
+    
+          while (stack.length > 0 && stack[stack.length - 1].level >= node.level) {
+            stack.pop(); // Move up the hierarchy if needed
+          }
+    
+          if (stack.length > 0) {
+            stack[stack.length - 1].children!.push(node); // Add child to the last element in stack
+          } else {
+            rootNodes.push(node); // If no parent, it's a root node
+          }
+    
+          if (node.expandable) {
+            stack.push(node); // Push expandable nodes to stack
+          }
         }
-
-        return null;
-    }
-
-    shouldRender(node: FlatNode) {
-        let parent = this.getParentNode(node);
-        while (parent) {
-            if (!parent.isExpanded) {
-                return false;
-            }
-            parent = this.getParentNode(parent);
-        }
-        return true;
-    }
-
-    showOrganizationUnitDetails(code: string): void {
-        this.modalService.showOrganizationUnitDetails(code);
-    }
-
-    editMonada(code: string) {
-        // console.log('editMonada >>>>>>>>>>>>>>>>', code);
-        this.modalService.monadaEdit(code);
+    
+        return rootNodes;
     }
 
     getRemits(code: string){
@@ -120,5 +109,9 @@ export class OrganizationTreeReportComponent implements OnInit {
                 console.log(this.remits);
                 return this.remits;
             })
+    }
+
+    onBtnExportExcel(){
+        this.searchService.onExportToExcelReport(this.hierarchicalData)
     }
 }

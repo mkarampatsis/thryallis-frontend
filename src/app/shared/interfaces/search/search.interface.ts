@@ -56,3 +56,12 @@ export interface ISearchGridOutput {
         }[] | null;
       }[];
   } 
+
+export interface OrganizationNode {
+    expandable: boolean;
+    monada: { preferredLabel: string; code: string };
+    level: number;
+    remitsFinalized: boolean;
+    remits: any[];
+    children?: OrganizationNode[]; // Store child elements dynamically
+}

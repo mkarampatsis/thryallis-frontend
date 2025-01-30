@@ -12,6 +12,8 @@ import { Organization } from '../interfaces/search/search.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
 import { LegalProvisionService } from './legal-provision.service';
+import { OrganizationNode } from '../interfaces/search/search.interface';
+
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
@@ -351,4 +353,57 @@ export class SearchService {
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
         saveAs(blob, `export.xlsx`);
     }
+
+    onExportToExcelReport(hierarchicalData: OrganizationNode[]) {
+        const flattenedData: any[] = [];
+        this.flattenTree(hierarchicalData, '', flattenedData);
+      
+        // Create worksheet
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(flattenedData);
+      
+        // Create workbook
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Organization Tree');
+      
+        // Save file
+        const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(data, 'OrganizationTree.xlsx');
+    }
+      
+    flattenTree(nodes: OrganizationNode[], prefix: string, result: any[]) {
+        nodes.forEach((node, index) => {
+            const currentPrefix = prefix ? `${prefix}.${index + 1}` : `${index + 1}`;
+        
+            // Extract remitText(s)
+            const remitTexts = node.remits.map(remit => remit.remitText).join(' | ');
+        
+            // Extract legal provisions
+            const legalProvisions = node.remits
+            .flatMap(remit =>
+                remit.legalProvisions.map(lp => 
+                `${lp.legalActKey} [${Object.entries(lp.legalProvisionSpecs)
+                    .map(([key, value]) => `${key}: ${value}`)
+                    .join(', ')}]`
+                )
+            )
+            .join(' | ');
+        
+            result.push({
+                Hierarchy: currentPrefix,
+                Name: node.monada.preferredLabel,
+                Code: node.monada.code,
+                Level: node.level,
+                Expandable: node.expandable ? 'Yes' : 'No',
+                RemitsFinalized: node.remitsFinalized ? 'Yes' : 'No',
+                RemitText: remitTexts || 'N/A',
+                LegalProvisions: legalProvisions || 'N/A',
+            });
+        
+            if (node.children && node.children.length > 0) {
+                this.flattenTree(node.children, currentPrefix, result);
+            }
+        });
+    }
+
 }
