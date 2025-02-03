@@ -1,0 +1,29 @@
+<div class="mb-2">
+  @if (node.monada.code == code) {
+    <strong class="text-success"> {{ prefix }}. {{ node.monada.preferredLabel }}</strong>
+  } @else {
+    <strong>{{ prefix }}. {{ node.monada.preferredLabel }}</strong>
+  }
+  @if (node.remits.length>0){
+    <ul class="bg-body-secondary">
+      @for (remit of node.remits; track remit) {
+        <li class="list-disc" [innerHTML]="sanitizeHtml(remit.remitText)"></li>
+        <ul>
+          @for (legalProvision of remit.legalProvisions; track legalProvision) {
+            <li class="list-square">{{legalProvision.legalActKey}}</li>    
+          }
+        </ul>
+      }
+    </ul>
+  }
+</div>
+  
+<ul class="list-unstyled ms-4" *ngIf="node.children?.length">
+  <li *ngFor="let child of node.children; let i = index">
+    <app-show-tree-report
+      [node]="child"
+      [prefix]="prefix + '.' + (i + 1)"
+      [code] = "code">      
+    </app-show-tree-report>
+  </li>
+</ul>
