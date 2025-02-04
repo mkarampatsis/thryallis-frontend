@@ -11,6 +11,7 @@ import { Subscription, take } from 'rxjs';
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
 import { OrganizationTreeReportComponent } from 'src/app/shared/components/organization-tree-report/organization-tree-report.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-reports',
@@ -69,9 +70,11 @@ export class ReportsComponent {
     selectedData = []
     matrixData = []
     showTable = false
+    
     organizationCode: string | null = null;
     code: string | null = null;
-
+    organizationName: string | null = null
+    
     onGridReady(params: GridReadyEvent<IOrganizationList>): void {
         this.gridApiOrganizationalUnit = params.api;
         this.gridApiOrganizationalUnit.showLoadingOverlay();
@@ -93,6 +96,9 @@ export class ReportsComponent {
     onCellClicked(event: any): void  {
 
         this.organizationCode = event.data['organizationCode']
+        console.log(event.data);
+
+        this.organizationName = event.data['organization']
 
         if (event.colDef.field=="preferredLabel") {
             this.code = event.data['code']

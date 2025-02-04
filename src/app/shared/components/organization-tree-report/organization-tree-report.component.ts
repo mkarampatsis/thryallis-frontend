@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { CdkTreeModule, FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -39,6 +39,7 @@ interface FlatNode extends IOrganizationTreeReport {
 })
 export class OrganizationTreeReportComponent implements OnInit {
     @Input() organizationCode: string | null = null;
+    @Input() organizationName: string | null = null;
     @Input() code: string | null = null;
 
     organizationService = inject(OrganizationService);
@@ -54,15 +55,17 @@ export class OrganizationTreeReportComponent implements OnInit {
     isLoading = true;
 
     ngOnInit(): void {
-        // console.log(">>>", this.organizationCode, this.code)
+        console.log("1>>>", this.organizationCode, this.code)
         
         this.organizationService
         .getOrganizationTree(this.organizationCode)
         .pipe(
             take(1),
             switchMap((data: FlatNode[]) => {
-            this.organizationTree = data; // Save the organization tree
-            const remitRequests = data.map(node =>
+            // this.organizationTree = data; // Save the organization tree
+            this.organizationTree = this.getSubTree(data, this.code);
+            console.log(">>",this.organizationTree);
+            const remitRequests = this.organizationTree.map(node =>
                 this.remitService.getRemitsByCode(node.monada.code).pipe(
                 map(remits => ({ ...node, remits })) // Add remits to each node
                 )
@@ -77,6 +80,13 @@ export class OrganizationTreeReportComponent implements OnInit {
         });
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['organizationCode'] || changes['code']) {
+            console.log("CH1>>>",changes['organizationCode'], changes['code'])
+            console.log("CH2>>>",this.organizationCode, this.code);
+        }
+    }
+    
     buildHierarchy(flatList: OrganizationNode[]): OrganizationNode[] {
         const rootNodes: OrganizationNode[] = [];
         const stack: OrganizationNode[] = [];
@@ -113,5 +123,32 @@ export class OrganizationTreeReportComponent implements OnInit {
 
     onBtnExportExcel(){
         this.searchService.onExportToExcelReport(this.hierarchicalData)
+    }
+
+    getSubTree(flatTree: any[], code: string): any[] {
+        // Find the root node of the subtree
+        const rootNode = flatTree.find(node => node.monada.code === code);
+        if (!rootNode) {
+            console.warn("Node not found");
+            return [];
+        }
+    
+        const subtree: any[] = [rootNode];
+        const rootLevel = rootNode.level;
+        
+        // Start collecting children
+        for (let i = flatTree.indexOf(rootNode) + 1; i < flatTree.length; i++) {
+            const currentNode = flatTree[i];
+    
+            // Stop when reaching a node at the same or lower level as the root
+            if (currentNode.level <= rootLevel) {
+                break;
+            }
+    
+            // Add to subtree if it's a child
+            subtree.push(currentNode);
+        }
+    
+        return subtree;
     }
 }

@@ -26,5 +26,9 @@
 </div>
 
 @if (organizationCode) {
-    <app-organization-tree-report [organizationCode]="organizationCode" [code]="code"></app-organization-tree-report>
+    <app-organization-tree-report 
+        [organizationName]="organizationName" 
+        [organizationCode]="organizationCode" 
+        [code]="code">
+    </app-organization-tree-report>
 }
