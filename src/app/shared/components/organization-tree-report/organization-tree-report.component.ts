@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { CdkTreeModule, FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Input, OnInit, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, SimpleChanges, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -16,6 +16,9 @@ import { IRemit } from '../../interfaces/remit/remit.interface';
 import { ShowTreeReportComponent } from './show-tree-report/show-tree-report.component';
 import { OrganizationNode } from '../../interfaces/search/search.interface';
 import { SearchService } from '../../services/search.service';
+import { LegalProvisionService } from '../../services/legal-provision.service';
+import { ILegalProvision } from '../../interfaces/legal-provision/legal-provision.interface';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 interface FlatNode extends IOrganizationTreeReport {
     isExpanded?: boolean;
@@ -37,7 +40,7 @@ interface FlatNode extends IOrganizationTreeReport {
     templateUrl: './organization-tree-report.component.html',
     styleUrl: './organization-tree-report.component.css'
 })
-export class OrganizationTreeReportComponent implements OnInit {
+export class OrganizationTreeReportComponent {
     @Input() organizationCode: string | null = null;
     @Input() organizationName: string | null = null;
     @Input() code: string | null = null;
@@ -46,44 +49,61 @@ export class OrganizationTreeReportComponent implements OnInit {
     modalService = inject(ModalService);
     remitService = inject(RemitService)
     searchService = inject(SearchService)
+    legalProvisionService = inject(LegalProvisionService)
+    sanitizer = inject(DomSanitizer);
 
     remits: IRemit[] = []
 
     organizationTree: IOrganizationTreeReport[] | null = null;
     hierarchicalData: OrganizationNode[] = [];
 
+    foreasLegalProvion: ILegalProvision[] = [];  
     isLoading = true;
-
-    ngOnInit(): void {
-        console.log("1>>>", this.organizationCode, this.code)
-        
-        this.organizationService
-        .getOrganizationTree(this.organizationCode)
-        .pipe(
-            take(1),
-            switchMap((data: FlatNode[]) => {
-            // this.organizationTree = data; // Save the organization tree
-            this.organizationTree = this.getSubTree(data, this.code);
-            console.log(">>",this.organizationTree);
-            const remitRequests = this.organizationTree.map(node =>
-                this.remitService.getRemitsByCode(node.monada.code).pipe(
-                map(remits => ({ ...node, remits })) // Add remits to each node
-                )
-            );
-            return forkJoin(remitRequests); // Wait for all requests to complete
-            })
-        )
-        .subscribe(updatedTree => {
-            this.organizationTree = updatedTree; // Update the tree with remits
-            this.hierarchicalData = this.buildHierarchy(this.organizationTree);
-            this.isLoading = false;
-        });
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['organizationCode'] || changes['code']) {
-            console.log("CH1>>>",changes['organizationCode'], changes['code'])
-            console.log("CH2>>>",this.organizationCode, this.code);
+            this.isLoading = true;
+
+            this.legalProvisionService.getLegalProvisionsByRegulatedOrganization(this.organizationCode)
+                .subscribe(data =>{
+                    this.foreasLegalProvion = data;
+            });
+
+            this.organizationService
+            .getOrganizationTree(this.organizationCode)
+            .pipe(
+                take(1),
+                switchMap((data: FlatNode[]) => {
+                    
+                    this.organizationCode!=this.code? this.organizationTree = this.getSubTree(data, this.code): this.organizationTree = data;
+                    const remitRequests = this.organizationTree.map(node =>
+                        this.remitService.getRemitsByCode(node.monada.code).pipe(
+                        map(remits => ({ ...node, remits })) // Add remits to each node
+                        )
+                    );
+
+                    const legalProvisioRequests = this.organizationTree.map(node =>
+                        this.legalProvisionService.getLegalProvisionsByRegulatedOrganizationUnit(node.monada.code).pipe(
+                            map(provisions => ({ ...node, provisions })) // Attach provisions to each node
+                        )
+                    );
+
+                    // Wait for both remitRequests and legalProvisioRequests
+                    return forkJoin([forkJoin(remitRequests), forkJoin(legalProvisioRequests)]).pipe(
+                        map(([remitTree, provisionTree]) =>
+                            remitTree.map((node, index) => ({
+                                ...node,
+                                provisions: provisionTree[index].provisions, // Merge provisions into the same node
+                            }))
+                        )
+                    );
+                })
+            )
+            .subscribe(updatedTree => {
+                this.organizationTree = updatedTree; // Update the tree with remits
+                this.hierarchicalData = this.buildHierarchy(this.organizationTree);
+                this.isLoading = false;
+            });
         }
     }
     
@@ -116,13 +136,20 @@ export class OrganizationTreeReportComponent implements OnInit {
         this.remitService.getRemitsByCode(code)
             .subscribe(data => {
                 this.remits = data;
-                console.log(this.remits);
                 return this.remits;
             })
     }
 
-    onBtnExportExcel(){
-        this.searchService.onExportToExcelReport(this.hierarchicalData)
+    onBtnExportExcel_OrganizationChart(){
+        this.searchService.onExportToExcel_OrganizationChart(this.hierarchicalData)
+    }
+
+    onBtnExportExcel_LegalProvisions(){
+        this.searchService.onExportToExcel_LegalProvisions(this.foreasLegalProvion, this.organizationTree, this.organizationName, this.organizationCode)
+    }
+
+    onBtnExportExcel_Remits(){
+        this.searchService.onExportToExcel_Remits(this.organizationTree)
     }
 
     getSubTree(flatTree: any[], code: string): any[] {
@@ -150,5 +177,13 @@ export class OrganizationTreeReportComponent implements OnInit {
         }
     
         return subtree;
+    }
+
+    sanitizeHtml(html) : SafeHtml {
+        if (html) {
+            return this.sanitizer.bypassSecurityTrustHtml(html);
+        } else {
+            return ""
+        }
     }
 }

@@ -5,7 +5,6 @@
         <mat-spinner></mat-spinner>
     </div>
 } @else {
-    >> {{organizationCode}}, {{code}}
     @if (organizationTree?.length === 0) {
         <ngb-alert
             [type]="'info'"
@@ -14,14 +13,110 @@
         </ngb-alert>
     } @else {
         <div class="container mt-4">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <div><strong>Φορέας:</strong> {{organizationName}}</div>
+            </div>
+
+            <h4 class="govgr-heading-sm bg-body-secondary mt-4 p-2">Οργανόγραμμα</h4>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-primary btn-sm mb-2 me-2" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
+                <button class="btn btn-primary btn-sm mb-2 me-2" (click)="onBtnExportExcel_OrganizationChart()">Εξαγωγή Οργανογράμματος σε Excel</button>
             </div>
             <ul class="list-unstyled">
               <li *ngFor="let node of hierarchicalData; let i = index">
                 <app-show-tree-report [node]="node" [prefix]="(i + 1).toString()" [code]="code"></app-show-tree-report>
               </li>
             </ul>
+
+            
+            <h4 class="govgr-heading-sm bg-body-secondary mt-4 p-2">Διατάξεις Πρόβλεψεις</h4>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-primary btn-sm mb-4 me-2" (click)="onBtnExportExcel_LegalProvisions()">Εξαγωγή Διατάξεων σε Excel</button>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <th>Ονομασία</th>
+                    <th>Διάταξη Πρόβλεψης</th>
+                    <th>Λοιπά Στοιχεία</th>
+                    <th>Κείμενο</th>
+                </thead>
+                <tbody>
+                    @for(item of foreasLegalProvion; track item) {
+                        <tr>
+                            <td>{{organizationName}}</td>
+                            <td>{{item.legalActKey}}</td>
+                            <td>
+                                Μέρος:{{item.legalProvisionSpecs.meros}}, <br>
+                                Κεφάλαιο:{{item.legalProvisionSpecs.kefalaio}}, <br>
+                                'Αρθρο:{{item.legalProvisionSpecs.arthro}},<br>
+                                Παράγραφος:{{item.legalProvisionSpecs.paragrafos}},<br>
+                                Εδάφιο:{{item.legalProvisionSpecs.edafio}},<br>
+                                Παράρτημα:{{item.legalProvisionSpecs.pararthma}},<br>
+                            </td>
+                            <td><span [innerHTML]="sanitizeHtml(item.legalProvisionText)"></span></td>
+                        </tr>
+                    }
+                    @for(item of organizationTree; track item) {
+                        @for(provision of item.provisions; track provision){
+                            <tr>
+                                <td>{{item.monada.preferredLabel}}</td>
+                                <td>{{provision.legalActKey}}</td>
+                                <td>
+                                    Μέρος:{{provision.legalProvisionSpecs.meros}}, <br>
+                                    Κεφάλαιο:{{provision.legalProvisionSpecs.kefalaio}}, <br>
+                                    'Αρθρο:{{provision.legalProvisionSpecs.arthro}},<br>
+                                    Παράγραφος:{{provision.legalProvisionSpecs.paragrafos}},<br>
+                                    Εδάφιο:{{provision.legalProvisionSpecs.edafio}},<br>
+                                    Παράρτημα:{{provision.legalProvisionSpecs.pararthma}},<br>
+                                </td>
+                                <td><span [innerHTML]="sanitizeHtml(provision.legalProvisionText)"></span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            
+            <h4 class="govgr-heading-sm bg-body-secondary mt-4 p-2">Αρμοδιότητες</h4>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-primary btn-sm mb-4 me-2" (click)="onBtnExportExcel_Remits()">Εξαγωγή Αρμοδιοτήτων σε Excel </button>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <th>Ονομασία</th>
+                    <th>Αρμοδιότητα</th>
+                    <th>Διατάξεις Αρμοδιότητας</th>
+                    <th>Κατάσταση</th>
+                </thead>
+                <tbody>
+                    
+                    @for(item of organizationTree; track item) {
+                        @for(remit of item.remits; track remit){
+                            <tr>
+                                <td>{{item.monada.preferredLabel}}</td>
+                                <td><span [innerHTML]="sanitizeHtml(remit.remitText)"></span></td>
+                                <td>
+                                    <ul>
+                                        @for (provision of remit.legalProvisions; track provision){
+                                            <li>{{provision.legalActKey}} 
+                                                (
+                                                    Μέρος:{{provision.legalProvisionSpecs.meros}},
+                                                    Κεφάλαιο:{{provision.legalProvisionSpecs.kefalaio}},
+                                                    'Αρθρο:{{provision.legalProvisionSpecs.arthro}},
+                                                    Παράγραφος:{{provision.legalProvisionSpecs.paragrafos}},
+                                                    Εδάφιο:{{provision.legalProvisionSpecs.edafio}},
+                                                    Παράρτημα:{{provision.legalProvisionSpecs.pararthma}},
+                                                )
+                                            </li>
+                                        }
+                                    </ul>
+
+                                </td>
+                                <td>{{item.remitsFinalized? "Ολοκληρωμένες":"Σε επεξεργασία"}}</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     }
 }

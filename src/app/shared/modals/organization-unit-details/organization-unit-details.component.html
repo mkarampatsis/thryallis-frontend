@@ -131,6 +131,21 @@
                                                 Απόκρυψη Ανεργών Αρμοδιοτήτων
                                             </button>
                                         }
+                                        @if(!showDetails){
+                                            <button
+                                                (click)="showDetailsRemits(true)"
+                                                class="btn btn-secondary ms-2"
+                                                style="max-width: fit-content">
+                                                Εμφάνιση Λεπτομερειών
+                                            </button>
+                                        } @else {
+                                            <button
+                                                (click)="showDetailsRemits(false)"
+                                                class="btn btn-secondary ms-2"
+                                                style="max-width: fit-content">
+                                                Απόκρυψη Λεπτομερειών
+                                            </button>
+                                        }
                                     </div>
                                 } @else {
                                     <button
@@ -167,7 +182,7 @@
                                                         </div>
                                                     </div>
                                                     
-                                                    <table class="table table-bordered">
+                                                    <table *ngIf="showDetails" class="table table-bordered">
                                                         <tr>
                                                             <td class="fw-semibold">Τύπος Αρμοδιότητας</td>
                                                             <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
@@ -185,7 +200,7 @@
                                                             <td>{{ getCofogNames(remit.cofog)[2] }}</td>
                                                         </tr>
                                                     </table>
-                                                    <app-list-legal-provisions
+                                                    <app-list-legal-provisions *ngIf="showDetails"
                                                         [legalProvisions]="
                                                             remit.legalProvisions
                                                         "></app-list-legal-provisions>
@@ -212,7 +227,7 @@
                                                             'bg-warning': remit.status === 'ΑΝΕΝΕΡΓΗ'
                                                         }">
                                                         <div [innerHTML]="remit.remitText"></div>
-                                                        <table class="table table-bordered">
+                                                        <table *ngIf="showDetails" class="table table-bordered">
                                                             <tr>
                                                                 <td class="fw-semibold">Τύπος Αρμοδιότητας</td>
                                                                 <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
@@ -230,7 +245,7 @@
                                                                 <td>{{ getCofogNames(remit.cofog)[2] }}</td>
                                                             </tr>
                                                         </table>
-                                                        <app-list-legal-provisions
+                                                        <app-list-legal-provisions *ngIf="showDetails"
                                                             [legalProvisions]="
                                                                 remit.legalProvisions
                                                             "></app-list-legal-provisions>

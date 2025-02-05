@@ -13,6 +13,8 @@ import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
 import { LegalProvisionService } from './legal-provision.service';
 import { OrganizationNode } from '../interfaces/search/search.interface';
+import { ILegalProvision } from '../interfaces/legal-provision/legal-provision.interface';
+import { IOrganizationTreeReport } from 'src/app/shared/interfaces/organization/organization-tree-report.interface';
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -26,6 +28,7 @@ export class SearchService {
     http = inject(HttpClient);
     constService = inject(ConstService);
     legalProvision = inject(LegalProvisionService)
+
     unitTypes = this.constService.UNIT_TYPES;
 
     store = inject(Store<AppState>);
@@ -354,7 +357,7 @@ export class SearchService {
         saveAs(blob, `export.xlsx`);
     }
 
-    onExportToExcelReport(hierarchicalData: OrganizationNode[]) {
+    onExportToExcel_OrganizationChart(hierarchicalData: OrganizationNode[]) {
         const flattenedData: any[] = [];
         this.flattenTree(hierarchicalData, '', flattenedData);
       
@@ -363,7 +366,7 @@ export class SearchService {
       
         // Create workbook
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Organization Tree');
+        XLSX.utils.book_append_sheet(wb, ws, 'Οργανόγραμμα');
       
         // Save file
         const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -375,29 +378,13 @@ export class SearchService {
         nodes.forEach((node, index) => {
             const currentPrefix = prefix ? `${prefix}.${index + 1}` : `${index + 1}`;
         
-            // Extract remitText(s)
-            const remitTexts = node.remits.map(remit => remit.remitText).join(' | ');
-        
-            // Extract legal provisions
-            const legalProvisions = node.remits
-            .flatMap(remit =>
-                remit.legalProvisions.map(lp => 
-                `${lp.legalActKey} [${Object.entries(lp.legalProvisionSpecs)
-                    .map(([key, value]) => `${key}: ${value}`)
-                    .join(', ')}]`
-                )
-            )
-            .join(' | ');
-        
             result.push({
-                Hierarchy: currentPrefix,
-                Name: node.monada.preferredLabel,
-                Code: node.monada.code,
-                Level: node.level,
-                Expandable: node.expandable ? 'Yes' : 'No',
-                RemitsFinalized: node.remitsFinalized ? 'Yes' : 'No',
-                RemitText: remitTexts || 'N/A',
-                LegalProvisions: legalProvisions || 'N/A',
+                'Ιεραρχία': currentPrefix,
+                'Μονάδα': node.monada.preferredLabel,
+                'Κωδικός Μονάδας': node.monada.code,
+                'Επίπεδο': node.level,
+                'Επεκτάσιμο': node.expandable ? 'Ναι' : 'Όχι',
+                "Κατάσταση Αρμοδιοτήτων" : node.remitsFinalized ? 'Ολοκληρωμένες' : 'Σε Επεξεργασία',
             });
         
             if (node.children && node.children.length > 0) {
@@ -406,4 +393,87 @@ export class SearchService {
         });
     }
 
+    onExportToExcel_LegalProvisions(organizations: ILegalProvision[], organizationalUnits: IOrganizationTreeReport[], organizationName: string, organizationCode:string) {
+        const data: any[] = [];
+
+        // Add organizations legal provisions data
+        organizations.forEach(item => {
+            data.push({
+                'Μονάδα': organizationName,
+                'Κωδικός Μονάδας': organizationCode,
+                'Διάταξη Πρόβλεψης': item.legalActKey,
+                'Μέρος': item.legalProvisionSpecs.meros,
+                'Κεφάλαιο': item.legalProvisionSpecs.kefalaio,
+                'Άρθρο': item.legalProvisionSpecs.arthro,
+                'Παράγραφος': item.legalProvisionSpecs.paragrafos,
+                'Εδάφιο': item.legalProvisionSpecs.edafio,
+                'Παράρτημα': item.legalProvisionSpecs.pararthma,
+                'Κείμενο': item.legalProvisionText
+            });
+        });
+
+        // Add organization units legal provisions data
+        organizationalUnits.forEach(node => {
+            node.provisions.forEach(provision => {
+                data.push({
+                    'Μονάδα': node.monada.preferredLabel,
+                    'Κωδικός Μονάδας': node.monada.code,
+                    'Διάταξη Πρόβλεψης': provision.legalActKey,
+                    'Μέρος': provision.legalProvisionSpecs.meros,
+                    'Κεφάλαιο': provision.legalProvisionSpecs.kefalaio,
+                    'Άρθρο': provision.legalProvisionSpecs.arthro,
+                    'Παράγραφος': provision.legalProvisionSpecs.paragrafos,
+                    'Εδάφιο': provision.legalProvisionSpecs.edafio,
+                    'Παράρτημα': provision.legalProvisionSpecs.pararthma,
+                    'Κείμενο': provision.legalProvisionText
+                });
+            });
+        });
+
+         // Create a new worksheet and workbook
+         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+         const wb: XLSX.WorkBook = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(wb, ws, 'Διατάξεις Πρόβλεψεις');
+ 
+         // Save the file
+         const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+         const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+         saveAs(blob, 'LegalProvisions.xlsx');
+    }
+
+    onExportToExcel_Remits(organizationalUnits: IOrganizationTreeReport[]) {
+        const data: any[] = [];
+        
+        // Add organization units legal provisions data
+        organizationalUnits.forEach(node => {
+            node.remits.forEach(remit => {
+                remit.legalProvisions.forEach(provision =>{
+                    data.push({
+                        'Μονάδα': node.monada.preferredLabel,
+                        'Κωδικός Μονάδας': node.monada.code,
+                        'Αρμοδιότητα': remit.remitText,
+                        'Διάταξη Πρόβλεψης': provision.legalActKey,
+                        'Μέρος': provision.legalProvisionSpecs.meros,
+                        'Κεφάλαιο': provision.legalProvisionSpecs.kefalaio,
+                        'Άρθρο': provision.legalProvisionSpecs.arthro,
+                        'Παράγραφος': provision.legalProvisionSpecs.paragrafos,
+                        'Εδάφιο': provision.legalProvisionSpecs.edafio,
+                        'Παράρτημα': provision.legalProvisionSpecs.pararthma,
+                        'Κείμενο': provision.legalProvisionText,
+                        "Κατάσταση Αρμοδιοτήτων" : node.remitsFinalized ? 'Ολοκληρωμένες' : 'Σε Επεξεργασία',
+                    });
+                })
+            });
+        });
+
+         // Create a new worksheet and workbook
+         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+         const wb: XLSX.WorkBook = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(wb, ws, 'Αρμοδιότητες');
+ 
+         // Save the file
+         const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+         const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+         saveAs(blob, 'Remits.xlsx');
+    }
 }

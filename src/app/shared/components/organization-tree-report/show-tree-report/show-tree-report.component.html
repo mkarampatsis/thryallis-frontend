@@ -1,10 +1,8 @@
 <div class="mb-2">
-  @if (node.monada.code == code) {
-    <strong class="text-success"> {{ prefix }}. {{ node.monada.preferredLabel }}</strong>
-  } @else {
-    <strong>{{ prefix }}. {{ node.monada.preferredLabel }}</strong>
-  }
-  @if (node.remits.length>0){
+  
+  <strong>{{ prefix }}. {{ node.monada.preferredLabel }}</strong>
+  
+  <!-- @if (node.remits.length>0){
     <ul class="bg-body-secondary">
       @for (remit of node.remits; track remit) {
         <li class="list-disc" [innerHTML]="sanitizeHtml(remit.remitText)"></li>
@@ -15,7 +13,7 @@
         </ul>
       }
     </ul>
-  }
+  } -->
 </div>
   
 <ul class="list-unstyled ms-4" *ngIf="node.children?.length">

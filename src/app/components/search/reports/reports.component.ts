@@ -96,8 +96,6 @@ export class ReportsComponent {
     onCellClicked(event: any): void  {
 
         this.organizationCode = event.data['organizationCode']
-        console.log(event.data);
-
         this.organizationName = event.data['organization']
 
         if (event.colDef.field=="preferredLabel") {

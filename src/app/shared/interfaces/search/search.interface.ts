@@ -1,3 +1,6 @@
+import { IRemit } from "../remit/remit.interface"
+import { ILegalProvision } from "../legal-provision/legal-provision.interface"
+
 export interface ISearch {
     organizations: Organization[]
 }
@@ -62,6 +65,7 @@ export interface OrganizationNode {
     monada: { preferredLabel: string; code: string };
     level: number;
     remitsFinalized: boolean;
-    remits: any[];
+    remits: IRemit[];
+    provisions: ILegalProvision[]
     children?: OrganizationNode[]; // Store child elements dynamically
 }

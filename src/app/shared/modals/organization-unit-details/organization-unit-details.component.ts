@@ -50,6 +50,7 @@ export class OrganizationUnitDetailsComponent {
     remitsEnabled: IRemit[] = [];
     remitsDisabled: IRemit[] = [];
     showDisabled: Boolean = false;
+    showDetails: Boolean = false;
 
     organizationalUnitCode: string | null = null;
     // organizationalUnit: IOrganizationUnit | null = null;
@@ -170,6 +171,10 @@ export class OrganizationUnitDetailsComponent {
 
     showDisabledRemits(status:boolean){
         this.showDisabled = status
+    }
+
+    showDetailsRemits(status:boolean){
+        this.showDetails = status
     }
 
     getRemits(code:string){

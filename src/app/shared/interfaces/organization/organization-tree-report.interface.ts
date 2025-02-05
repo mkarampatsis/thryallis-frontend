@@ -1,4 +1,5 @@
 import { IRemit } from "../remit/remit.interface";
+import { ILegalProvision } from "../legal-provision/legal-provision.interface";
 
 export interface IOrganizationTreeReport {
     expandable: boolean;
@@ -9,4 +10,5 @@ export interface IOrganizationTreeReport {
     level: number;
     remitsFinalized: boolean;
     remits: IRemit[]
+    provisions: ILegalProvision[]
 }
