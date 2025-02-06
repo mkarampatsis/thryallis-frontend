@@ -65,6 +65,7 @@ export class OrganizationTreeReportComponent {
             this.isLoading = true;
 
             this.legalProvisionService.getLegalProvisionsByRegulatedOrganization(this.organizationCode)
+                .pipe(take(1))
                 .subscribe(data =>{
                     this.foreasLegalProvion = data;
             });
