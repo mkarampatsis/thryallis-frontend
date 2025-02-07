@@ -96,11 +96,13 @@
                 <div ngbAccordionBody>
                     <ng-template>
                         <div class="d-flex flex-column gap-2">
+
                             <div
                                 class="d-flex justify-content-between"
                                 *ngIf="canEdit(organizationalUnit.code)">
                                 @if (!organizationalUnitRemitsFinalized) {
                                     <button
+                                        *ngIf="user()"
                                         (click)="newRemit()"
                                         class="btn btn-primary"
                                         style="max-width: fit-content">
@@ -108,7 +110,7 @@
                                     </button>
                                     <div>
                                         <button
-                                            *ngIf="remitsEnabled?.length > 0"
+                                            *ngIf="user() && remitsEnabled?.length > 0"
                                             (click)="setRemitsFinalized(true)"
                                             class="btn btn-info"
                                             style="max-width: fit-content">
@@ -149,6 +151,7 @@
                                     </div>
                                 } @else {
                                     <button
+                                        *ngIf="user()"
                                         (click)="setRemitsFinalized(false)"
                                         class="btn btn-info"
                                         style="max-width: fit-content">
@@ -168,7 +171,7 @@
                                                     }">
                                                     <div class="d-flex flex-row">
                                                         <div class="flex-grow-1" [innerHTML]="remit.remitText"></div>
-                                                        <div>
+                                                        <div *ngIf="user()">
                                                             <i 
                                                                 role="button"
                                                                 (click)="deleteRemit(remit._id)"
@@ -205,6 +208,7 @@
                                                             remit.legalProvisions
                                                         "></app-list-legal-provisions>
                                                     <button
+                                                        *ngIf="user()"
                                                         (click)="updateRemit(remit)"
                                                         class="btn btn-primary btn-sm"
                                                         style="max-width: fit-content">
@@ -250,6 +254,7 @@
                                                                 remit.legalProvisions
                                                             "></app-list-legal-provisions>
                                                         <button
+                                                            *ngIf="user()"
                                                             (click)="updateRemit(remit)"
                                                             class="btn btn-primary btn-sm"
                                                             style="max-width: fit-content">

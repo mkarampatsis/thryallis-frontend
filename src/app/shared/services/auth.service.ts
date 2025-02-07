@@ -17,6 +17,7 @@ export class AuthService {
     router = inject(Router);
 
     user = signal(<IUser | null>null);
+    synchronization = signal<boolean>(false);
 
     constructor() {
         this.socialAuthService.authState.subscribe({

@@ -4,64 +4,23 @@
     Κατά τη διάρκεια της δοκιμαστικής περιόδου ανάπτυξης η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους
     χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.
 
-    @if ((organizationsLoading$ | async) || (organizationalUnitsLoading$ | async) || (remitsLoading$ | async)) {
-        <span class="d-flex align-items-center gap-2">
-            Αναμονή ολοκλήρωσης συγχρονισμών ...
-            <span
-                class="spinner-border text-primary"
-                role="status">
-                <span class="visually-hidden">Loading...</span>
-            </span>
-        </span>
-        @if (organizationsLoading$ | async) {
-            <span class="d-flex align-items-center gap-2">
-                Συγχρονισμός Φορέων...
-                <span
-                    class="spinner-border text-primary"
-                    role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </span>
-            </span>
-        }
-
-        @if (organizationalUnitsLoading$ | async) {
-            <span class="d-flex align-items-center gap-2">
-                Συγχρονισμός Μονάδων ...
-                <span
-                    class="spinner-border text-primary"
-                    role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </span>
-            </span>
-        }
-
-        @if (remitsLoading$ | async) {
-            <span class="d-flex align-items-center gap-2">
-                Συγχρονισμός Αρμοδιοτήτων ...
-                <span
-                    class="spinner-border text-primary"
-                    role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </span>
-            </span>
-        }
-    } @else {
-        <asl-google-signin-button
-            type="standard"
-            size="large"></asl-google-signin-button>
-    }
+    <asl-google-signin-button
+        type="standard"
+        size="large">
+    </asl-google-signin-button>
+    
 </p>
 
 <div class="govgr-body">
-    <h1 class="govgr-heading-md">Τεστ για σύνδεση με ΚΕΔ</h1>
+    <h1 class="govgr-heading-md">Υπηρεσία αυθεντικοποίησης Χρηστών Δημόσιας Διοίκησης</h1>
     <p class="d-flex gap-3">
-        <button (click)="login()">Login</button>
-        <button (click)="logout()">Logout</button>
+        <button 
+            class="btn btn-primary"
+            (click)="login()">
+            Είσοδος με ΚΕΔ
+        </button>
+        <!-- <button (click)="logout()">Logout</button> -->
     </p>
-    <!-- <div *ngIf="authService.identityClaims">
-      <h2>Logged In</h2>
-      <pre>{{ authService.identityClaims | json }}</pre>
-    </div> -->
 </div>
   
 <!-- <div *ngIf="profile">

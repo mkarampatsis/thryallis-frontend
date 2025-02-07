@@ -15,4 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 export class NavigationComponent {
     authService = inject(AuthService);
     user = this.authService.user;
+    synchronization = this.authService.synchronization
+
+    constructor() {
+        console.log("synchronization>>",this.synchronization())
+    }
 }

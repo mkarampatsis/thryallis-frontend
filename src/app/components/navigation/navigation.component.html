@@ -54,19 +54,21 @@
                                 </div>
                             </div>
                         </div>
-                        @if (user()) {
+                        @if (synchronization()) {
                             <div
                                 class="collapse navbar-collapse mt-4 mt-lg-0"
                                 id="navbarNavAltMarkup">
                                 <ul class="navbar-nav dropdown-menu-dark gap-lg-4">
-                                    <li>
-                                        <a
-                                            routerLink="dashboard"
-                                            routerLinkActive="fw-bold"
-                                            class="dropdown-item p-1">
-                                            Προσβάσεις
-                                        </a>
-                                    </li>
+                                    @if(user()){
+                                        <li>
+                                            <a
+                                                routerLink="dashboard"
+                                                routerLinkActive="fw-bold"
+                                                class="dropdown-item p-1">
+                                                Προσβάσεις
+                                            </a>
+                                        </li>
+                                    }
                                     <li>
                                         <a
                                             routerLink="search"
@@ -107,34 +109,17 @@
                                             Νομικές Πράξεις
                                         </a>
                                     </li>
-                                    <!-- <li>
-                                        <a
-                                            routerLink="diataxeis"
-                                            routerLinkActive="fw-bold"
-                                            class="dropdown-item p-1">
-                                            Διατάξεις
-                                        </a>
-                                    </li> -->
                                 </ul>
                             </div>
                         }
                     </div>
                 </div>
             </nav>
-            @if (user()) {
+            @if (synchronization() ) {
                 <div class="text-white mt-2 mt-lg-0">
                     <app-user-info></app-user-info>
                 </div>
             } 
-            <!-- @else {
-                <a
-                    routerLink="login"
-                    routerLinkActive="fw-bold"
-                    class="dropdown-item p-1">
-                    Είσοδος
-                    <i class="bi bi-box-arrow-in-right"></i>
-                </a>
-            } -->
         </div>
     </div>
 </div>

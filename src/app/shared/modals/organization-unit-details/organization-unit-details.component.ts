@@ -41,6 +41,8 @@ export class OrganizationUnitDetailsComponent {
     authService = inject(AuthService);
     legalProvisionService = inject(LegalProvisionService);
 
+    user = this.authService.user;
+
     store = inject(Store<AppState>);
 
     legalProvisionsNeedUpdate = this.legalProvisionService.legalProvisionsNeedUpdate;
@@ -146,7 +148,11 @@ export class OrganizationUnitDetailsComponent {
     }
 
     canEdit(code: string) {
-        return this.authService.canEdit(code);
+        if(this.user()) {
+            return this.authService.canEdit(code);
+        } else {
+            return true
+        }
     }
 
     getCofogNames(cofog: { cofog1: string; cofog2: string; cofog3: string }) {

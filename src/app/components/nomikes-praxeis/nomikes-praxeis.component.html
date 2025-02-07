@@ -1,10 +1,12 @@
 <h1 class="govgr-heading-sm">Νομικές Πράξεις του συστήματος ΠΣΠΕΔ</h1>
 
-<button
-    class="btn btn-primary mb-2"
-    (click)="newLegalAct()">
-    Νέα Νομική Πράξη
-</button>
+@if(user()) {
+    <button
+        class="btn btn-primary mb-2"
+        (click)="newLegalAct()">
+        Νέα Νομική Πράξη
+    </button>
+}
 
 <div class="govgr-body">
     <ag-grid-angular

@@ -9,6 +9,7 @@ import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-
 import { ConstService } from 'src/app/shared/services/const.service';
 import { LegalActService } from 'src/app/shared/services/legal-act.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
     selector: 'app-nomikes-praxeis',
@@ -21,6 +22,8 @@ export class NomikesPraxeisComponent implements OnInit {
     constService = inject(ConstService);
     modalService = inject(ModalService);
     legalActService = inject(LegalActService);
+    authService = inject(AuthService);
+    user = this.authService.user;
     legalActs: ILegalAct[] = [];
 
     legalActsNeedUpdate = this.legalActService.legalActsNeedUpdate;

@@ -6,6 +6,7 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { take } from 'rxjs';
 import { LegalActService } from '../../services/legal-act.service';
 import { ILegalAct } from '../../interfaces/legal-act/legal-act.interface';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-legal-acts-actions',
@@ -18,6 +19,9 @@ export class LegalActsActionsComponent implements ICellRendererAngularComp {
     modalService = inject(ModalService);
     uploadService = inject(FileUploadService);
     legalActService = inject(LegalActService);
+    authService = inject(AuthService)
+
+    user = this.authService.user;
 
     params: ICellRendererParams;
 

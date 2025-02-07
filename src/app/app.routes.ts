@@ -51,7 +51,15 @@ export const routes: Routes = [
         loadChildren: () => import('./components/helpbox/helpbox.routes').then((m) => m.HelpBoxRoutes),
     },
     {
+        path:'landing',
+        loadChildren: () => import('./components/landing/landing.routes').then((m) => m.LandingRoutes),
+    },
+    {
+        path:'',
+        loadChildren: () => import('./components/landing/landing.routes').then((m) => m.LandingRoutes),
+    },
+    {
         path: '**',
-        redirectTo: 'login',
+        redirectTo: 'landing',
     },
 ];
