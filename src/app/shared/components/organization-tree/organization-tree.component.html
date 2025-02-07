@@ -78,13 +78,15 @@
                     class="text-truncate">
                     {{ node.monada.preferredLabel }}
                 </span>
-                <span class="ms-2" ngbTooltip="επεξεργασία">
-                    <i
-                        class="bi bi-pencil-square"
-                        role="button"
-                        (click)="editMonada(node.monada.code)">
-                    </i>
-                </span>
+                @if(user() && canEdit(node.monada.code)){
+                    <span class="ms-2" ngbTooltip="επεξεργασία">
+                        <i
+                            class="bi bi-pencil-square"
+                            role="button"
+                            (click)="editMonada(node.monada.code)">
+                        </i>
+                    </span>
+                }
                 @if (node.remitsFinalized){
                     <span class="ms-2" ngbTooltip="αρμοδιοτήτες ολοκληρωμένες"><i class="bi bi-check-circle text-success"></i></span>
                 } @else {
