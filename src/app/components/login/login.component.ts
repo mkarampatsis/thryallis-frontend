@@ -24,15 +24,14 @@ export class LoginComponent implements OnInit {
 
     loading$ = this.organizationsLoading$ || this.organizationalUnitsLoading$;
 
-    code: string = '';
-    user: any = {};
+    user: any = '';
 
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
           const authCode = params['code'];
           if (authCode) {
-            this.code = authCode;
+            console.log(authCode)
             this.oauthService.getGsisUser(authCode)
             .subscribe(data => {
                 console.log("gsisUser>>", data)
