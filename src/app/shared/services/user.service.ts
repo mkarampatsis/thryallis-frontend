@@ -33,6 +33,10 @@ export class UserService {
         return this.user().roles.some((role) => role.role === 'EDITOR');
     }
 
+    hasAdminRole(){
+        return this.user().roles.some((role) => role.role === 'ADMIN');
+    }
+
     setUserAccesses(email:string, organizationCodes:string[], organizationalUnitCodes:string[]) : Observable<{ msg: string }> {
         const url = `${APIPREFIX_USER}/${email}`;
         return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });

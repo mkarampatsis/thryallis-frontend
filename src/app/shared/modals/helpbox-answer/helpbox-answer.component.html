@@ -49,14 +49,14 @@
                             }
                             <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(q.answerText)"></div>
                         </div>
-                        <div class="d-flex gap-2 fs-5">
-                            @if (!q.answered && hasHelpDeskRole()) {
-                                <i class="bi bi-pencil-square text-danger" role="button" (click)="answerQuestion(q.id)" title="Δεν απαντήθηκε"></i>
+                        <div *ngIf="hasHelpDeskRole()" class="d-flex gap-2 fs-5" >
+                            @if (!q.answered) {
+                                <i class="bi bi-pencil-square text-danger" role="button" (click)="answerQuestion(q.id)" ngbTooltip="Δεν απαντήθηκε"></i>
                             }
-                            @if (q.published) {
-                                <i class="bi bi-instagram text-success" role="button"  title="Δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
+                            @if (q.published ) {
+                                <i class="bi bi-instagram text-success" role="button"  ngbTooltip="Δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
                             } @else {
-                                <i class="bi bi-instagram text-danger" role="button"  title="Δεν δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
+                                <i class="bi bi-instagram text-danger" role="button"  ngbTooltip="Δεν δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
                             }
                         </div>
                     </li>

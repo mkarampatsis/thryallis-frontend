@@ -12,6 +12,7 @@ export interface IQuestion {
 }
 
 export interface IHelpbox {
+    key?: string;
     email?: string;
     firstName?: string;
     lastName?: string;

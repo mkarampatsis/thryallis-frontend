@@ -30,13 +30,13 @@
                 <span
                     role="button"
                     (click)="showOrganizationUnitDetails(node.monada.code)"
-                    ngbTooltip="Κωδικός απογραφής: {{ node.monada.code }}"
+                    ngbTooltip="Κωδικός απογραφής: {{ node.monada.code }}, εισαγωγή αρμοδιοτήτων"
                     placement="end"
                     class="text-truncate">
                     {{ node.monada.preferredLabel }}
                 </span>
                 @if(user() && canEdit(node.monada.code)){
-                    <span class="ms-2" ngbTooltip="επεξεργασία">
+                    <span class="ms-2" ngbTooltip="Εισαγωγή Διατάξεων Πρόβλεψης">
                         <i
                             class="bi bi-pencil-square"
                             role="button"
@@ -73,13 +73,13 @@
                 <span
                     role="button"
                     (click)="showOrganizationUnitDetails(node.monada.code)"
-                    ngbTooltip="Κωδικός απογραφής: {{ node.monada.code }}"
+                    ngbTooltip="Κωδικός απογραφής: {{ node.monada.code }}, εισαγωγή αρμοδιοτήτων"
                     placement="end"
                     class="text-truncate">
                     {{ node.monada.preferredLabel }}
                 </span>
                 @if(user() && canEdit(node.monada.code)){
-                    <span class="ms-2" ngbTooltip="επεξεργασία">
+                    <span class="ms-2" ngbTooltip="Εισαγωγή Διατάξεων Πρόβλεψης">
                         <i
                             class="bi bi-pencil-square"
                             role="button"

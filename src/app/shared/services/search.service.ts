@@ -122,6 +122,54 @@ export class SearchService {
         return result
     }
 
+    onExportToExcelMatrix1(jsonData: any[]): void {
+        // Define headers
+        const headers = [
+            'Φορείς', 
+            'ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ', 
+            'ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ', 
+            'ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ', 
+            'ΔΙΕΥΘΥΝΣΗ', 
+            'ΥΠΟΔΙΕΥΘΥΝΣΗ',
+            'ΤΜΗΜΑ',
+            'ΓΡΑΦΕΙΟ',
+            'ΑΛΛΟ'
+        ];
+
+        // Flatten the data
+        console.log("jsonData>>>",jsonData)
+        const flattenedData = jsonData.flatMap(item =>
+            item.legalProvisionDetails.map(detail => ({
+                Φορέας: item.organizationPreferredLabel,
+                Μονάδα: item.organizationalUnitPreferredLabel,
+                Αρμοδιότητα: item.remitText.replace(/<\/?[^>]+(>|$)/g, ''), // Remove HTML tags
+                ΦΕΚ: detail.legalActKey,
+                Στοιχεία: [
+                    detail.legalProvisionSpecs.meros,
+                    detail.legalProvisionSpecs.arthro,
+                    detail.legalProvisionSpecs.paragrafos,
+                    detail.legalProvisionSpecs.edafio,
+                    detail.legalProvisionSpecs.pararthma,
+                ]
+                    .filter(part => part) // Remove empty fields
+                    .join(', '), // Concatenate specs
+                ΑΔΑ: detail.ada,
+            }))
+        );
+
+        // Convert to worksheet
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData, { header: headers });
+
+        // Create workbook and add the worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Exported Data');
+
+        // Write workbook and save
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, `export.xlsx`);
+    }
+
     transformMatrixData_2(selectedOrganizations:IOrganizationUnitList[]){
         let selectedOrganizationalUnits = []
         
