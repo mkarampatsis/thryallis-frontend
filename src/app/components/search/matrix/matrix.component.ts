@@ -12,7 +12,7 @@ import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, GridOptions  } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { SearchService } from 'src/app/shared/services/search.service';
-import { Subscription, take } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { selectRemits$, selectRemitsLoading$ } from 'src/app/shared/state/remits.state';
 import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/state/organizational-units.state';
 import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
@@ -74,7 +74,7 @@ export class MatrixComponent {
     selectedRowLimit = 2;
     
     selectedDataMatrix1 = []
-    matrixData1 = []
+    matrixData1 = [];
     showTable1 = false
     
     selectedDataMatrix2 = []
@@ -129,8 +129,12 @@ export class MatrixComponent {
       
         // Log selected rows to the console
         this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
-        this.matrixData1 = this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
-
+        this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
+            .subscribe(data =>{
+                this.matrixData1 = data;
+                console.log(this.matrixData1)
+            })
+    
         if (this.selectedDataMatrix1.length>0){
             this.showTable1 = true;
         } else {
@@ -157,7 +161,6 @@ export class MatrixComponent {
     }
 
     onBtnExportMatrix1(){
-        // this.searchService.onExportToExcelMatrix1(this.matrixData1)
         const separator = ',';
         const keys = Object.keys(this.matrixData1[0]); // Get headers from the first object
         const csvContent = [
@@ -166,8 +169,8 @@ export class MatrixComponent {
                 keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values
             )
         ].join('\n');
-        console.log("Generated CSV:", csvContent);
-
+        
+        console.log("csvContent",csvContent);  
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
 
