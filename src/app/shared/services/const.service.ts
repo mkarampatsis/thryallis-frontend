@@ -107,6 +107,20 @@ export class ConstService {
             flex: 1,
             cellRenderer: (params) => params.value.find((data) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
         },
+        {
+            field: 'roles',
+            headerName: 'Ρόλοι',
+            flex: 1,
+            valueGetter: function (params) {
+                console.log(params.data);
+                const userRoles =  params.data
+                    .filter((data) => {console.log("1>>",data); return data.role.active})
+                    .map((data) => { console.log("2>>",data); return data.role.role})
+                    .join(", ")
+                console.log("userRoles>>",userRoles)
+                return userRoles
+            }
+        },
     ];
 
     ORGANIZATIONS_COL_DEFS: ColDef[] = [

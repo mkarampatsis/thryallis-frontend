@@ -26,7 +26,6 @@ export class LoginComponent implements OnInit {
 
     user: any = '';
 
-
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
           const authCode = params['code'];
@@ -37,17 +36,11 @@ export class LoginComponent implements OnInit {
                 console.log("gsisUser>>", data)
                 this.user = data['user']
             })
-            // this.exchangeCodeForToken(authCode);
           }
         });
       }
 
     login() {
-        // this.authService.login();
-        // this.authService.getGsisUser()
-        //     .subscribe(data=>{
-        //         console.log("GSIS",data);
-        //     })
         this.oauthService.gsisLogin();
     }
 
@@ -55,9 +48,4 @@ export class LoginComponent implements OnInit {
         // this.authService.logout();
         // this.router.navigate([`https://test.gsis.gr/oauth2server/logout/${{CLIENT_ID}}/?url=https://localhost:4200/`]);
     }
-
-    // get profile() {
-    //     let profile:any = this.authService.getProfile(); 
-    //     return profile ? profile: null;
-    // }
 }

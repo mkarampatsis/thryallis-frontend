@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { HelpboxService } from '../../services/helpbox.service';
 import { IHelpbox } from '../../interfaces/helpbox/helpbox.interface';
 import { ConstService } from 'src/app/shared/services/const.service';
@@ -14,11 +14,18 @@ import { take } from 'rxjs';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-helpbox-answer',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
-  templateUrl: './helpbox-answer.component.html',
-  styleUrl: './helpbox-answer.component.css'
+    selector: 'app-helpbox-answer',
+    standalone: true,
+    imports: [
+        CommonModule, 
+        ReactiveFormsModule, 
+        NgxEditorModule, 
+        NgbAlertModule,
+        NgbTooltipModule,
+        NgIf
+    ],
+    templateUrl: './helpbox-answer.component.html',
+    styleUrl: './helpbox-answer.component.css'
 })
 export class HelpboxAnswerComponent {
     helpboxService = inject(HelpboxService);

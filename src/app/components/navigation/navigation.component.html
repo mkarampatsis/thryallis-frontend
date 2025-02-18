@@ -24,7 +24,7 @@
                     </div>
                     <div>
                         <div class="d-flex gap-2">
-                            @if (user()) {
+                            @if (user() && hasEditorRole()) {
                                 <button
                                     class="navbar-toggler"
                                     type="button"
@@ -59,7 +59,7 @@
                                 class="collapse navbar-collapse mt-4 mt-lg-0"
                                 id="navbarNavAltMarkup">
                                 <ul class="navbar-nav dropdown-menu-dark gap-lg-4">
-                                    @if(user()){
+                                    @if(user() && hasEditorRole()){
                                         <li>
                                             <a
                                                 routerLink="dashboard"

@@ -62,17 +62,18 @@ export class UserAccessesComponent {
                 });
                 this.gridApi.hideOverlay();
                 this.gridApi.setRowData(this.foreis);
-                this.selectRows();
+                // this.selectRows();
             });
     }
 
-    selectRows() {
-        console.log('Selecting rows');
-        const foreis = this.user.roles.find((data) => data.role === 'EDITOR')?.foreas ?? [];
-        this.gridApi.forEachNode((node) => {
-            if (foreis.includes(node.data.code)) node.setSelected(true);
-        });
-    }
+    // selectRows() {
+    //     console.log('Selecting rows');
+    //     const foreis = this.user.roles.find((data) => data.role === 'EDITOR')?.foreas ?? [];
+    //     this.gridApi.forEachNode((node) => {
+    //         if (foreis.includes(node.data.code)) 
+    //             node.setSelected(true);
+    //     });
+    // }
 
     dismiss() {
         this.modalRef.dismiss();

@@ -31,4 +31,8 @@ export class UserInfoComponent {
     hasEditorRole() {
         return this.userService.hasEditorRole();
     }
+
+    hasAdminRole() {
+        return this.userService.hasAdminRole();
+    }
 }

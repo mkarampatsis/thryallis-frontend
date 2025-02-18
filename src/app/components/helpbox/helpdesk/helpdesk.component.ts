@@ -26,6 +26,7 @@ export class HelpdeskComponent {
 
     defaultColDef = this.constService.defaultColDef;
     colDefs: ColDef[] = [
+        { field: 'key', headerName: 'Κωδικός Ερώτησης', flex:1 },
         { field: 'questionTitle', headerName: 'Τίτλος Συνομιλίας', flex:1 },
         { field: 'email', headerName: 'Χρήστης', flex:1 },
         { field: 'firstName', headerName: 'Όνομα', flex:1 },

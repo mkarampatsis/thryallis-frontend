@@ -73,18 +73,18 @@ export class MatrixComponent {
     
     selectedRowLimit = 2;
     
-    selectedDataMatrix1 = []
-    matrixData1 = []
-    showTable1 = false
+    selectedDataMatrix1 = [];
+    matrixData1 = [];
+    showTable1 = false;
     
-    selectedDataMatrix2 = []
-    matrixData2 = []
-    showTable2 = false
+    selectedDataMatrix2 = [];
+    matrixData2 = [];
+    showTable2 = false;
 
-    selectedDataMatrix3 = []
-    matrixData3 = []
-    showTable3 = false
-    filteredRows = []
+    selectedDataMatrix3 = [];
+    matrixData3 = [];
+    showTable3 = false;
+    filteredRows = [];
 
     ngOnDestroy(): void {
         this.subscriptions.forEach((sub) => sub.unsubscribe());
@@ -129,7 +129,11 @@ export class MatrixComponent {
       
         // Log selected rows to the console
         this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
-        this.matrixData1 = this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
+        
+        this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
+            .subscribe(data =>{
+                this.matrixData1 = data;
+            })
 
         if (this.selectedDataMatrix1.length>0){
             this.showTable1 = true;
@@ -157,25 +161,7 @@ export class MatrixComponent {
     }
 
     onBtnExportMatrix1(){
-        const separator = ',';
-        const keys = Object.keys(this.matrixData1[0]); // Get headers from the first object
-        const csvContent = [
-            keys.join(separator), // Add the headers
-            ...this.matrixData1.map((row) =>
-                keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values
-            )
-        ].join('\n');
-        console.log("Generated CSV:", csvContent);
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'matrix1.csv'); // File name
-        document.body.appendChild(link);
-        link.click(); // Trigger download
-        document.body.removeChild(link);
+        this.searchService.onExportToExcelMatrix(this.matrixData1);
     }
 
     //   MATRIX 2 
@@ -203,6 +189,11 @@ export class MatrixComponent {
         // Log selected rows to the console
         this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
         this.matrixData2 = this.searchService.transformMatrixData_2(this.selectedDataMatrix2)
+
+        // this.searchService.transformMatrixData_2(this.selectedDataMatrix2)
+        //     .subscribe(data =>{
+        //         this.matrixData2 = data;
+        //     })
 
         if (this.selectedDataMatrix2.length>0){
             this.showTable2 = true
@@ -232,25 +223,7 @@ export class MatrixComponent {
     }
 
     onBtnExportMatrix2(){
-        const separator = ',';
-        const keys = Object.keys(this.matrixData2[0]); // Get headers from the first object
-        const csvContent = [
-            keys.join(separator), // Add the headers
-            ...this.matrixData2.map((row) =>
-                keys.map((key) => `"${row[key]}"`).join(separator) // Map each row's values
-            )
-        ].join('\n');
-        console.log("Generated CSV:", csvContent);
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'matrix2.csv'); // File name
-        document.body.appendChild(link);
-        link.click(); // Trigger download
-        document.body.removeChild(link);
+        this.searchService.onExportToExcelMatrix(this.matrixData2);
     }
 
     //   MATRIX 3 

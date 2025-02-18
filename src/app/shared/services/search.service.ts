@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ISearch, ISearchGridInput, ISearchGridOutput } from '../interfaces/search/search.interface';
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
-import { take } from 'rxjs';
+import { forkJoin, map, take } from 'rxjs';
 import { selectOrganizationalUnitByOrganizationCode$, selectOrganizationalUnitBysupervisorUnitCode$} from 'src/app/shared/state/organizational-units.state';
 import {selectRemitByOrganizationalUnitCode$} from 'src/app/shared/state/remits.state'; 
 import { Organization } from '../interfaces/search/search.interface';
@@ -18,6 +18,7 @@ import { IOrganizationTreeReport } from 'src/app/shared/interfaces/organization/
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { _countGroupLabelsBeforeOption } from '@angular/material/core';
 
 const APIPREFIX = `${environment.elasticUrl}/search`;
 
@@ -82,61 +83,134 @@ export class SearchService {
     }
 
     transformMatrixData_1(selectedOrganizations:Organization[]){
-        let selectedOrganizationalUnits = []
-        
-        for (let data of selectedOrganizations) {
-            this.store
-            .select(this.selectOrganizationalUnitByOrganizationCode$(data.code))
-            .pipe(take(1))
-            .subscribe((orgCodes) => {
-                  selectedOrganizationalUnits = selectedOrganizationalUnits.concat(...orgCodes)
-                
-            });
-        }
+        const observables = selectedOrganizations.map((data) =>
+            this.store.select(this.selectOrganizationalUnitByOrganizationCode$(data.code)).pipe(
+                take(1),
+                map((orgCodes) => 
+                    orgCodes.map(org => ({ ...org, label: data.preferredLabel }))// Add label
+                ) 
+            )
+        );
 
-        // Group by unitType and organizationCode
-        const result = selectedOrganizationalUnits.reduce((acc, item) => {
-            const { unitType, organizationCode } = item;
-            
-            const unitTypeDescription = this.unitTypes.find(type => type.id === unitType)?.description || "Unknown Type";
+        return forkJoin(observables).pipe(
+            map((results) => {
+                let selectedOrganizationalUnits = results.flat(); // Flatten array
+                // Group by unitType and organizationCode
+                return selectedOrganizationalUnits.reduce((acc, item) => {
+                    const { unitType, organizationCode, label } = item;
+
+                    const unitTypeDescription = this.unitTypes.find(type => type.id === +unitType)?.description || "Unknown Type";
+
+                    // Find if this combination already exists in the accumulator
+                    const existingEntry = acc.find(entry => entry.unitType === unitType && entry.organizationCode === organizationCode);
+
+                    if (existingEntry) {
+                        existingEntry.count += 1;
+                    } else {
+                        acc.push({
+                            preferredLabel: label,
+                            description: unitTypeDescription,
+                            unitType: unitType,
+                            organizationCode: organizationCode,
+                            count: 1
+                        });
+                    }
+
+                    return acc;
+                }, []);
+            })
+        );
+    }
+
+    onExportToExcelMatrix(jsonData: any[]): void {
         
-            // Find if this combination already exists in the accumulator
-            const existingEntry = acc.find(entry => entry.unitType === unitType && entry.organizationCode === organizationCode);
-        
-            if (existingEntry) {
-            // If it exists, increment the count
-            existingEntry.count += 1;
-            } else {
-            // If it doesn't exist, create a new entry
-            acc.push({
-                description: unitTypeDescription,
-                unitType: unitType,
-                organizationCode: organizationCode,
-                count: 1
-            });
+        // Define headers
+        const headers = [
+            'Φορέας/Μονάδα',
+            'Κωδικός Υπηρεσίας',
+            'Γενική Γραμματεία', 
+            'Ειδική Γραμματεία', 
+            'Γενική Διεύθυνση', 
+            'Διεύθυνση',
+            'Υποδιεύθυνση',
+            'Τμήμα',
+            'Γραφείο',
+            'Άλλο'
+        ];
+
+        // Map descriptions to their respective headers
+        const descriptionMap: { [key: string]: string } = {
+            "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ": "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ",
+            "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ": "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ",
+            "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ": "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ",
+            "ΔΙΕΥΘΥΝΣΗ": "ΔΙΕΥΘΥΝΣΗ",
+            "ΥΠΟΔΙΕΥΘΥΝΣΗ": "ΥΠΟΔΙΕΥΘΥΝΣΗ",
+            "ΤΜΗΜΑ": "ΤΜΗΜΑ",
+            "ΓΡΑΦΕΙΟ": "ΓΡΑΦΕΙΟ",
+            "ΑΛΛΟ": "ΑΛΛΟ"
+        };
+
+        // Create an empty object to group data by organization
+        const groupedData: { [key: string]: any } = {};
+
+        // Process data
+        jsonData.forEach(item => {
+            const key = item.organizationCode; // Grouping key
+            if (!groupedData[key]) {
+                groupedData[key] = {
+                    'Φορέας/Μονάδα': item.preferredLabel,
+                    'Κωδικός Υπηρεσίας': item.organizationCode,
+                    'ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ': 0,
+                    'ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ': 0,
+                    'ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ': 0,
+                    'ΔΙΕΥΘΥΝΣΗ': 0,
+                    'ΥΠΟΔΙΕΥΘΥΝΣΗ': 0,
+                    'ΤΜΗΜΑ': 0,
+                    'ΓΡΑΦΕΙΟ': 0,
+                    'ΑΛΛΟ': 0
+                };
             }
+            
+            // Match the description field with the corresponding header
+            for (const [header, description] of Object.entries(descriptionMap)) {
+                if (item.description === header) {
+                    groupedData[key][header] = item.count;
+                }
+            }
+        });
+
+       
+        // Convert grouped data into an array for Excel
+        const excelData = Object.values(groupedData);
         
-            return acc;
-        }, []);
-          
-        return result
+        // Convert to worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+        // Create workbook and add the worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Συγκριτικός Πίνακας Φορέων');
+
+        // Write workbook and save
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, `matrix1.xlsx`);
     }
 
     transformMatrixData_2(selectedOrganizations:IOrganizationUnitList[]){
         let selectedOrganizationalUnits = []
         
         for (let data of selectedOrganizations) {
-            this.findChildren(data.code, data.code, selectedOrganizationalUnits)
+            this.findChildren(data.code, data.code, data.preferredLabel, selectedOrganizationalUnits)
         }
 
         // Group by unitType and organizationCode
         const result = selectedOrganizationalUnits.reduce((acc, item) => {
-            const { unitType, father } = item;
+            const { unitType, fatherCode, fatherLabel } = item;
             
             const unitTypeDescription = this.unitTypes.find(type =>type.id === unitType)?.description || "Unknown Type";
         
             // Find if this combination already exists in the accumulator
-            const existingEntry = acc.find(entry => entry.unitType === unitType && entry.organizationCode === father);
+            const existingEntry = acc.find(entry => entry.unitType === unitType && entry.organizationCode === fatherCode);
             if (existingEntry) {
                 // If it exists, increment the count
                 existingEntry.count += 1;
@@ -145,7 +219,8 @@ export class SearchService {
                 acc.push({
                     description: unitTypeDescription,
                     unitType: unitType,
-                    organizationCode: father,
+                    organizationCode: fatherCode,
+                    preferredLabel: fatherLabel,
                     count: 1
                 });
             }
@@ -156,7 +231,7 @@ export class SearchService {
         return result
     }
 
-    findChildren(code: string, fatherCode: string, selectedOrganizationalUnits: any[]){
+    findChildren(code: string, fatherCode: string, fatherLabel:string, selectedOrganizationalUnits: any[]){
                 
         this.store
             .select(this.selectOrganizationalUnitBysupervisorUnitCode$(code))
@@ -166,14 +241,15 @@ export class SearchService {
                 .forEach(childDoc => {
                     // Add the current document with necessary fields to the result
                     selectedOrganizationalUnits.push({
-                        father: fatherCode,
+                        fatherCode: fatherCode,
+                        fatherLabel: fatherLabel,
                         unitType: childDoc.unitType,
                         code: childDoc.code,
                         preferredLabel: childDoc.preferredLabel
                     });
 
                     // Recursively find children of the current document
-                    this.findChildren(childDoc.code, fatherCode, selectedOrganizationalUnits);
+                    this.findChildren(childDoc.code, fatherCode, fatherLabel, selectedOrganizationalUnits);
                 });
             });
         

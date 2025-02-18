@@ -58,7 +58,6 @@ export class ForeisComponent {
     }
 
     onRowDoubleClicked(event: any): void {
-        // console.log(event);
         this.modalService.showOrganizationDetails(event.data.code);
     }
 }
