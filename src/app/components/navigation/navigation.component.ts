@@ -18,7 +18,7 @@ export class NavigationComponent {
     userService = inject(UserService);
     user = this.authService.user;
     loading = this.authService.loading;
-    synchronization = this.authService.synchronization
+    synchronization = this.authService.synchronization;
 
     hasEditorRole() {
         return this.userService.hasEditorRole();
