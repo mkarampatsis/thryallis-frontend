@@ -111,14 +111,11 @@ export class ConstService {
             field: 'roles',
             headerName: 'Ρόλοι',
             flex: 1,
-            valueGetter: function (params) {
-                console.log(params.data);
-                const userRoles =  params.data
-                    .filter((data) => {console.log("1>>",data); return data.role.active})
-                    .map((data) => { console.log("2>>",data); return data.role.role})
-                    .join(", ")
-                console.log("userRoles>>",userRoles)
-                return userRoles
+            valueGetter: (params) => {
+                return params.data.roles
+                    .filter(role => role.active)  // Get only active roles
+                    .map(role => role.role)       // Extract role names
+                    .join(", ");                  // Convert to a string
             }
         },
     ];
