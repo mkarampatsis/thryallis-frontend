@@ -15,7 +15,7 @@ export class Oauth2Service {
 //   private oAuthService = inject(OAuthService);
     http = inject(HttpClient)    
 
-       gsisLogin() {
+    gsisLogin() {
         const clientId = 'T4KA2K27387';
         const redirectUri = encodeURIComponent('https://ypes.ddns.net/login');
         const authUrl = `https://test.gsis.gr/oauth2servergov/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=read`;
