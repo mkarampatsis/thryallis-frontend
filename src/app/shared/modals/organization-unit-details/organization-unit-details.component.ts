@@ -204,10 +204,11 @@ export class OrganizationUnitDetailsComponent {
             .subscribe((consent) => {
                 // console.log(">>>", consent)
                 if (consent) {
-                    this.modalRef.dismiss();
+                    // this.modalRef.dismiss();
                     this.remitService.deleteRemitByID(id)
                         .subscribe(data => {
                             console.log(data)
+                            this.getRemits(this.organizationalUnitCode)
                         })
                 }
             });
