@@ -40,9 +40,10 @@
                 <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="typesMap"
-                        formControlName="typesMap">
+                        id="organizationType"
+                        formControlName="organizationType">
                         <option value="" disabled>Επιλέξτε Τύπο Φορέα</option>
+                        <option value=""></option>
                         @for (types of organizationTypesMap.keys(); track types) {
                             <option
                                 [value]="organizationTypesMap.get(types)">
@@ -54,9 +55,10 @@
                 <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="functionsMap"
-                        formControlName="functionsMap">
+                        id="purpose"
+                        formControlName="purpose">
                         <option value="" disabled>Επιλέξτε Σκοπό Φορέα</option>
+                        <option value=""></option>
                         @for (types of organizationFunctionsMap.keys(); track types) {
                             <option
                                 [value]="organizationFunctionsMap.get(types)">
@@ -68,9 +70,10 @@
                 <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="levels"
-                        formControlName="levels">
+                        id="level"
+                        formControlName="level">
                         <option value="" disabled>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
+                        <option value=""></option>
                         @for (types of organizationLevels; track types) {
                             <option
                                 [value]="types">
@@ -198,7 +201,7 @@
                             id="foundationFekUntil"/>
                     </div>
                 </div>
-                <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
+                <!-- <div formGroupName="mainAddress" class="d-flex gap-3 align-items-center" >
                     <div class="flex-fill mb-3">
                         <input type="text" 
                             class="form-control"
@@ -206,7 +209,7 @@
                             id="postCode"  
                             placeholder="Ταχυδρομικός Τομέας"/>
                     </div>
-                </div>
+                </div> -->
                 <a role="button" class="link-primary link-offset-2" (click)="lessFields('organization')">Λιγότερα πεδία</a>
             }
        </div>
@@ -251,9 +254,10 @@
                 <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="typesMap"
-                        formControlName="typesMap">
+                        id="unitType"
+                        formControlName="unitType">
                         <option value="" disabled>Επιλέξτε Τύπο Μονάδας</option>
+                        <option value=""></option>
                         @for (types of organizationUnitTypesMap.keys(); track types) {
                             <option
                                 [value]="organizationUnitTypesMap.get(types)">
@@ -265,9 +269,10 @@
                 <div class="flex-fill mb-3">
                     <select
                         class="form-select"
-                        id="functionsMap"
-                        formControlName="functionsMap">
+                        id="purpose"
+                        formControlName="purpose">
                         <option value="" disabled>Επιλέξτε Σκοπό Μονάδας</option>
+                        <option value=""></option>
                         @for (types of organizationUnitFunctionsMap.keys(); track types) {
                             <option
                                 [value]="organizationUnitFunctionsMap.get(types)">
@@ -284,7 +289,7 @@
                         placeholder="Πληκτρολογήστε Προϊστάμενη Μονάδα"/>
                 </div>
             </div>
-            @if(!showMoreOrganizationUnitFields) {
+            <!-- @if(!showMoreOrganizationUnitFields) {
                 <a role="button" class="link-primary link-offset-2" (click)="moreFields('organizationUnits')">Περισσότερα πεδία</a>
             }
             @if(showMoreOrganizationUnitFields){
@@ -300,7 +305,7 @@
                     </div>
                 </div>
                 <a role="button" class="link-primary link-offset-2" (click)="lessFields('organizationUnits')">Λιγότερα πεδία</a>
-            }
+            } -->
         </div>
     </div>
     <div formGroupName="remits" class="card mb-4">
@@ -345,6 +350,7 @@
                         id="remitType"
                         formControlName="remitType">
                         <option value="" disabled>Επιλέξτε Τύπο Αρμοδιότητας</option>
+                        <option value=""></option>
                         @for (types of remitType; track types) {
                             <option
                                 [value]="types">
@@ -375,6 +381,7 @@
                         id="cofog1"
                         formControlName="cofog1">
                         <option value="" disabled>Επιλέξτε Λειτουργική Περιοχή COFOG</option>
+                        <option value=""></option>
                         @for (types of cofog1; track types) {
                             <option
                                 [value]="types.code">
@@ -390,6 +397,7 @@
                             id="cofog2"
                             formControlName="cofog2">
                             <option value="" disabled>Επιλέξτε Λειτουργικό Τομέα COFOG</option>
+                            <option value=""></option>
                             @for (types of cofog2; track types) {
                                 <option
                                     [value]="types.code">
@@ -406,6 +414,7 @@
                             id="cofog3"
                             formControlName="cofog3">
                             <option value="" disabled>Επιλέξτε Θεματική Περιοχή COFOG</option>
+                            <option value=""></option>
                             @for (types of cofog3; track types) {
                                 <option
                                     [value]="types.code">

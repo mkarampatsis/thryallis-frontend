@@ -86,6 +86,8 @@ export class HelpdeskComponent {
                     return {color: 'red'};
                 }
             }, 
+            unSortIcon: true,
+            filter: false,
             flex:1
         },
     ];
@@ -122,6 +124,7 @@ export class HelpdeskComponent {
             } else {
                 this.helpbox = helpbox;
             }
+            console.log(">>>",this.helpbox)
             this.gridApi.hideOverlay();
         });
     }

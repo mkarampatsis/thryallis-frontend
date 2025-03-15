@@ -47,10 +47,10 @@ export class SearchFormComponent {
         organizations: new FormGroup({
             preferredLabel: new FormControl('', Validators.required),
             preferredLabelSearch: new FormControl(''),
-            typesMap: new FormControl('', Validators.required),
-            functionsMap: new FormControl('', Validators.required),
+            organizationType : new FormControl('', Validators.required),
+            purpose: new FormControl('', Validators.required),
             subOrganizationOf: new FormControl('', Validators.required),
-            levels: new FormControl('', Validators.required),
+            level: new FormControl('', Validators.required),
             statusActive: new FormControl(true, Validators.required),
             statusInactive: new FormControl(false, Validators.required),
             foundationDate: new FormGroup({
@@ -67,19 +67,19 @@ export class SearchFormComponent {
                 from: new FormControl('', Validators.required),
                 until: new FormControl('', Validators.required),
             }),
-            mainAddress: new FormGroup({
-                postCode: new FormControl('', Validators.required)
-            }) 
+            // mainAddress: new FormGroup({
+            //     postCode: new FormControl('', Validators.required)
+            // }) 
         }),
         organizational_units: new FormGroup({
             preferredLabel: new FormControl('', Validators.required),
             preferredLabelSearch: new FormControl(''),
-            typesMap: new FormControl('', Validators.required),
-            functionsMap: new FormControl('', Validators.required),
+            unitType: new FormControl('', Validators.required),
+            purpose: new FormControl('', Validators.required),
             supervisorUnitCode: new FormControl('', Validators.required),
-            mainAddress: new FormGroup({
-                postCode: new FormControl('', Validators.required)
-            })
+            // mainAddress: new FormGroup({
+            //     postCode: new FormControl('', Validators.required)
+            // })
         }),
         remits: new FormGroup({
             remitText: new FormControl('', Validators.required),
@@ -139,7 +139,7 @@ export class SearchFormComponent {
 
         // console.log(this.form.value);
         const searchQuery = this.transformData(this.form.value);
-        // console.log("searchQuery>>",searchQuery);
+        console.log("searchQuery>>",searchQuery);
 
         this.searchService
             .postSearch(searchQuery)
@@ -166,13 +166,13 @@ export class SearchFormComponent {
     initializeForm(){
         this.form.controls.organizations.patchValue({
             preferredLabel:"",
-            preferredLabelSearch:"phrase",
+            preferredLabelSearch:"words",
             subOrganizationOf:"",
             statusActive: true,
             statusInactive: false,
-            typesMap: "",
-            functionsMap: "",
-            levels:"",
+            organizationType: "",
+            purpose: "",
+            level:"",
             foundationDate: {
                 from: "",
                 until: ""
@@ -181,9 +181,9 @@ export class SearchFormComponent {
                 from: "",
                 until: ""
             },
-            mainAddress:{
-                postCode:""
-            },
+            // mainAddress:{
+            //     postCode:""
+            // },
             foundationFek:{
                 from: "",
                 until: ""
@@ -193,18 +193,18 @@ export class SearchFormComponent {
 
         this.form.controls.organizational_units.patchValue({
             preferredLabel: "",
-            preferredLabelSearch:"phrase",
-            typesMap: "",
-            functionsMap: "",
+            preferredLabelSearch:"words",
+            unitType: "",
+            purpose: "",
             supervisorUnitCode: "",
-            mainAddress:{
-                postCode:""
-            },
+            // mainAddress:{
+            //     postCode:""
+            // },
         });
   
         this.form.controls.remits.patchValue({
                 remitText: '',
-                remitTextSearch: 'phrase',
+                remitTextSearch: 'words',
                 remitType: '',
                 cofog1: '',
                 cofog2: '',

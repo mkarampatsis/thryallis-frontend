@@ -162,7 +162,29 @@ export class ConstService {
         { field: 'organization', headerName: 'Φορέας', flex: 1 },
         { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
         { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
-        { field: 'remitsFinalized', headerName: 'Αρμοδιότητες', flex: 0.5 },
+        { 
+          field: 'remitsFinalized', 
+          headerName: 'Αρμοδιότητες',
+          cellRenderer: function (params) {
+            return params.value ? "Ολοκληρωμένες" : 'Μη Ολοκληρωμένες';
+          },
+          valueFormatter: (params) => (params.value ? 'Ολοκληρωμένες' : 'Μη Ολοκληρωμένες'),
+          unSortIcon: true,
+          filter: false,
+          // filter: 'agTextColumnFilter',
+          // filterParams: {
+          //   suppressAndOrCondition: true, // Removes 'AND'/'OR' conditions
+          //   filterOptions: ['equals', 'contains'], // Only allow 'equals' filter option
+          //   textFormatter: (value: string) => {
+          //     console.log(">>", value);
+          //     if (value === 'xx') return 'true';
+          //     if (value === 'not') return 'false';
+          //     return value;
+          //   },
+          //   debounceMs: 200, // Reduces input delay
+          // },  
+          flex: 0.5 
+        },
         // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
     ];
 
