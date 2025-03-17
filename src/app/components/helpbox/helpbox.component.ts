@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { EditorsComponent } from './editors/editors.component';
 import { HelpdeskComponent } from './helpdesk/helpdesk.component';
@@ -18,13 +18,15 @@ export class HelpboxComponent {
   userService = inject(UserService);
   router = inject(Router);
   route = inject(ActivatedRoute)
+  cdr = inject(ChangeDetectorRef)
 
   active: number = 1; 
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['tab']) {
-        this.changeTab(params['tab']);
+        this.changeTab(params['tab']);  // Update tab dynamically
+        this.cdr.detectChanges(); // Force UI update
       }
     });
   }

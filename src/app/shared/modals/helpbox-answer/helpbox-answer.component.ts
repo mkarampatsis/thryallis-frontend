@@ -122,9 +122,18 @@ export class HelpboxAnswerComponent {
     }
 
     newQuestion(){
-      console.log(this.question);
       this.helpboxService.helpboxNewQuestion.set(this.question);
-      this.router.navigate(['helpbox'], { queryParams: { tab: 2 }, queryParamsHandling: "merge" });
+      this.router.navigate([], {
+        queryParams: { tab: null },
+        queryParamsHandling: "merge",
+        skipLocationChange: true,
+      }).then(() => {
+        this.router.navigate(['helpbox'], {
+          queryParams: { tab: 2 },
+          queryParamsHandling: "merge",
+          replaceUrl: true,
+        });
+      });
       this.modalRef.close()
     }
 

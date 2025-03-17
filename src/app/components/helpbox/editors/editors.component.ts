@@ -27,9 +27,10 @@ export class EditorsComponent implements OnInit, OnDestroy {
     user = this.authService.user;
     organizationPreferedLabel:string[] = [];
 
-    newQuestion = this.helpboxService.helpboxNewQuestion;
-    const 
-
+    addNewQuestion = this.helpboxService.helpboxNewQuestion;
+    newQuestionId: string = '';
+    newQuestion: boolean = false;
+    
     editor: Editor = new Editor();
     toolbar: Toolbar = DEFAULT_TOOLBAR;
     questionText: string;
@@ -57,9 +58,17 @@ export class EditorsComponent implements OnInit, OnDestroy {
     constructor(){
       effect(
         () => {
-            if (this.newQuestion()) {
-                console.log("xxxx", this.newQuestion())
-                this.newQuestion.set(null);
+            if (this.addNewQuestion()) {
+                this.newQuestionId = this.addNewQuestion()["_id"]["$oid"];
+                this.form.controls.email.patchValue(this.user().email);
+                this.form.controls.firstName.patchValue(this.user().firstName);
+                this.form.controls.lastName.patchValue(this.user().lastName);
+                this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)
+                this.form.controls.questionTitle.disable()
+                this.form.controls.questionCategory.patchValue(this.addNewQuestion().questionCategory)
+                this.form.controls.questionCategory.disable()
+                this.newQuestion = true;
+                this.addNewQuestion.set(null);
             }
         },
         { allowSignalWrites: true },
@@ -119,17 +128,19 @@ export class EditorsComponent implements OnInit, OnDestroy {
         // const value = this.form.controls.questionSelect.value.split('_');
 
         // if (value[0]==="new"){ 
+        if (! this.newQuestion) {
             this.helpboxService.newQuestion(helpQuestion)
                 .subscribe(data => {
                     this.goToTab(1);
                 });
-        // } else {
-        //     const id = value[1];
-        //     this.helpboxService.updateQuestion(helpQuestion, id)
-        //     .subscribe(data => {
-        //         this.goToTab(1);
-        //     });
-        // }
+        } else {
+            // const id = value[1];
+            // this.helpboxService.updateQuestion(helpQuestion, id)
+            this.helpboxService.updateQuestion(helpQuestion,this.newQuestionId)
+            .subscribe(data => {
+                this.goToTab(1);
+            });
+        }
     }
 
     resetForm(){
