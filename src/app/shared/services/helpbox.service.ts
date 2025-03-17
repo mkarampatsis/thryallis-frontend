@@ -15,6 +15,8 @@ export class HelpboxService {
 
     helpboxNeedUpdate = signal<boolean>(false);
 
+    helpboxNewQuestion = signal(<IHelpbox | null>null);
+
     getAllHelpbox(): Observable<IHelpbox[]> {
         return this.http.get<IHelpbox[]>(APIPREFIX);
     }

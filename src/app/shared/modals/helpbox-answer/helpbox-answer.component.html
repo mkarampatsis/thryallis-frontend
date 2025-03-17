@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between m-3">
-    <span class="h5">Κυτίο Βοήθειας</span>
+    <span class="h5">Συνομιλία {{ question.key }}</span>
     <button
         type="button"
         class="btn-close"
@@ -20,6 +20,7 @@
     <div class="mb-3 p-2">
         @if (question) {
             <div class="mb-2"><strong>Τίτλος Συνομιλίας:</strong> {{question.questionTitle}}</div>
+            <div class="mb-2"><strong>Κατηγορία Συνομιλίας:</strong> {{question.questionCategory}}</div>
             <ol class="list-group list-group-numbered mb-2">
                 @for (q of question.questions; track q; let i = $index) {
                     <li class="list-group-item d-flex justify-content-between align-items-start"> 
@@ -133,6 +134,14 @@
                             }
                         </button>
                     }
+                    @if(hasEditorRole()){
+                      <button
+                          type="button"
+                          class="btn btn-primary"
+                          (click)="newQuestion()">
+                          Νέο ερώτημα  
+                        </button>
+                  }
                 </div>
             </form>
         }

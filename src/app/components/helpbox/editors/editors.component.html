@@ -18,16 +18,30 @@
                 class="form-label">
                 Τίτλος Συνομιλίας
             </label>
-            <select class="mb-3 form-control" type="text" id="questionSelect" formControlName="questionSelect" (change)="showSelectValue()">
+            <!-- <select class="mb-3 form-control" type="text" id="questionSelect" formControlName="questionSelect" (change)="showSelectValue()">
                 <option value="" disabled selected>Επιλεξτε ερώτημα</option>
                 <option value="new">Νέα συνομιλία</option>
                 @for (doc of notFinalized; track doc) {
                     <option value="{{doc.questionTitle}}_{{doc['_id']['$oid']}}">{{doc.questionTitle}}</option>
                 }
-            </select>
-            @if (showInputField) {
-                <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle" placeholder="Πληκτρολογείστε το ερώτημα σας">
-            }
+            </select> -->
+            <!-- @if (showInputField) { -->
+                <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle" placeholder="Πληκτρολογείστε τίτλο συνομιλίας">
+            <!-- } -->
+        </div>
+        <div class="mb-3 p-2">
+          <select class="mb-3 form-control" type="text" id="questionCategory" formControlName="questionCategory">
+            <option value="" disabled selected>Επιλεξτε κατηγορία</option>
+            <option value="Προσβάσεις">Προσβάσεις</option>
+            <option value="Φορείς">Φορείς</option>
+            <option value="Μονάδες">Μονάδες</option>
+            <option value="Αρμοδιότητες">Αρμοδιότητες</option>
+            <option value="Νομικές Πράξεις">Νομικές Πράξεις</option>
+            <option value="Αναζήτηση">Αναζήτηση</option>
+            <option value="Helpbox">Helpbox</option>
+            <option value="Είσοδος στο σύστημα">Είσοδος στο σύστημα</option>
+            <option value="Άλλο">Άλλο</option>
+          </select>
         </div>
         <div formGroupName="question" class="mb-3 p-2">
             <label

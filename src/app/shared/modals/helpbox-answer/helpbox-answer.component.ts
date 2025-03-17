@@ -12,6 +12,7 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { take } from 'rxjs';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-helpbox-answer',
@@ -34,6 +35,7 @@ export class HelpboxAnswerComponent {
     uploadService = inject(FileUploadService);
     modalService = inject(ModalService);
     sanitizer = inject(DomSanitizer);
+    router = inject(Router);
 
     modalRef: any;
     helpboxId: string;
@@ -117,6 +119,13 @@ export class HelpboxAnswerComponent {
                 this.helpboxService.helpboxNeedUpdate.set(true);
                 this.modalRef.close()
             });    
+    }
+
+    newQuestion(){
+      console.log(this.question);
+      this.helpboxService.helpboxNewQuestion.set(this.question);
+      this.router.navigate(['helpbox'], { queryParams: { tab: 2 }, queryParamsHandling: "merge" });
+      this.modalRef.close()
     }
 
     getHelpBox(){

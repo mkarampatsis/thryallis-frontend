@@ -18,6 +18,7 @@ export interface IHelpbox {
     lastName?: string;
     organizations?: string[];
     questionTitle?: string;
+    questionCategory?: string;
     questions?:IQuestion[];
     toWhom?: string | null;
     finalized?: boolean | null;

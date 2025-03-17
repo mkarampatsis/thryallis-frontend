@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, EventEmitter, Output, effect } from '@angular/core';
 import { CommonModule } from '@angular/common'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
@@ -27,6 +27,9 @@ export class EditorsComponent implements OnInit, OnDestroy {
     user = this.authService.user;
     organizationPreferedLabel:string[] = [];
 
+    newQuestion = this.helpboxService.helpboxNewQuestion;
+    const 
+
     editor: Editor = new Editor();
     toolbar: Toolbar = DEFAULT_TOOLBAR;
     questionText: string;
@@ -43,12 +46,25 @@ export class EditorsComponent implements OnInit, OnDestroy {
         lastName: new FormControl(''),
         organizations : new FormControl([]),
         questionTitle: new FormControl('', Validators.required),
+        questionCategory: new FormControl('', Validators.required),
         question: new FormGroup({
             questionText: new FormControl('', Validators.required),
             questionFile: new FormControl(''),
         }),
-        questionSelect: new FormControl('')
+        // questionSelect: new FormControl('')
     });
+
+    constructor(){
+      effect(
+        () => {
+            if (this.newQuestion()) {
+                console.log("xxxx", this.newQuestion())
+                this.newQuestion.set(null);
+            }
+        },
+        { allowSignalWrites: true },
+    );
+    }
 
     ngOnInit() {
         this.helpboxService.getAllHelpbox().subscribe((data) => {
@@ -66,6 +82,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.form.controls.firstName.patchValue(this.user().firstName);
         this.form.controls.lastName.patchValue(this.user().lastName);
         this.form.controls.questionTitle.patchValue("")
+        this.form.controls.questionCategory.patchValue("")
         this.form.controls.question.patchValue({
             questionText: this.questionText,
             questionFile : ""
@@ -92,26 +109,27 @@ export class EditorsComponent implements OnInit, OnDestroy {
             firstName: this.form.controls.firstName.value,
             organizations: this.form.controls.organizations.value,
             questionTitle: this.form.controls.questionTitle.value,
+            questionCategory: this.form.controls.questionCategory.value,
             question: {
                 questionText: this.questionText,
                 questionFile: this.uploadObjectID
             },
         } as unknown as IHelpbox;
 
-        const value = this.form.controls.questionSelect.value.split('_');
+        // const value = this.form.controls.questionSelect.value.split('_');
 
-        if (value[0]==="new"){ 
+        // if (value[0]==="new"){ 
             this.helpboxService.newQuestion(helpQuestion)
                 .subscribe(data => {
                     this.goToTab(1);
                 });
-        } else {
-            const id = value[1];
-            this.helpboxService.updateQuestion(helpQuestion, id)
-            .subscribe(data => {
-                this.goToTab(1);
-            });
-        }
+        // } else {
+        //     const id = value[1];
+        //     this.helpboxService.updateQuestion(helpQuestion, id)
+        //     .subscribe(data => {
+        //         this.goToTab(1);
+        //     });
+        // }
     }
 
     resetForm(){
@@ -124,18 +142,18 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.changeTab.emit(tabIndex); // Emit the tab index to parent
     }
 
-    showSelectValue() {
-        const value = this.form.controls.questionSelect.value.split('_');
+    // showSelectValue() {
+    //     const value = this.form.controls.questionSelect.value.split('_');
 
-        if (value[0] === "new") {
-            this.showInputField = true
-            this.form.controls.questionTitle.patchValue('')
-        }
-        else {
-            this.showInputField = false
-            this.form.controls.questionTitle.patchValue(value[0])
-        }
-    }
+    //     if (value[0] === "new") {
+    //         this.showInputField = true
+    //         this.form.controls.questionTitle.patchValue('')
+    //     }
+    //     else {
+    //         this.showInputField = false
+    //         this.form.controls.questionTitle.patchValue(value[0])
+    //     }
+    // }
 
     selectFile(event: any): void {
 

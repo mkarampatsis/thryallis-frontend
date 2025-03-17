@@ -28,7 +28,8 @@ export class HelpdeskComponent {
     colDefs: ColDef[] = [
         { field: 'key', headerName: 'Κωδικός Ερώτησης', flex:1 },
         { field: 'questionTitle', headerName: 'Τίτλος Συνομιλίας', flex:1 },
-        { field: 'email', headerName: 'Χρήστης', flex:1 },
+        { field: 'questionCategory', headerName: 'Κατηγορία', flex:1 },
+        // { field: 'email', headerName: 'Χρήστης', flex:1 },
         { field: 'firstName', headerName: 'Όνομα', flex:1 },
         { field: 'lastName', headerName: 'Επίθετο', flex:1 },
         {
@@ -41,6 +42,8 @@ export class HelpdeskComponent {
                 });
                 return organizationPreferedLabel.join(', ');
             }, 
+            unSortIcon: true,
+            filter: false,
             flex:1
         },
         // { 
@@ -124,7 +127,7 @@ export class HelpdeskComponent {
             } else {
                 this.helpbox = helpbox;
             }
-            console.log(">>>",this.helpbox)
+            // console.log(">>>",this.helpbox)
             this.gridApi.hideOverlay();
         });
     }
