@@ -11,6 +11,7 @@ import { AppState } from './shared/state/app.state';
 import { loadOrganizations } from './shared/state/organizations.state';
 import { loadOrganizationalUnits } from './shared/state/organizational-units.state';
 import { loadRemits } from './shared/state/remits.state';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -22,6 +23,8 @@ import { loadRemits } from './shared/state/remits.state';
 export class AppComponent implements OnInit {
     authService = inject(AuthService);
     constService = inject(ConstService);
+    router = inject(Router);
+    route = inject(ActivatedRoute);
 
     store = inject(Store<AppState>);
 
@@ -29,6 +32,20 @@ export class AppComponent implements OnInit {
         this.store.dispatch(loadOrganizations());
         this.store.dispatch(loadOrganizationalUnits());
         this.store.dispatch(loadRemits());
+
+        // let urlParams = new URLSearchParams(window.location.search);
+        // let code = urlParams.get('code');
+
+        // console.log("Extracted Code from window.location:", code);
+
+        // // Check if "code" query param exists
+        // this.route.queryParams.subscribe(params => {
+        //     console.log("app initialized with query params", params);
+        //     if (params['code']) {
+        //         console.log("Navigating to login with code:", params['code']);
+        //         this.router.navigate(['/login'], { queryParams: { code: params['code'] } });
+        //     }
+        // });
     }
 
     @HostListener('window:beforeunload', ['$event'])

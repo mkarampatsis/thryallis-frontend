@@ -27,4 +27,9 @@ export class Oauth2Service {
         const url = `${APIPREFIX}/gsisUser/${code}`;
         return this.http.get<IGsisUser>(url);
     }
+
+    getGsisHorizontal(): Observable<any> {
+        const url = `${APIPREFIX}/gsisHorizontal`;
+        return this.http.get<any>(url);
+    }
 }

@@ -4,7 +4,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-login',
@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
+          console.log("auth")
           const authCode = params['code'];
           if (authCode) {
             console.log(authCode)
@@ -42,6 +43,13 @@ export class LoginComponent implements OnInit {
 
     login() {
         this.oauthService.gsisLogin();
+    }
+
+    horizontalGSIS(){
+      this.oauthService.getGsisHorizontal()
+      .subscribe(data => {
+        console.log(data);
+      })
     }
 
     logout() {
