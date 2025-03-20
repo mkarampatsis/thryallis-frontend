@@ -40,8 +40,10 @@ export class AuthService {
         effect(
             () => {
               if (!this.loading$()) {
+                console.log("synchronization 1>>>")
                 this.synchronization.set(true);
               } else {
+                  console.log("synchronization 2>>>")
                   this.router.navigate(['landing']);
               }
             },
