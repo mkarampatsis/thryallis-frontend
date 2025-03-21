@@ -27,18 +27,18 @@ export class LoginComponent implements OnInit {
     user: any = '';
 
     ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-          console.log("auth")
-          const authCode = params['code'];
-          if (authCode) {
-            console.log(authCode)
-            this.oauthService.getGsisUser(authCode)
-            .subscribe(data => {
-                console.log("gsisUser>>", data)
-                this.user = data['user']
-            })
-          }
-        });
+        // this.route.queryParams.subscribe(params => {
+        //   console.log("auth")
+        //   const authCode = params['code'];
+        //   if (authCode) {
+        //     console.log(authCode)
+        //     this.oauthService.getGsisUser(authCode)
+        //     .subscribe(data => {
+        //         console.log("gsisUser>>", data)
+        //         this.user = data['user']
+        //     })
+        //   }
+        // });
       }
 
     login() {

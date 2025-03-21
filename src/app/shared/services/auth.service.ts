@@ -8,6 +8,8 @@ import { take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute} from '@angular/router';
+import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
 
 const APIPREFIX = `${environment.apiUrl}/log`;
 
@@ -19,6 +21,8 @@ export class AuthService {
     store = inject(Store<AppState>);
     http = inject(HttpClient);
     router = inject(Router);
+    route = inject(ActivatedRoute)
+    oauthService = inject(Oauth2Service);
 
     user = signal(<IUser | null>null);
     synchronization = signal<boolean>(false);
@@ -43,8 +47,20 @@ export class AuthService {
                 console.log("synchronization 1>>>")
                 this.synchronization.set(true);
               } else {
-                  console.log("synchronization 2>>>")
-                  this.router.navigate(['landing']);
+                this.route.queryParams.subscribe(params => {
+                  console.log("auth")
+                  const authCode = params['code'];
+                  if (authCode) {
+                    console.log(authCode)
+                    this.oauthService.getGsisUser(authCode)
+                    .subscribe(data => {
+                        console.log("gsisUser>>", data)
+                        this.router.navigate(['landing']);
+                        // this.user = data['user']
+                    })
+                  }
+                }); 
+                this.router.navigate(['landing']);         
               }
             },
             { allowSignalWrites: true }
