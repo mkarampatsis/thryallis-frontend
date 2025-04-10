@@ -1,15 +1,3 @@
-<!-- @if (!publishedQuestions) {
-    <p>Δεν υπάρχουν στοιχεία</p>
-} @else {
-    @for (item of publishedQuestions; track item; let i = $index ) {
-        <div>
-            <strong><span [innerHTML]="sanitizeHtml(item.questions.questionText)"></span></strong>
-        </div>
-
-        <div class="mb-3"><span [innerHTML]="sanitizeHtml(item.questions.answerText)"></span></div>
-    }
-} -->
-
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between mb-2">
       <span class="fw-semibold">Συχνές ερωτήσεις</span>
@@ -18,22 +6,20 @@
     @if (!publishedQuestions) {
         <div class="p-2">Δεν υπάρχουν στοιχεία</div>
     } @else {
-        <ol class="list-group list-group-numbered mb-2">
-            @for (item of publishedQuestions; track item) {
-                <li class="list-group-item d-flex justify-content-between align-items-start"> 
-                    <div class="ms-2 me-auto">
-                        <span class="fw-bold" [innerHTML]="sanitizeHtml(item.questions.questionText)"></span>
-                        <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(item.questions.answerText)"></div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <div>
-                            <p><span class="fw-bold">Ημερ. ερωτήματος:</span> {{item.questions.whenAsked | date: "dd-MM-yyyy HH:mm:ss"}}</p>
-                            <p><span class="fw-bold">Απαντ. ερωτήματος:</span> {{item.questions.whenAnswered | date: "dd-MM-yyyy HH:mm:ss"}}</p>
-                        </div>
-                    </div>
-                </li>
-            }
-        </ol>
+        <div class="govgr-body">
+            <ag-grid-angular
+                [domLayout]="'autoHeight'"
+                [rowData]="publishedQuestions"
+                [defaultColDef]="defaultColDef"
+                [columnDefs]="colDefs"
+                [pagination]="true"
+                [paginationPageSize]="50"
+                [loadingOverlayComponent]="loadingOverlayComponent"
+                [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+                (gridReady)="onGridReady($event)"
+                (rowClicked)="onRowClicked($event)"
+                class="ag-theme-balham"></ag-grid-angular>
+        </div>
     }
 
 </div>

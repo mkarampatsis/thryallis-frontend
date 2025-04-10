@@ -16,16 +16,19 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                 <div><strong>Φορέας:</strong> {{organizationName}}</div>
             </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <div><strong>Τυποποιημένη αναφορά για:</strong>{{showReportText}}</div>
+            </div>
 
             <h4 class="govgr-heading-sm bg-body-secondary mt-4 p-2">Οργανόγραμμα</h4>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-primary btn-sm mb-2 me-2" (click)="onBtnExportExcel_OrganizationChart()">Εξαγωγή Οργανογράμματος σε Excel</button>
-            </div>
             <ul class="list-unstyled">
               <li *ngFor="let node of hierarchicalData; let i = index">
                 <app-show-tree-report [node]="node" [prefix]="(i + 1).toString()" [code]="code"></app-show-tree-report>
               </li>
             </ul>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-primary btn-sm mb-2 me-2" (click)="onBtnExportExcel_OrganizationChart()">Εξαγωγή Οργανογράμματος σε Excel</button>
+            </div>
 
             
             <h4 class="govgr-heading-sm bg-body-secondary mt-4 p-2">Διατάξεις Πρόβλεψεις</h4>

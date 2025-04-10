@@ -28,6 +28,8 @@ export class ReportsComponent {
     
     organizational_units$ = selectOrganizationalUnits$;
     loading = false; 
+    showReport = false;
+    showReportText = '';
 
     monades: IOrganizationUnitList[] = [];
     
@@ -38,8 +40,8 @@ export class ReportsComponent {
     defaultColDef = this.constService.defaultColDef;
     colDefs: ColDef[] = [
         { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
-        { field: 'preferredLabel', headerName: 'Ονομασία', flex: 1 },
         { field: 'organization', headerName: 'Φορέας', flex: 1 },
+        { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
         { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
         { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
         {   
@@ -97,15 +99,25 @@ export class ReportsComponent {
 
         this.organizationCode = event.data['organizationCode']
         this.organizationName = event.data['organization']
+        
+        this.showReport = false;
+        this.showReportText = ''
 
         if (event.colDef.field=="preferredLabel") {
-            this.code = event.data['code']
+            this.code = event.data['code'];
+            this.showReport = true;
+            this.showReportText = event.data['preferredLabel'];
         } else if (event.colDef.field=="organization") {
-            this.code = event.data['organizationCode']
+            this.code = event.data['organizationCode'];
+            this.showReport = true;
+            this.showReportText = event.data['organization'];
         } else if (event.colDef.field=="subOrganizationOf") {
-            this.code = event.data['supervisorUnitCode']
+            this.code = event.data['supervisorUnitCode'];
+            this.showReport = true;
+            this.showReportText = event.data['subOrganizationOf'];
         } else {
-            console.log("Nothing to show")
+            this.showReport = false;
+            this.showReportText = ''
         }
     }
 

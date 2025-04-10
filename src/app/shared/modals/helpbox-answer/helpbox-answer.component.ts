@@ -49,6 +49,7 @@ export class HelpboxAnswerComponent {
     answerText: string;
 
     showForm = false;
+    showNewQuestionButton = false;
 
     progress = 0;
     currentFile: File;
@@ -141,6 +142,7 @@ export class HelpboxAnswerComponent {
         this.helpboxService.getHelpboxById(this.helpboxId)
             .subscribe((data)=>{
                 this.question = data[0];
+                this.showNewQuestionButton = this.question.finalized ? false : true;
                 this.question.organizations.every(data=> {
                     this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
             });  

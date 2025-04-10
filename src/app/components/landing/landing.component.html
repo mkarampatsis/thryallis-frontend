@@ -1,7 +1,7 @@
-<h1 class="govgr-heading-md">Λογισμικό για την υποστήριξη της Πολυεπίπεδης Διακυβέρνησης</h1>
+<h1 class="govgr-heading-md">Πληροφοριακό Σύστημα Πολυεπίπεδης Διακυβέρνησης</h1>
 
 <p class="govgr-body d-flex flex-column gap-3">
-    Πλατφόρμα και σύστημα παρακολούθησης αρμοδιοτήτων μεταξύ των φορέων του δημοσίου. 
+    Πλατφόρμα παρακολούθησης αρμοδιοτήτων μεταξύ των φορέων του δημοσίου. 
     <br>Στα πλαίσια του έργου <em>"Καθιέρωση πολυεπίπεδης διακυβέρνησης-κατανομή αρμοδιοτήτων μεταξύ των επιπέδων της Δημόσιας Διοίκησης".</em>
 
     @if ((organizationsLoading$ | async) || (organizationalUnitsLoading$ | async) || (remitsLoading$ | async)) {
@@ -13,7 +13,7 @@
                 <span class="visually-hidden">Loading...</span>
             </span>
         </span>
-        @if (organizationsLoading$ | async) {
+        <!-- @if (organizationsLoading$ | async) {
             <span class="d-flex align-items-center gap-2">
                 Συγχρονισμός Φορέων...
                 <span
@@ -44,7 +44,7 @@
                     <span class="visually-hidden">Loading...</span>
                 </span>
             </span>
-        }
+        } -->
     } @else {
         <p class="mt-4"><strong>O συγχρονισμός των δεδομένων ολοκληρώθηκε</strong></p>
     }

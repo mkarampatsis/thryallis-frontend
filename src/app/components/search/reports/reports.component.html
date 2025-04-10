@@ -5,7 +5,7 @@
     
     <div class="d-flex justify-content-between small">
         <div>
-            <span>Eπιλέξτε φορέα/μονάδα που επιθυμείτε</span>
+            <span>Eπιλέξτε φορέα/μονάδα/προϊστάμενη μονάδα που επιθυμείτε</span>
         </div>
     </div>
 
@@ -25,10 +25,12 @@
     </ag-grid-angular>
 </div>
 
-@if (organizationCode) {
+@if (showReport) {
+    <p><strong>'Εχετε επιλέξει:</strong> {{showReportText}}</p>
     <app-organization-tree-report 
         [organizationName]="organizationName" 
         [organizationCode]="organizationCode" 
+        [showReportText]="showReportText"
         [code]="code">
     </app-organization-tree-report>
 }

@@ -91,6 +91,8 @@ export class ConstService {
         filter: true,
         sortable: true,
         floatingFilter: true,
+        wrapHeaderText: true,
+        autoHeaderHeight: true,
     };
     
     autoSizeStrategy:

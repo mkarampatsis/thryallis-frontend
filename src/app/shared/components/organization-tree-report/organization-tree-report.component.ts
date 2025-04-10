@@ -43,6 +43,7 @@ interface FlatNode extends IOrganizationTreeReport {
 export class OrganizationTreeReportComponent {
     @Input() organizationCode: string | null = null;
     @Input() organizationName: string | null = null;
+    @Input() showReportText: string | null = null;
     @Input() code: string | null = null;
 
     organizationService = inject(OrganizationService);
