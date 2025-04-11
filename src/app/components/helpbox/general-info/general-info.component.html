@@ -1,153 +1,147 @@
 @if (hasHelpDeskRole()) {
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between">
-              <span class="fw-semibold">Εισαγωγή ενημέρωσης</span>
-            </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between">
+            <span class="fw-semibold">Εισαγωγή ενημέρωσης</span>
+          </div>
 
-            <div class="mb-3 mt-3 p-2">
-                <p><strong>Ηλεκτρονική διεύθυνση:</strong> {{user().email}}</p>
-                <p><strong>Όνομα:</strong> {{user().firstName}}</p>
-                <p><strong>Επίθετο:</strong> {{user().lastName}}</p>
-            </div>
+          <div class="mb-3 mt-3 p-2">
+              <p><strong>Ηλεκτρονική διεύθυνση:</strong> {{user().email}}</p>
+              <p><strong>Όνομα:</strong> {{user().firstName}}</p>
+              <p><strong>Επίθετο:</strong> {{user().lastName}}</p>
+          </div>
 
-            <div class="mb-3 p-2">
-                <label
-                    for="title"
-                    class="form-label">
-                    Τίτλος ενημέρωσης:
-                </label>
-                <input class="form-control" type="text" id="title" formControlName="title" placeholder="Πληκτρολογείστε το τίτλο">
-            </div>
+          <div class="mb-3 p-2">
+              <label
+                  for="title"
+                  class="form-label">
+                  Τίτλος ενημέρωσης:
+              </label>
+              <input class="form-control" type="text" id="title" formControlName="title" placeholder="Πληκτρολογείστε το τίτλο">
+          </div>
 
-            <div class="mb-3 p-2">
-              <select class="mb-3 form-control" id="category" formControlName="category">
-                <option value="" disabled selected>Επιλέξτε κατηγορία</option>
-                <option value="Θεσμικό πλαίσιο ΠΕΔ">Θεσμικό πλαίσιο ΠΕΔ</option>
-                <option value="Εγκύκλιοι">Εγκύκλιοι</option>
-                <option value="Νέα - Ενημερώσεις">Νέα - Ενημερώσεις</option>
-                <option value="Άλλο">Άλλο</option>
-              </select>
-            </div>
+          <div class="mb-3 p-2">
+            <select class="mb-3 form-control" id="category" formControlName="category">
+              <option value="" disabled selected>Επιλέξτε κατηγορία</option>
+              <option value="Θεσμικό πλαίσιο ΠΕΔ">Θεσμικό πλαίσιο ΠΕΔ</option>
+              <option value="Εγκύκλιοι">Εγκύκλιοι</option>
+              <option value="Νέα - Ενημερώσεις">Νέα - Ενημερώσεις</option>
+              <option value="Άλλο">Άλλο</option>
+            </select>
+          </div>
 
-            <div class="mb-3 p-2">
-                <label
-                    for="text"
-                    class="form-label">
-                    Κείμενο ενημέρωσης:
-                </label>
-                <div class="NgxEditor__Wrapper">
-                    <ngx-editor-menu
-                        [editor]="editor"
-                        [toolbar]="toolbar">
-                    </ngx-editor-menu>
-                    <ngx-editor
-                        [editor]="editor"
-                        id="text"
-                        formControlName = "text"
-                        (ngModelChange)="onTextChange($event)">
-                    </ngx-editor>
-                </div>
-            </div>
-            <div class="mb-3 p-2">
-                <label class="form-label">Αρχείο PDF (16MB maximum):</label>
-                <input
-                    class="form-control"
-                    type="file"
-                    (change)="selectFile($event)" />
-                    <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
-                @if (progress) {
-                    <div class="progress mt-2">
-                        <div
-                            class="progress-bar progress-bar-info"
-                            role="progressbar"
-                            attr.aria-valuenow="{{ progress }}"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            [ngStyle]="{ width: progress + '%' }">
-                            {{ progress }}%
-                        </div>
-                    </div>
-                }
-            </div>
-            <!-- <div class="mb-3 p-2">
-                <p>Επιλέξτε ετικέτες</p>
-                @for (tag of tags; track tag; let idx = $index) {
-                    <div class="form-check form-check-inline mb-2">
-                        <input class="form-check-input" type="checkbox" value={{tag}} id=`tag_${idx}` (change)="onCheckboxChange($event)">
-                        <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
-                    </div>
-                }
-                <input type="text" class="form-control" formControlName="tags" placeholder="Πληκτρολογείστε νέα ετικέτα χρησιμοποιήστε το κόμμα ως διαχωριστικό">
-            </div> -->
-            <div class="d-flex align-items-center gap-2 mb-3 p-2">
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    type="submit"
-                    [disabled]="form.invalid">
-                    Υποβολή
-                </button>
-                <button
-                    type="button"
-                    class="btn btn-danger"
-                    (click)="resetForm()">
-                    Επαναφορά
-                </button>
-            </div>
-        </div>
-    </form>  
+          <div class="mb-3 p-2">
+              <label
+                  for="text"
+                  class="form-label">
+                  Κείμενο ενημέρωσης:
+              </label>
+              <div class="NgxEditor__Wrapper">
+                  <ngx-editor-menu
+                      [editor]="editor"
+                      [toolbar]="toolbar">
+                  </ngx-editor-menu>
+                  <ngx-editor
+                      [editor]="editor"
+                      id="text"
+                      formControlName = "text"
+                      (ngModelChange)="onTextChange($event)">
+                  </ngx-editor>
+              </div>
+          </div>
+          <div class="mb-3 p-2">
+              <label class="form-label">Αρχείο (PDF, DOCX, XLSX, PNG, JPEG) (16MB maximum):</label>
+              <input
+                  class="form-control"
+                  type="file"
+                  (change)="selectFile($event)" />
+                  <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+              @if (progress) {
+                  <div class="progress mt-2">
+                      <div
+                          class="progress-bar progress-bar-info"
+                          role="progressbar"
+                          attr.aria-valuenow="{{ progress }}"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          [ngStyle]="{ width: progress + '%' }">
+                          {{ progress }}%
+                      </div>
+                  </div>
+              }
+          </div>
+          <!-- <div class="mb-3 p-2">
+              <p>Επιλέξτε ετικέτες</p>
+              @for (tag of tags; track tag; let idx = $index) {
+                  <div class="form-check form-check-inline mb-2">
+                      <input class="form-check-input" type="checkbox" value={{tag}} id=`tag_${idx}` (change)="onCheckboxChange($event)">
+                      <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
+                  </div>
+              }
+              <input type="text" class="form-control" formControlName="tags" placeholder="Πληκτρολογείστε νέα ετικέτα χρησιμοποιήστε το κόμμα ως διαχωριστικό">
+          </div> -->
+          <div class="d-flex align-items-center gap-2 mb-3 p-2">
+              <button
+                  type="button"
+                  class="btn btn-primary"
+                  type="submit"
+                  [disabled]="form.invalid">
+                  Υποβολή
+              </button>
+              <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="resetForm()">
+                  Καθαρισμός
+              </button>
+          </div>
+      </div>
+  </form>  
 }
 
 <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between mb-2">
-      <span class="fw-semibold">Ενημερώσεις</span>
+  <div class="card-header d-flex justify-content-between mb-2">
+    <span class="fw-semibold">Ενημερώσεις</span>
+  </div>
+
+  @if (!showGeneralInfo) {
+      <div class="p-2 mx-2">Δεν υπάρχουν στοιχεία</div>
+  } @else {
+    <!-- <div class="ms-2 mx-2">
+        <p>Επιλέξτε ετικέτα</p>
+        @for (tag of tags; track tag; let idx = $index) {
+            <div class="form-check form-check-inline mb-2">
+                <input class="form-check-input" type="checkbox" value={{tag}} id=`tag_${idx}` (change)="onCheckboxSelected($event)">
+                <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
+            </div>
+        }
+    </div> -->
+    <div class="mb-3 p-2">
+      <select class="mb-3 form-control" (change)="onSelectionChange($event)">
+        <option value="" disabled selected>Επιλέξτε κατηγορία</option>
+        <option value="">Όλες οι κατηγορίες</option>
+        <option value="Θεσμικό πλαίσιο ΠΕΔ">Θεσμικό πλαίσιο ΠΕΔ</option>
+        <option value="Εγκύκλιοι">Εγκύκλιοι</option>
+        <option value="Νέα - Ενημερώσεις">Νέα - Ενημερώσεις</option>
+        <option value="Άλλο">Άλλο</option>
+      </select>
     </div>
+    
+        
 
-    @if (!showGeneralInfo) {
-        <div class="p-2 mx-2">Δεν υπάρχουν στοιχεία</div>
-    } @else {
-        <!-- <div class="ms-2 mx-2">
-            <p>Επιλέξτε ετικέτα</p>
-            @for (tag of tags; track tag; let idx = $index) {
-                <div class="form-check form-check-inline mb-2">
-                    <input class="form-check-input" type="checkbox" value={{tag}} id=`tag_${idx}` (change)="onCheckboxSelected($event)">
-                    <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
-                </div>
-            }
-        </div> -->
-        <div class="mb-3 p-2">
-          <select class="mb-3 form-control" (change)="onSelectionChange($event)">
-            <option value="" disabled selected>Επιλέξτε κατηγορία</option>
-            <option value="Θεσμικό πλαίσιο ΠΕΔ">Θεσμικό πλαίσιο ΠΕΔ</option>
-            <option value="Εγκύκλιοι">Εγκύκλιοι</option>
-            <option value="Νέα - Ενημερώσεις">Νέα - Ενημερώσεις</option>
-            <option value="Άλλο">Άλλο</option>
-          </select>
-        </div>
-        <ol class="list-group list-group-numbered mb-2 mx-2">
-            @for (item of showGeneralInfo; track item) {
-                <li class="list-group-item d-flex justify-content-between align-items-start"> 
-                    <div class="ms-2 me-auto">
-                        <span class="fw-bold" [innerHTML]="sanitizeHtml(item.title)"></span>
-                        <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(item.text)"></div>
-                        @if(item.file){
-                            <div>
-                                <strong>Αρχείο  ενημέρωσης:</strong>
-                                <i class="bi bi-journal-text fs-4" role="button" (click)="displayFile(item.file['$oid'])"></i>
-                            </div>
-                        }
-                        <div class="mt-2"><strong>Κατηγορια: </strong>{{item.category}}</div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <div>
-                            <p><span class="fw-bold">Ημερ. ενημέρωσης:</span> {{item.when['$date'] | date: "dd-MM-yyyy HH:mm:ss"}}</p>
-                            <p><span class="fw-bold">Χειριστής Helpdesk:</span> {{item.email }}</p>
-                        </div>
-                    </div>
-                </li>
-            }
-        </ol>
-    }
-
+    <div class="govgr-body">
+      <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="showGeneralInfo"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="50"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        (rowClicked)="onRowClicked($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+    </div>
+  }
 </div>
