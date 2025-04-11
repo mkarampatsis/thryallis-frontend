@@ -7,6 +7,7 @@ import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ColDef } from 'ag-grid-community';
 import { ConstService } from 'src/app/shared/services/const.service';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
   selector: 'app-faq',
@@ -19,6 +20,7 @@ export class FaqComponent implements OnInit {
     helpboxService = inject(HelpboxService)
     sanitizer = inject(DomSanitizer);
     constService = inject(ConstService);
+    modalService = inject(ModalService);
 
     publishedQuestions = []; 
 
@@ -104,7 +106,7 @@ export class FaqComponent implements OnInit {
     }
 
     onRowClicked(event: any): void {
-        // this.modalService.showHelpboxAnswer(event.data._id.$oid);
+        this.modalService.showFaqAnswer(event.data);
         console.log(event);
     }
 }

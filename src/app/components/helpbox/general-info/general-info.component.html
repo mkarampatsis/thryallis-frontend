@@ -21,6 +21,16 @@
             </div>
 
             <div class="mb-3 p-2">
+              <select class="mb-3 form-control" id="category" formControlName="category">
+                <option value="" disabled selected>Επιλέξτε κατηγορία</option>
+                <option value="Θεσμικό πλαίσιο ΠΕΔ">Θεσμικό πλαίσιο ΠΕΔ</option>
+                <option value="Εγκύκλιοι">Εγκύκλιοι</option>
+                <option value="Νέα - Ενημερώσεις">Νέα - Ενημερώσεις</option>
+                <option value="Άλλο">Άλλο</option>
+              </select>
+            </div>
+
+            <div class="mb-3 p-2">
                 <label
                     for="text"
                     class="form-label">
@@ -60,7 +70,7 @@
                     </div>
                 }
             </div>
-            <div class="mb-3 p-2">
+            <!-- <div class="mb-3 p-2">
                 <p>Επιλέξτε ετικέτες</p>
                 @for (tag of tags; track tag; let idx = $index) {
                     <div class="form-check form-check-inline mb-2">
@@ -69,7 +79,7 @@
                     </div>
                 }
                 <input type="text" class="form-control" formControlName="tags" placeholder="Πληκτρολογείστε νέα ετικέτα χρησιμοποιήστε το κόμμα ως διαχωριστικό">
-            </div>
+            </div> -->
             <div class="d-flex align-items-center gap-2 mb-3 p-2">
                 <button
                     type="button"
@@ -97,7 +107,7 @@
     @if (!showGeneralInfo) {
         <div class="p-2 mx-2">Δεν υπάρχουν στοιχεία</div>
     } @else {
-        <div class="ms-2 mx-2">
+        <!-- <div class="ms-2 mx-2">
             <p>Επιλέξτε ετικέτα</p>
             @for (tag of tags; track tag; let idx = $index) {
                 <div class="form-check form-check-inline mb-2">
@@ -105,6 +115,15 @@
                     <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
                 </div>
             }
+        </div> -->
+        <div class="mb-3 p-2">
+          <select class="mb-3 form-control" (change)="onSelectionChange($event)">
+            <option value="" disabled selected>Επιλέξτε κατηγορία</option>
+            <option value="Θεσμικό πλαίσιο ΠΕΔ">Θεσμικό πλαίσιο ΠΕΔ</option>
+            <option value="Εγκύκλιοι">Εγκύκλιοι</option>
+            <option value="Νέα - Ενημερώσεις">Νέα - Ενημερώσεις</option>
+            <option value="Άλλο">Άλλο</option>
+          </select>
         </div>
         <ol class="list-group list-group-numbered mb-2 mx-2">
             @for (item of showGeneralInfo; track item) {
@@ -115,10 +134,10 @@
                         @if(item.file){
                             <div>
                                 <strong>Αρχείο  ενημέρωσης:</strong>
-                                <i class="bi bi-file-earmark-pdf fs-4" role="button" (click)="displayPDF(item.file['$oid'])"></i>
+                                <i class="bi bi-journal-text fs-4" role="button" (click)="displayFile(item.file['$oid'])"></i>
                             </div>
                         }
-                        <div class="mt-2"><strong>Ετικέτες: </strong>{{item.tags.join()}}</div>
+                        <div class="mt-2"><strong>Κατηγορια: </strong>{{item.category}}</div>
                     </div>
                     <div class="d-flex gap-2">
                         <div>

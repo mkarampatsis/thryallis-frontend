@@ -40,9 +40,9 @@ export class GeneralInfoComponent {
     generalInfo: IGeneralInfo[];
     showGeneralInfo: IGeneralInfo[];
     text: string;
-    tags: string[] | null = [];
-    selectedValues: string[] = [];
-    showSelectedValues: string[] = [];
+    // tags: string[] | null = [];
+    // selectedValues: string[] = [];
+    // showSelectedValues: string[] = [];
 
     form = new FormGroup({
         email: new FormControl(''),
@@ -51,7 +51,7 @@ export class GeneralInfoComponent {
         title: new FormControl('', Validators.required),
         text: new FormControl('', Validators.required),
         file: new FormControl(''),
-        tags: new FormControl("")
+        category: new FormControl("")
     });
 
     ngOnInit() {
@@ -70,7 +70,7 @@ export class GeneralInfoComponent {
         this.form.controls.title.patchValue("");
         this.form.controls.text.patchValue("");
         this.form.controls.file.patchValue("");
-        this.form.controls.tags.patchValue("");
+        this.form.controls.category.patchValue("");
     }
 
     onTextChange(html: object) {
@@ -79,8 +79,8 @@ export class GeneralInfoComponent {
 
     onSubmit() {
 
-        const inputValues = this.form.controls.tags.value.split(",").map(item => item.trim())
-        this.selectedValues = this.selectedValues.concat(inputValues);
+        // const inputValues = this.form.controls.tags.value.split(",").map(item => item.trim())
+        // this.selectedValues = this.selectedValues.concat(inputValues);
            
         const infoText = {
             email: this.form.controls.email.value,
@@ -89,7 +89,8 @@ export class GeneralInfoComponent {
             title: this.form.controls.title.value,
             text: this.text,
             file: this.uploadObjectID,
-            tags: this.selectedValues
+            // tags: this.selectedValues
+            category: this.form.controls.category.value
            
         } as IGeneralInfo;
 
@@ -106,10 +107,10 @@ export class GeneralInfoComponent {
             .subscribe((data)=>{
                 this.generalInfo = data;
                 this.showGeneralInfo = this.generalInfo;
-                data.forEach(data => {
-                    this.tags = this.tags.concat(data.tags);
-                })
-                this.tags = [...new Set(this.tags)];
+                // data.forEach(data => {
+                //     this.tags = this.tags.concat(data.tags);
+                // })
+                // this.tags = [...new Set(this.tags)];
             })
     }
 
@@ -153,50 +154,56 @@ export class GeneralInfoComponent {
         });
     }
 
-    displayPDF(fileId:string) {
+    displayFile(fileId:string) {
         this.uploadService
             .getUploadByID(fileId)
             .pipe(take(1))
             .subscribe((data) => {
-                const url = window.URL.createObjectURL(data);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'document.pdf';
-                this.modalService.showPdfViewer(link);
+                if (data.type==="application/pdf") {
+                  const url = window.URL.createObjectURL(data);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'document.pdf';
+                  this.modalService.showPdfViewer(link);
+                } else {
+                  // const type = data.type.split('/')[1];
+                  console.log(data.type);
+                  if (data.type=='image/png')
+                    this.helpboxService.downloadFile("imageBinaryData", 'image.png', 'image/png');
+                  if (data.type=='image/jpeg')
+                    this.helpboxService.downloadFile("imageBinaryData", 'photo.jpg', 'image/png');
+                  if (data.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                    this.helpboxService.downloadFile("xlsxBinaryData", 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                  if (data.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+                    this.helpboxService.downloadFile("xlsxBinaryData", 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                  this.helpboxService.downloadFile("docxBinaryData", 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+                  // const url = window.URL.createObjectURL(data);
+                  // const link = document.createElement('a');
+                  // link.href = url;
+                  // link.download = 'document.'+type;
+                  // console.log(link.download);
+                }
             });
     }
 
-    onCheckboxChange(event:Event){
-        const checkbox = event.target as HTMLInputElement;
-        const value = checkbox.value;
+    // onCheckboxChange(event:Event){
+    //     const checkbox = event.target as HTMLInputElement;
+    //     const value = checkbox.value;
 
-        if (checkbox.checked) {
-            // Add value to selectedValues if checked
-            this.selectedValues.push(value);
-        } else {
-            // Remove value from selectedValues if unchecked
-            this.selectedValues = this.selectedValues.filter((item) => item !== value);
-        }
-    }
+    //     if (checkbox.checked) {
+    //         // Add value to selectedValues if checked
+    //         this.selectedValues.push(value);
+    //     } else {
+    //         // Remove value from selectedValues if unchecked
+    //         this.selectedValues = this.selectedValues.filter((item) => item !== value);
+    //     }
+    // }
 
-    onCheckboxSelected(event:Event){
-        const checkbox = event.target as HTMLInputElement;
-        const value = checkbox.value;
-        this.showGeneralInfo = this.generalInfo;
-
-        if (checkbox.checked) {
-            // Add value to selectedValues if checked
-            this.showSelectedValues.push(value);
-            this.showSelectedValues.forEach((data) => {
-                this.showGeneralInfo = this.generalInfo.filter((item)=>item.tags.includes(data));
-            })
-        } else {
-            // Remove value from selectedValues if unchecked
-            this.showSelectedValues = this.showSelectedValues.filter((item) => item !== value);
-            this.showSelectedValues.forEach((data) => {
-                this.showGeneralInfo = this.generalInfo.filter((item)=>item.tags.includes(data));
-            })
-        }
+    onSelectionChange(event:Event){
+      const selectection = event.target as HTMLInputElement;
+      const value = selectection.value;
+      this.showGeneralInfo = this.generalInfo;
+      this.showGeneralInfo = this.generalInfo.filter((item)=>item.category.includes(value));
     }
 
     hasHelpDeskRole() {

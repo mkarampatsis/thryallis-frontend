@@ -56,4 +56,18 @@ export class HelpboxService {
     newGeneralInfo(data: IGeneralInfo): Observable<{ msg: string; index: IHelpbox }> {
         return this.http.post<{ msg: string; index: IGeneralInfo }>(`${APIPREFIX}/general-info`, data);
     }
+
+    downloadFile(fileContent: BlobPart, fileName: string, mimeType: string): void {
+      const blob = new Blob([fileContent], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+    
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    
+      URL.revokeObjectURL(url);
+    }
 }

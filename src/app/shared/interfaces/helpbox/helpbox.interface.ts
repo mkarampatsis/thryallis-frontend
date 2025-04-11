@@ -32,5 +32,6 @@ export interface IGeneralInfo {
     text?: string | null;
     file?: string | null;
     when?: Date | null;
-    tags?: string[] | null;
+    // tags?: string[] | null;
+    category?: string | null;
 }

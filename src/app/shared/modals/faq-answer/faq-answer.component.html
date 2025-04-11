@@ -1,0 +1,33 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Συχνές Ερωτήσεις</span>
+  <button
+      type="button"
+      class="btn-close"
+      (click)="modalRef.dismiss()">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="mb-3 mt-3 p-2">
+      @if (data) {
+          <div><strong>Τίτλος Συνομιλίας:</strong> {{data.questionTitle}}</div>
+          <div class="mt-2"><strong>Ερώτηση:</strong>
+            <div class="mt-2" [innerHTML]="sanitizeHtml(data.questions.questionText)"></div>
+          </div>
+          <div class="mt-2"><strong>Απάντηση:</strong>
+            <div class="mt-2" [innerHTML]="sanitizeHtml(data.questions.answerText)"></div>
+          </div>
+          <div class="mt-2"><strong>Ημερ. ερωτήματος:</strong> {{data.questions.whenAsked | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+          <div class="mt-2"><strong>Απαντ. ερωτήματος:</strong> {{data.questions.whenAnswered | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+      }
+  </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+  <button
+      ngbAutofocus
+      type="button"
+      class="btn btn-primary"
+      (click)="modalRef.close()">
+      Επιστροφή
+  </button>
+</div>
