@@ -120,7 +120,8 @@ export class HelpdeskComponent {
     }
 
     loadData(){
-      this.helpboxService.getAllHelpbox().subscribe((helpbox) => {
+      this.helpboxService.getAllHelpbox()
+      .subscribe((helpbox) => {
         if (this.userService.hasEditorRole()) {
           this.helpbox = helpbox.filter(item => item.email===this.userService.user().email);
         } else {

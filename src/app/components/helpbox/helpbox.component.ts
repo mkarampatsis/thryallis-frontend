@@ -24,7 +24,6 @@ export class HelpboxComponent {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      console.log("helpbox")
       if (params['tab']) {
         this.changeTab(params['tab']);  // Update tab dynamically
         this.cdr.detectChanges(); // Force UI update

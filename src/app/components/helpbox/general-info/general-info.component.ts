@@ -43,7 +43,7 @@ export class GeneralInfoComponent {
   uploadObjectID: string | null = null;
 
   generalInfo: IGeneralInfo[];
-  showGeneralInfo: IGeneralInfo[];
+  showGeneralInfo: IGeneralInfo[] = [];
   text: string;
   // tags: string[] | null = [];
   // selectedValues: string[] = [];
@@ -99,11 +99,11 @@ export class GeneralInfoComponent {
       field: 'when.$date', 
       headerName: 'Ημερ. ενημέρωσης', 
       cellRenderer: (params) => {
-          const date = new Date(params.value);
-          const day = String(date.getDate()).padStart(2, '0');
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const year = date.getFullYear();
-          return `${day}-${month}-${year}`;
+        const date = new Date(params.value);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
       }, 
       flex:1 
     },
@@ -115,6 +115,16 @@ export class GeneralInfoComponent {
     { 
       field: 'file.$oid', 
       headerName: 'Αρχείο',
+      cellRenderer: function (params) {
+        return params.value ? 'ΝΑΙ' : 'ΟΧΙ';
+      },
+      cellStyle: params => {
+        if (params.value) {
+            return { color: 'green' };
+        } else {
+            return { color: 'red' };
+        }
+      }, 
       flex:1 
     },
   ];
@@ -124,73 +134,71 @@ export class GeneralInfoComponent {
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση ερωτημάτων...' };
 
-  gridApi: GridApi<any>;
-
+  gridApi: GridApi<IGeneralInfo>;
+  
   ngOnInit() {
-      this.getAllGeneralInfo();
-      this.initializeForm();
+    // this.getAllGeneralInfo();
+    this.initializeForm();
+  }
+
+  onGridReady(params: GridReadyEvent<IGeneralInfo>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    console.log("grid ready");
+    this.getAllGeneralInfo();
   }
 
   ngOnDestroy(): void {
-      this.editor.destroy();
+    this.editor.destroy();
   }
 
   initializeForm(){
-      this.form.controls.email.patchValue(this.user().email);
-      this.form.controls.firstName.patchValue(this.user().firstName);
-      this.form.controls.lastName.patchValue(this.user().lastName);
-      this.form.controls.title.patchValue("");
-      this.form.controls.text.patchValue("");
-      this.form.controls.file.patchValue("");
-      this.form.controls.category.patchValue("");
+    this.form.controls.email.patchValue(this.user().email);
+    this.form.controls.firstName.patchValue(this.user().firstName);
+    this.form.controls.lastName.patchValue(this.user().lastName);
+    this.form.controls.title.patchValue("");
+    this.form.controls.text.patchValue("");
+    this.form.controls.file.patchValue("");
+    this.form.controls.category.patchValue("");
   }
 
   onTextChange(html: object) {
-      this.text = html.toString()
+    this.text = html.toString()
   }
 
   onSubmit() {
+    // const inputValues = this.form.controls.tags.value.split(",").map(item => item.trim())
+    // this.selectedValues = this.selectedValues.concat(inputValues);
+    const infoText = {
+      email: this.form.controls.email.value,
+      lastName: this.form.controls.lastName.value,
+      firstName: this.form.controls.firstName.value,
+      title: this.form.controls.title.value,
+      text: this.text,
+      file: this.uploadObjectID,
+      // tags: this.selectedValues
+      category: this.form.controls.category.value        
+    } as IGeneralInfo;
 
-      // const inputValues = this.form.controls.tags.value.split(",").map(item => item.trim())
-      // this.selectedValues = this.selectedValues.concat(inputValues);
-          
-      const infoText = {
-          email: this.form.controls.email.value,
-          lastName: this.form.controls.lastName.value,
-          firstName: this.form.controls.firstName.value,
-          title: this.form.controls.title.value,
-          text: this.text,
-          file: this.uploadObjectID,
-          // tags: this.selectedValues
-          category: this.form.controls.category.value
-          
-      } as IGeneralInfo;
-
-      this.helpboxService.newGeneralInfo(infoText)
-              .subscribe(data => {
-                  // this.goToTab(1);
-                  this.initializeForm()
-                  this.getAllGeneralInfo();
-              });
-  }
-
-  onGridReady(params: GridReadyEvent<any>): void {
-    this.gridApi = params.api;
-    this.gridApi.showLoadingOverlay();
-    this.getAllGeneralInfo();;
+    this.helpboxService.newGeneralInfo(infoText)
+      .subscribe(data => {
+        // this.goToTab(1);
+        this.initializeForm()
+        this.getAllGeneralInfo();
+      });
   }
 
   getAllGeneralInfo(){
-      this.helpboxService.getGeneralInfo()
-          .subscribe((data)=>{
-              this.generalInfo = data;
-              this.showGeneralInfo = this.generalInfo;
-              console.log(this.showGeneralInfo);
-              // data.forEach(data => {
-              //     this.tags = this.tags.concat(data.tags);
-              // })
-              // this.tags = [...new Set(this.tags)];
-          })
+    this.helpboxService.getGeneralInfo()
+      .subscribe((data)=>{
+        this.generalInfo = data;
+        this.showGeneralInfo = this.generalInfo;
+        this.gridApi.hideOverlay();
+        // data.forEach(data => {
+        //     this.tags = this.tags.concat(data.tags);
+        // })
+        // this.tags = [...new Set(this.tags)];
+      })
   }
 
   resetForm(){
@@ -198,73 +206,59 @@ export class GeneralInfoComponent {
     this.initializeForm(); 
   }
 
-  sanitizeHtml(html) : SafeHtml {
-    if (html) {
-        return this.sanitizer.bypassSecurityTrustHtml(html);
-    } else {
-        return ""
-    }
-  }
-
   selectFile(event: any): void {
+    if (event.target.files.length === 0) {
+      console.log('No file selected!');
+      return;
+    }
+    this.currentFile = event.target.files[0];
 
-      if (event.target.files.length === 0) {
-          console.log('No file selected!');
-          return;
-      }
-      this.currentFile = event.target.files[0];
-
-      this.uploadService.upload(this.currentFile).subscribe({
-          next: (event: any) => {
-              if (event.type === HttpEventType.UploadProgress) {
-                  this.progress = Math.round((100 * event.loaded) / event.total);
-              } else if (event instanceof HttpResponse) {
-                  this.uploadObjectID = event.body.id;
-                  this.form.controls.file.setValue(this.uploadObjectID);
-                  this.form.markAsDirty();
-              }
-          },
-          error: (err: any) => {
-              console.log(err);
-          },
-          complete: () => {
-              console.log('Upload complete');
-          },
-      });
+    this.uploadService.upload(this.currentFile).subscribe({
+      next: (event: any) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.progress = Math.round((100 * event.loaded) / event.total);
+        } else if (event instanceof HttpResponse) {
+          this.uploadObjectID = event.body.id;
+          this.form.controls.file.setValue(this.uploadObjectID);
+          this.form.markAsDirty();
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+      complete: () => {
+        console.log('Upload complete');
+      },
+    });
   }
 
   displayFile(fileId:string) {
-      this.uploadService
-          .getUploadByID(fileId)
-          .pipe(take(1))
-          .subscribe((data) => {
-              if (data.type==="application/pdf") {
-                const url = window.URL.createObjectURL(data);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'document.pdf';
-                this.modalService.showPdfViewer(link);
-              } else {
-                // const type = data.type.split('/')[1];
-                console.log(">>",data.type);
-                if (data.type==='image/png'){
-                  console.log("1>>",data.type);
-                  this.helpboxService.downloadFile(data, 'image.png', 'image/png');
-                }
-                if (data.type=='image/jpeg'){
-                  console.log("2>>",data.type);
-                  this.helpboxService.downloadFile(data, 'photo.jpg', 'image/png');
-                }
-                if (data.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
-                  console.log("3>>",data.type);
-                  this.helpboxService.downloadFile(data, 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                }
-                if (data.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-                  console.log("4>>",data.type);
-                  this.helpboxService.downloadFile(data, 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-                }
-              }
-          });
+    this.uploadService
+      .getUploadByID(fileId)
+      .pipe(take(1))
+      .subscribe((data) => {
+        if (data.type==="application/pdf") {
+          const url = window.URL.createObjectURL(data);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'document.pdf';
+          this.modalService.showPdfViewer(link);
+        } else {
+          // const type = data.type.split('/')[1];
+          if (data.type==='image/png'){
+            this.helpboxService.downloadFile(data, 'image.png', 'image/png');
+          }
+          if (data.type=='image/jpeg'){
+            this.helpboxService.downloadFile(data, 'photo.jpg', 'image/png');
+          }
+          if (data.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+            this.helpboxService.downloadFile(data, 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          }
+          if (data.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+            this.helpboxService.downloadFile(data, 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+          }
+        }
+    });
   }
 
   // onCheckboxChange(event:Event){
@@ -288,15 +282,15 @@ export class GeneralInfoComponent {
   }
 
   hasHelpDeskRole() {
-      return this.userService.hasHelpDeskRole();
+    return this.userService.hasHelpDeskRole();
   }
   
   hasEditorRole() {
-      return this.userService.hasEditorRole();
+    return this.userService.hasEditorRole();
   }
 
   onRowClicked(event: any): void {
-    this.modalService.showFaqAnswer(event.data);
+    // this.modalService.showFaqAnswer(event.data);
     console.log(event);
   }
 }

@@ -44,17 +44,13 @@ export class AuthService {
         effect(
             () => {
               if (!this.loading$()) {
-                console.log("synchronization 1>>>")
                 this.synchronization.set(true);
               } else {
                 this.route.queryParams.subscribe(params => {
-                  console.log("auth")
                   const authCode = params['code'];
                   if (authCode) {
-                    console.log(authCode)
                     this.oauthService.getGsisUser(authCode)
                     .subscribe(data => {
-                        console.log("gsisUser>>", data)
                         this.router.navigate(['landing']);
                         // this.user = data['user']
                     })
