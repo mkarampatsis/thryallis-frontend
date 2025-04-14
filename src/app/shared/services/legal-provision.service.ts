@@ -15,6 +15,7 @@ export class LegalProvisionService {
     http = inject(HttpClient);
 
     legalProvisionsNeedUpdate = signal<boolean>(false);
+    legalProvisionObjectUpdate = signal<ILegalProvision>(null);
 
     newLegalProvision(data: ILegalProvision): Observable<{ message: string; legalProvision: ILegalProvision }> {
         return this.http.post<{ message: string; legalProvision: ILegalProvision }>(APIPREFIX, data);

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation, inject, effect } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { OrganizationalUnitService } from 'src/app/shared/services/organizational-unit.service';
@@ -52,9 +52,23 @@ export class RemitModalComponent implements OnInit, OnDestroy {
     cofog2_selected: boolean = false;
 
     legalProvisions: ILegalProvision[] = [];
+    legalProvisionObjectUpdate = this.legalProvisionService.legalProvisionObjectUpdate;
     originalLegalProvisions: ILegalProvision[] = [];
 
     showInfoText: string = '';
+
+    constructor() {
+      effect(
+          () => {
+              if (this.legalProvisionObjectUpdate()) {
+                  console.log("Effect>>",this.legalProvisionObjectUpdate().legalProvisionText);
+                  this.updateRemitTextWithNewProvision(this.legalProvisionObjectUpdate().legalProvisionText);
+                  this.legalProvisionObjectUpdate.set(null);
+              }
+          },
+          { allowSignalWrites: true },
+      );
+  }
 
     get canAddLegalProvision() {
         return (
