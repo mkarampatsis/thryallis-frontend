@@ -144,7 +144,6 @@ export class GeneralInfoComponent {
   onGridReady(params: GridReadyEvent<IGeneralInfo>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
-    console.log("grid ready");
     this.getAllGeneralInfo();
   }
 
@@ -290,8 +289,7 @@ export class GeneralInfoComponent {
   }
 
   onRowClicked(event: any): void {
-    // this.modalService.showFaqAnswer(event.data);
-    console.log(event);
+    this.modalService.generalInfoModal(event.data);
   }
 }
 

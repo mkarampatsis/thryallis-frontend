@@ -1,0 +1,34 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Λεπτομέρειες Ενημέρωσης</span>
+  <button
+      type="button"
+      class="btn-close"
+      (click)="modalRef.dismiss()">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="mb-3 mt-3 p-2">
+      @if (data) {
+          <div><strong>Τίτλος:</strong> {{data.title}}</div>
+          <div class="mt-2"><strong>Κείμενο:</strong>
+            <div class="mt-2" [innerHTML]="sanitizeHtml(data.text)"></div>
+          </div>
+          <div class="mt-2"><strong>Κατηγορία:</strong> {{data.category}}</div>
+          <div class="mt-2"><strong>Ημερ. ενημέρωσης:</strong> {{data.when.$date | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+          
+          @if(data.file) {
+            <div class="mt-2"><strong>Αρχεία:</strong><i class="bi bi-file-earmark-check" (click)="displayFile(data.file.$oid)"></i></div>
+          }
+      }
+  </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+  <button
+      ngbAutofocus
+      type="button"
+      class="btn btn-primary"
+      (click)="modalRef.close()">
+      Επιστροφή
+  </button>
+</div>
