@@ -53,6 +53,7 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
             // if (!this.legalProvision.legalProvisionSpecs.kefalaio) {
             //     this.legalProvision.legalProvisionSpecs.kefalaio = "-";
             // }
+            // console.log(this.legalProvision, this.legalProvision.legalActKey)
             this.selectedLegalActKey = this.legalProvision.legalActKey;
             this.form.get('legalActText')?.setValue(this.legalProvision.legalProvisionText);
             this.form.get('legalProvisionSpecs')?.setValue(this.legalProvision.legalProvisionSpecs);
@@ -81,7 +82,7 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
 
     selectLegalAct() {
         this.modalService.selectLegalAct().subscribe((data) => {
-            // console.log(data);
+            // console.log(">>",data);
             this.selectedLegalActKey = data;
             this.form.get('legalActKey').setValue(data);
         });

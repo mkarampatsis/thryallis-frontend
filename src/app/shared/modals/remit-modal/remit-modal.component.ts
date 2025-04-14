@@ -92,41 +92,41 @@ export class RemitModalComponent implements OnInit, OnDestroy {
             });
 
         if (this.remit) {
-            // console.log('UPDATING REMIT', this.remit);
-            // populate form with remit data
-            this.form.get('remitText').setValue(this.remit.remitText);
-            this.form.get('remitType').setValue(this.remit.remitType);
-            this.form.get('cofog1').setValue(this.remit.cofog.cofog1);
-            this.form.get('cofog2').setValue(this.remit.cofog.cofog2);
-            this.cofog1_selected = true;
-            this.cofog2_selected = true;
-            this.form.get('cofog3').setValue(this.remit.cofog.cofog3);
-            this.cofog2 = this.constService.COFOG.find((cofog) => cofog.code === this.remit.cofog.cofog1)?.cofog2 || [];
-            this.cofog3 = this.cofog2.find((cofog) => cofog.code === this.remit.cofog.cofog2)?.cofog3 || [];
-            this.form.get('legalProvisions').setValue(this.remit.legalProvisions);
-            this.legalProvisions = cloneDeep(this.remit.legalProvisions);
-            this.originalLegalProvisions = cloneDeep(this.remit.legalProvisions);
+          // console.log('UPDATING REMIT', this.remit);
+          // populate form with remit data
+          this.form.get('remitText').setValue(this.remit.remitText);
+          this.form.get('remitType').setValue(this.remit.remitType);
+          this.form.get('cofog1').setValue(this.remit.cofog.cofog1);
+          this.form.get('cofog2').setValue(this.remit.cofog.cofog2);
+          this.cofog1_selected = true;
+          this.cofog2_selected = true;
+          this.form.get('cofog3').setValue(this.remit.cofog.cofog3);
+          this.cofog2 = this.constService.COFOG.find((cofog) => cofog.code === this.remit.cofog.cofog1)?.cofog2 || [];
+          this.cofog3 = this.cofog2.find((cofog) => cofog.code === this.remit.cofog.cofog2)?.cofog3 || [];
+          this.form.get('legalProvisions').setValue(this.remit.legalProvisions);
+          this.legalProvisions = cloneDeep(this.remit.legalProvisions);
+          this.originalLegalProvisions = cloneDeep(this.remit.legalProvisions);
         }
 
         this.formSubscriptions.push(
-            this.form.get('cofog1').valueChanges.subscribe((value) => {
-                if (value) {
-                    this.form.get('cofog2').setValue('');
-                    this.cofog1_selected = true;
-                    this.cofog2_selected = false;
-                    this.cofog2 = this.constService.COFOG.find((cofog) => cofog.code === value)?.cofog2 || [];
-                }
-            }),
+          this.form.get('cofog1').valueChanges.subscribe((value) => {
+            if (value) {
+              this.form.get('cofog2').setValue('');
+              this.cofog1_selected = true;
+              this.cofog2_selected = false;
+              this.cofog2 = this.constService.COFOG.find((cofog) => cofog.code === value)?.cofog2 || [];
+            }
+          }),
         );
 
         this.formSubscriptions.push(
-            this.form.get('cofog2').valueChanges.subscribe((value) => {
-                if (value) {
-                    this.form.get('cofog3').setValue('');
-                    this.cofog2_selected = true;
-                    this.cofog3 = this.cofog2.find((cofog) => cofog.code === value)?.cofog3 || [];
-                }
-            }),
+          this.form.get('cofog2').valueChanges.subscribe((value) => {
+            if (value) {
+              this.form.get('cofog3').setValue('');
+              this.cofog2_selected = true;
+              this.cofog3 = this.cofog2.find((cofog) => cofog.code === value)?.cofog3 || [];
+            }
+          }),
         );
     }
 
@@ -199,7 +199,7 @@ export class RemitModalComponent implements OnInit, OnDestroy {
                 return acc + this.legalProvisionHeader(legalProvision);
             }, '');
             
-            this.showInfoText = "<p style='color:red'><strong> Το κείμενο ενημερώνεται αυτόματα όσο προσθέτετε Διατάξεις.<br>      Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης και πριν την υποβολή της Αρμοδιότητας. (Τουλάχιστον διαγράψτε το κόκκινο σχόλιο) </strong></p>"
+            this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>"
 
             // remitText = `<p style="color:red"><strong>
             // Το κείμενο ενημερώνεται αυτόματα όσο προσθέτετε Διατάξεις.<br>
