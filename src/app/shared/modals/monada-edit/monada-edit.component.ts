@@ -31,6 +31,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
     sanitizer = inject(DomSanitizer);
 
     legalProvisionsNeedUpdate = this.legalProvisionService.legalProvisionsNeedUpdate;
+    legalProvisionObjectUpdate = this.legalProvisionService.legalProvisionObjectUpdate;
 
     editor: Editor = new Editor();
     toolbar: Toolbar = DEFAULT_TOOLBAR;
@@ -52,10 +53,15 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
     constructor() {
         effect(
             () => {
-                if (this.legalProvisionsNeedUpdate()) {
-                    this.getLegalProvisionsByRegulatedOrganizationalUnit(this.monada.code);
-                    this.legalProvisionsNeedUpdate.set(false);
-                }
+              if (this.legalProvisionsNeedUpdate()) {
+                  this.getLegalProvisionsByRegulatedOrganizationalUnit(this.monada.code);
+                  this.legalProvisionsNeedUpdate.set(false);
+              }
+              if (this.legalProvisionObjectUpdate()) {
+                console.log("Effect>>",this.legalProvisionObjectUpdate().legalProvisionText);
+                this.updateRemitTextWithNewProvision(this.legalProvisionObjectUpdate().legalProvisionText);
+                this.legalProvisionObjectUpdate.set(null);
+              }
             },
             { allowSignalWrites: true },
         );
@@ -134,7 +140,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
     updateRemitTextWithNewProvision(newText: string) {
         const remitText = this.provisionText;
         
-        this.showInfoText = "<p style='color:red'><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της πρόβλεψης μετά την τελευταία προσθήκη Διάταξης:</strong></p>";
+        this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου Πρόβλεψης της Μονάδας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της πρόβλεψης για τη σύσταση ή/και το σκοπό/στόχους της Μονάδας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
         
         // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
         if (remitText) {

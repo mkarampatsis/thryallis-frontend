@@ -61,7 +61,6 @@ export class RemitModalComponent implements OnInit, OnDestroy {
       effect(
           () => {
               if (this.legalProvisionObjectUpdate()) {
-                  console.log("Effect>>",this.legalProvisionObjectUpdate().legalProvisionText);
                   this.updateRemitTextWithNewProvision(this.legalProvisionObjectUpdate().legalProvisionText);
                   this.legalProvisionObjectUpdate.set(null);
               }
@@ -199,7 +198,7 @@ export class RemitModalComponent implements OnInit, OnDestroy {
     updateRemitTextWithNewProvision(newText: string) {
         const remitText = this.form.get('remitText').value;
         
-        this.showInfoText = "<p style='color:red'><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>";
+        this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
         
         // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
         const updatedtext = `${newText}${remitText}`;
