@@ -58,7 +58,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
                   this.legalProvisionsNeedUpdate.set(false);
               }
               if (this.legalProvisionObjectUpdate()) {
-                console.log("Effect>>",this.legalProvisionObjectUpdate().legalProvisionText);
+                // console.log("Effect>>",this.legalProvisionObjectUpdate().legalProvisionText);
                 this.updateRemitTextWithNewProvision(this.legalProvisionObjectUpdate().legalProvisionText);
                 this.legalProvisionObjectUpdate.set(null);
               }
@@ -79,7 +79,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
             .getMonada(this.monada_id)
             .pipe(take(1))
             .subscribe((data) => {
-                console.log('GET MONADA', data);
+                // console.log('GET MONADA', data);
                 this.monada = data;
 
                 this.provisionText = this.monada.provisionText;
@@ -96,7 +96,7 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
 
     getLegalProvisionsByRegulatedOrganizationalUnit(code: string): void {
         this.legalProvisionService.getLegalProvisionsByRegulatedOrganizationUnit(code).subscribe((data) => {
-            console.log('GET LEGAL PROVISIONS BY REGULATED ORGANIZATIONAL UNIT', data);
+            // console.log('GET LEGAL PROVISIONS BY REGULATED ORGANIZATIONAL UNIT', data);
             this.legalProvisions = data;
             this.originalLegalProvisions = cloneDeep(this.legalProvisions);
         });
@@ -140,8 +140,10 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
     updateRemitTextWithNewProvision(newText: string) {
         const remitText = this.provisionText;
         
-        this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου Πρόβλεψης της Μονάδας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της πρόβλεψης για τη σύσταση ή/και το σκοπό/στόχους της Μονάδας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
-        
+        if (!(this.legalProvisions.length===1 && ('isNew' in this.legalProvisions[0]))) {          
+          this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου Πρόβλεψης της Μονάδας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της πρόβλεψης για τη σύσταση ή/και το σκοπό/στόχους της Μονάδας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
+        }
+          
         // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
         if (remitText) {
             this.provisionText = `${newText}${remitText}`;

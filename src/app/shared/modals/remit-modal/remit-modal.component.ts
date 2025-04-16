@@ -79,10 +79,11 @@ export class RemitModalComponent implements OnInit, OnDestroy {
     }
 
     form = new FormGroup({
-        remitText: new FormControl(
-            '<strong>Το κείμενο θα ενημερώνεται αυτόματα όσο προσθέτετε διατάξεις</strong>',
-            Validators.required,
-        ),
+        // remitText: new FormControl(
+        //     '<strong>Το κείμενο θα ενημερώνεται αυτόματα όσο προσθέτετε διατάξεις</strong>',
+        //     Validators.required,
+        // ),
+        remitText: new FormControl('', Validators.required),
         remitType: new FormControl('', Validators.required),
         cofog1: new FormControl('', Validators.required),
         cofog2: new FormControl('', Validators.required),
@@ -198,8 +199,9 @@ export class RemitModalComponent implements OnInit, OnDestroy {
     updateRemitTextWithNewProvision(newText: string) {
         const remitText = this.form.get('remitText').value;
         
-        this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
-        
+        if (!(this.legalProvisions.length===1 && ('isNew' in this.legalProvisions[0]))) {
+          this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την τελευταία τροποποίηση</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας <strong>όπως ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
+        }
         // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
         const updatedtext = `${newText}${remitText}`;
 
