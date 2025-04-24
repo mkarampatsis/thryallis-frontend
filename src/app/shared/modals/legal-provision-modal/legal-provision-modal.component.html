@@ -133,9 +133,13 @@
                     <ngx-editor-menu
                         [editor]="editor"
                         [toolbar]="toolbar"></ngx-editor-menu>
-                    <ngx-editor
+                    <!-- <ngx-editor
                         (paste)="onPaste($event)"
                         [editor]="editor"
+                        id="legalActText"
+                        formControlName="legalActText"></ngx-editor> -->
+                      <ngx-editor
+                         [editor]="editor"
                         id="legalActText"
                         formControlName="legalActText"></ngx-editor>
                 </div>
