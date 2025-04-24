@@ -145,7 +145,7 @@ export class ConstService {
         { field: 'code', headerName: 'Κωδικός', flex: 1 },
         {
             field: 'preferredLabel',
-            headerName: 'Ονομασία',
+            headerName: 'Φορέας',
             flex: 4,
             filter: 'agTextColumnFilter',
             filterParams: {
@@ -193,7 +193,7 @@ export class ConstService {
     ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES: ColDef[] = [
         { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
         { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
-        { field: 'preferredLabel', headerName: 'Ονομασία', flex: 1 },
+        { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
         { field: 'organization', headerName: 'Φορέας', flex: 1 },
         { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
         { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },

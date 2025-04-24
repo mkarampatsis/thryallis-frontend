@@ -121,6 +121,12 @@ export class ReportsComponent {
         }
     }
 
+    clearSelection() {
+        this.code = null;
+        this.showReportText = ''
+        this.showReport = false;
+    }
+
     ngOnDestroy(): void {
         this.subscriptions.forEach((sub) => sub.unsubscribe());
     }

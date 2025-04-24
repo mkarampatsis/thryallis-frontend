@@ -7,8 +7,11 @@
         <div>
             <span>Eπιλέξτε φορέα/μονάδα/προϊστάμενη μονάδα που επιθυμείτε</span>
         </div>
+        <div>
+            <button class="btn btn-danger btn-sm mb-1" (click)="clearSelection()">Καθάρισμα επιλογών</button>
+        </div>
     </div>
-
+    
     <ag-grid-angular
         [domLayout]="'autoHeight'"
         [rowData]="monades"

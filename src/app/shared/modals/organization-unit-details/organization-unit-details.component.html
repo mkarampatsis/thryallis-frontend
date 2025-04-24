@@ -85,6 +85,32 @@
                 </div>
             </div>
         </div>
+        <div
+            ngbAccordionItem
+            [collapsed]="true">
+            <h2 ngbAccordionHeader>
+                <button ngbAccordionButton>Διατάξεις Πρόβλεψης</button>
+            </h2>
+            <div ngbAccordionCollapse>
+                <div ngbAccordionBody>
+                    <ng-template>
+                        <div class="row">
+                            <div class="col-md-4 fw-semibold d-inline text-truncate">Κείμενο Πρόβλεψης</div>
+                            <div
+                                class="col-md-8"
+                                [innerHTML]="provisionText">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 fw-semibold d-inline text-truncate">Διατάξεις Πρόβλεψης</div>
+                            <div class="col-md-8"></div>
+                        </div>
+                        <app-list-legal-provisions [legalProvisions]="legalProvisions"></app-list-legal-provisions>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
         <!-- end of nbgAccordionItem -->
         <div
             ngbAccordionItem
