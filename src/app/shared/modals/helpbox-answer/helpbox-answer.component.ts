@@ -80,7 +80,11 @@ export class HelpboxAnswerComponent {
             questionId: this.questionId,
             answerText: this.answerText,
             answerFile: this.uploadObjectID,
-            fromWhom: this.userService.user().email,
+            fromWhom: {
+              email: this.userService.user().email,
+              firstName: this.userService.user().firstName,
+              lastName: this.userService.user().lastName
+            },
         } as IHelpbox;
 
         this.helpboxService.answerQuestion(helpQuestion)

@@ -108,8 +108,10 @@ export class GeneralInfoComponent {
       flex:1 
     },
     { 
-      field: 'email', 
+      // field: 'email', 
       headerName: 'Χειριστής Helpdesk',
+      valueGetter: (value) =>
+        value.data.firstName + ' ' + value.data.lastName + ' (' + value.data.email.split("@")[0] + ')', 
       flex:1 
     },
     { 

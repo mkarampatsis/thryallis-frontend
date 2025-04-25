@@ -6,9 +6,7 @@
           <span class="fw-semibold">Στοιχεία Χρήστη</span>
         </div>
         <div class="mb-3 mt-3 p-2">
-            <p><strong>Ηλεκτρονική διεύθυνση:</strong> {{user().email}}</p>
-            <p><strong>Όνομα:</strong> {{user().firstName}}</p>
-            <p><strong>Επίθετο:</strong> {{user().lastName}}</p>
+            <p>{{user().firstName}} {{user().lastName}} ({{user().email.split("@")[0]}})</p>
             <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
         </div>
         

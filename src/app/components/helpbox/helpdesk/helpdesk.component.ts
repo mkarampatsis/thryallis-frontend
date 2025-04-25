@@ -28,9 +28,14 @@ export class HelpdeskComponent {
       { field: 'key', headerName: 'Κωδικός Ερώτησης', flex:1 },
       { field: 'questionTitle', headerName: 'Τίτλος Συνομιλίας', flex:1 },
       { field: 'questionCategory', headerName: 'Κατηγορία', flex:1 },
-      // { field: 'email', headerName: 'Χρήστης', flex:1 },
-      { field: 'firstName', headerName: 'Όνομα', flex:1 },
-      { field: 'lastName', headerName: 'Επίθετο', flex:1 },
+      { 
+        headerName: 'Χρήστης',
+        valueGetter: (value) =>
+          value.data.firstName + ' ' + value.data.lastName + ' (' + value.data.email.split("@")[0] + ')', 
+        flex:1 
+      },
+      // { field: 'firstName', headerName: 'Χρήστης', flex:1 },
+      // { field: 'lastName', headerName: 'Επίθετο', flex:1 },
       {
         field: 'organizations',
         headerName: 'Φορείς',
@@ -53,7 +58,15 @@ export class HelpdeskComponent {
       //     }
       //     , flex:1 
       // },
-      { field: 'toWhom', headerName: 'Χειριστής Helpdesk', flex:1},
+      { 
+        field: 'toWhom', 
+        headerName: 'Χειριστής Helpdesk',
+        cellRenderer: function (params) {
+          let user = params.value.firstName + ' ' + params.value.lastName + ' (' + params.value.email.split("@")[0] +')';
+          return user;
+        }, 
+        flex:1
+      },
       { 
         field: 'questions', 
         headerName: 'Ερωτήσεις/Απαντήσεις', 

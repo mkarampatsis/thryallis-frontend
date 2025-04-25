@@ -4,7 +4,11 @@ export interface IQuestion {
     answerText?: string | null;
     questionFile?: string | null;
     answerFile?: string | null;
-    fromWhom?: string | null;
+    fromWhom?: {
+      email?: string;
+      firstName?: string;
+      lastName?: string;
+    };
     whenAsked?: Date | null;
     whenAnswered?: Date | null;
     answered?: boolean | null;
@@ -20,7 +24,11 @@ export interface IHelpbox {
     questionTitle?: string;
     questionCategory?: string;
     questions?:IQuestion[];
-    toWhom?: string | null;
+    toWhom?: {
+      email?: string;
+      firstName?: string;
+      lastName?: string;
+    }
     finalized?: boolean | null;
 }
 
