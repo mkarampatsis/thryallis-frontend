@@ -39,8 +39,11 @@ export class GeneralInfoComponent {
   toolbar: Toolbar = DEFAULT_TOOLBAR;
 
   progress = 0;
-  currentFile: File;
-  uploadObjectID: string | null = null;
+  // currentFile: File;
+  // currentFiles:File;
+  // fileNames: string[];
+  // uploadObjectID: string | null = null;
+  uploadObjectIDs: string[] = [];
 
   generalInfo: IGeneralInfo[];
   showGeneralInfo: IGeneralInfo[] = [];
@@ -55,7 +58,8 @@ export class GeneralInfoComponent {
     lastName: new FormControl(''),
     title: new FormControl('', Validators.required),
     text: new FormControl('', Validators.required),
-    file: new FormControl(''),
+    // file: new FormControl(''),
+    file: new FormControl([]), // updated to array of IDs
     category: new FormControl("")
   });
 
@@ -159,7 +163,7 @@ export class GeneralInfoComponent {
     this.form.controls.lastName.patchValue(this.user().lastName);
     this.form.controls.title.patchValue("");
     this.form.controls.text.patchValue("");
-    this.form.controls.file.patchValue("");
+    this.form.controls.file.patchValue([]);
     this.form.controls.category.patchValue("");
   }
 
@@ -176,7 +180,8 @@ export class GeneralInfoComponent {
       firstName: this.form.controls.firstName.value,
       title: this.form.controls.title.value,
       text: this.text,
-      file: this.uploadObjectID,
+      // file: this.uploadObjectID,
+      file: this.uploadObjectIDs,
       // tags: this.selectedValues
       category: this.form.controls.category.value        
     } as IGeneralInfo;
@@ -207,29 +212,70 @@ export class GeneralInfoComponent {
     this.initializeForm(); 
   }
 
+  // selectFile(event: any): void {
+  //   if (event.target.files.length === 0) {
+  //     console.log('No file selected!');
+  //     return;
+  //   }
+  //   this.currentFile = event.target.files[0];
+    
+  //   this.uploadService.upload(this.currentFile).subscribe({
+  //     next: (event: any) => {
+  //       if (event.type === HttpEventType.UploadProgress) {
+  //         this.progress = Math.round((100 * event.loaded) / event.total);
+  //       } else if (event instanceof HttpResponse) {
+  //         this.uploadObjectID = event.body.id;
+  //         this.form.controls.file.setValue(this.uploadObjectID);
+  //         this.form.markAsDirty();
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //     },
+  //     complete: () => {
+  //       console.log('Upload complete');
+  //     },
+  //   });
+  // }
   selectFile(event: any): void {
-    if (event.target.files.length === 0) {
-      console.log('No file selected!');
+    const files: FileList = event.target.files;
+    if (!files || files.length === 0) {
+      console.log('No files selected!');
       return;
     }
-    this.currentFile = event.target.files[0];
-
-    this.uploadService.upload(this.currentFile).subscribe({
-      next: (event: any) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          this.progress = Math.round((100 * event.loaded) / event.total);
-        } else if (event instanceof HttpResponse) {
-          this.uploadObjectID = event.body.id;
-          this.form.controls.file.setValue(this.uploadObjectID);
-          this.form.markAsDirty();
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-      complete: () => {
-        console.log('Upload complete');
-      },
+  
+    this.progress = 0;
+    // const uploadedIDs: string[] = [];
+    const fileArray = Array.from(files);
+    let completed = 0;
+  
+    fileArray.forEach((file, index) => {
+      this.uploadService.upload(file).subscribe({
+        next: (event: any) => {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            // Optional: track individual file progress if needed
+            // const fileProgress = Math.round((100 * event.loaded) / event.total);
+            this.progress = Math.round((100 * event.loaded) / event.total);
+            console.log(`Progress for file ${index}: ${this.progress}%`);
+          } else if (event instanceof HttpResponse) {
+            // this.uploadedIDs.push(event.body.id);
+            this.uploadObjectIDs.push(event.body.id);
+          }
+        },
+        error: (err: any) => {
+          console.error(`Upload failed for file ${file.name}`, err);
+        },
+        complete: () => {
+          completed++;
+          if (completed === fileArray.length) {
+            // this.form.controls.file.setValue(uploadedIDs);
+            this.form.controls.file.setValue( this.uploadObjectIDs);
+            this.form.markAsDirty();
+            console.log('All uploads complete:',  this.uploadObjectIDs);
+            // console.log('All uploads complete:', uploadedIDs);
+          }
+        },
+      });
     });
   }
 

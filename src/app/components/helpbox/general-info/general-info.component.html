@@ -52,6 +52,7 @@
         <input
           class="form-control"
           type="file"
+          multiple
           (change)="selectFile($event)" />
         <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
         @if (progress) {

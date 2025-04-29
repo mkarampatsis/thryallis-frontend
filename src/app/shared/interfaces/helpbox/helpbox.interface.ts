@@ -38,7 +38,7 @@ export interface IGeneralInfo {
     lastName?: string;
     title?: string;
     text?: string | null;
-    file?: string | null;
+    file?: string[] | [];
     when?: Date | null;
     // tags?: string[] | null;
     category?: string | null;
