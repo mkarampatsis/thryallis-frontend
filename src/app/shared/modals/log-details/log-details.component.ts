@@ -26,7 +26,7 @@ export class LogDetailsComponent {
     ngOnInit() : void {
         this.logDataService.getChanges(this.code)
         .subscribe((data)=>{
-            console.log(data)
+            // console.log(data)
             this.results = data
             this.processedResults = this.results.map(item => ({
                 ...item,

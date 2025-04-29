@@ -105,7 +105,7 @@ export class LogDataComponent {
                         organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
                     };
                 });
-                console.log(">>",this.remits)
+                // console.log(">>",this.remits)
                 this.gridApi.hideOverlay();
             }),
         );
@@ -124,7 +124,7 @@ export class LogDataComponent {
     }
 
     onCellClicked(event: any): void  {
-        console.log(event.colDef.field, event.data['organizationCode'])
+        // console.log(event.colDef.field, event.data['organizationCode'])
         if (event.colDef.field=="organizationLabel") {
             this.modalService.showChangeDetails(event.data['organizationCode']);
         } else if (event.colDef.field=="organizationUnitLabel") {
