@@ -20,7 +20,7 @@
             @for (file of data.file; track file){
               <div class="mt-2">
                 <strong>Αρχείo:</strong>
-                <i class="bi bi-file-earmark-check" (click)="displayFile(file._id.$oid)"></i>{{file.file_name}}, 
+                <i class="bi bi-file-earmark-check cursor-pointer" (click)="displayFile(file._id.$oid)"></i><span class="cursor-pointer">{{file.file_name}}</span>, 
                 <strong>Τύπος:</strong>{{file.file_type}}
               </div>
             }
