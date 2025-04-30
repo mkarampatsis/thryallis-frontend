@@ -17,7 +17,13 @@
           <div class="mt-2"><strong>Ημερ. ενημέρωσης:</strong> {{data.when.$date | date: "dd-MM-yyyy HH:mm:ss"}}</div>
           
           @if(data.file) {
-            <div class="mt-2"><strong>Αρχεία:</strong><i class="bi bi-file-earmark-check" (click)="displayFile(data.file.$oid)"></i></div>
+            @for (file of data.file; track file){
+              <div class="mt-2">
+                <strong>Αρχείo:</strong>
+                <i class="bi bi-file-earmark-check" (click)="displayFile(file._id.$oid)"></i>{{file.file_name}}, 
+                <strong>Τύπος:</strong>{{file.file_type}}
+              </div>
+            }
           }
       }
   </div>

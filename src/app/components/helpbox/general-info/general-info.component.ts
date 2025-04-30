@@ -119,13 +119,13 @@ export class GeneralInfoComponent {
       flex:1 
     },
     { 
-      field: 'file.$oid', 
+      field: 'file', 
       headerName: 'Αρχείο',
       cellRenderer: function (params) {
-        return params.value ? 'ΝΑΙ' : 'ΟΧΙ';
+        return params.value.length > 0 ? 'ΝΑΙ' : 'ΟΧΙ';
       },
       cellStyle: params => {
-        if (params.value) {
+        if (params.value.length > 0) {
             return { color: 'green' };
         } else {
             return { color: 'red' };
@@ -198,6 +198,7 @@ export class GeneralInfoComponent {
     this.helpboxService.getGeneralInfo()
       .subscribe((data)=>{
         this.generalInfo = data;
+        console.log(this.generalInfo);
         this.showGeneralInfo = this.generalInfo;
         this.gridApi.hideOverlay();
         // data.forEach(data => {
@@ -212,31 +213,6 @@ export class GeneralInfoComponent {
     this.initializeForm(); 
   }
 
-  // selectFile(event: any): void {
-  //   if (event.target.files.length === 0) {
-  //     console.log('No file selected!');
-  //     return;
-  //   }
-  //   this.currentFile = event.target.files[0];
-    
-  //   this.uploadService.upload(this.currentFile).subscribe({
-  //     next: (event: any) => {
-  //       if (event.type === HttpEventType.UploadProgress) {
-  //         this.progress = Math.round((100 * event.loaded) / event.total);
-  //       } else if (event instanceof HttpResponse) {
-  //         this.uploadObjectID = event.body.id;
-  //         this.form.controls.file.setValue(this.uploadObjectID);
-  //         this.form.markAsDirty();
-  //       }
-  //     },
-  //     error: (err: any) => {
-  //       console.log(err);
-  //     },
-  //     complete: () => {
-  //       console.log('Upload complete');
-  //     },
-  //   });
-  // }
   selectFile(event: any): void {
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
@@ -245,7 +221,6 @@ export class GeneralInfoComponent {
     }
   
     this.progress = 0;
-    // const uploadedIDs: string[] = [];
     const fileArray = Array.from(files);
     let completed = 0;
   
@@ -253,12 +228,9 @@ export class GeneralInfoComponent {
       this.uploadService.upload(file).subscribe({
         next: (event: any) => {
           if (event.type === HttpEventType.UploadProgress && event.total) {
-            // Optional: track individual file progress if needed
-            // const fileProgress = Math.round((100 * event.loaded) / event.total);
             this.progress = Math.round((100 * event.loaded) / event.total);
             console.log(`Progress for file ${index}: ${this.progress}%`);
           } else if (event instanceof HttpResponse) {
-            // this.uploadedIDs.push(event.body.id);
             this.uploadObjectIDs.push(event.body.id);
           }
         },
@@ -268,11 +240,9 @@ export class GeneralInfoComponent {
         complete: () => {
           completed++;
           if (completed === fileArray.length) {
-            // this.form.controls.file.setValue(uploadedIDs);
             this.form.controls.file.setValue( this.uploadObjectIDs);
             this.form.markAsDirty();
             console.log('All uploads complete:',  this.uploadObjectIDs);
-            // console.log('All uploads complete:', uploadedIDs);
           }
         },
       });
