@@ -14,14 +14,14 @@
             <div class="mt-2" [innerHTML]="sanitizeHtml(data.text)"></div>
           </div>
           <div class="mt-2"><strong>Κατηγορία:</strong> {{data.category}}</div>
-          <div class="mt-2"><strong>Ημερ. ενημέρωσης:</strong> {{data.when.$date | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+          <div class="mt-2"><strong>Ημερ. ενημέρωσης:</strong> {{data["when"]["$date"] | date: "dd-MM-yyyy HH:mm:ss"}}</div>
           
           @if(data.file) {
             @for (file of data.file; track file){
               <div class="mt-2">
                 <strong>Αρχείo:</strong>
-                <i class="bi bi-file-earmark-check cursor-pointer" (click)="displayFile(file._id.$oid)"></i><span class="cursor-pointer">{{file.file_name}}</span>, 
-                <strong>Τύπος:</strong>{{file.file_type}}
+                <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
+                <span role="button" class="cursor-pointer" (click)="displayFile(file['_id']['$oid'])">{{file['file_name']}}</span>
               </div>
             }
           }

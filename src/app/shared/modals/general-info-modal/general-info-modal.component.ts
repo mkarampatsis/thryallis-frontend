@@ -5,6 +5,7 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { take } from 'rxjs';
+import { IGeneralInfo } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 
 @Component({
   selector: 'app-general-info-modal',
@@ -20,7 +21,7 @@ export class GeneralInfoModalComponent {
   modalService = inject(ModalService);
 
   modalRef: any;
-  data: any;
+  data: IGeneralInfo;
   
   displayFile(fileId:string) {
     this.uploadService
@@ -58,4 +59,5 @@ export class GeneralInfoModalComponent {
         return ""
     }
   }
+
 }

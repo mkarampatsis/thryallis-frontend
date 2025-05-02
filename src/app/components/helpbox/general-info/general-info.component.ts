@@ -5,15 +5,15 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { IGeneralInfo } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { take } from 'rxjs';
 import { ModalService } from 'src/app/shared/services/modal.service';
-import { set } from 'lodash-es';
-import { GridApi, GridReadyEvent, ColDef } from 'ag-grid-community';
+// import { set } from 'lodash-es';
+import { GridApi, GridReadyEvent, ColDef, CellClickedEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
@@ -21,7 +21,14 @@ import { ConstService } from 'src/app/shared/services/const.service';
 @Component({
   selector: 'app-general-info',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgxEditorModule, NgbAlertModule, AgGridAngular, GridLoadingOverlayComponent],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    NgxEditorModule, 
+    NgbAlertModule, 
+    NgbTooltipModule, 
+    AgGridAngular
+  ],
   templateUrl: './general-info.component.html',
   styleUrl: './general-info.component.css'
 })
@@ -39,18 +46,12 @@ export class GeneralInfoComponent {
   toolbar: Toolbar = DEFAULT_TOOLBAR;
 
   progress = 0;
-  // currentFile: File;
-  // currentFiles:File;
-  // fileNames: string[];
-  // uploadObjectID: string | null = null;
+  checkFileStatus: boolean = true;
   uploadObjectIDs: string[] = [];
 
   generalInfo: IGeneralInfo[];
   showGeneralInfo: IGeneralInfo[] = [];
   text: string;
-  // tags: string[] | null = [];
-  // selectedValues: string[] = [];
-  // showSelectedValues: string[] = [];
 
   form = new FormGroup({
     email: new FormControl(''),
@@ -58,7 +59,6 @@ export class GeneralInfoComponent {
     lastName: new FormControl(''),
     title: new FormControl('', Validators.required),
     text: new FormControl('', Validators.required),
-    // file: new FormControl(''),
     file: new FormControl([]), // updated to array of IDs
     category: new FormControl("")
   });
@@ -133,6 +133,22 @@ export class GeneralInfoComponent {
       }, 
       flex:1 
     },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: function(params) {
+        return `
+          <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>
+          <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία" role="button"></i>
+          <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή" role="button"></i>
+        `;
+      },
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      resizable: false,
+      flex: 0.5,
+    },
   ];
 
   autoSizeStrategy = this.constService.autoSizeStrategy;
@@ -143,7 +159,6 @@ export class GeneralInfoComponent {
   gridApi: GridApi<IGeneralInfo>;
   
   ngOnInit() {
-    // this.getAllGeneralInfo();
     this.initializeForm();
   }
 
@@ -198,13 +213,8 @@ export class GeneralInfoComponent {
     this.helpboxService.getGeneralInfo()
       .subscribe((data)=>{
         this.generalInfo = data;
-        console.log(this.generalInfo);
         this.showGeneralInfo = this.generalInfo;
         this.gridApi.hideOverlay();
-        // data.forEach(data => {
-        //     this.tags = this.tags.concat(data.tags);
-        // })
-        // this.tags = [...new Set(this.tags)];
       })
   }
 
@@ -223,30 +233,44 @@ export class GeneralInfoComponent {
     this.progress = 0;
     const fileArray = Array.from(files);
     let completed = 0;
+    this.checkFileStatus = true;
+    this.form.controls.file.setErrors({'incorrect': false});
+
+    fileArray.forEach((file, index)=>{
+      const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
+      const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
+      const checkFileSize = (file.size/1024)<13000
+      if (!(checkFileSize && checkFileType)) 
+        this.checkFileStatus = false
+    })  
   
-    fileArray.forEach((file, index) => {
-      this.uploadService.upload(file).subscribe({
-        next: (event: any) => {
-          if (event.type === HttpEventType.UploadProgress && event.total) {
-            this.progress = Math.round((100 * event.loaded) / event.total);
-            console.log(`Progress for file ${index}: ${this.progress}%`);
-          } else if (event instanceof HttpResponse) {
-            this.uploadObjectIDs.push(event.body.id);
-          }
-        },
-        error: (err: any) => {
-          console.error(`Upload failed for file ${file.name}`, err);
-        },
-        complete: () => {
-          completed++;
-          if (completed === fileArray.length) {
-            this.form.controls.file.setValue( this.uploadObjectIDs);
-            this.form.markAsDirty();
-            console.log('All uploads complete:',  this.uploadObjectIDs);
-          }
-        },
+    if (this.checkFileStatus){
+      fileArray.forEach((file, index) => {
+        this.uploadService.upload(file).subscribe({
+          next: (event: any) => {
+            if (event.type === HttpEventType.UploadProgress && event.total) {
+              this.progress = Math.round((100 * event.loaded) / event.total);
+              console.log(`Progress for file ${index}: ${this.progress}%`);
+            } else if (event instanceof HttpResponse) {
+              this.uploadObjectIDs.push(event.body.id);
+            }
+          },
+          error: (err: any) => {
+            console.error(`Upload failed for file ${file.name}`, err);
+          },
+          complete: () => {
+            completed++;
+            if (completed === fileArray.length) {
+              this.form.controls.file.setValue( this.uploadObjectIDs);
+              this.form.markAsDirty();
+              console.log('All uploads complete:',  this.uploadObjectIDs);
+            }
+          },
+        });
       });
-    });
+    } else {
+      this.form.controls.file.setErrors({'incorrect': true});
+    }
   }
 
   displayFile(fileId:string) {
@@ -278,19 +302,6 @@ export class GeneralInfoComponent {
     });
   }
 
-  // onCheckboxChange(event:Event){
-  //     const checkbox = event.target as HTMLInputElement;
-  //     const value = checkbox.value;
-
-  //     if (checkbox.checked) {
-  //         // Add value to selectedValues if checked
-  //         this.selectedValues.push(value);
-  //     } else {
-  //         // Remove value from selectedValues if unchecked
-  //         this.selectedValues = this.selectedValues.filter((item) => item !== value);
-  //     }
-  // }
-
   onSelectionChange(event:Event){
     const selectection = event.target as HTMLInputElement;
     const value = selectection.value;
@@ -298,16 +309,39 @@ export class GeneralInfoComponent {
     this.showGeneralInfo = this.generalInfo.filter((item)=>item.category.includes(value));
   }
 
-  hasHelpDeskRole() {
-    return this.userService.hasHelpDeskRole();
-  }
+  onCellClicked(event: CellClickedEvent): void {
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    if (!action) return;
   
-  hasEditorRole() {
-    return this.userService.hasEditorRole();
+    if (action === 'info') {
+      this.modalService.generalInfoModal(event.data);
+    } else if (action === 'edit') {
+      this.editGeneralInfo(event.data);
+    } else if (action ==='delete'){
+      this.deleteGeneralInfo(event.data)
+    }
   }
 
-  onRowClicked(event: any): void {
-    this.modalService.generalInfoModal(event.data);
+  editGeneralInfo(data:IGeneralInfo) {
+    if (this.hasHelpDeskRole()){
+      this.form.controls.title.patchValue(data.title);
+      this.form.controls.text.patchValue(data.text);
+      this.form.controls.file.patchValue(data.file);
+      this.form.controls.category.patchValue(data.category);
+    }
+  }
+
+  deleteGeneralInfo(data:IGeneralInfo) {
+    if (this.hasHelpDeskRole()){
+      this.helpboxService.deleteGeneralInfo(data["_id"]["$oid"])
+        .subscribe(data=>{
+          this.getAllGeneralInfo();
+        })
+    }
+  }
+
+  hasHelpDeskRole() {
+    return this.userService.hasHelpDeskRole();
   }
 }
 

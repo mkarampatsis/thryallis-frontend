@@ -68,17 +68,20 @@
             </div>
           </div>
         }
+        @if (!checkFileStatus){
+          <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
+        }
+        <!-- @if(data.file) {
+          @for (file of data.file; track file){
+            <div class="mt-2">
+              <strong>Αρχείo:</strong>
+              <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file._id.$oid)"></i>
+              <span role="button" class="cursor-pointer" (click)="displayFile(file._id.$oid)">{{file.file_name}}</span>
+            </div>
+          }
+        } -->
       </div>
-        <!-- <div class="mb-3 p-2">
-            <p>Επιλέξτε ετικέτες</p>
-            @for (tag of tags; track tag; let idx = $index) {
-                <div class="form-check form-check-inline mb-2">
-                    <input class="form-check-input" type="checkbox" value={{tag}} id=`tag_${idx}` (change)="onCheckboxChange($event)">
-                    <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
-                </div>
-            }
-            <input type="text" class="form-control" formControlName="tags" placeholder="Πληκτρολογείστε νέα ετικέτα χρησιμοποιήστε το κόμμα ως διαχωριστικό">
-        </div> -->
+       
       <div class="d-flex align-items-center gap-2 mb-3 p-2">
         <button
           type="button"
@@ -106,15 +109,6 @@
   @if (!showGeneralInfo) {
       <div class="p-2 mx-2">Δεν υπάρχουν στοιχεία</div>
   } @else {
-    <!-- <div class="ms-2 mx-2">
-        <p>Επιλέξτε ετικέτα</p>
-        @for (tag of tags; track tag; let idx = $index) {
-            <div class="form-check form-check-inline mb-2">
-                <input class="form-check-input" type="checkbox" value={{tag}} id=`tag_${idx}` (change)="onCheckboxSelected($event)">
-                <label class="form-check-label" for=`tag_${idx}`>{{tag}}</label>
-            </div>
-        }
-    </div> -->
     <div class="mb-3 p-2">
       <select class="mb-3 form-control" (change)="onSelectionChange($event)">
         <option value="" disabled selected>Επιλέξτε κατηγορία</option>
@@ -137,7 +131,7 @@
         [loadingOverlayComponent]="loadingOverlayComponent"
         [loadingOverlayComponentParams]="loadingOverlayComponentParams"
         (gridReady)="onGridReady($event)"
-        (rowClicked)="onRowClicked($event)"
+        (cellClicked)="onCellClicked($event)"
         class="ag-theme-balham"></ag-grid-angular>
     </div>
   }

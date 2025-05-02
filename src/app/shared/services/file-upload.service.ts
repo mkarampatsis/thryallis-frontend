@@ -20,7 +20,7 @@ export class FileUploadService {
             reportProgress: true,
             responseType: 'json',
         });
-
+    
         return this.http.request(req);
     }
 
