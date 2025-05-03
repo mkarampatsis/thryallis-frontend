@@ -62,6 +62,11 @@ export class HelpboxService {
     return this.http.delete<{ message: string }>(`${APIPREFIX}/general-info/${generalInfoID}`);
   }
 
+  deleteFileFromGeneralInfo(generalInfoID: string, fileId:string): Observable<{ message: string }> {
+    const url = `${APIPREFIX}/general-info/${generalInfoID}`;
+    return this.http.delete<{ message: string }>(`${APIPREFIX}/general-info/${generalInfoID}/file/${fileId}`);
+  }
+
   downloadFile(fileContent: BlobPart, fileName: string, mimeType: string): void {
     const blob = new Blob([fileContent], { type: mimeType });
     const url = URL.createObjectURL(blob);

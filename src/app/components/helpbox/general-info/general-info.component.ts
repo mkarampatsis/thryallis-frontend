@@ -8,7 +8,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { UserService } from 'src/app/shared/services/user.service';
-import { IGeneralInfo } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
+import { IGeneralInfo, IFile_Upload } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { take } from 'rxjs';
 import { ModalService } from 'src/app/shared/services/modal.service';
@@ -47,6 +47,7 @@ export class GeneralInfoComponent {
 
   progress = 0;
   checkFileStatus: boolean = true;
+  generalInfoToUpdate: IGeneralInfo = {};
   uploadObjectIDs: string[] = [];
 
   generalInfo: IGeneralInfo[];
@@ -180,6 +181,7 @@ export class GeneralInfoComponent {
     this.form.controls.text.patchValue("");
     this.form.controls.file.patchValue([]);
     this.form.controls.category.patchValue("");
+    this.generalInfoToUpdate = {};
   }
 
   onTextChange(html: object) {
@@ -326,9 +328,15 @@ export class GeneralInfoComponent {
     if (this.hasHelpDeskRole()){
       this.form.controls.title.patchValue(data.title);
       this.form.controls.text.patchValue(data.text);
-      this.form.controls.file.patchValue(data.file);
+      // this.form.controls.file.patchValue(data.file);
       this.form.controls.category.patchValue(data.category);
+      console.log("edit>>",data)
+      this.generalInfoToUpdate = data;
     }
+  }
+
+  deleteFile(generalInfoId:string, fileId:string){
+    console.log(generalInfoId, fileId)
   }
 
   deleteGeneralInfo(data:IGeneralInfo) {

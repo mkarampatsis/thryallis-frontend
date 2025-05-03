@@ -71,15 +71,15 @@
         @if (!checkFileStatus){
           <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
         }
-        <!-- @if(data.file) {
-          @for (file of data.file; track file){
+        @if(generalInfoToUpdate) {
+          @for (file of generalInfoToUpdate.file; track file){
             <div class="mt-2">
               <strong>Αρχείo:</strong>
-              <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file._id.$oid)"></i>
-              <span role="button" class="cursor-pointer" (click)="displayFile(file._id.$oid)">{{file.file_name}}</span>
+              <span role="button" class="cursor-pointer" (click)="deleteFile(generalInfoToUpdate['_id']['$oid'],file['_id']['$oid'])">{{file['file_name']}}</span>
+              <i class="bi bi-file-x text-danger fs-6 cursor-pointer" role="button" (click)="deleteFile(generalInfoToUpdate['_id']['$oid'],file['_id']['$oid'])"></i>
             </div>
           }
-        } -->
+        }
       </div>
        
       <div class="d-flex align-items-center gap-2 mb-3 p-2">

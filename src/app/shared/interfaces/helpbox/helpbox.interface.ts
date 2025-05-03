@@ -32,6 +32,15 @@ export interface IHelpbox {
     finalized?: boolean | null;
 }
 
+export interface IFile_Upload {
+  google_id: string;
+  file_id: string;
+  file_name: string;
+  file_type: string;
+  file_size: string;
+  file_location: string;
+}
+
 export interface IGeneralInfo {
     email?: string;
     firstName?: string;
