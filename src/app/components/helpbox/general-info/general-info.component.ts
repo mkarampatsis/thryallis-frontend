@@ -337,6 +337,10 @@ export class GeneralInfoComponent {
 
   deleteFile(generalInfoId:string, fileId:string){
     console.log(generalInfoId, fileId)
+    this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
+      .subscribe(data => {
+        this.getAllGeneralInfo();
+      })
   }
 
   deleteGeneralInfo(data:IGeneralInfo) {
