@@ -230,9 +230,11 @@ export class GeneralInfoComponent {
         category: this.form.controls.category.value        
       } as IGeneralInfo;
       
-      this.helpboxService.updateGeneralInfo(this.generalInfoToUpdate["id"]["$oid"], infoText)
+      this.helpboxService.updateGeneralInfo(this.generalInfoToUpdate["_id"]["$oid"], infoText)
         .subscribe((data) =>{
-          console.log(data);
+          // console.log(data);
+          this.initializeForm()
+          this.getAllGeneralInfo();
         })
     }
   }
