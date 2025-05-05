@@ -189,9 +189,7 @@ export class GeneralInfoComponent {
   }
 
   onSubmit() {
-    console.log("generalInfoToUpdate",this.generalInfoToUpdate);
     if(Object.keys(this.generalInfoToUpdate).length === 0){
-      console.log("EMPTY General Info, not update")
       const infoText = {
         email: this.form.controls.email.value,
         lastName: this.form.controls.lastName.value,
@@ -209,31 +207,33 @@ export class GeneralInfoComponent {
           this.getAllGeneralInfo();
         });
     } else {
-      console.log("EMPTY General Info, update")
-      console.log(
-        this.form.controls.email.value,
-        this.form.controls.lastName.value,
-        this.form.controls.firstName.value,
-        this.form.controls.title.value,
-        this.text,
-        this.uploadObjectIDs,
-        this.form.controls.category.value,
-        this.generalInfoToUpdate.file,
-        this.generalInfoToUpdate["_id"]["$oid"]
-      )
-
-      const ids: string[] = this.uploadObjectIDs
-      // Extract only the objects from `files` that have their $oid in `ids`
+      const newObjectIds: string[] = this.uploadObjectIDs
+      // Extract only the objects from `files` that have their $oid in `newObjectIds`
       // Step 1: Get all oids from files
-      const fileOids = this.generalInfoToUpdate.file.map(f => f._id.$oid);
+      const oldObjectIds = this.generalInfoToUpdate.file.map(f => f._id.$oid);
 
-      // Step 2: Add ids that are NOT already in fileOids
-      const additionalIds = this.uploadObjectIDs.filter(id => !fileOids.includes(id));
+      // Step 2: Add ids that are NOT already in oldObjectIds
+      const additionalIds = this.uploadObjectIDs.filter(id => !oldObjectIds.includes(newObjectIds));
 
       // Step 3: Combine and get final list
-      const finalIDs = [...fileOids, ...additionalIds];
+      const finalIDs = [...oldObjectIds, ...additionalIds];
 
       console.log(finalIDs);
+
+      const infoText = {
+        email: this.form.controls.email.value,
+        lastName: this.form.controls.lastName.value,
+        firstName: this.form.controls.firstName.value,
+        title: this.form.controls.title.value,
+        text: this.text,
+        file: finalIDs,
+        category: this.form.controls.category.value        
+      } as IGeneralInfo;
+      
+      this.helpboxService.updateGeneralInfo(this.generalInfoToUpdate["id"]["$oid"], infoText)
+        .subscribe((data) =>{
+          console.log(data);
+        })
     }
   }
 

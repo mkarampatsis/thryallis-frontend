@@ -57,6 +57,10 @@ export class HelpboxService {
     return this.http.post<{ msg: string; index: IGeneralInfo }>(`${APIPREFIX}/general-info`, data);
   }
 
+  updateGeneralInfo(generalInfoID:string, data: IGeneralInfo): Observable<{ msg: string; index: IHelpbox }> {
+    return this.http.put<{ msg: string; index: IGeneralInfo }>(`${APIPREFIX}/general-info/${generalInfoID}`, data);
+  }
+
   deleteGeneralInfo(generalInfoID: string): Observable<{ message: string }> {
     const url = `${APIPREFIX}/general-info/${generalInfoID}`;
     return this.http.delete<{ message: string }>(`${APIPREFIX}/general-info/${generalInfoID}`);
