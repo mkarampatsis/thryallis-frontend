@@ -62,9 +62,9 @@ export class HelpboxService {
     return this.http.delete<{ message: string }>(`${APIPREFIX}/general-info/${generalInfoID}`);
   }
 
-  deleteFileFromGeneralInfo(generalInfoID: string, fileId:string): Observable<{ message: string }> {
+  deleteFileFromGeneralInfo(generalInfoID: string, fileId:string): Observable<{ message: string, data: IGeneralInfo }> {
     const url = `${APIPREFIX}/general-info/${generalInfoID}`;
-    return this.http.delete<{ message: string }>(`${APIPREFIX}/general-info/${generalInfoID}/file/${fileId}`);
+    return this.http.delete<{ message: string, data: IGeneralInfo }>(`${APIPREFIX}/general-info/${generalInfoID}/file/${fileId}`);
   }
 
   downloadFile(fileContent: BlobPart, fileName: string, mimeType: string): void {

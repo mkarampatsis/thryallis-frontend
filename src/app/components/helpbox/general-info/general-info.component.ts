@@ -189,26 +189,52 @@ export class GeneralInfoComponent {
   }
 
   onSubmit() {
-    // const inputValues = this.form.controls.tags.value.split(",").map(item => item.trim())
-    // this.selectedValues = this.selectedValues.concat(inputValues);
-    const infoText = {
-      email: this.form.controls.email.value,
-      lastName: this.form.controls.lastName.value,
-      firstName: this.form.controls.firstName.value,
-      title: this.form.controls.title.value,
-      text: this.text,
-      // file: this.uploadObjectID,
-      file: this.uploadObjectIDs,
-      // tags: this.selectedValues
-      category: this.form.controls.category.value        
-    } as IGeneralInfo;
+    console.log("generalInfoToUpdate",this.generalInfoToUpdate);
+    if(Object.keys(this.generalInfoToUpdate).length === 0){
+      console.log("EMPTY General Info, not update")
+      const infoText = {
+        email: this.form.controls.email.value,
+        lastName: this.form.controls.lastName.value,
+        firstName: this.form.controls.firstName.value,
+        title: this.form.controls.title.value,
+        text: this.text,
+        file: this.uploadObjectIDs,
+        category: this.form.controls.category.value        
+      } as IGeneralInfo;
 
-    this.helpboxService.newGeneralInfo(infoText)
-      .subscribe(data => {
-        // this.goToTab(1);
-        this.initializeForm()
-        this.getAllGeneralInfo();
-      });
+      this.helpboxService.newGeneralInfo(infoText)
+        .subscribe(data => {
+          // this.goToTab(1);
+          this.initializeForm()
+          this.getAllGeneralInfo();
+        });
+    } else {
+      console.log("EMPTY General Info, update")
+      console.log(
+        this.form.controls.email.value,
+        this.form.controls.lastName.value,
+        this.form.controls.firstName.value,
+        this.form.controls.title.value,
+        this.text,
+        this.uploadObjectIDs,
+        this.form.controls.category.value,
+        this.generalInfoToUpdate.file,
+        this.generalInfoToUpdate["_id"]["$oid"]
+      )
+
+      const ids: string[] = this.uploadObjectIDs
+      // Extract only the objects from `files` that have their $oid in `ids`
+      // Step 1: Get all oids from files
+      const fileOids = this.generalInfoToUpdate.file.map(f => f._id.$oid);
+
+      // Step 2: Add ids that are NOT already in fileOids
+      const additionalIds = this.uploadObjectIDs.filter(id => !fileOids.includes(id));
+
+      // Step 3: Combine and get final list
+      const finalIDs = [...fileOids, ...additionalIds];
+
+      console.log(finalIDs);
+    }
   }
 
   getAllGeneralInfo(){
@@ -330,15 +356,15 @@ export class GeneralInfoComponent {
       this.form.controls.text.patchValue(data.text);
       // this.form.controls.file.patchValue(data.file);
       this.form.controls.category.patchValue(data.category);
-      console.log("edit>>",data)
       this.generalInfoToUpdate = data;
     }
   }
 
   deleteFile(generalInfoId:string, fileId:string){
-    console.log(generalInfoId, fileId)
     this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
-      .subscribe(data => {
+      .subscribe(result => {
+        console.log(">>",result)
+        this.generalInfoToUpdate.file = result.data.file;
         this.getAllGeneralInfo();
       })
   }
