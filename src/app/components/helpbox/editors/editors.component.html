@@ -16,16 +16,7 @@
                 class="form-label">
                 Τίτλος Συνομιλίας
             </label>
-            <!-- <select class="mb-3 form-control" type="text" id="questionSelect" formControlName="questionSelect" (change)="showSelectValue()">
-                <option value="" disabled selected>Επιλεξτε ερώτημα</option>
-                <option value="new">Νέα συνομιλία</option>
-                @for (doc of notFinalized; track doc) {
-                    <option value="{{doc.questionTitle}}_{{doc['_id']['$oid']}}">{{doc.questionTitle}}</option>
-                }
-            </select> -->
-            <!-- @if (showInputField) { -->
-                <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle" placeholder="Πληκτρολογείστε τίτλο συνομιλίας">
-            <!-- } -->
+           <input class="form-control" type="text" id="questionTitle" formControlName="questionTitle" placeholder="Πληκτρολογείστε τίτλο συνομιλίας">
         </div>
         <div class="mb-3 p-2">
           <select class="mb-3 form-control" type="text" id="questionCategory" formControlName="questionCategory">
@@ -63,24 +54,38 @@
         
 
         <div class="mb-3 p-2">
-            <label class="form-label">Αρχείο PDF (16MB maximum):</label>
+            <label class="form-label">Αρχείο (PDF, DOCX, XLSX, PNG, JPEG) (16MB maximum):</label>
             <input
-                class="form-control"
-                type="file"
-                (change)="selectFile($event)" />
-                <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+              #fileInput
+              class="form-control"
+              type="file"
+              multiple
+              (change)="selectFile($event)" />
+              <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
             @if (progress) {
-                <div class="progress mt-2">
-                    <div
-                        class="progress-bar progress-bar-info"
-                        role="progressbar"
-                        attr.aria-valuenow="{{ progress }}"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                        [ngStyle]="{ width: progress + '%' }">
-                        {{ progress }}%
-                    </div>
+              <div class="progress mt-2">
+                <div
+                  class="progress-bar progress-bar-info"
+                  role="progressbar"
+                  attr.aria-valuenow="{{ progress }}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  [ngStyle]="{ width: progress + '%' }">
+                  {{ progress }}%
                 </div>
+              </div>
+            }
+            @if (!checkFileStatus){
+              <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
+            }
+            @if(generalInfoToUpdate) {
+              @for (file of generalInfoToUpdate.file; track file){
+                <div class="mt-2">
+                  <strong>Αρχείo:</strong>
+                  <span role="button" class="cursor-pointer" (click)="deleteFile(generalInfoToUpdate['_id']['$oid'],file['_id']['$oid'])">{{file['file_name']}}</span>
+                  <i class="bi bi-file-x text-danger fs-6 cursor-pointer" role="button" (click)="deleteFile(generalInfoToUpdate['_id']['$oid'],file['_id']['$oid'])"></i>
+                </div>
+              }
             }
         </div>
 

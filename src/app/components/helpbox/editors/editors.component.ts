@@ -153,19 +153,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.changeTab.emit(tabIndex); // Emit the tab index to parent
     }
 
-    // showSelectValue() {
-    //     const value = this.form.controls.questionSelect.value.split('_');
-
-    //     if (value[0] === "new") {
-    //         this.showInputField = true
-    //         this.form.controls.questionTitle.patchValue('')
-    //     }
-    //     else {
-    //         this.showInputField = false
-    //         this.form.controls.questionTitle.patchValue(value[0])
-    //     }
-    // }
-
     selectFile(event: any): void {
 
         if (event.target.files.length === 0) {
@@ -191,6 +178,14 @@ export class EditorsComponent implements OnInit, OnDestroy {
                 console.log('Upload complete');
             },
         });
+    }
+
+    deleteFile(generalInfoId:string, fileId:string){
+      this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
+        .subscribe(result => {
+          this.generalInfoToUpdate.file = result.data.file;
+          this.getAllGeneralInfo();
+        })
     }
 
     hasUploadedFile(): boolean {
