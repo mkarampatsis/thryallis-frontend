@@ -149,9 +149,9 @@ export class EditorsComponent implements OnInit, OnDestroy {
         questionTitle: this.form.controls.questionTitle.value,
         questionCategory: this.form.controls.questionCategory.value,
         question: {
-            text: this.questionText,
+            questionText: this.questionText,
             // questionFile: this.uploadObjectID
-            file: this.uploadObjectIDs
+            questionFile: this.uploadObjectIDs
         },
       } as unknown as IHelpbox;
 
