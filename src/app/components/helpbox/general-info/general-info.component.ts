@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common'
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
@@ -33,6 +33,8 @@ import { ConstService } from 'src/app/shared/services/const.service';
   styleUrl: './general-info.component.css'
 })
 export class GeneralInfoComponent {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   authService = inject(AuthService);
   uploadService = inject(FileUploadService);
   helpboxService = inject(HelpboxService);
@@ -174,13 +176,25 @@ export class GeneralInfoComponent {
   }
 
   initializeForm(){
-    this.form.controls.email.patchValue(this.user().email);
-    this.form.controls.firstName.patchValue(this.user().firstName);
-    this.form.controls.lastName.patchValue(this.user().lastName);
-    this.form.controls.title.patchValue("");
-    this.form.controls.text.patchValue("");
-    this.form.controls.file.patchValue([]);
-    this.form.controls.category.patchValue("");
+    this.form.patchValue({
+      email: this.user().email,
+      firstName: this.user().firstName,
+      lastName: this.user().lastName,
+      title: '',
+      text: '',
+      file: [],
+      category: ''
+    });
+  
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+  
+    // Clear the native file input selection
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+  
+    this.progress = 0;
     this.generalInfoToUpdate = {};
   }
 
@@ -217,8 +231,6 @@ export class GeneralInfoComponent {
 
       // Step 3: Combine and get final list
       const finalIDs = [...oldObjectIds, ...additionalIds];
-
-      console.log(finalIDs);
 
       const infoText = {
         email: this.form.controls.email.value,
@@ -365,7 +377,6 @@ export class GeneralInfoComponent {
   deleteFile(generalInfoId:string, fileId:string){
     this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
       .subscribe(result => {
-        console.log(">>",result)
         this.generalInfoToUpdate.file = result.data.file;
         this.getAllGeneralInfo();
       })
@@ -375,6 +386,7 @@ export class GeneralInfoComponent {
     if (this.hasHelpDeskRole()){
       this.helpboxService.deleteGeneralInfo(data["_id"]["$oid"])
         .subscribe(data=>{
+          this.initializeForm();
           this.getAllGeneralInfo();
         })
     }
