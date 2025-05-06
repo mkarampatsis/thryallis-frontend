@@ -49,6 +49,11 @@ export class HelpboxService {
     return this.http.put<{ msg: string; index: IHelpbox }>(`${APIPREFIX}/publish`, data);
   }
 
+  deleteFileFromHelpBox(helpBoxID: string, fileId:string): Observable<{ message: string, data: IHelpbox }> {
+    const url = `${APIPREFIX}/${helpBoxID}`;
+    return this.http.delete<{ message: string, data: IHelpbox }>(`${APIPREFIX}/${helpBoxID}/file/${fileId}`);
+  }
+
   getGeneralInfo(): Observable<IGeneralInfo[]> {
     return this.http.get<IGeneralInfo[]>(`${APIPREFIX}/general-info`);
   }

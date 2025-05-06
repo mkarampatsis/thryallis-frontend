@@ -2,7 +2,7 @@ export interface IQuestion {
     id?: string | null;    
     questionText?: string;
     answerText?: string | null;
-    questionFile?: string | null;
+    questionFile?: string[] | [];
     answerFile?: string | null;
     fromWhom?: {
       email?: string;

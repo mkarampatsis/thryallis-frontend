@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, EventEmitter, Output, effect } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, EventEmitter, Output, effect, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
@@ -19,6 +19,8 @@ import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 })
 export class EditorsComponent implements OnInit, OnDestroy {
     @Output() changeTab = new EventEmitter<number>();
+    @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+    
     authService = inject(AuthService);
     constService = inject(ConstService);
     uploadService = inject(FileUploadService);
@@ -38,8 +40,11 @@ export class EditorsComponent implements OnInit, OnDestroy {
     showInputField = false;
 
     progress = 0;
-    currentFile: File;
-    uploadObjectID: string | null = null;
+    checkFileStatus: boolean = true;
+    helpboxToUpdate: IHelpbox = {};
+    uploadObjectIDs: string[] = [];
+    // currentFile: File;
+    // uploadObjectID: string | null = null;
 
     form = new FormGroup({
         email: new FormControl(''),
@@ -48,9 +53,9 @@ export class EditorsComponent implements OnInit, OnDestroy {
         organizations : new FormControl([]),
         questionTitle: new FormControl('', Validators.required),
         questionCategory: new FormControl('', Validators.required),
-        question: new FormGroup({
+        questions: new FormGroup({
             questionText: new FormControl('', Validators.required),
-            questionFile: new FormControl(''),
+            questionFile: new FormControl([]),
         }),
         // questionSelect: new FormControl('')
     });
@@ -87,15 +92,28 @@ export class EditorsComponent implements OnInit, OnDestroy {
     }
 
     initializeForm(){
-        this.form.controls.email.patchValue(this.user().email);
-        this.form.controls.firstName.patchValue(this.user().firstName);
-        this.form.controls.lastName.patchValue(this.user().lastName);
-        this.form.controls.questionTitle.patchValue("")
-        this.form.controls.questionCategory.patchValue("")
-        this.form.controls.question.patchValue({
-            questionText: this.questionText,
-            questionFile : ""
+        this.form.patchValue({
+            email: this.user().email,
+            firstName: this.user().firstName,
+            lastName: this.user().lastName,
+            organizations : [],
+            questionTitle: '',
+            questionCategory: '',
+            questions: {
+                questionText: '',
+                questionFile:[]
+            }
         });
+
+        // this.form.controls.email.patchValue(this.user().email);
+        // this.form.controls.firstName.patchValue(this.user().firstName);
+        // this.form.controls.lastName.patchValue(this.user().lastName);
+        // this.form.controls.questionTitle.patchValue("")
+        // this.form.controls.questionCategory.patchValue("")
+        // this.form.controls.question.patchValue({
+        //     questionText: this.questionText,
+        //     questionFile : ""
+        // });
         
         const foreas = this.user().roles.filter(data => data.role==="EDITOR")[0].foreas
         this.form.controls.organizations.patchValue(foreas);
@@ -103,6 +121,17 @@ export class EditorsComponent implements OnInit, OnDestroy {
         foreas.every(data=> {
             this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
         });
+
+        this.form.markAsPristine();
+        this.form.markAsUntouched();
+  
+        // Clear the native file input selection
+        if (this.fileInput?.nativeElement) {
+            this.fileInput.nativeElement.value = '';
+        }
+    
+        this.progress = 0;
+        this.helpboxToUpdate = {};
     }
 
     onQuestionTextChange(html: object) {
@@ -121,7 +150,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
             questionCategory: this.form.controls.questionCategory.value,
             question: {
                 questionText: this.questionText,
-                questionFile: this.uploadObjectID
+                // questionFile: this.uploadObjectID
+                questionFile: this.uploadObjectIDs
             },
         } as unknown as IHelpbox;
 
@@ -154,41 +184,92 @@ export class EditorsComponent implements OnInit, OnDestroy {
     }
 
     selectFile(event: any): void {
-
-        if (event.target.files.length === 0) {
-            console.log('No file selected!');
-            return;
+        const files: FileList = event.target.files;
+        if (!files || files.length === 0) {
+          console.log('No files selected!');
+          return;
         }
-        this.currentFile = event.target.files[0];
-
-        this.uploadService.upload(this.currentFile).subscribe({
-            next: (event: any) => {
-                if (event.type === HttpEventType.UploadProgress) {
-                    this.progress = Math.round((100 * event.loaded) / event.total);
+      
+        this.progress = 0;
+        const fileArray = Array.from(files);
+        let completed = 0;
+        this.checkFileStatus = true;
+        this.form.controls.questions.controls.questionFile.setErrors({'incorrect': false});
+    
+        fileArray.forEach((file, index)=>{
+          const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
+          const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
+          const checkFileSize = (file.size/1024)<13000
+          if (!(checkFileSize && checkFileType)) 
+            this.checkFileStatus = false
+        })  
+      
+        if (this.checkFileStatus){
+          fileArray.forEach((file, index) => {
+            this.uploadService.upload(file).subscribe({
+              next: (event: any) => {
+                if (event.type === HttpEventType.UploadProgress && event.total) {
+                  this.progress = Math.round((100 * event.loaded) / event.total);
+                  console.log(`Progress for file ${index}: ${this.progress}%`);
                 } else if (event instanceof HttpResponse) {
-                    this.uploadObjectID = event.body.id;
-                    this.form.controls.question.controls.questionFile.setValue(this.uploadObjectID);
-                    this.form.markAsDirty();
+                  this.uploadObjectIDs.push(event.body.id);
                 }
-            },
-            error: (err: any) => {
-                console.log(err);
-            },
-            complete: () => {
-                console.log('Upload complete');
-            },
-        });
-    }
+              },
+              error: (err: any) => {
+                console.error(`Upload failed for file ${file.name}`, err);
+              },
+              complete: () => {
+                completed++;
+                if (completed === fileArray.length) {
+                    this.form.controls.questions.controls.questionFile.setValue( this.uploadObjectIDs);
+                  this.form.markAsDirty();
+                  console.log('All uploads complete:',  this.uploadObjectIDs);
+                }
+              },
+            });
+          });
+        } else {
+            this.form.controls.questions.controls.questionFile.setErrors({'incorrect': true});
+        }
+      }
 
-    deleteFile(generalInfoId:string, fileId:string){
-      this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
+    // selectFile(event: any): void {
+
+    //     if (event.target.files.length === 0) {
+    //         console.log('No file selected!');
+    //         return;
+    //     }
+    //     this.currentFile = event.target.files[0];
+
+    //     this.uploadService.upload(this.currentFile).subscribe({
+    //         next: (event: any) => {
+    //             if (event.type === HttpEventType.UploadProgress) {
+    //                 this.progress = Math.round((100 * event.loaded) / event.total);
+    //             } else if (event instanceof HttpResponse) {
+    //                 this.uploadObjectID = event.body.id;
+    //                 this.form.controls.question.controls.questionFile.setValue(this.uploadObjectID);
+    //                 this.form.markAsDirty();
+    //             }
+    //         },
+    //         error: (err: any) => {
+    //             console.log(err);
+    //         },
+    //         complete: () => {
+    //             console.log('Upload complete');
+    //         },
+    //     });
+    // }
+
+    deleteFile(helpBoxId:string, fileId:string){
+      this.helpboxService.deleteFileFromHelpBox(helpBoxId, fileId)
         .subscribe(result => {
-          this.generalInfoToUpdate.file = result.data.file;
-          this.getAllGeneralInfo();
+          this.helpboxToUpdate.questions["questionFile"] = result.data.questions["questionFile"];
+        //   this.getAllGeneralInfo();
         })
     }
 
     hasUploadedFile(): boolean {
-        return this.form.controls.question.controls.questionFile.value !== null;
+        // return this.form.controls.question.controls.questionFile.value !== null;
+        return this.form.controls.questions.controls.questionFile.value !== null;
     }
 }
