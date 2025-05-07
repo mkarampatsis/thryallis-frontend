@@ -145,7 +145,7 @@ export class HelpboxAnswerComponent {
     getHelpBox(){
         this.helpboxService.getHelpboxById(this.helpboxId)
             .subscribe((data)=>{
-                this.question = data[0];
+                this.question = data;
                 this.showNewQuestionButton = this.question.finalized ? false : true;
                 this.question.organizations.every(data=> {
                     this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
@@ -184,18 +184,46 @@ export class HelpboxAnswerComponent {
         });
     }
 
-    displayPDF(fileId:string) {
+    // displayPDF(fileId:string) {
+    //     this.uploadService
+    //         .getUploadByID(fileId)
+    //         .pipe(take(1))
+    //         .subscribe((data) => {
+    //             const url = window.URL.createObjectURL(data);
+    //             const link = document.createElement('a');
+    //             link.href = url;
+    //             link.download = 'document.pdf';
+    //             this.modalService.showPdfViewer(link);
+    //         });
+    // }
+    displayFile(fileId:string) {
         this.uploadService
-            .getUploadByID(fileId)
-            .pipe(take(1))
-            .subscribe((data) => {
-                const url = window.URL.createObjectURL(data);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'document.pdf';
-                this.modalService.showPdfViewer(link);
-            });
-    }
+          .getUploadByID(fileId)
+          .pipe(take(1))
+          .subscribe((data) => {
+            if (data.type==="application/pdf") {
+              const url = window.URL.createObjectURL(data);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = 'document.pdf';
+              this.modalService.showPdfViewer(link);
+            } else {
+              // const type = data.type.split('/')[1];
+              if (data.type==='image/png'){
+                this.helpboxService.downloadFile(data, 'image.png', 'image/png');
+              }
+              if (data.type=='image/jpeg'){
+                this.helpboxService.downloadFile(data, 'photo.jpg', 'image/png');
+              }
+              if (data.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+                this.helpboxService.downloadFile(data, 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+              }
+              if (data.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+                this.helpboxService.downloadFile(data, 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+              }
+            }
+        });
+      }
 
     hasHelpDeskRole() {
         return this.userService.hasHelpDeskRole();

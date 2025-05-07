@@ -135,7 +135,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
     }
 
     onQuestionTextChange(html: object) {
-        this.questionText = toHTML(html);
+      // this.questionText = toHTML(html);
+      this.questionText = html.toString()
     }
 
 
@@ -197,6 +198,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.form.controls.questions.controls.questionFile.setErrors({'incorrect': false});
     
         fileArray.forEach((file, index)=>{
+          console.log(">>",file.name)
           const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
           const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
           const checkFileSize = (file.size/1024)<13000
