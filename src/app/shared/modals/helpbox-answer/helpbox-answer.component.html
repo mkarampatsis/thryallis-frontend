@@ -31,7 +31,6 @@
                                     <strong>Αρχείο ερωτήματος:</strong>
                                     <!-- <i class="bi bi-file-earmark-pdf fs-4" role="button" (click)="displayPDF(q.questionFile['$oid'])"></i> -->
                                     @for (file of q.questionFile; track file){
-                                        {{file | json }}
                                         <div class="mt-2">
                                             <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
                                             <span role="button" class="cursor-pointer" (click)="displayFile(file['_id']['$oid'])">{{file['file_name']}}</span>
@@ -39,12 +38,10 @@
                                       }
                                 </div>
                             }
-                            <div><strong>Ημερ. ερωτήματος:</strong> {{q.whenAsked['$date']}}</div>
+                            <div><strong>Ημερ. ερωτήματος:</strong> {{q.whenAsked}}</div>
                             <div>
                                 <strong>Ημερ. απάντησης:</strong> 
                                 @if (q.whenAnswered) {
-                                    {{q.whenAnswered['$date']}}
-                                } @else {
                                     {{q.whenAnswered}}
                                 }
                             </div>
