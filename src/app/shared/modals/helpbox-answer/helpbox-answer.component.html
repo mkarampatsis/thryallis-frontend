@@ -38,11 +38,11 @@
                                       }
                                 </div>
                             }
-                            <div><strong>Ημερ. ερωτήματος:</strong> {{q.whenAsked}}</div>
+                            <div><strong>Ημερ. ερωτήματος:</strong> {{q.whenAsked | date: "dd-MM-yyyy HH:mm:ss"}}</div>
                             <div>
                                 <strong>Ημερ. απάντησης:</strong> 
                                 @if (q.whenAnswered) {
-                                    {{q.whenAnswered}}
+                                    {{q.whenAnswered | date: "dd-MM-yyyy HH:mm:ss"}}
                                 }
                             </div>
                             <div>
