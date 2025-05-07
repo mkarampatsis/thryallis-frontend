@@ -32,24 +32,24 @@
             <option value="Άλλο">Άλλο</option>
           </select>
         </div>
-        <div formGroupName="questions" class="mb-3 p-2">
-            <label
-                for="questionText"
-                class="form-label">
-                Κείμενο ερωτήματος:
-            </label>
-            <div class="NgxEditor__Wrapper">
-                <ngx-editor-menu
-                    [editor]="editor"
-                    [toolbar]="toolbar">
-                </ngx-editor-menu>
-                <ngx-editor
-                    [editor]="editor"
-                    id="questionText"
-                    formControlName = "questionText"
-                    (ngModelChange)="onQuestionTextChange($event)">
-                </ngx-editor>
-            </div>
+        <div formGroupName="question" class="mb-3 p-2">
+          <label
+            for="text"
+            class="form-label">
+            Κείμενο ερωτήματος:
+          </label>
+          <div class="NgxEditor__Wrapper">
+            <ngx-editor-menu
+              [editor]="editor"
+              [toolbar]="toolbar">
+            </ngx-editor-menu>
+            <ngx-editor
+              [editor]="editor"
+              id="text"
+              formControlName = "questionText"
+              (ngModelChange)="onTextChange($event)">
+            </ngx-editor>
+          </div>
         </div>
         
 

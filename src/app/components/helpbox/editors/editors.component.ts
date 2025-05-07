@@ -53,7 +53,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         organizations : new FormControl([]),
         questionTitle: new FormControl('', Validators.required),
         questionCategory: new FormControl('', Validators.required),
-        questions: new FormGroup({
+        question: new FormGroup({
             questionText: new FormControl('', Validators.required),
             questionFile: new FormControl([]),
         }),
@@ -99,7 +99,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
             organizations : [],
             questionTitle: '',
             questionCategory: '',
-            questions: {
+            question: {
                 questionText: '',
                 questionFile:[]
             }
@@ -134,44 +134,43 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.helpboxToUpdate = {};
     }
 
-    onQuestionTextChange(html: object) {
+    onTextChange(html: object) {
+      console.log(">>", html.toString())
       // this.questionText = toHTML(html);
       this.questionText = html.toString()
     }
 
-
     onSubmit() {
-        
-        const helpQuestion = {
-            email: this.form.controls.email.value,
-            lastName: this.form.controls.lastName.value,
-            firstName: this.form.controls.firstName.value,
-            organizations: this.form.controls.organizations.value,
-            questionTitle: this.form.controls.questionTitle.value,
-            questionCategory: this.form.controls.questionCategory.value,
-            question: {
-                questionText: this.questionText,
-                // questionFile: this.uploadObjectID
-                questionFile: this.uploadObjectIDs
-            },
-        } as unknown as IHelpbox;
+      const helpQuestion = {
+        email: this.form.controls.email.value,
+        lastName: this.form.controls.lastName.value,
+        firstName: this.form.controls.firstName.value,
+        organizations: this.form.controls.organizations.value,
+        questionTitle: this.form.controls.questionTitle.value,
+        questionCategory: this.form.controls.questionCategory.value,
+        question: {
+            questionText: this.questionText,
+            // questionFile: this.uploadObjectID
+            questionFile: this.uploadObjectIDs
+        },
+      } as unknown as IHelpbox;
 
-        // const value = this.form.controls.questionSelect.value.split('_');
+      // const value = this.form.controls.questionSelect.value.split('_');
 
-        // if (value[0]==="new"){ 
-        if (! this.newQuestion) {
-            this.helpboxService.newQuestion(helpQuestion)
-                .subscribe(data => {
-                    this.goToTab(1);
-                });
-        } else {
-            // const id = value[1];
-            // this.helpboxService.updateQuestion(helpQuestion, id)
-            this.helpboxService.updateQuestion(helpQuestion,this.newQuestionId)
-            .subscribe(data => {
-                this.goToTab(1);
-            });
-        }
+      // if (value[0]==="new"){ 
+      if (! this.newQuestion) {
+        this.helpboxService.newQuestion(helpQuestion)
+          .subscribe(data => {
+              this.goToTab(1);
+          });
+      } else {
+        // const id = value[1];
+        // this.helpboxService.updateQuestion(helpQuestion, id)
+        this.helpboxService.updateQuestion(helpQuestion,this.newQuestionId)
+        .subscribe(data => {
+            this.goToTab(1);
+        });
+      }
     }
 
     resetForm(){
@@ -195,7 +194,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         const fileArray = Array.from(files);
         let completed = 0;
         this.checkFileStatus = true;
-        this.form.controls.questions.controls.questionFile.setErrors({'incorrect': false});
+        this.form.controls.question.controls.questionFile.setErrors({'incorrect': false});
     
         fileArray.forEach((file, index)=>{
           console.log(">>",file.name)
@@ -223,7 +222,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
               complete: () => {
                 completed++;
                 if (completed === fileArray.length) {
-                    this.form.controls.questions.controls.questionFile.setValue( this.uploadObjectIDs);
+                    this.form.controls.question.controls.questionFile.setValue( this.uploadObjectIDs);
                   this.form.markAsDirty();
                   console.log('All uploads complete:',  this.uploadObjectIDs);
                 }
@@ -231,7 +230,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
             });
           });
         } else {
-            this.form.controls.questions.controls.questionFile.setErrors({'incorrect': true});
+            this.form.controls.question.controls.questionFile.setErrors({'incorrect': true});
         }
       }
 
@@ -265,6 +264,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
     deleteFile(helpBoxId:string, fileId:string){
       this.helpboxService.deleteFileFromHelpBox(helpBoxId, fileId)
         .subscribe(result => {
+          console.log(">>>",this.helpboxToUpdate);
           this.helpboxToUpdate.questions["questionFile"] = result.data.questions["questionFile"];
         //   this.getAllGeneralInfo();
         })
@@ -272,6 +272,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
 
     hasUploadedFile(): boolean {
         // return this.form.controls.question.controls.questionFile.value !== null;
-        return this.form.controls.questions.controls.questionFile.value !== null;
+        return this.form.controls.question.controls.questionFile.value !== null;
     }
 }
