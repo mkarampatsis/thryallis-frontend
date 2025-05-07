@@ -4,7 +4,7 @@ import { HelpboxService } from '../../services/helpbox.service';
 import { IHelpbox } from '../../interfaces/helpbox/helpbox.interface';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { UserService } from 'src/app/shared/services/user.service';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -56,9 +56,12 @@ export class HelpboxAnswerComponent {
     uploadObjectID: string | null = null;
 
     form = new FormGroup({
-        answerText: new FormControl('', Validators.required),
-        answerFile: new FormControl(''),
-        finalized: new FormControl(false, Validators.required)
+      answerText: new FormControl('', Validators.required),
+      answerFile: new FormControl(''),
+      finalized: new FormControl(false, Validators.required),
+      questions: new FormGroup({
+        questionId: new FormControl()
+      })
     });
   
     ngOnInit() : void {
@@ -75,46 +78,47 @@ export class HelpboxAnswerComponent {
     }
 
     onSubmit() {
-        const helpQuestion = {
-            helpBoxId: this.helpboxId,
-            questionId: this.questionId,
-            answerText: this.answerText,
-            answerFile: this.uploadObjectID,
-            fromWhom: {
-              email: this.userService.user().email,
-              firstName: this.userService.user().firstName,
-              lastName: this.userService.user().lastName
-            },
-        } as IHelpbox;
+      console.log(this.form.value)
+      // const helpQuestion = {
+      //   helpBoxId: this.helpboxId,
+      //   questionId: this.questionId,
+      //   answerText: this.answerText,
+      //   answerFile: this.uploadObjectID,
+      //   fromWhom: {
+      //     email: this.userService.user().email,
+      //     firstName: this.userService.user().firstName,
+      //     lastName: this.userService.user().lastName
+      //   },
+      // } as IHelpbox;
 
-        this.helpboxService.answerQuestion(helpQuestion)
-            .subscribe(data => {
-            this.modalRef.close()
-            this.helpboxService.helpboxNeedUpdate.set(true);
-            });
+      // this.helpboxService.answerQuestion(helpQuestion)
+      //   .subscribe(data => {
+      //     this.modalRef.close()
+      //     this.helpboxService.helpboxNeedUpdate.set(true);
+      //   });
     }
 
     sanitizeHtml(html) : SafeHtml {
-        if (html) {
-            return this.sanitizer.bypassSecurityTrustHtml(html);
-        } else {
-            return ""
-        }
+      if (html) {
+        return this.sanitizer.bypassSecurityTrustHtml(html);
+      } else {
+        return ""
+      }
     }
 
     answerQuestion(id:string){
-        if (this.hasHelpDeskRole()){
-            this.showForm = true;
-            this.questionId = id['$oid']
-        }
-    }
+      if (this.hasHelpDeskRole()){
+        this.showForm = true;
+        this.questionId = id['$oid']
+      }
+  }
 
     publishQuestion(questionId:string, published:boolean) {
-        this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId['$oid'], published:!published})
-            .subscribe((data) => {
-                this.helpboxService.helpboxNeedUpdate.set(true);
-                this.modalRef.close()
-            });    
+      this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId['$oid'], published:!published})
+        .subscribe((data) => {
+          this.helpboxService.helpboxNeedUpdate.set(true);
+          this.modalRef.close()
+        });    
     }
 
     finalizeConversation(){
@@ -184,18 +188,6 @@ export class HelpboxAnswerComponent {
         });
     }
 
-    // displayPDF(fileId:string) {
-    //     this.uploadService
-    //         .getUploadByID(fileId)
-    //         .pipe(take(1))
-    //         .subscribe((data) => {
-    //             const url = window.URL.createObjectURL(data);
-    //             const link = document.createElement('a');
-    //             link.href = url;
-    //             link.download = 'document.pdf';
-    //             this.modalService.showPdfViewer(link);
-    //         });
-    // }
     displayFile(fileId:string) {
         this.uploadService
           .getUploadByID(fileId)

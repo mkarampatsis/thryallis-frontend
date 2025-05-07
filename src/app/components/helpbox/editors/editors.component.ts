@@ -64,16 +64,16 @@ export class EditorsComponent implements OnInit, OnDestroy {
       effect(
         () => {
             if (this.addNewQuestion()) {
-                this.newQuestionId = this.addNewQuestion()["_id"]["$oid"];
-                this.form.controls.email.patchValue(this.user().email);
-                this.form.controls.firstName.patchValue(this.user().firstName);
-                this.form.controls.lastName.patchValue(this.user().lastName);
-                this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)
-                this.form.controls.questionTitle.disable()
-                this.form.controls.questionCategory.patchValue(this.addNewQuestion().questionCategory)
-                this.form.controls.questionCategory.disable()
-                this.newQuestion = true;
-                this.addNewQuestion.set(null);
+              this.newQuestionId = this.addNewQuestion()["id"];
+              this.form.controls.email.patchValue(this.user().email);
+              this.form.controls.firstName.patchValue(this.user().firstName);
+              this.form.controls.lastName.patchValue(this.user().lastName);
+              this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)
+              this.form.controls.questionTitle.disable()
+              this.form.controls.questionCategory.patchValue(this.addNewQuestion().questionCategory)
+              this.form.controls.questionCategory.disable()
+              this.newQuestion = true;
+              this.addNewQuestion.set(null);
             }
         },
         { allowSignalWrites: true },
@@ -135,7 +135,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
     }
 
     onTextChange(html: object) {
-      console.log(">>", html.toString())
       // this.questionText = toHTML(html);
       this.questionText = html.toString()
     }
@@ -197,7 +196,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
         this.form.controls.question.controls.questionFile.setErrors({'incorrect': false});
     
         fileArray.forEach((file, index)=>{
-          console.log(">>",file.name)
           const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
           const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
           const checkFileSize = (file.size/1024)<13000
@@ -234,37 +232,9 @@ export class EditorsComponent implements OnInit, OnDestroy {
         }
       }
 
-    // selectFile(event: any): void {
-
-    //     if (event.target.files.length === 0) {
-    //         console.log('No file selected!');
-    //         return;
-    //     }
-    //     this.currentFile = event.target.files[0];
-
-    //     this.uploadService.upload(this.currentFile).subscribe({
-    //         next: (event: any) => {
-    //             if (event.type === HttpEventType.UploadProgress) {
-    //                 this.progress = Math.round((100 * event.loaded) / event.total);
-    //             } else if (event instanceof HttpResponse) {
-    //                 this.uploadObjectID = event.body.id;
-    //                 this.form.controls.question.controls.questionFile.setValue(this.uploadObjectID);
-    //                 this.form.markAsDirty();
-    //             }
-    //         },
-    //         error: (err: any) => {
-    //             console.log(err);
-    //         },
-    //         complete: () => {
-    //             console.log('Upload complete');
-    //         },
-    //     });
-    // }
-
     deleteFile(helpBoxId:string, fileId:string){
       this.helpboxService.deleteFileFromHelpBox(helpBoxId, fileId)
         .subscribe(result => {
-          console.log(">>>",this.helpboxToUpdate);
           this.helpboxToUpdate.questions["questionFile"] = result.data.questions["questionFile"];
         //   this.getAllGeneralInfo();
         })

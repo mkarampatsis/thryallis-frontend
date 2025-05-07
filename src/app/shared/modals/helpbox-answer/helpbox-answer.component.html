@@ -47,7 +47,7 @@
                             </div>
                             <div>
                               <strong>Χειριστής Helpdesk:</strong> 
-                              {{q.fromWhom ? q.fromWhom.firstName + ' ' + q.fromWhom.lastName + ' (' + q.fromWhom.email.split('@')[0] + ')':'-'  }}
+                              {{q.fromWhom ? q.fromWhom.firstName + ' ' + q.fromWhom.lastName + ' (' + q.fromWhom.email.split('@')[0] + ')': question.toWhom.firstName + ' ' +  question.toWhom.lastName + ' (' + question.toWhom.email.split('@')[0] + ')' }}
                             </div>
                             @if(q.answerFile){
                                 <div>
@@ -74,54 +74,62 @@
             </ol>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 @if(showForm){
-                    <div class="mb-3">
-                        <label
-                            for="answerText"
-                            class="form-label">
-                            <strong>Απάντηση:</strong>
-                        </label>
-                        <div class="NgxEditor__Wrapper">
-                            <ngx-editor-menu
-                                [editor]="editor"
-                                [toolbar]="toolbar">
-                            </ngx-editor-menu>
-                            <ngx-editor
-                                [editor]="editor"
-                                id="answerText"
-                                formControlName = "answerText"
-                                (ngModelChange)="onAnswerTextChange($event)">
-                            </ngx-editor>
-                        </div>
+                  <div class="mb-3">
+                    <label
+                      for="answerText"
+                      class="form-label">
+                      <strong>Απάντηση:</strong>
+                    </label>
+                    <div class="NgxEditor__Wrapper">
+                      <ngx-editor-menu
+                        [editor]="editor"
+                        [toolbar]="toolbar">
+                      </ngx-editor-menu>
+                      <ngx-editor
+                        [editor]="editor"
+                        id="answerText"
+                        formControlName = "answerText"
+                        (ngModelChange)="onAnswerTextChange($event)">
+                      </ngx-editor>
                     </div>
-                    <div class="mb-3 p-2">
-                        <label class="form-label">Αρχείο PDF (16MB maximum):</label>
-                        <input
-                            class="form-control"
-                            type="file"
-                            (change)="selectFile($event)" />
-                            <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
-                        <!-- @if (hasUploadedFile()) {
-                            <ngb-alert
-                                type="info"
-                                [dismissible]="false"
-                                class="mt-2">
-                                Υπάρχει ήδη μεταφορτωμένο αρχείο.
-                            </ngb-alert>
-                        } -->
-                        @if (progress) {
-                            <div class="progress mt-2">
-                                <div
-                                    class="progress-bar progress-bar-info"
-                                    role="progressbar"
-                                    attr.aria-valuenow="{{ progress }}"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                    [ngStyle]="{ width: progress + '%' }">
-                                    {{ progress }}%
-                                </div>
-                            </div>
+                  </div>
+                  <div class="mb-3">
+                    <label
+                      for="answerText"
+                      class="form-label">
+                      <strong>Επιλέξτε Ερωτήσεις:</strong>
+                    </label>
+                    <ul formArrayName="questions">
+                      @for (q of question.questions; track q; let i = $index) {
+                        @if (q.answered===false) {
+                          <li [formGroupName]="i">
+                            <input type="checkbox" formControlName="questionId" /> {{ q.questionText}}
+                          </li>
                         }
-                    </div>
+                      }
+                    </ul>
+                  </div>
+                  <div class="mb-3 p-2">
+                    <label class="form-label">Αρχείο PDF (16MB maximum):</label>
+                    <input
+                        class="form-control"
+                        type="file"
+                        (change)="selectFile($event)" />
+                        <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+                    @if (progress) {
+                        <div class="progress mt-2">
+                            <div
+                                class="progress-bar progress-bar-info"
+                                role="progressbar"
+                                attr.aria-valuenow="{{ progress }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                [ngStyle]="{ width: progress + '%' }">
+                                {{ progress }}%
+                            </div>
+                        </div>
+                    }
+                  </div>
                 }
                 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
                     <button
