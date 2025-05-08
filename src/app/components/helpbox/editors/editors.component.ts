@@ -63,18 +63,18 @@ export class EditorsComponent implements OnInit, OnDestroy {
     constructor(){
       effect(
         () => {
-            if (this.addNewQuestion()) {
-              this.newQuestionId = this.addNewQuestion()["id"];
-              this.form.controls.email.patchValue(this.user().email);
-              this.form.controls.firstName.patchValue(this.user().firstName);
-              this.form.controls.lastName.patchValue(this.user().lastName);
-              this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)
-              this.form.controls.questionTitle.disable()
-              this.form.controls.questionCategory.patchValue(this.addNewQuestion().questionCategory)
-              this.form.controls.questionCategory.disable()
-              this.newQuestion = true;
-              this.addNewQuestion.set(null);
-            }
+          if (this.addNewQuestion()) {
+            this.newQuestionId = this.addNewQuestion()["id"];
+            this.form.controls.email.patchValue(this.user().email);
+            this.form.controls.firstName.patchValue(this.user().firstName);
+            this.form.controls.lastName.patchValue(this.user().lastName);
+            this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)
+            this.form.controls.questionTitle.disable()
+            this.form.controls.questionCategory.patchValue(this.addNewQuestion().questionCategory)
+            this.form.controls.questionCategory.disable()
+            this.newQuestion = true;
+            this.addNewQuestion.set(null);
+          }
         },
         { allowSignalWrites: true },
     );
@@ -92,46 +92,36 @@ export class EditorsComponent implements OnInit, OnDestroy {
     }
 
     initializeForm(){
-        this.form.patchValue({
-            email: this.user().email,
-            firstName: this.user().firstName,
-            lastName: this.user().lastName,
-            organizations : [],
-            questionTitle: '',
-            questionCategory: '',
-            question: {
-                questionText: '',
-                questionFile:[]
-            }
-        });
-
-        // this.form.controls.email.patchValue(this.user().email);
-        // this.form.controls.firstName.patchValue(this.user().firstName);
-        // this.form.controls.lastName.patchValue(this.user().lastName);
-        // this.form.controls.questionTitle.patchValue("")
-        // this.form.controls.questionCategory.patchValue("")
-        // this.form.controls.question.patchValue({
-        //     questionText: this.questionText,
-        //     questionFile : ""
-        // });
-        
-        const foreas = this.user().roles.filter(data => data.role==="EDITOR")[0].foreas
-        this.form.controls.organizations.patchValue(foreas);
-            
-        foreas.every(data=> {
-            this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
-        });
-
-        this.form.markAsPristine();
-        this.form.markAsUntouched();
-  
-        // Clear the native file input selection
-        if (this.fileInput?.nativeElement) {
-            this.fileInput.nativeElement.value = '';
+      this.form.patchValue({
+        email: this.user().email,
+        firstName: this.user().firstName,
+        lastName: this.user().lastName,
+        organizations : [],
+        questionTitle: '',
+        questionCategory: '',
+        question: {
+            questionText: '',
+            questionFile:[]
         }
-    
-        this.progress = 0;
-        this.helpboxToUpdate = {};
+      });
+
+      const foreas = this.user().roles.filter(data => data.role==="EDITOR")[0].foreas
+      this.form.controls.organizations.patchValue(foreas);
+          
+      foreas.every(data=> {
+        this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
+      });
+
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
+
+      // Clear the native file input selection
+      if (this.fileInput?.nativeElement) {
+          this.fileInput.nativeElement.value = '';
+      }
+  
+      this.progress = 0;
+      this.helpboxToUpdate = {};
     }
 
     onTextChange(html: object) {
@@ -183,54 +173,54 @@ export class EditorsComponent implements OnInit, OnDestroy {
     }
 
     selectFile(event: any): void {
-        const files: FileList = event.target.files;
-        if (!files || files.length === 0) {
-          console.log('No files selected!');
-          return;
-        }
-      
-        this.progress = 0;
-        const fileArray = Array.from(files);
-        let completed = 0;
-        this.checkFileStatus = true;
-        this.form.controls.question.controls.questionFile.setErrors({'incorrect': false});
-    
-        fileArray.forEach((file, index)=>{
-          const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
-          const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
-          const checkFileSize = (file.size/1024)<13000
-          if (!(checkFileSize && checkFileType)) 
-            this.checkFileStatus = false
-        })  
-      
-        if (this.checkFileStatus){
-          fileArray.forEach((file, index) => {
-            this.uploadService.upload(file).subscribe({
-              next: (event: any) => {
-                if (event.type === HttpEventType.UploadProgress && event.total) {
-                  this.progress = Math.round((100 * event.loaded) / event.total);
-                  console.log(`Progress for file ${index}: ${this.progress}%`);
-                } else if (event instanceof HttpResponse) {
-                  this.uploadObjectIDs.push(event.body.id);
-                }
-              },
-              error: (err: any) => {
-                console.error(`Upload failed for file ${file.name}`, err);
-              },
-              complete: () => {
-                completed++;
-                if (completed === fileArray.length) {
-                    this.form.controls.question.controls.questionFile.setValue( this.uploadObjectIDs);
-                  this.form.markAsDirty();
-                  console.log('All uploads complete:',  this.uploadObjectIDs);
-                }
-              },
-            });
-          });
-        } else {
-            this.form.controls.question.controls.questionFile.setErrors({'incorrect': true});
-        }
+      const files: FileList = event.target.files;
+      if (!files || files.length === 0) {
+        console.log('No files selected!');
+        return;
       }
+    
+      this.progress = 0;
+      const fileArray = Array.from(files);
+      let completed = 0;
+      this.checkFileStatus = true;
+      this.form.controls.question.controls.questionFile.setErrors({'incorrect': false});
+  
+      fileArray.forEach((file, index)=>{
+        const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
+        const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
+        const checkFileSize = (file.size/1024)<13000
+        if (!(checkFileSize && checkFileType)) 
+          this.checkFileStatus = false
+      })  
+    
+      if (this.checkFileStatus){
+        fileArray.forEach((file, index) => {
+          this.uploadService.upload(file).subscribe({
+            next: (event: any) => {
+              if (event.type === HttpEventType.UploadProgress && event.total) {
+                this.progress = Math.round((100 * event.loaded) / event.total);
+                console.log(`Progress for file ${index}: ${this.progress}%`);
+              } else if (event instanceof HttpResponse) {
+                this.uploadObjectIDs.push(event.body.id);
+              }
+            },
+            error: (err: any) => {
+              console.error(`Upload failed for file ${file.name}`, err);
+            },
+            complete: () => {
+              completed++;
+              if (completed === fileArray.length) {
+                  this.form.controls.question.controls.questionFile.setValue( this.uploadObjectIDs);
+                this.form.markAsDirty();
+                console.log('All uploads complete:',  this.uploadObjectIDs);
+              }
+            },
+          });
+        });
+      } else {
+          this.form.controls.question.controls.questionFile.setErrors({'incorrect': true});
+      }
+    }
 
     deleteFile(helpBoxId:string, fileId:string){
       this.helpboxService.deleteFileFromHelpBox(helpBoxId, fileId)

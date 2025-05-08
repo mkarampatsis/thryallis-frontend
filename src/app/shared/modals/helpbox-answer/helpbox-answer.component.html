@@ -29,7 +29,6 @@
                             @if(q.questionFile){
                                 <div>
                                     <strong>Αρχείο ερωτήματος:</strong>
-                                    <!-- <i class="bi bi-file-earmark-pdf fs-4" role="button" (click)="displayPDF(q.questionFile['$oid'])"></i> -->
                                     @for (file of q.questionFile; track file){
                                         <div class="mt-2">
                                             <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
@@ -52,9 +51,12 @@
                             @if(q.answerFile){
                                 <div>
                                     <strong>Αρχείο απάντησης:</strong>
-                                    <!-- <i class="bi bi-file-earmark-pdf fs-4" role="button" (click)="displayPDF(q.answerFile['$oid'])"></i> -->
-                                    <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(q.answerFile['$oid'])"></i>
-                                    <span role="button" class="cursor-pointer" (click)="displayFile(q.answerFile['$oid'])">{{q.answerFile['file_name']}}</span>
+                                    @for (file of q.answerFile; track file){
+                                      <div class="mt-2">
+                                          <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
+                                          <span role="button" class="cursor-pointer" (click)="displayFile(file['_id']['$oid'])">{{file['file_name']}}</span>
+                                      </div>
+                                    }
                                 </div>
                             }
                             <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(q.answerText)"></div>
@@ -100,23 +102,23 @@
                       <strong>Επιλέξτε Ερωτήσεις:</strong>
                     </label>
                     <div formArrayName="questions">
-                      @for (q of question.questions; track q; let i = $index) {
-                        @if (q.answered===false) {
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" [formControlName]="i"  id={{q.id}}/>
-                            <label class="form-check-label" for={{q.id}}>Ερώτηση {{ i+1 }}</label>
-                          </div>
-                        }
+                      @for (q of questionsNotAnswered; track q; let i = $index) {
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" [formControlName]="i"  id={{q.id}}/>
+                          <label class="form-check-label" for={{q.id}}>Ερώτηση: {{q.questionText }}</label>
+                        </div>
                       }
                     </div>
                   </div>
                   <div class="mb-3 p-2">
-                    <label class="form-label">Αρχείο PDF (16MB maximum):</label>
+                    <label class="form-label">Αρχείο (PDF, DOCX, XLSX, PNG, JPEG) (16MB maximum):</label>
                     <input
-                        class="form-control"
-                        type="file"
-                        (change)="selectFile($event)" />
-                        <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+                      #fileInput
+                      class="form-control"
+                      type="file"
+                      multiple
+                      (change)="selectFile($event)" />
+                      <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
                     @if (progress) {
                         <div class="progress mt-2">
                             <div
@@ -132,12 +134,15 @@
                     }
                   </div>
                 }
+                @if (!checkFileStatus){
+                  <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
+                }    
                 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
                     <button
                         type="button"
                         class="btn btn-primary"
                         type="submit"
-                        [disabled]="form.invalid">
+                        [disabled]="form.invalid || !isAnyCheckboxSelected()">
                         Υποβολή
                     </button>
                     @if(hasHelpDeskRole()){
