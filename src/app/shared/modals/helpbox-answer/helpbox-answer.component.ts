@@ -59,9 +59,7 @@ export class HelpboxAnswerComponent {
       answerText: new FormControl('', Validators.required),
       answerFile: new FormControl(''),
       finalized: new FormControl(false, Validators.required),
-      questions: new FormGroup({
-        questionId: new FormControl()
-      })
+      questions: new FormArray([])
     });
   
     ngOnInit() : void {
@@ -147,17 +145,25 @@ export class HelpboxAnswerComponent {
     }
 
     getHelpBox(){
-        this.helpboxService.getHelpboxById(this.helpboxId)
-            .subscribe((data)=>{
-                this.question = data;
-                this.showNewQuestionButton = this.question.finalized ? false : true;
-                this.question.organizations.every(data=> {
-                    this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
-            });  
-            if (this.hasHelpDeskRole()) {
-                // this.answerText=this.question.answerText;
-                this.initializeForm();
-            }
+      this.helpboxService.getHelpboxById(this.helpboxId)
+        .subscribe((data)=>{
+          this.question = data;
+          console.log(this.question)
+          this.showNewQuestionButton = this.question.finalized ? false : true;
+
+          // Dynamically add a FormControl for each question's checkbox
+          const questionsAnswered = this.question.questions.filter(q => !q.answered);
+          questionsAnswered.forEach((q) => {
+            (this.form.get('questions') as FormArray).push(new FormControl(false));
+          });
+          // end
+          this.question.organizations.every(data=> {
+            this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
+          });  
+          if (this.hasHelpDeskRole()) {
+            // this.answerText=this.question.answerText;
+            this.initializeForm();
+          }
         })
     }
 

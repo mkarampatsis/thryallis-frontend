@@ -99,15 +99,16 @@
                       class="form-label">
                       <strong>Επιλέξτε Ερωτήσεις:</strong>
                     </label>
-                    <ul formArrayName="questions">
+                    <div formArrayName="questions">
                       @for (q of question.questions; track q; let i = $index) {
                         @if (q.answered===false) {
-                          <li [formGroupName]="i">
-                            <input type="checkbox" formControlName="questionId" /> {{ q.questionText}}
-                          </li>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" [formControlName]="i"  id={{q.id}}/>
+                            <label class="form-check-label" for={{q.id}}>Ερώτηση {{ i+1 }}</label>
+                          </div>
                         }
                       }
-                    </ul>
+                    </div>
                   </div>
                   <div class="mb-3 p-2">
                     <label class="form-label">Αρχείο PDF (16MB maximum):</label>
