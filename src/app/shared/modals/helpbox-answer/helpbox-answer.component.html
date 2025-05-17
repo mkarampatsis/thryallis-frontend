@@ -105,7 +105,10 @@
                       @for (q of questionsNotAnswered; track q; let i = $index) {
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" [formControlName]="i"  id={{q.id}}/>
-                          <label class="form-check-label" for={{q.id}}>Ερώτηση: {{q.questionText }}</label>
+                          <label class="form-check-label d-flex flex-row gap-2" for={{q.id}}>
+                            <span>Ερώτηση:</span>
+                            <span [innerHTML]="sanitizeHtml(q.questionText)"></span>
+                          </label>
                         </div>
                       }
                     </div>
