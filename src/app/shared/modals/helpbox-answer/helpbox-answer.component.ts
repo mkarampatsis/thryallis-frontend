@@ -151,7 +151,8 @@ export class HelpboxAnswerComponent {
 }
 
   publishQuestion(questionId:string, published:boolean) {
-    this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId['$oid'], published:!published})
+    console.log(questionId, published);
+    this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId, published:!published})
       .subscribe((data) => {
         this.helpboxService.helpboxNeedUpdate.set(true);
         this.modalRef.close()

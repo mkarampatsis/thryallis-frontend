@@ -123,175 +123,173 @@
                     <ng-template>
                         <div class="d-flex flex-column gap-2">
 
-                            <div
-                                class="d-flex justify-content-between"
-                                *ngIf="canEdit(organizationalUnit.code)">
-                                @if (!organizationalUnitRemitsFinalized) {
+                            <div class="d-flex justify-content-between">
+                              <!-- @if (!organizationalUnitRemitsFinalized) { -->
+                                <button
+                                  *ngIf="canEdit(organizationalUnit.code) && !organizationalUnitRemitsFinalized"
+                                  (click)="newRemit()"
+                                  class="btn btn-primary"
+                                  style="max-width: fit-content">
+                                  Νέα Αρμοδιότητα
+                                </button>
+                                <div>
+                                  <button
+                                    *ngIf="canEdit(organizationalUnit.code) && remitsEnabled?.length > 0 && !organizationalUnitRemitsFinalized"
+                                    (click)="setRemitsFinalized(true)"
+                                    class="btn btn-info"
+                                    style="max-width: fit-content">
+                                    Ολοκλήρωση Αρμοδιοτήτων
+                                  </button>
+                                  @if(!showDisabled){
                                     <button
-                                        *ngIf="user()"
-                                        (click)="newRemit()"
-                                        class="btn btn-primary"
-                                        style="max-width: fit-content">
-                                        Νέα Αρμοδιότητα
+                                      *ngIf="remitsDisabled?.length > 0"
+                                      (click)="showDisabledRemits(true)"
+                                      class="btn btn-warning ms-2"
+                                      style="max-width: fit-content">
+                                      Εμφάνιση Ανεργών Αρμοδιοτήτων
                                     </button>
-                                    <div>
-                                        <button
-                                            *ngIf="user() && remitsEnabled?.length > 0"
-                                            (click)="setRemitsFinalized(true)"
-                                            class="btn btn-info"
-                                            style="max-width: fit-content">
-                                            Ολοκλήρωση Αρμοδιοτήτων
-                                        </button>
-                                        @if(!showDisabled){
-                                            <button
-                                                *ngIf="remitsDisabled?.length > 0"
-                                                (click)="showDisabledRemits(true)"
-                                                class="btn btn-warning ms-2"
-                                                style="max-width: fit-content">
-                                                Εμφάνιση Ανεργών Αρμοδιοτήτων
-                                            </button>
-                                        } @else {
-                                            <button
-                                                *ngIf="remitsDisabled?.length > 0"
-                                                (click)="showDisabledRemits(false)"
-                                                class="btn btn-warning ms-2"
-                                                style="max-width: fit-content">
-                                                Απόκρυψη Ανεργών Αρμοδιοτήτων
-                                            </button>
-                                        }
-                                        @if(!showDetails){
-                                            <button
-                                                (click)="showDetailsRemits(true)"
-                                                class="btn btn-secondary ms-2"
-                                                style="max-width: fit-content">
-                                                Εμφάνιση Λεπτομερειών
-                                            </button>
-                                        } @else {
-                                            <button
-                                                (click)="showDetailsRemits(false)"
-                                                class="btn btn-secondary ms-2"
-                                                style="max-width: fit-content">
-                                                Απόκρυψη Λεπτομερειών
-                                            </button>
-                                        }
-                                    </div>
-                                } @else {
+                                  } @else {
                                     <button
-                                        *ngIf="user()"
-                                        (click)="setRemitsFinalized(false)"
-                                        class="btn btn-info"
-                                        style="max-width: fit-content">
-                                        Αναίρεση Ολοκλήρωσης Αρμοδιοτήτων
+                                      *ngIf="remitsDisabled?.length > 0"
+                                      (click)="showDisabledRemits(false)"
+                                      class="btn btn-warning ms-2"
+                                      style="max-width: fit-content">
+                                      Απόκρυψη Ανεργών Αρμοδιοτήτων
                                     </button>
-                                }
+                                  }
+                                  @if(!showDetails){
+                                    <button
+                                      (click)="showDetailsRemits(true)"
+                                      class="btn btn-secondary ms-2"
+                                      style="max-width: fit-content">
+                                      Εμφάνιση Λεπτομερειών
+                                    </button>
+                                  } @else {
+                                    <button
+                                      (click)="showDetailsRemits(false)"
+                                      class="btn btn-secondary ms-2"
+                                      style="max-width: fit-content">
+                                      Απόκρυψη Λεπτομερειών
+                                    </button>
+                                  }
+                                </div>
+                              <!-- } @else { -->
+                                  <button
+                                    *ngIf="canEdit(organizationalUnit.code) && organizationalUnitRemitsFinalized"
+                                    (click)="setRemitsFinalized(false)"
+                                    class="btn btn-info"
+                                    style="max-width: fit-content">
+                                    Αναίρεση Ολοκλήρωσης Αρμοδιοτήτων
+                                  </button>
+                              <!-- } -->
                             </div>
                             @if (remitsEnabled?.length > 0 || showDisabled) {
-                                <table class="table table-striped">
-                                    <tbody>
-                                        @for (remit of remitsEnabled; track remit) {
-                                            <tr>
-                                                <td
-                                                    class="d-flex flex-column gap-2"
-                                                    [ngClass]="{
-                                                        'bg-warning': remit.status === 'ΑΝΕΝΕΡΓΗ'
-                                                    }">
-                                                    <div class="d-flex flex-row">
-                                                        <div class="flex-grow-1" [innerHTML]="remit.remitText"></div>
-                                                        <div *ngIf="user()">
-                                                            <i 
-                                                                role="button"
-                                                                (click)="deleteRemit(remit._id)"
-                                                                class="bi bi-trash text-danger"
-                                                                ngbTooltip="Διαγραφή αρμοδιότητας"></i>
-                                                            <i 
-                                                                role="button"
-                                                                (click)="copyRemit(remit._id)"
-                                                                class="bi bi-copy text-success ms-2"
-                                                                ngbTooltip="Αντιγραφή αρμοδιότητας"></i>    
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <table *ngIf="showDetails" class="table table-bordered">
-                                                        <tr>
-                                                            <td class="fw-semibold">Τύπος Αρμοδιότητας</td>
-                                                            <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{{ remit.remitType }}</td>
-                                                            <td>{{ getCofogNames(remit.cofog)[0] }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="fw-semibold">Λειτουργικός Τομέας COFOG</td>
-                                                            <td class="fw-semibold">Θεματική Περιοχή COFOG</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{{ getCofogNames(remit.cofog)[1] }}</td>
-                                                            <td>{{ getCofogNames(remit.cofog)[2] }}</td>
-                                                        </tr>
-                                                    </table>
-                                                    <app-list-legal-provisions *ngIf="showDetails"
-                                                        [legalProvisions]="
-                                                            remit.legalProvisions
-                                                        "></app-list-legal-provisions>
-                                                    <button
-                                                        *ngIf="user()"
-                                                        (click)="updateRemit(remit)"
-                                                        class="btn btn-primary btn-sm"
-                                                        style="max-width: fit-content">
-                                                        Τροποποίηση
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                              <table class="table table-striped">
+                                  <tbody>
+                                      @for (remit of remitsEnabled; track remit) {
+                                          <tr>
+                                              <td
+                                                  class="d-flex flex-column gap-2"
+                                                  [ngClass]="{
+                                                      'bg-warning': remit.status === 'ΑΝΕΝΕΡΓΗ'
+                                                  }">
+                                                  <div class="d-flex flex-row">
+                                                      <div class="flex-grow-1" [innerHTML]="remit.remitText"></div>
+                                                      <div *ngIf="canEdit(organizationalUnit.code)">
+                                                          <i 
+                                                              role="button"
+                                                              (click)="deleteRemit(remit._id)"
+                                                              class="bi bi-trash text-danger"
+                                                              ngbTooltip="Διαγραφή αρμοδιότητας"></i>
+                                                          <i 
+                                                              role="button"
+                                                              (click)="copyRemit(remit._id)"
+                                                              class="bi bi-copy text-success ms-2"
+                                                              ngbTooltip="Αντιγραφή αρμοδιότητας"></i>    
+                                                      </div>
+                                                  </div>
+                                                  
+                                                  <table *ngIf="showDetails" class="table table-bordered">
+                                                      <tr>
+                                                          <td class="fw-semibold">Τύπος Αρμοδιότητας</td>
+                                                          <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td>{{ remit.remitType }}</td>
+                                                          <td>{{ getCofogNames(remit.cofog)[0] }}</td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td class="fw-semibold">Λειτουργικός Τομέας COFOG</td>
+                                                          <td class="fw-semibold">Θεματική Περιοχή COFOG</td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td>{{ getCofogNames(remit.cofog)[1] }}</td>
+                                                          <td>{{ getCofogNames(remit.cofog)[2] }}</td>
+                                                      </tr>
+                                                  </table>
+                                                  <app-list-legal-provisions *ngIf="showDetails"
+                                                      [legalProvisions]="
+                                                          remit.legalProvisions
+                                                      "></app-list-legal-provisions>
+                                                  <button
+                                                      *ngIf="canEdit(organizationalUnit.code)"
+                                                      (click)="updateRemit(remit)"
+                                                      class="btn btn-primary btn-sm"
+                                                      style="max-width: fit-content">
+                                                      Τροποποίηση
+                                                  </button>
+                                              </td>
+                                          </tr>
+                                      }
+                                  </tbody>
+                              </table>
 
-                                @if(showDisabled) {
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            @for (remit of remitsDisabled; track remit) {
-                                                <tr>
-                                                    <td
-                                                        class="d-flex flex-column gap-2"
-                                                        [ngClass]="{
-                                                            'bg-warning': remit.status === 'ΑΝΕΝΕΡΓΗ'
-                                                        }">
-                                                        <div [innerHTML]="remit.remitText"></div>
-                                                        <table *ngIf="showDetails" class="table table-bordered">
-                                                            <tr>
-                                                                <td class="fw-semibold">Τύπος Αρμοδιότητας</td>
-                                                                <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>{{ remit.remitType }}</td>
-                                                                <td>{{ getCofogNames(remit.cofog)[0] }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="fw-semibold">Λειτουργικός Τομέας COFOG</td>
-                                                                <td class="fw-semibold">Θεματική Περιοχή COFOG</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>{{ getCofogNames(remit.cofog)[1] }}</td>
-                                                                <td>{{ getCofogNames(remit.cofog)[2] }}</td>
-                                                            </tr>
-                                                        </table>
-                                                        <app-list-legal-provisions *ngIf="showDetails"
-                                                            [legalProvisions]="
-                                                                remit.legalProvisions
-                                                            "></app-list-legal-provisions>
-                                                        <button
-                                                            *ngIf="user()"
-                                                            (click)="updateRemit(remit)"
-                                                            class="btn btn-primary btn-sm"
-                                                            style="max-width: fit-content">
-                                                            Τροποποίηση
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
+                              @if(showDisabled) {
+                                  <table class="table table-striped">
+                                      <tbody>
+                                          @for (remit of remitsDisabled; track remit) {
+                                              <tr>
+                                                  <td
+                                                      class="d-flex flex-column gap-2"
+                                                      [ngClass]="{
+                                                          'bg-warning': remit.status === 'ΑΝΕΝΕΡΓΗ'
+                                                      }">
+                                                      <div [innerHTML]="remit.remitText"></div>
+                                                      <table *ngIf="showDetails" class="table table-bordered">
+                                                          <tr>
+                                                              <td class="fw-semibold">Τύπος Αρμοδιότητας</td>
+                                                              <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td>{{ remit.remitType }}</td>
+                                                              <td>{{ getCofogNames(remit.cofog)[0] }}</td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td class="fw-semibold">Λειτουργικός Τομέας COFOG</td>
+                                                              <td class="fw-semibold">Θεματική Περιοχή COFOG</td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td>{{ getCofogNames(remit.cofog)[1] }}</td>
+                                                              <td>{{ getCofogNames(remit.cofog)[2] }}</td>
+                                                          </tr>
+                                                      </table>
+                                                      <app-list-legal-provisions *ngIf="showDetails"
+                                                          [legalProvisions]="
+                                                              remit.legalProvisions
+                                                          "></app-list-legal-provisions>
+                                                      <button
+                                                          *ngIf="user()"
+                                                          (click)="updateRemit(remit)"
+                                                          class="btn btn-primary btn-sm"
+                                                          style="max-width: fit-content">
+                                                          Τροποποίηση
+                                                      </button>
+                                                  </td>
+                                              </tr>
+                                          }
+                                      </tbody>
+                                  </table>
+                              }
                             } @else {
                                 <ngb-alert
                                     type="info"

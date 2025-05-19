@@ -3,175 +3,175 @@
     <span class="h5">Συνομιλία {{ question.key }}</span>
   }
     <button
-        type="button"
-        class="btn-close"
-        (click)="modalRef.dismiss()">
+      type="button"
+      class="btn-close"
+      (click)="modalRef.dismiss()">
     </button>
 </div>
 <div class="modal-body">
-    <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Χρήστη</span>
-    <div class="mb-3 mt-3 p-2">
-        @if (question) {
-            <p>{{question.firstName}} {{question.lastName}} ({{question.email.split("@")[0]}})</p>
-            <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
-        }
-    </div>
-    <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Συνομιλίας</span>
-    <div class="mb-3 p-2">
-        @if (question) {
-            <div class="mb-2"><strong>Τίτλος Συνομιλίας:</strong> {{question.questionTitle}}</div>
-            <div class="mb-2"><strong>Κατηγορία Συνομιλίας:</strong> {{question.questionCategory}}</div>
-            <ol class="list-group list-group-numbered mb-2">
-                @for (q of question.questions; track q; let i = $index) {
-                    <li class="list-group-item d-flex justify-content-between align-items-start"> 
-                        <div class="ms-2 me-auto">
-                            <span class="fw-bold" [innerHTML]="sanitizeHtml(q.questionText)"></span>
-                            @if(q.questionFile){
-                                <div>
-                                    <strong>Αρχείο ερωτήματος:</strong>
-                                    @for (file of q.questionFile; track file){
-                                        <div class="mt-2">
-                                            <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
-                                            <span role="button" class="cursor-pointer" (click)="displayFile(file['_id']['$oid'])">{{file['file_name']}}</span>
-                                        </div>
-                                      }
-                                </div>
-                            }
-                            <div><strong>Ημερ. ερωτήματος:</strong> {{q.whenAsked | date: "dd-MM-yyyy HH:mm:ss"}}</div>
-                            <div>
-                                <strong>Ημερ. απάντησης:</strong> 
-                                @if (q.whenAnswered) {
-                                    {{q.whenAnswered | date: "dd-MM-yyyy HH:mm:ss"}}
-                                }
-                            </div>
-                            <div>
-                              <strong>Χειριστής Helpdesk:</strong> 
-                              {{q.fromWhom ? q.fromWhom.firstName + ' ' + q.fromWhom.lastName + ' (' + q.fromWhom.email.split('@')[0] + ')': question.toWhom.firstName + ' ' +  question.toWhom.lastName + ' (' + question.toWhom.email.split('@')[0] + ')' }}
-                            </div>
-                            @if(q.answerFile){
-                                <div>
-                                    <strong>Αρχείο απάντησης:</strong>
-                                    @for (file of q.answerFile; track file){
+  <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Χρήστη</span>
+  <div class="mb-3 mt-3 p-2">
+    @if (question) {
+      <p>{{question.firstName}} {{question.lastName}} ({{question.email.split("@")[0]}})</p>
+      <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
+    }
+  </div>
+  <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Συνομιλίας</span>
+  <div class="mb-3 p-2">
+      @if (question) {
+          <div class="mb-2"><strong>Τίτλος Συνομιλίας:</strong> {{question.questionTitle}}</div>
+          <div class="mb-2"><strong>Κατηγορία Συνομιλίας:</strong> {{question.questionCategory}}</div>
+          <ol class="list-group list-group-numbered mb-2">
+              @for (q of question.questions; track q; let i = $index) {
+                  <li class="list-group-item d-flex justify-content-between align-items-start"> 
+                      <div class="ms-2 me-auto">
+                          <span class="fw-bold" [innerHTML]="sanitizeHtml(q.questionText)"></span>
+                          @if(q.questionFile){
+                              <div>
+                                  <strong>Αρχείο ερωτήματος:</strong>
+                                  @for (file of q.questionFile; track file){
                                       <div class="mt-2">
                                           <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
                                           <span role="button" class="cursor-pointer" (click)="displayFile(file['_id']['$oid'])">{{file['file_name']}}</span>
                                       </div>
                                     }
-                                </div>
-                            }
-                            <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(q.answerText)"></div>
-                        </div>
-                        <div *ngIf="hasHelpDeskRole()" class="d-flex gap-2 fs-5">
-                            @if (!q.answered && hasHelpDeskRole()) {
-                                <i class="bi bi-pencil-square text-danger" role="button" (click)="answerQuestion(q.id)" ngbTooltip="Δεν απαντήθηκε"></i>
-                            }
-                            @if (q.published) {
-                                <i class="bi bi-instagram text-success" role="button"  ngbTooltip="Δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
-                            } @else {
-                                <i class="bi bi-instagram text-danger" role="button"  ngbTooltip="Δεν δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
-                            }
-                        </div>
-                    </li>
-                }
-            </ol>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                @if(showForm){
-                  <div class="mb-3">
-                    <label
-                      for="answerText"
-                      class="form-label">
-                      <strong>Απάντηση:</strong>
-                    </label>
-                    <div class="NgxEditor__Wrapper">
-                      <ngx-editor-menu
-                        [editor]="editor"
-                        [toolbar]="toolbar">
-                      </ngx-editor-menu>
-                      <ngx-editor
-                        [editor]="editor"
-                        id="answerText"
-                        formControlName = "answerText"
-                        (ngModelChange)="onAnswerTextChange($event)">
-                      </ngx-editor>
-                    </div>
+                              </div>
+                          }
+                          <div><strong>Ημερ. ερωτήματος:</strong> {{q.whenAsked | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+                          <div>
+                              <strong>Ημερ. απάντησης:</strong> 
+                              @if (q.whenAnswered) {
+                                  {{q.whenAnswered | date: "dd-MM-yyyy HH:mm:ss"}}
+                              }
+                          </div>
+                          <div>
+                            <strong>Χειριστής Helpdesk:</strong> 
+                            {{q.fromWhom ? q.fromWhom.firstName + ' ' + q.fromWhom.lastName + ' (' + q.fromWhom.email.split('@')[0] + ')': question.toWhom.firstName + ' ' +  question.toWhom.lastName + ' (' + question.toWhom.email.split('@')[0] + ')' }}
+                          </div>
+                          @if(q.answerFile){
+                              <div>
+                                  <strong>Αρχείο απάντησης:</strong>
+                                  @for (file of q.answerFile; track file){
+                                    <div class="mt-2">
+                                        <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(file['_id']['$oid'])"></i>
+                                        <span role="button" class="cursor-pointer" (click)="displayFile(file['_id']['$oid'])">{{file['file_name']}}</span>
+                                    </div>
+                                  }
+                              </div>
+                          }
+                          <div class="mt-2 bg-light" [innerHTML]="sanitizeHtml(q.answerText)"></div>
+                      </div>
+                      <div *ngIf="hasHelpDeskRole()" class="d-flex gap-2 fs-5">
+                          @if (!q.answered && hasHelpDeskRole()) {
+                              <i class="bi bi-pencil-square text-danger" role="button" (click)="answerQuestion(q.id)" ngbTooltip="Δεν απαντήθηκε"></i>
+                          }
+                          @if (q.published) {
+                              <i class="bi bi-instagram text-success" role="button"  ngbTooltip="Δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
+                          } @else {
+                              <i class="bi bi-instagram text-danger" role="button"  ngbTooltip="Δεν δημοσιεύθηκε" (click)="publishQuestion(q.id, q.published)"></i>
+                          }
+                      </div>
+                  </li>
+              }
+          </ol>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              @if(showForm){
+                <div class="mb-3">
+                  <label
+                    for="answerText"
+                    class="form-label">
+                    <strong>Απάντηση:</strong>
+                  </label>
+                  <div class="NgxEditor__Wrapper">
+                    <ngx-editor-menu
+                      [editor]="editor"
+                      [toolbar]="toolbar">
+                    </ngx-editor-menu>
+                    <ngx-editor
+                      [editor]="editor"
+                      id="answerText"
+                      formControlName = "answerText"
+                      (ngModelChange)="onAnswerTextChange($event)">
+                    </ngx-editor>
                   </div>
-                  <div class="mb-3">
-                    <label
-                      for="answerText"
-                      class="form-label">
-                      <strong>Επιλέξτε Ερωτήσεις:</strong>
-                    </label>
-                    <div formArrayName="questions">
-                      @for (q of questionsNotAnswered; track q; let i = $index) {
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" [formControlName]="i"  id={{q.id}}/>
-                          <label class="form-check-label d-flex flex-row gap-2" for={{q.id}}>
-                            <span>Ερώτηση:</span>
-                            <span [innerHTML]="sanitizeHtml(q.questionText)"></span>
-                          </label>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                  <div class="mb-3 p-2">
-                    <label class="form-label">Αρχείο (PDF, DOCX, XLSX, PNG, JPEG) (16MB maximum):</label>
-                    <input
-                      #fileInput
-                      class="form-control"
-                      type="file"
-                      multiple
-                      (change)="selectFile($event)" />
-                      <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
-                    @if (progress) {
-                        <div class="progress mt-2">
-                            <div
-                                class="progress-bar progress-bar-info"
-                                role="progressbar"
-                                attr.aria-valuenow="{{ progress }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                                [ngStyle]="{ width: progress + '%' }">
-                                {{ progress }}%
-                            </div>
-                        </div>
+                </div>
+                <div class="mb-3">
+                  <label
+                    for="answerText"
+                    class="form-label">
+                    <strong>Επιλέξτε Ερωτήσεις:</strong>
+                  </label>
+                  <div formArrayName="questions">
+                    @for (q of questionsNotAnswered; track q; let i = $index) {
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [formControlName]="i"  id={{q.id}}/>
+                        <label class="form-check-label d-flex flex-row gap-2" for={{q.id}}>
+                          <span>Ερώτηση:</span>
+                          <span [innerHTML]="sanitizeHtml(q.questionText)"></span>
+                        </label>
+                      </div>
                     }
                   </div>
-                }
-                @if (!checkFileStatus){
-                  <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
-                }    
-                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                </div>
+                <div class="mb-3 p-2">
+                  <label class="form-label">Αρχείο (PDF, DOCX, XLSX, PNG, JPEG) (16MB maximum):</label>
+                  <input
+                    #fileInput
+                    class="form-control"
+                    type="file"
+                    multiple
+                    (change)="selectFile($event)" />
+                    <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+                  @if (progress) {
+                      <div class="progress mt-2">
+                          <div
+                              class="progress-bar progress-bar-info"
+                              role="progressbar"
+                              attr.aria-valuenow="{{ progress }}"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                              [ngStyle]="{ width: progress + '%' }">
+                              {{ progress }}%
+                          </div>
+                      </div>
+                  }
+                </div>
+              }
+              @if (!checkFileStatus){
+                <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
+              }    
+              <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                  <button
+                      type="button"
+                      class="btn btn-primary"
+                      type="submit"
+                      [disabled]="form.invalid || !isAnyCheckboxSelected()">
+                      Υποβολή
+                  </button>
+                  @if(hasHelpDeskRole()){
+                      <button
+                          type="button"
+                          class="btn btn-success"
+                          (click)="finalizeConversation()">
+                          @if (question.finalized) {
+                              Άνοιγμα συνομιλίας
+                          } @else {
+                              Ολοκλήρωση συνομιλίας
+                          }
+                      </button>
+                  }
+                  @if(hasEditorRole() && showNewQuestionButton){
                     <button
                         type="button"
                         class="btn btn-primary"
-                        type="submit"
-                        [disabled]="form.invalid || !isAnyCheckboxSelected()">
-                        Υποβολή
-                    </button>
-                    @if(hasHelpDeskRole()){
-                        <button
-                            type="button"
-                            class="btn btn-success"
-                            (click)="finalizeConversation()">
-                            @if (question.finalized) {
-                                Άνοιγμα συνομιλίας
-                            } @else {
-                                Ολοκλήρωση συνομιλίας
-                            }
-                        </button>
-                    }
-                    @if(hasEditorRole() && showNewQuestionButton){
-                      <button
-                          type="button"
-                          class="btn btn-primary"
-                          (click)="newQuestion()">
-                          Νέο ερώτημα
-                        </button>
-                  }
-                </div>
-            </form>
-        }
-    </div>
+                        (click)="newQuestion()">
+                        Νέο ερώτημα
+                      </button>
+                }
+              </div>
+          </form>
+      }
+  </div>
 </div>
 
 <div class="d-flex justify-content-end m-3">

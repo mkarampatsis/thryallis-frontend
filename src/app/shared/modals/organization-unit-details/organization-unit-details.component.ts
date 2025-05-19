@@ -68,7 +68,7 @@ export class OrganizationUnitDetailsComponent {
             .pipe(take(1))
             .subscribe((data) => {
                 this.organizationalUnit = data;
-                console.log(">>1",this.organizationalUnit);
+                // console.log(">>1",this.organizationalUnit);
             });
         
         this.getRemits(this.organizationalUnitCode)
@@ -84,7 +84,7 @@ export class OrganizationUnitDetailsComponent {
             .pipe(take(1))
             .subscribe((data) => {
                 this.organizationalUnitRemitsFinalized = data.remitsFinalized;
-                console.log(">>2",data.provisionText);
+                // console.log(">>2",data.provisionText);
                 this.provisionText = data.provisionText
             });
         
