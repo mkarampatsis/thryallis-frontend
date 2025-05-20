@@ -29,3 +29,14 @@ export interface IFacility {
   }
 }
 
+export interface ISpace {
+  spaceName: string;
+  spaceUse: string;
+  spaceUseTree: string[];
+  spaceArea: number;
+  spaceLength: string;
+  spaceWidth: string;
+  entrances: number;
+  windows: number;
+  floor_level: number;
+}
