@@ -109,6 +109,22 @@
                                             Νομικές Πράξεις
                                         </a>
                                     </li>
+                                    <li *ngIf="hasFacilityAdminRole() || hasFacilityEditorRole()" class="dropdown">
+                                       <a
+                                        class="dropdown-item dropdown-toggle mt-1"
+                                        data-bs-toggle="dropdown" 
+                                        role="button" 
+                                        aria-expanded="false">
+                                        Πόροι Φορέων Δ.Δ
+                                      </a>
+                                      <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Εμφάνιση Στοιχείων</a></li>
+                                        <li *ngIf="hasFacilityAdminRole() || hasFacilityEditorRole()"><a class="dropdown-item" href="#">Καταχώρηση Ακινήτου</a></li>
+                                        <li *ngIf="hasFacilityAdminRole()|| hasFacilityEditorRole()"><a class="dropdown-item" href="#">Καταχώρηση Εξοπλισμού</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="#">Αναζήτηση</a></li>
+                                      </ul>
+                                    </li>
                                 </ul>
                             </div>
                         }

@@ -37,6 +37,22 @@ export class UserService {
         return this.user().roles.some((role) => role.role === 'ADMIN');
     }
 
+    hasFacilityAdminRole(){
+      if (this.user()) {
+        return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN');
+      }
+
+      return false;
+    }
+
+    hasFacilityEditorRole(){
+      if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR');
+      }
+
+      return false;
+    }
+
     setUserAccesses(email:string, organizationCodes:string[], organizationalUnitCodes:string[]) : Observable<{ msg: string }> {
         const url = `${APIPREFIX_USER}/${email}`;
         return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });
