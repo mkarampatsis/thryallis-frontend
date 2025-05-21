@@ -7,29 +7,29 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
-    selector: 'app-navigation',
-    standalone: true,
-    imports: [RouterLink, RouterLinkActive, UserInfoComponent, MatIconModule, NgIf],
-    templateUrl: './navigation.component.html',
-    styleUrl: './navigation.component.css',
+  selector: 'app-navigation',
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, UserInfoComponent, MatIconModule, NgIf],
+  templateUrl: './navigation.component.html',
+  styleUrl: './navigation.component.css',
 })
 
 export class NavigationComponent {
-    authService = inject(AuthService);
-    userService = inject(UserService);
-    user = this.authService.user;
-    loading = this.authService.loading;
-    synchronization = this.authService.synchronization;
+  authService = inject(AuthService);
+  userService = inject(UserService);
+  user = this.authService.user;
+  loading = this.authService.loading;
+  synchronization = this.authService.synchronization;
 
-    hasEditorRole() {
-        return this.userService.hasEditorRole();
-    }
+  hasEditorRole() {
+    return this.userService.hasEditorRole();
+  }
 
-    hasFacilityAdminRole(){
-      return this.userService.hasFacilityAdminRole()
-    }
+  hasFacilityAdminRole() {
+    return this.userService.hasFacilityAdminRole()
+  }
 
-    hasFacilityEditorRole(){
-      return this.userService.hasFacilityEditorRole()
-    }
+  hasFacilityEditorRole() {
+    return this.userService.hasFacilityEditorRole()
+  }
 }

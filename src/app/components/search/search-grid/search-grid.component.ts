@@ -18,160 +18,160 @@ import { map, forkJoin } from 'rxjs';
   styleUrl: './search-grid.component.css'
 })
 export class SearchGridComponent {
-    @Input() data: ISearchGridOutput[] | null;
-    
-    constService = inject(ConstService);
-    modalService = inject(ModalService);
-    legalProvisionService = inject(LegalProvisionService);
-    searchService = inject(SearchService)
+  @Input() data: ISearchGridOutput[] | null;
 
-    loading = false; 
+  constService = inject(ConstService);
+  modalService = inject(ModalService);
+  legalProvisionService = inject(LegalProvisionService);
+  searchService = inject(SearchService)
 
-    defaultColDef = this.constService.defaultColDef;
+  loading = false;
 
-    colDefs: ColDef[] = [
-        { field: 'organizationCode', headerName: 'Κωδ. Φορέα', flex: 1, hide: true },
-        { 
-            field: 'organizationPreferredLabel', 
-            headerName: 'Φορέας',
-            valueFormatter: params => params.value.toUpperCase(),
-            flex: 2 
-        },
-        { field: 'organizationObjectId', flex: 1, hide: true  },
-        { field: 'organizationScore', headerName: 'Βαθ. Φορέα', flex: 1 },
-  
-        { field: 'organizationalUnitCode', headerName: 'Κωδ. Μονάδας', flex: 1, hide: true },
-        { 
-            field: 'organizationalUnitPreferredLabel', 
-            headerName: 'Μονάδα', 
-            valueFormatter: params => params.value.toUpperCase(),
-            flex: 2 
-        },
-        { field: 'organizationalUnitObjectId', flex: 1, hide: true  },
+  defaultColDef = this.constService.defaultColDef;
 
-        { 
-            field: 'remitText', 
-            headerName: 'Αρμοδιότητα',
-            flex: 4,
-            cellRenderer: HtmlCellRenderer,
-            autoHeight: true,
-            cellStyle: { 'white-space': 'normal' }
-        },
-        { field: 'remitObjectId', flex: 1, hide: true },
+  colDefs: ColDef[] = [
+    { field: 'organizationCode', headerName: 'Κωδ. Φορέα', flex: 1, hide: true },
+    {
+      field: 'organizationPreferredLabel',
+      headerName: 'Φορέας',
+      valueFormatter: params => params.value.toUpperCase(),
+      flex: 2
+    },
+    { field: 'organizationObjectId', flex: 1, hide: true },
+    { field: 'organizationScore', headerName: 'Βαθ. Φορέα', flex: 1 },
 
-        { field: 'organizationalUnitScore', headerName: 'Βαθ. Μοναδ./Αρμοδ.', flex: 1, sort: 'desc' }
-    ];
+    { field: 'organizationalUnitCode', headerName: 'Κωδ. Μονάδας', flex: 1, hide: true },
+    {
+      field: 'organizationalUnitPreferredLabel',
+      headerName: 'Μονάδα',
+      valueFormatter: params => params.value.toUpperCase(),
+      flex: 2
+    },
+    { field: 'organizationalUnitObjectId', flex: 1, hide: true },
 
-    autoSizeStrategy = this.constService.autoSizeStrategy;
+    {
+      field: 'remitText',
+      headerName: 'Αρμοδιότητα',
+      flex: 4,
+      cellRenderer: HtmlCellRenderer,
+      autoHeight: true,
+      cellStyle: { 'white-space': 'normal' }
+    },
+    { field: 'remitObjectId', flex: 1, hide: true },
 
-    loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
+    { field: 'organizationalUnitScore', headerName: 'Βαθ. Μοναδ./Αρμοδ.', flex: 1, sort: 'desc' }
+  ];
 
-    gridApi: GridApi;
+  autoSizeStrategy = this.constService.autoSizeStrategy;
 
-    onGridReady(params: GridReadyEvent): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.gridApi.hideOverlay();
-    }
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
-    onCellClicked(event: any): void  {
-        if (event.colDef.field!="organizationScore" && event.colDef.field!="organizationalUnitScore") {
-            if (event.colDef.field === 'organizationPreferredLabel') {
-                this.modalService.showOrganizationDetails(event.data.organizationCode);
-            }
-            else if (event.data.organizationalUnitObjectId && event.colDef.field === 'organizationalUnitPreferredLabel') {
-                this.modalService.showOrganizationUnitDetails(event.data.organizationalUnitCode)
-            } else {
-                if (event.data.remitObjectId){
-                    this.modalService.showRemitDetails({ 
-                        organizationCode: event.data.organizationalUnitCode, 
-                        remitId: event.data.remitObjectId 
-                    })
-                }
-            }
+  gridApi: GridApi;
+
+  onGridReady(params: GridReadyEvent): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.gridApi.hideOverlay();
+  }
+
+  onCellClicked(event: any): void {
+    if (event.colDef.field != "organizationScore" && event.colDef.field != "organizationalUnitScore") {
+      if (event.colDef.field === 'organizationPreferredLabel') {
+        this.modalService.showOrganizationDetails(event.data.organizationCode);
+      }
+      else if (event.data.organizationalUnitObjectId && event.colDef.field === 'organizationalUnitPreferredLabel') {
+        this.modalService.showOrganizationUnitDetails(event.data.organizationalUnitCode)
+      } else {
+        if (event.data.remitObjectId) {
+          this.modalService.showRemitDetails({
+            organizationCode: event.data.organizationalUnitCode,
+            remitId: event.data.remitObjectId
+          })
         }
+      }
     }
+  }
 
-    onBtnExportCSV(){
-        this.loading = true;
-        // console.log(this.data)
-        if (this.data[0].remitObjectId===""){
-            this.gridApi.exportDataAsCsv();
-            this.loading = false;
-        } else {
-            const observables = this.data.map(doc =>
-                this.legalProvisionService
-                    .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
-                    .pipe(
-                        map(legalProvisionData => {
-                            // Create a shallow copy of the object to make it mutable
-                            const mutableDoc = { ...doc };
-                            mutableDoc["legalProvisionDetails"] = legalProvisionData;
-                            return mutableDoc;
-                        })
-                    )
-            );
+  onBtnExportCSV() {
+    this.loading = true;
+    // console.log(this.data)
+    if (this.data[0].remitObjectId === "") {
+      this.gridApi.exportDataAsCsv();
+      this.loading = false;
+    } else {
+      const observables = this.data.map(doc =>
+        this.legalProvisionService
+          .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
+          .pipe(
+            map(legalProvisionData => {
+              // Create a shallow copy of the object to make it mutable
+              const mutableDoc = { ...doc };
+              mutableDoc["legalProvisionDetails"] = legalProvisionData;
+              return mutableDoc;
+            })
+          )
+      );
 
-            // Use forkJoin to handle all the requests simultaneously
-            forkJoin(observables).subscribe(
-                updatedArray => {
-                    // Update the original data array if needed
-                    this.data.length = 0; // Clear original array
-                    this.data.push(...updatedArray); // Push updated objects back
-                    //   console.log('Updated data array:', this.data);
-                    this.searchService.onExportCSV(this.data);
-                    this.loading = false;
-                },
-                error => {
-                    console.error('Error fetching legal provisions:', error);
-                }           
-            );
+      // Use forkJoin to handle all the requests simultaneously
+      forkJoin(observables).subscribe(
+        updatedArray => {
+          // Update the original data array if needed
+          this.data.length = 0; // Clear original array
+          this.data.push(...updatedArray); // Push updated objects back
+          //   console.log('Updated data array:', this.data);
+          this.searchService.onExportCSV(this.data);
+          this.loading = false;
+        },
+        error => {
+          console.error('Error fetching legal provisions:', error);
         }
+      );
     }
+  }
 
-    onBtnExportExcel(){
-        this.loading = true;
-        if (this.data[0].remitObjectId===""){
-            this.searchService.onExportToExcel(this.data)
-            this.loading = false;
-        } else {
-            const observables = this.data.map(doc =>
-                this.legalProvisionService
-                    .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
-                    .pipe(
-                        map(legalProvisionData => {
-                            // Create a shallow copy of the object to make it mutable
-                            const mutableDoc = { ...doc };
-                            mutableDoc["legalProvisionDetails"] = legalProvisionData;
-                            return mutableDoc;
-                        })
-                    )
-            );
+  onBtnExportExcel() {
+    this.loading = true;
+    if (this.data[0].remitObjectId === "") {
+      this.searchService.onExportToExcel(this.data)
+      this.loading = false;
+    } else {
+      const observables = this.data.map(doc =>
+        this.legalProvisionService
+          .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
+          .pipe(
+            map(legalProvisionData => {
+              // Create a shallow copy of the object to make it mutable
+              const mutableDoc = { ...doc };
+              mutableDoc["legalProvisionDetails"] = legalProvisionData;
+              return mutableDoc;
+            })
+          )
+      );
 
-            // Use forkJoin to handle all the requests simultaneously
-            forkJoin(observables).subscribe(
-                updatedArray => {
-                    // Update the original data array if needed
-                    this.data.length = 0; // Clear original array
-                    this.data.push(...updatedArray); // Push updated objects back
-                    //   console.log('Updated data array:', this.data);
-                    this.searchService.onExportToExcel(this.data);
-                    this.loading = false;
-                },
-                error => {
-                    console.error('Error fetching legal provisions:', error);
-                }           
-            );
+      // Use forkJoin to handle all the requests simultaneously
+      forkJoin(observables).subscribe(
+        updatedArray => {
+          // Update the original data array if needed
+          this.data.length = 0; // Clear original array
+          this.data.push(...updatedArray); // Push updated objects back
+          //   console.log('Updated data array:', this.data);
+          this.searchService.onExportToExcel(this.data);
+          this.loading = false;
+        },
+        error => {
+          console.error('Error fetching legal provisions:', error);
         }
+      );
     }
+  }
 }
 
 @Component({
-    selector: 'app-html-cell-renderer',
-    standalone: true,
-    imports: [NgIf],
-    template: `
+  selector: 'app-html-cell-renderer',
+  standalone: true,
+  imports: [NgIf],
+  template: `
         <div :class="emphasis" 
             [innerHTML]="shortText"
             *ngIf="!showFullText"></div>
@@ -185,37 +185,37 @@ export class SearchGridComponent {
             {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
         </button>
     `,
-    styles: 'em { color: red }'
+  styles: 'em { color: red }'
 })
 export class HtmlCellRenderer implements ICellRendererAngularComp {
-    params: any;
-    showFullText = false;
-    shortText = '';
-    isLongText = false;
+  params: any;
+  showFullText = false;
+  shortText = '';
+  isLongText = false;
 
-    agInit(params: any): void {
-        this.params = params;
-        if (this.params.value.length > 500) {
-            this.shortText = this.params.value.substr(0, 500);
-            this.isLongText = true;
-        } else {
-            this.shortText = this.params.value;
-        }
+  agInit(params: any): void {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
     }
+  }
 
-    refresh(params: any): boolean {
-        this.params = params;
-        if (this.params.value.length > 500) {
-            this.shortText = this.params.value.substr(0, 500);
-            this.isLongText = true;
-        } else {
-            this.shortText = this.params.value;
-        }
-        this.showFullText = false; // Reset the text display state
-        return true;
+  refresh(params: any): boolean {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
     }
+    this.showFullText = false; // Reset the text display state
+    return true;
+  }
 
-    toggleText(): void {
-        this.showFullText = !this.showFullText;
-    }
+  toggleText(): void {
+    this.showFullText = !this.showFullText;
+  }
 }

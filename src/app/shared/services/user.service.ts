@@ -8,53 +8,53 @@ import { IUser } from '../interfaces/auth';
 const APIPREFIX_USER = `${environment.apiUrl}/user`;
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class UserService {
-    http = inject(HttpClient);
-    authService = inject(AuthService);
-    user = this.authService.user;
+  http = inject(HttpClient);
+  authService = inject(AuthService);
+  user = this.authService.user;
 
-    getAllUsers(): Observable<IUser[]> {
-        const url = `${APIPREFIX_USER}/all`;
-        return this.http.get<IUser[]>(url);
+  getAllUsers(): Observable<IUser[]> {
+    const url = `${APIPREFIX_USER}/all`;
+    return this.http.get<IUser[]>(url);
+  }
+
+  getMyOrganizations(): Observable<{ organizations: string[]; organizational_units: string[] }> {
+    const url = `${APIPREFIX_USER}/myaccesses`;
+    return this.http.get<{ organizations: string[]; organizational_units: string[] }>(url);
+  }
+
+  hasHelpDeskRole() {
+    return this.user().roles.some((role) => role.role === 'HELPDESK');
+  }
+
+  hasEditorRole() {
+    return this.user().roles.some((role) => role.role === 'EDITOR');
+  }
+
+  hasAdminRole() {
+    return this.user().roles.some((role) => role.role === 'ADMIN');
+  }
+
+  hasFacilityAdminRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN');
     }
 
-    getMyOrganizations(): Observable<{ organizations: string[]; organizational_units: string[] }> {
-        const url = `${APIPREFIX_USER}/myaccesses`;
-        return this.http.get<{ organizations: string[]; organizational_units: string[] }>(url);
-    }
+    return false;
+  }
 
-    hasHelpDeskRole() {
-        return this.user().roles.some((role) => role.role === 'HELPDESK');
-    }
-
-    hasEditorRole(){
-        return this.user().roles.some((role) => role.role === 'EDITOR');
-    }
-
-    hasAdminRole(){
-        return this.user().roles.some((role) => role.role === 'ADMIN');
-    }
-
-    hasFacilityAdminRole(){
-      if (this.user()) {
-        return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN');
-      }
-
-      return false;
-    }
-
-    hasFacilityEditorRole(){
-      if (this.user()) {
+  hasFacilityEditorRole() {
+    if (this.user()) {
       return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR');
-      }
-
-      return false;
     }
 
-    setUserAccesses(email:string, organizationCodes:string[], organizationalUnitCodes:string[]) : Observable<{ msg: string }> {
-        const url = `${APIPREFIX_USER}/${email}`;
-        return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });
-    }
+    return false;
+  }
+
+  setUserAccesses(email: string, organizationCodes: string[], organizationalUnitCodes: string[]): Observable<{ msg: string }> {
+    const url = `${APIPREFIX_USER}/${email}`;
+    return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });
+  }
 }

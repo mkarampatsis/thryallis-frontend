@@ -1,4 +1,11 @@
 import { Injectable } from '@angular/core';
+import {
+  ColDef,
+  RowClassRules,
+  SizeColumnsToContentStrategy,
+  SizeColumnsToFitGridStrategy,
+  SizeColumnsToFitProvidedWidthStrategy
+} from 'ag-grid-community';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +37,7 @@ export class ConstFacilityService {
     "Ισόγειο",
     "Υπόγειο",
     "Ημιυπόγειο",
-    "Ημιόροφος", 
+    "Ημιόροφος",
     "Ταράτσα"
   ]
 
@@ -213,8 +220,8 @@ export class ConstFacilityService {
       "type": "",
       "spaces": [
         {
-          "type":"Αερολιμένας",
-          "spaces":[
+          "type": "Αερολιμένας",
+          "spaces": [
             "Χώρος αναχωρήσεων (check-in και λοιποί χώροι)",
             "Χώρος ελέγχου αναχωρούντων επιβατών",
             "Χώρος καταστημάτων",
@@ -232,8 +239,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Πύργος Ελέγχου και συναφή κτίρια",
-          "spaces":[
+          "type": "Πύργος Ελέγχου και συναφή κτίρια",
+          "spaces": [
             "Αίθουσα ΕΕΚ (Ελέγχου Εναέριας Κυκλοφορίας)",
             "Κ/Τ Κέντρο Τηλεπικοινωνιών",
             "Χώρος Ηλεκτρονικών",
@@ -247,8 +254,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Τεχνική Βάση και συναφή κτίρια",
-          "spaces":[
+          "type": "Τεχνική Βάση και συναφή κτίρια",
+          "spaces": [
             "Υπόστεγο συντήρησης",
             "Αποθηκευτικός χώρος εξοπλισμού - ανταλλακτικών κτλ.",
             "Χώρος γραφείων (υπηρεσίες)",
@@ -256,8 +263,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Εμπορευματικός σταθμός – Cargo και συναφή κτίρια",
-          "spaces":[
+          "type": "Εμπορευματικός σταθμός – Cargo και συναφή κτίρια",
+          "spaces": [
             "Χώρος παραλαβής/διαλογής εμπορευμάτων",
             "Χώρος σάρωσης/ελέγχου ασφαλείας",
             "Χώρος προσωρινής φύλαξης",
@@ -275,8 +282,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Πυροσβεστικός σταθμός",
-          "spaces":[
+          "type": "Πυροσβεστικός σταθμός",
+          "spaces": [
             "Γκαράζ οχημάτων (Αμαξοστάσιο)",
             "Κέντρο διαχείρισης, ελέγχου και επικοινωνιών",
             "Χώρος συντήρησης και επισκευών",
@@ -290,8 +297,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Πεδίο ελιγμών",
-          "spaces":[
+          "type": "Πεδίο ελιγμών",
+          "spaces": [
             "Διάδρομος αεροσκαφών",
             "Τροχόδρομος",
             "Δάπεδο αεροσκαφών",
@@ -300,9 +307,9 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Άλλη Εγκατάσταση Αερολιμένα",
-          "spaces":[
-           "Άλλο"
+          "type": "Άλλη Εγκατάσταση Αερολιμένα",
+          "spaces": [
+            "Άλλο"
           ]
         }
       ]
@@ -311,8 +318,8 @@ export class ConstFacilityService {
       "type": "Λιμένας",
       "spaces": [
         {
-          "type":"Ζώνη υποδοχής/ελλιμενισμού πλοίων",
-          "spaces":[
+          "type": "Ζώνη υποδοχής/ελλιμενισμού πλοίων",
+          "spaces": [
             "Προβλήτα (Ντόκος)",
             "Πλωτές εξέδρα",
             "Λεκάνη ελιγμών (Turning Basin)",
@@ -320,8 +327,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Ζώνη Φόρτωσης, Εκφόρτωσης και Αποθήκευσης",
-          "spaces":[
+          "type": "Ζώνη Φόρτωσης, Εκφόρτωσης και Αποθήκευσης",
+          "spaces": [
             "Τερματικοί σταθμοί εμπορευματοκιβωτίων (Container Terminals)",
             "Χώροι αποθήκευσης ξηρού φορτίου",
             "Χώροι αποθήκευσης υγρών καυσίμων, χημικών και υγρών.",
@@ -332,8 +339,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Επιβατικός Σταθμός",
-          "spaces":[
+          "type": "Επιβατικός Σταθμός",
+          "spaces": [
             "Αίθουσες αναμονής επιβατών",
             "Check-in και τελωνειακός έλεγχος",
             "Γραφεία ναυτιλιακών/ταξιδιωτικών εταιρειών",
@@ -344,8 +351,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Χώροι συγκοινωνιών και δικτύων μεταφορών λιμένα",
-          "spaces":[
+          "type": "Χώροι συγκοινωνιών και δικτύων μεταφορών λιμένα",
+          "spaces": [
             "Χώροι Οδικού δικτύου ",
             "Χώροι σιδηροδρομικού δικτύου",
             "Περιοχή φορτοεκφόρτωσης φορτηγών (Truck Terminals)",
@@ -355,8 +362,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Διοίκηση και Λοιπές Εγκαταστάσεις",
-          "spaces":[
+          "type": "Διοίκηση και Λοιπές Εγκαταστάσεις",
+          "spaces": [
             "Λιμενικός σταθμός",
             "Σταθμός ρυμουλκών (Tugboat Station).",
             "Χώροι Τελωνείου και συνοριακού ελέγχου",
@@ -368,8 +375,8 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Ναυπηγοεπισκευαστικές Εγκαταστάσεις",
-          "spaces":[
+          "type": "Ναυπηγοεπισκευαστικές Εγκαταστάσεις",
+          "spaces": [
             "Δεξαμενή ξηράς (Dry Dock)",
             "Εργαστήριο",
             "Αποθήκη ανταλλακτικών",
@@ -379,30 +386,30 @@ export class ConstFacilityService {
           ]
         },
         {
-          "type":"Άλλη Εγκατάσταση Λιμένα",
-          "spaces":[
+          "type": "Άλλη Εγκατάσταση Λιμένα",
+          "spaces": [
             "Άλλο"
           ]
         }
       ]
     },
     {
-      "type":"Αιγιαλός",
-      "spaces":[
+      "type": "Αιγιαλός",
+      "spaces": [
         "Αιγιαλός",
         "Άλλο"
       ]
     },
     {
-      "type":"Οικόπεδο (χωρίς ειδικότερη χρήση)",
-      "spaces":[
+      "type": "Οικόπεδο (χωρίς ειδικότερη χρήση)",
+      "spaces": [
         "Αδόμητο οικόπεδο",
         "Άλλο"
       ]
     },
     {
-      "type":"Άλλος Τύπος Χρήσης",
-      "spaces":[
+      "type": "Άλλος Τύπος Χρήσης",
+      "spaces": [
         "Άλλο"
       ]
     }
@@ -434,4 +441,21 @@ export class ConstFacilityService {
     "Βεράντα/εξώστης",
     "Άλλος βοηθητικός χώρος"
   ]
+
+  // AgGrid related constants
+  defaultColDef = {
+    resizable: true,
+    filter: true,
+    sortable: true,
+    floatingFilter: true,
+    wrapHeaderText: true,
+    autoHeaderHeight: true,
+  };
+
+  autoSizeStrategy:
+    | SizeColumnsToFitGridStrategy
+    | SizeColumnsToFitProvidedWidthStrategy
+    | SizeColumnsToContentStrategy = { type: 'fitCellContents' };
+
+  
 }  

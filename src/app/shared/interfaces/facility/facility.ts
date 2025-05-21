@@ -10,13 +10,13 @@ export interface IFacility {
     code: string;
     preferredLabel: string;
   };
-  kaek:string,
+  kaek: string,
   belongsTo: string,
   distinctiveNameOfFacility: string;
   useOfFacility: string;
   uniqueUserOfFacility: boolean;
   coveredPremisesArea: number;
-  floors_levels:number;
+  floors_levels: number;
   floorplans: IFloorPlans[];
   addressOfFacility: {
     street: string;
