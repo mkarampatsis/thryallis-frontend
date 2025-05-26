@@ -486,8 +486,7 @@ export class ConstFacilityService {
             <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή" role="button"></i>
           `;
         } else {
-          return
-            `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>`
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>`
         }
       },
       filter: false,
