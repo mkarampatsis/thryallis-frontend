@@ -113,21 +113,12 @@ export class FacilityComponent {
   // }
 
   allFacilities() {
-    console.log("ALL Facilities")
-    // this.gridForeis = this.foreis.filter(data=>{
-    //   console.log(data);
-
-    // })
+    this.gridForeis = this.foreis;
   }
 
   myFacilities() {
-    console.log("My Facilities")
-    const myForeis = this.userService.user().roles.filter(data => {
-      console.log("Data", data);
-      if (data.role === "FACILITY_EDITOR") 
-        return data.foreas
-    });
-    console.log("My Foreis", myForeis);
+    const myForeis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
+    this.gridForeis = this.foreis.filter(f => myForeis.includes(f.code))
   }
 
   onCellClicked(event: CellClickedEvent): void {
