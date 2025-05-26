@@ -3,23 +3,43 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstFacilityService } from 'src/app/shared/services/const-facility.service';
+import { ConstService } from 'src/app/shared/services/const.service';
 import { IFacility } from 'src/app/shared/interfaces/facility/facility';
+import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-no-rows-overlay/ag-grid-no-rows-overlay.component';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/shared/state/app.state';
+import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
+import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
+import { take } from 'rxjs';
+
 
 @Component({
   selector: 'app-facility',
   standalone: true,
-  imports: [AgGridAngular],
+  imports: [AgGridAngular, AgGridNoRowsOverlayComponent],
   templateUrl: './facility.component.html',
   styleUrl: './facility.component.css'
 })
 export class FacilityComponent {
   constFacilityService = inject(ConstFacilityService);
+  constService = inject(ConstService);
+  foreis: IOrganizationList[] = [];
 
-  facilities: IFacility[] = [];
+  store = inject(Store<AppState>);
+  organizations$ = selectOrganizations$;
+
+  facilities: IFacility[] | null = [];
+  noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
+
   loading = false;
 
+  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+  organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
+  
   defaultColDef = this.constFacilityService.defaultColDef;
-  colDefs: ColDef[] = [
+  foreisColDefs: ColDef[] = this.constFacilityService.ORGANIZATIONS_COL_DEFS;
+
+  facilityColDefs: ColDef[] = [
     { field: 'organizationCode', headerName: 'Κωδ. Φορέα', flex: 1, hide: true },
     {
       field: 'organizationPreferredLabel',
@@ -59,14 +79,48 @@ export class FacilityComponent {
 
   gridApi: GridApi;
 
-  onGridReady(params: GridReadyEvent): void {
+  constructor() {
+    this.loading = false
+  }
+
+  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
-    this.gridApi.hideOverlay();
+    this.store
+      .select(selectOrganizations$)
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.foreis = data.map((org) => {
+          return {
+            ...org,
+            organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
+            subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
+          };
+        });
+        this.gridApi.hideOverlay();
+      });
   }
+
+  // onGridReady(params: GridReadyEvent): void {
+  //   this.gridApi = params.api;
+  //   // this.gridApi.showLoadingOverlay();
+  //   // this.gridApi.hideOverlay();
+  // }
 
   onCellClicked(event: any): void {
     console.log(event)
+  }
+
+  onRowDoubleClicked(event: any): void {
+    console.log("Organization", event)
+  }
+
+  allFacilities() {
+    console.log("ALL Facilities")
+  }
+
+  myFacilities() {
+    console.log("ALL Facilities")
   }
 }
 

@@ -53,6 +53,15 @@ export class UserService {
     return false;
   }
 
+  hasFacilityEditorRoleInOrganization(code:string) {
+    if (this.user()) {
+      console.log(code, this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code)))
+      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code));
+    }
+
+    return false;
+  }
+
   setUserAccesses(email: string, organizationCodes: string[], organizationalUnitCodes: string[]): Observable<{ msg: string }> {
     const url = `${APIPREFIX_USER}/${email}`;
     return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });

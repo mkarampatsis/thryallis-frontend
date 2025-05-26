@@ -1,3 +1,4 @@
+import { inject } from '@angular/core';
 import { Injectable } from '@angular/core';
 import {
   ColDef,
@@ -6,11 +7,13 @@ import {
   SizeColumnsToFitGridStrategy,
   SizeColumnsToFitProvidedWidthStrategy
 } from 'ag-grid-community';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConstFacilityService {
+  userService = inject(UserService)
 
   readonly USE_OF_FACILITY = [
     "Κτίριο Γραφείων (Υπηρεσίες)",
@@ -457,5 +460,45 @@ export class ConstFacilityService {
     | SizeColumnsToFitProvidedWidthStrategy
     | SizeColumnsToContentStrategy = { type: 'fitCellContents' };
 
-  
+  ORGANIZATIONS_COL_DEFS: ColDef[] = [
+    { field: 'code', headerName: 'Κωδικός', flex: 1 },
+    {
+      field: 'preferredLabel',
+      headerName: 'Ονομασία',
+      flex: 4,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        textMatcher: ({ value, filterText }) => {
+          return value.indexOf(this.removeAccents(filterText)) !== -1;
+        },
+      },
+    },
+    { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
+    { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: (params) => {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.code)) {
+          return `
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή" role="button"></i>
+          `;
+        } else {
+          return
+            `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>`
+        }
+      },
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      resizable: false,
+      flex: 0.5,
+    },
+  ];
+
+  removeAccents(input: string): string {
+    return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
 }  
