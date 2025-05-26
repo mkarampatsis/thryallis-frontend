@@ -5,31 +5,33 @@
     <span>Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω σε μια γραμμή</span>
   </div>
   <div class="d-flex justify-content-start gap-2">
-   <button
-      type="button"
-      class="btn btn-sm btn-primary"
-      (click)="myFacilities()">
-      Τα ακίνητα μου
-    </button>
-    <button
-      type="button"
-      class="btn btn-sm btn-danger"
-      (click)="allFacilities()">
-      Ολα τα ακίνητα
-    </button>
+    @if (hasFacilityAdminRole() || hasFacilityEditorRole()) {
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="myFacilities()">
+        Τα ακίνητα μου
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-danger"
+        (click)="allFacilities()">
+        Ολα τα ακίνητα
+      </button>
+    }
   </div>
 </div>
 
 <ag-grid-angular
   [domLayout]="'autoHeight'"
-  [rowData]="foreis"
+  [rowData]="gridForeis"
   [defaultColDef]="defaultColDef"
   [columnDefs]="foreisColDefs"
   [pagination]="true"
   [paginationPageSize]="20"
   [loadingOverlayComponent]="loadingOverlayComponent"
   [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-  (rowDoubleClicked)="onRowDoubleClicked($event)"
+  (cellClicked)="onCellClicked($event)"
   (gridReady)="onGridReady($event)"
   class="ag-theme-balham">
 </ag-grid-angular>

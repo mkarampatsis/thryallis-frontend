@@ -55,7 +55,6 @@ export class UserService {
 
   hasFacilityEditorRoleInOrganization(code:string) {
     if (this.user()) {
-      console.log(code, this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code)))
       return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code));
     }
 

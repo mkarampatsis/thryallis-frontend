@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, CellClickedEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstFacilityService } from 'src/app/shared/services/const-facility.service';
@@ -11,6 +11,7 @@ import { AppState } from 'src/app/shared/state/app.state';
 import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
 import { take } from 'rxjs';
+import { UserService } from 'src/app/shared/services/user.service';
 
 
 @Component({
@@ -23,7 +24,10 @@ import { take } from 'rxjs';
 export class FacilityComponent {
   constFacilityService = inject(ConstFacilityService);
   constService = inject(ConstService);
+  userService = inject(UserService);
+
   foreis: IOrganizationList[] = [];
+  gridForeis: IOrganizationList[] = [];
 
   store = inject(Store<AppState>);
   organizations$ = selectOrganizations$;
@@ -97,6 +101,7 @@ export class FacilityComponent {
             subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
           };
         });
+        this.gridForeis = this.foreis;
         this.gridApi.hideOverlay();
       });
   }
@@ -107,20 +112,55 @@ export class FacilityComponent {
   //   // this.gridApi.hideOverlay();
   // }
 
-  onCellClicked(event: any): void {
-    console.log(event)
-  }
-
-  onRowDoubleClicked(event: any): void {
-    console.log("Organization", event)
-  }
-
   allFacilities() {
     console.log("ALL Facilities")
+    // this.gridForeis = this.foreis.filter(data=>{
+    //   console.log(data);
+
+    // })
   }
 
   myFacilities() {
-    console.log("ALL Facilities")
+    console.log("My Facilities")
+    const myForeis = this.userService.user().roles.filter(data => {
+      console.log("Data", data);
+      if (data.role === "FACILITY_EDITOR") 
+        return data.foreas
+    });
+    console.log("My Foreis", myForeis);
+  }
+
+  onCellClicked(event: CellClickedEvent): void {
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    if (!action) return;
+  
+    if (action === 'info') {
+      this.showFacility(event.data);
+    } else if (action === 'edit') {
+      this.editFacility(event.data);
+    } else if (action ==='delete'){
+      this.deleteFacility(event.data)
+    }
+  }
+
+  editFacility(data:IOrganizationList) {
+    console.log("Edit", data)
+  }
+
+  showFacility(data:IOrganizationList) {
+    console.log("Show", data)
+  }
+
+  deleteFacility(data:IOrganizationList) {
+    console.log("Delete", data)
+  }
+
+  hasFacilityAdminRole() {
+    return this.userService.hasFacilityAdminRole()
+  }
+
+  hasFacilityEditorRole() {
+    return this.userService.hasFacilityEditorRole()
   }
 }
 

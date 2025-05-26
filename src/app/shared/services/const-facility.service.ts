@@ -465,7 +465,7 @@ export class ConstFacilityService {
     {
       field: 'preferredLabel',
       headerName: 'Ονομασία',
-      flex: 4,
+      flex: 3,
       filter: 'agTextColumnFilter',
       filterParams: {
         textMatcher: ({ value, filterText }) => {
@@ -493,7 +493,7 @@ export class ConstFacilityService {
       sortable: false,
       floatingFilter: false,
       resizable: false,
-      flex: 0.5,
+      flex: 1,
     },
   ];
 
