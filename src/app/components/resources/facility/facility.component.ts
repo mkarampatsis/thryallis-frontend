@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ColDef, GridApi, GridReadyEvent, CellClickedEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
@@ -8,6 +8,8 @@ import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-
 import { ConstFacilityService } from 'src/app/shared/services/const-facility.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { UserService } from 'src/app/shared/services/user.service';
+import { FileUploadService } from 'src/app/shared/services/file-upload.service';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
@@ -35,9 +37,12 @@ import { take } from 'rxjs';
   styleUrl: './facility.component.css'
 })
 export class FacilityComponent {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   constFacilityService = inject(ConstFacilityService);
   constService = inject(ConstService);
   userService = inject(UserService);
+  uploadService = inject(FileUploadService);
 
   organizationalUnits: IOrganizationUnitList[] = [];
   gridOrganizationalUnits: IOrganizationUnitList[] = [];
@@ -50,6 +55,10 @@ export class FacilityComponent {
 
   loading = false;
   showForm = false;
+  
+  uploadObjectIDs: string[] = [];
+  progress = 0;
+  checkFileStatus: boolean = true;
 
   USE_OF_FACILITY = this.constFacilityService.USE_OF_FACILITY;
   FLOORPLANS = this.constFacilityService.FLOORPLANS;
@@ -81,7 +90,7 @@ export class FacilityComponent {
         level: new FormControl('', Validators.required),
         num: new FormControl('', Validators.required),
         floorArea: new FormControl('', Validators.required),
-        floorPlan: new FormControl('', Validators.required),
+        floorPlan: new FormControl([]),
       })
     ]),
     addressOfFacility: new FormGroup({
@@ -171,6 +180,56 @@ export class FacilityComponent {
 
   hasFacilityEditorRole() {
     return this.userService.hasFacilityEditorRole()
+  }
+
+  selectFile(event: any): void {
+    const files: FileList = event.target.files;
+    if (!files || files.length === 0) {
+      console.log('No files selected!');
+      return;
+    }
+  
+    this.progress = 0;
+    const fileArray = Array.from(files);
+    let completed = 0;
+    this.checkFileStatus = true;
+    // this.form.controls.floorPlans.controls.floorPlan.setErrors({'incorrect': false});
+
+    fileArray.forEach((file, index)=>{
+      const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
+      const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
+      const checkFileSize = (file.size/1024)<13000
+      if (!(checkFileSize && checkFileType)) 
+        this.checkFileStatus = false
+    })  
+  
+    if (this.checkFileStatus){
+      fileArray.forEach((file, index) => {
+        this.uploadService.upload(file).subscribe({
+          next: (event: any) => {
+            if (event.type === HttpEventType.UploadProgress && event.total) {
+              this.progress = Math.round((100 * event.loaded) / event.total);
+              console.log(`Progress for file ${index}: ${this.progress}%`);
+            } else if (event instanceof HttpResponse) {
+              this.uploadObjectIDs.push(event.body.id);
+            }
+          },
+          error: (err: any) => {
+            console.error(`Upload failed for file ${file.name}`, err);
+          },
+          complete: () => {
+            completed++;
+            if (completed === fileArray.length) {
+                // this.form.controls.floorPlans.controls.questionFile.setValue( this.uploadObjectIDs);
+              this.form.markAsDirty();
+              console.log('All uploads complete:',  this.uploadObjectIDs);
+            }
+          },
+        });
+      });
+    } else {
+        // this.form.controls.floorPlans.controls.questionFile.setErrors({'incorrect': true});
+    }
   }
 }
 
