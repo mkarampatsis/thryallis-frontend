@@ -67,9 +67,13 @@ export class FacilityComponent {
   organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
   organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
 
+  organization: string = '';
+  organizationCode: string = '';
+  organizationalUnit: string = '';
+  organizationalUnitCode: string = ''
+
   defaultColDef = this.constFacilityService.defaultColDef;
-  organizationalUnitsColDefs: ColDef[] = this.constFacilityService.ORGANIZATIONAL_UNITS_COL_DEFS
-    ;
+  organizationalUnitsColDefs: ColDef[] = this.constFacilityService.ORGANIZATIONAL_UNITS_COL_DEFS;
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
@@ -78,6 +82,10 @@ export class FacilityComponent {
   gridApi: GridApi;
 
   form = new FormGroup({
+    organization: new FormControl({value: '', disabled: true}, Validators.required),
+    organizationCode: new FormControl({value: '', disabled: true}, Validators.required),
+    organizationalUnit: new FormControl({value: '', disabled: true}, Validators.required),
+    organizationalUnitCode: new FormControl({value: '', disabled: true}, Validators.required),
     kaek: new FormControl('', Validators.required),
     belongsTo: new FormControl('', Validators.required),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
@@ -152,6 +160,11 @@ export class FacilityComponent {
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
 
+    this.organization = event.data.organization;
+    this.organizationCode = event.data.organizationCode;
+    this.organizationalUnit = event.data.preferredLabel;
+    this.organizationalUnitCode = event.data.code;
+
     if (action === 'info') {
       this.showFacility(event.data);
     } else if (action === 'edit') {
@@ -163,6 +176,7 @@ export class FacilityComponent {
 
   editFacility(data: IOrganizationList) {
     console.log("Edit", data)
+    this.initiazeForm();
     this.showForm = true;
   }
 
@@ -231,6 +245,13 @@ export class FacilityComponent {
         // this.form.controls.floorPlans.controls.questionFile.setErrors({'incorrect': true});
     }
   }
+
+  initiazeForm(): void {
+    this.form.controls.organization.setValue(this.organization);
+    this.form.controls.organizationCode.setValue(this.organizationCode);
+    this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
+    this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
+  };
 }
 
 export class HtmlCellRenderer implements ICellRendererAngularComp {

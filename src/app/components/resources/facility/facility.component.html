@@ -27,7 +27,32 @@
     <form [formGroup]="form">
       <p class="h5 mb-3">Εισαγωγή Νέου Ακινήτου και των σχετικών χώρων του</p>
       
-      <fieldset class="form-group border p-3 mb-3">
+        <fieldset class="form-group border p-3 mb-3">
+          <legend class="w-auto">Στοιχεία Φορέα/Μονάδας:</legend>
+
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <input type="text" id="kaek" class="form-control" formControlName="organization">
+            </div>
+
+            <div class="col-sm-6">
+              <input type="text" id="kaek" class="form-control" formControlName="organizationCode">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <input type="text" id="kaek" class="form-control" formControlName="organizationalUnit">
+            </div>
+
+            <div class="col-sm-6">
+              <input type="text" id="kaek" class="form-control" formControlName="organizationalUnitCode">
+            </div>
+          </div>
+
+        </fieldset>
+
+        <fieldset class="form-group border p-3 mb-3">
           <legend class="w-auto">Στοιχεία ακινήτου:</legend>
 
           <div class="row mb-3">
