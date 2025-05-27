@@ -460,26 +460,17 @@ export class ConstFacilityService {
     | SizeColumnsToFitProvidedWidthStrategy
     | SizeColumnsToContentStrategy = { type: 'fitCellContents' };
 
-  ORGANIZATIONS_COL_DEFS: ColDef[] = [
-    { field: 'code', headerName: 'Κωδικός', flex: 1 },
-    {
-      field: 'preferredLabel',
-      headerName: 'Ονομασία',
-      flex: 3,
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        textMatcher: ({ value, filterText }) => {
-          return value.indexOf(this.removeAccents(filterText)) !== -1;
-        },
-      },
-    },
-    { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
-    { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
+  ORGANIZATIONAL_UNITS_COL_DEFS: ColDef[] = [
+    { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
+    { field: 'organization', headerName: 'Φορέας', flex: 1 },
+    { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
+    { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
+    { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
     {
       field: 'actionCell',
       headerName: 'Ενέργειες',
       cellRenderer: (params) => {
-        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.code)) {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
           return `
             <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>
             <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία" role="button"></i>

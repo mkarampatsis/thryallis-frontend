@@ -27,6 +27,7 @@ export interface IFacility {
     geographicRegion: string;
     country: string;
   }
+  finalized: string;
 }
 
 export interface ISpace {
