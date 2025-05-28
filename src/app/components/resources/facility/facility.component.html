@@ -137,7 +137,7 @@
               <div class="row g-3 mb-3">
                 
                 <div class="col-sm-2">
-                  <select class="form-select" aria-label="Default select example" formControlName="level">
+                  <select class="form-select" aria-label="Default select example" formControlName="level" (change)="selectLevel($event)">
                     <option value="" disabled selected>
                       Επιλέξτε επίπεδο
                     </option>
@@ -148,7 +148,15 @@
                 </div>
 
                 <div class="col-sm-2">
-                  <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                  @if (planFloorsNumField === 1) {
+                    <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                  } @else if (planFloorsNumField === 2) {
+                    <input type="number" class="form-control" min="0" max="0" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                  } @else if (planFloorsNumField === 3) {
+                    <input type="number" class="form-control"  max="-1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                  } @else if (planFloorsNumField === 4) {
+                    <input type="number" class="form-control" min="1000"  max="1000" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                  }
                 </div>
 
                 <div class="col-sm-3">

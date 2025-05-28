@@ -55,6 +55,7 @@ export class FacilityComponent {
 
   loading = false;
   showForm = false;
+  planFloorsNumField: number = 0;
   
   uploadObjectIDs: string[] = [];
   progress = 0;
@@ -252,6 +253,22 @@ export class FacilityComponent {
     this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
     this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
   };
+
+  selectLevel(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value.split(':')[1];
+    console.log(value);
+    if (value==='Όροφος')
+      this.planFloorsNumField = 1;
+    else if (value==='Ισόγειο')
+      this.planFloorsNumField = 2;
+    else if (value==='Υπόγειο')
+      this.planFloorsNumField = 3;
+    else if (value==='Ημιυπόγειο' || value==='Ημιόροφος' || value==='Ταράτσα' )
+      this.planFloorsNumField = 4;
+    else 
+     this.planFloorsNumField = 0;
+  }
 }
 
 export class HtmlCellRenderer implements ICellRendererAngularComp {
