@@ -256,18 +256,33 @@ export class FacilityComponent {
 
   selectLevel(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const value = target.value.split(':')[1];
-    console.log(value);
-    if (value==='Όροφος')
+    const value = target.value.split(':')[1].trim();
+    if (value=='Όροφος') {
       this.planFloorsNumField = 1;
-    else if (value==='Ισόγειο')
+    } else if (value=='Ισόγειο') {
       this.planFloorsNumField = 2;
-    else if (value==='Υπόγειο')
+    } else if (value=='Υπόγειο') {
       this.planFloorsNumField = 3;
-    else if (value==='Ημιυπόγειο' || value==='Ημιόροφος' || value==='Ταράτσα' )
+    }else if (value=='Ημιυπόγειο' || value=='Ημιόροφος' || value=='Ταράτσα' ) {
       this.planFloorsNumField = 4;
-    else 
+    } else {
      this.planFloorsNumField = 0;
+    }
+  }
+
+  addFloorPlan() {
+    this.floorPlans.push(
+      new FormGroup({
+        level: new FormControl('', Validators.required),
+        num: new FormControl('', Validators.required),
+        floorArea: new FormControl('', Validators.required),
+        floorPlan: new FormControl([]),
+      }),
+    );
+  }
+
+  removeFloorPlan(index: number) {
+    this.floorPlans.removeAt(index);
   }
 }
 

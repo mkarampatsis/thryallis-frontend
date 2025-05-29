@@ -132,91 +132,74 @@
       <fieldset class="form-group border p-3 mb-3">
         <legend class="w-auto">Καταγραφή ορόφων:</legend>
         <div class="mb-3" formArrayName="floorPlans">          
-          @for (p of floorPlans.controls; let i = $index; track i) {
-            <div [formGroupName]="i">
-              <div class="row g-3 mb-3">
-                
-                <div class="col-sm-2">
-                  <select class="form-select" aria-label="Default select example" formControlName="level" (change)="selectLevel($event)">
-                    <option value="" disabled selected>
-                      Επιλέξτε επίπεδο
-                    </option>
-                    @for (item of FLOORPLANS; track item) {
-                      <option [ngValue]="item">{{ item }}</option>
-                    }
-                  </select>
-                </div>
-
-                <div class="col-sm-2">
-                  @if (planFloorsNumField === 1) {
-                    <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                  } @else if (planFloorsNumField === 2) {
-                    <input type="number" class="form-control" min="0" max="0" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                  } @else if (planFloorsNumField === 3) {
-                    <input type="number" class="form-control"  max="-1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                  } @else if (planFloorsNumField === 4) {
-                    <input type="number" class="form-control" min="1000"  max="1000" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+          <div *ngFor="let p of floorPlans.controls; let i = index" [formGroupName]="i">
+            <div class="row g-3 mb-3">
+              
+              <div class="col-sm-2">
+                <select class="form-select" aria-label="Default select example" formControlName="level" (change)="selectLevel($event)">
+                  <option value="" disabled selected>
+                    Επιλέξτε επίπεδο
+                  </option>
+                  @for (item of FLOORPLANS; track item) {
+                    <option [ngValue]="item">{{ item }}</option>
                   }
-                </div>
+                </select>
+              </div>
 
-                <div class="col-sm-3">
-                  <input type="text" class="form-control" placeholder="΅Εμβαδόν ορόφου/επιπέδου σε τ.μ" aria-label="floor area" formControlName="floorArea">
-                </div>
-    
-                <div class="col-sm-4">
-                  <!-- <input type="text" class="form-control" placeholder="Αρχείο κάτοψης του ορόφου/επιπέδου:" aria-label="floor file" formControlName="floorPlan"> -->
+              <div class="col-sm-2">
+                @if (planFloorsNumField === 1) {
+                  <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                } @else if (planFloorsNumField === 2) {
+                  <input type="number" class="form-control" min="0" max="0" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                } @else if (planFloorsNumField === 3) {
+                  <input type="number" class="form-control"  max="-1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                } @else if (planFloorsNumField === 4) {
+                  <input type="number" class="form-control" min="1000"  max="1000" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+                }
+              </div>
 
-                  <input
-                    #fileInput
-                    class="form-control"
-                    type="file"
-                    multiple
-                    (change)="selectFile($event)" />
-                    <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
-                    @if (progress) {
-                      <div class="progress mt-2">
-                        <div
-                          class="progress-bar progress-bar-info"
-                          role="progressbar"
-                          attr.aria-valuenow="{{ progress }}"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                          [ngStyle]="{ width: progress + '%' }">
-                          {{ progress }}%
-                        </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" placeholder="Έμβαδόν ορόφου/επιπέδου σε τ.μ" aria-label="floor area" formControlName="floorArea">
+              </div>
+  
+              <div class="col-sm-4">
+                <!-- <input type="text" class="form-control" placeholder="Αρχείο κάτοψης του ορόφου/επιπέδου:" aria-label="floor file" formControlName="floorPlan"> -->
+
+                <input
+                  #fileInput
+                  class="form-control"
+                  type="file"
+                  multiple
+                  (change)="selectFile($event)" />
+                  <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+                  @if (progress) {
+                    <div class="progress mt-2">
+                      <div
+                        class="progress-bar progress-bar-info"
+                        role="progressbar"
+                        attr.aria-valuenow="{{ progress }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        [ngStyle]="{ width: progress + '%' }">
+                        {{ progress }}%
                       </div>
-                    }
-                    @if (!checkFileStatus){
-                      <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
-                    }    
-                </div>
-                <div class="col-sm-1 d-flex gap-2">
-                  <button class="text-primary">
-                    <i class="bi bi-plus-circle"></i>
-                  </button>
-                  <button class="text-danger">
-                    <i class="bi bi-x-square"></i>
-                  </button>
-                    <!-- @if (phone.controls.length > 1 && i !== 0) {
-                      <mat-icon
-                        role="button"
-                        (click)="removePhoneNumber(i)"
-                        class="cursor-pointer"
-                        >delete</mat-icon
-                      >
-                    }
-                    @if (phone.controls[i].valid) {
-                      <mat-icon
-                        role="button"
-                        (click)="addPhoneNumber()"
-                        class="cursor-pointer"
-                        >add</mat-icon
-                      >
-                    } -->
-                </div>
+                    </div>
+                  }
+                  @if (!checkFileStatus){
+                    <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
+                  }    
+              </div>
+              <div class="col-sm-1 d-flex gap-2">
+                <!-- {{floorPlans.controls[i].valid && i === floorPlans.controls.length - 1}} -->
+                <button *ngIf="i === floorPlans.controls.length - 1" (click)="addFloorPlan()">
+                  <i class="bi bi-plus-circle text-primary fs-5"></i>
+                </button>
+                <button *ngIf="floorPlans.controls.length > 1" (click)="removeFloorPlan(i)">
+                  <i class="bi bi-x-square text-danger fs-5"></i>
+                </button>
               </div>
             </div>
-          }
+          </div>
         </div>
       </fieldset>
 
@@ -253,6 +236,10 @@
         </div>
       </fieldset>
       
+      <fieldset class="form-group border p-3 mb-3">
+        <legend class="w-auto">Επιμέρους χώροι ακινήτου:</legend>
+      </fieldset>
+
       <div class="d-flex gap-2">
         <button class="btn btn-primary">Υποβολή</button>
         <button class="btn btn-danger">Καθάρισμα</button>
