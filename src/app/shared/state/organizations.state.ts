@@ -9,34 +9,34 @@ import { catchError, map, of, switchMap } from 'rxjs';
 
 // Organization State
 export interface OrganizationsState {
-    organizations: IOrganizationList[];
-    loading: boolean;
-    error: string;
+  organizations: IOrganizationList[];
+  loading: boolean;
+  error: string;
 }
 
 export const organizationInitialState: OrganizationsState = {
-    organizations: [],
-    loading: false,
-    error: '',
+  organizations: [],
+  loading: false,
+  error: '',
 };
 
 // Organization Actions
 export const loadOrganizations = createAction('[Organization] Load Organizations');
 export const loadOrganizationsSuccess = createAction(
-    '[Organization] Load Organizations Success',
-    props<{ organizations: IOrganizationList[] }>(),
+  '[Organization] Load Organizations Success',
+  props<{ organizations: IOrganizationList[] }>(),
 );
 export const loadOrganizationsFailure = createAction(
-    '[Organization] Load Organizations Failure',
-    props<{ error: string }>(),
+  '[Organization] Load Organizations Failure',
+  props<{ error: string }>(),
 );
 
 // Organizations Reducer
 export const organizationReducer = createReducer<OrganizationsState>(
-    organizationInitialState,
-    on(loadOrganizations, (state) => ({ ...state, loading: true })),
-    on(loadOrganizationsSuccess, (state, { organizations }) => ({ ...state, organizations, loading: false })),
-    on(loadOrganizationsFailure, (state, { error }) => ({ ...state, error, loading: false })),
+  organizationInitialState,
+  on(loadOrganizations, (state) => ({ ...state, loading: true })),
+  on(loadOrganizationsSuccess, (state, { organizations }) => ({ ...state, organizations, loading: false })),
+  on(loadOrganizationsFailure, (state, { error }) => ({ ...state, error, loading: false })),
 );
 
 // Organizations Selectors
@@ -45,19 +45,27 @@ export const getOrganizations$ = (state: AppState) => state.organizations.organi
 export const organizationsLoading$ = (state: AppState) => state.organizations.loading;
 // Use createSelector to create memoized selectors
 export const selectOrganizations$ = createSelector(selectOrganizationState$, (state) => state.organizations);
+// A selector to return the organization for a given code
+export const selectOrganizationByCode$ = (organizationCode: string) =>
+  createSelector(selectOrganizations$, (organizations) => {
+    const org = organizations
+      .filter(ou => ou.code === organizationCode)
+      // .map(ou => ou.code);
+    return org ? org : null;
+  });
 
 // Organizations Effects
 export const getOrganizationsEffect = createEffect(
-    (actions$ = inject(Actions), organizationService = inject(OrganizationService)) => {
-        return actions$.pipe(
-            ofType(loadOrganizations),
-            switchMap(() =>
-                organizationService.getAllOrganizations().pipe(
-                    map((organizations) => loadOrganizationsSuccess({ organizations })),
-                    catchError((error) => of(loadOrganizationsFailure({ error: error.message }))),
-                ),
-            ),
-        );
-    },
-    { functional: true },
+  (actions$ = inject(Actions), organizationService = inject(OrganizationService)) => {
+    return actions$.pipe(
+      ofType(loadOrganizations),
+      switchMap(() =>
+        organizationService.getAllOrganizations().pipe(
+          map((organizations) => loadOrganizationsSuccess({ organizations })),
+          catchError((error) => of(loadOrganizationsFailure({ error: error.message }))),
+        ),
+      ),
+    );
+  },
+  { functional: true },
 );

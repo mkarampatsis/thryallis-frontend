@@ -14,7 +14,8 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 // import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
-import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
+import { selectOrganizationalUnits$ } from 'src/app/shared/state/organizational-units.state';
+import { selectOrganizationByCode$ } from 'src/app/shared/state/organizations.state';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
@@ -28,9 +29,9 @@ import { take } from 'rxjs';
   selector: 'app-facility',
   standalone: true,
   imports: [
-    CommonModule, 
-    AgGridAngular, 
-    AgGridNoRowsOverlayComponent, 
+    CommonModule,
+    AgGridAngular,
+    AgGridNoRowsOverlayComponent,
     ReactiveFormsModule
   ],
   templateUrl: './facility.component.html',
@@ -47,8 +48,11 @@ export class FacilityComponent {
   organizationalUnits: IOrganizationUnitList[] = [];
   gridOrganizationalUnits: IOrganizationUnitList[] = [];
 
+  organizations: IOrganizationList[] = [];
+
   store = inject(Store<AppState>);
   organizationalUits$ = selectOrganizationalUnits$;
+  organization$ = selectOrganizationByCode$
 
   facilities: IFacility[] | null = [];
   noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
@@ -56,7 +60,7 @@ export class FacilityComponent {
   loading = false;
   showForm = false;
   planFloorsNumField: number = 0;
-  
+
   uploadObjectIDs: string[] = [];
   progress = 0;
   checkFileStatus: boolean = true;
@@ -83,10 +87,10 @@ export class FacilityComponent {
   gridApi: GridApi;
 
   form = new FormGroup({
-    organization: new FormControl({value: '', disabled: true}, Validators.required),
-    organizationCode: new FormControl({value: '', disabled: true}, Validators.required),
-    organizationalUnit: new FormControl({value: '', disabled: true}, Validators.required),
-    organizationalUnitCode: new FormControl({value: '', disabled: true}, Validators.required),
+    organization: new FormControl({ value: '', disabled: true }, Validators.required),
+    organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
+    organizationalUnit: new FormControl({ value: '', disabled: true }, Validators.required),
+    organizationalUnitCode: new FormControl({ value: '', disabled: true }, Validators.required),
     kaek: new FormControl('', Validators.required),
     belongsTo: new FormControl('', Validators.required),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
@@ -129,6 +133,20 @@ export class FacilityComponent {
 
   floorPlans = this.form.get('floorPlans') as FormArray;
 
+  ngOnInit() {
+    const foreis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
+
+    for (let forea of foreis) {
+      this.store
+        .select(this.organization$(forea))
+        .pipe(take(1))
+        .subscribe((org) => {
+          console.log("Init>>",org);
+          // return this.organization = this.organization.concat(...org);
+        });
+    }
+  }
+
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
@@ -154,7 +172,7 @@ export class FacilityComponent {
 
   myFacilities() {
     const myForeis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
-    this.gridOrganizationalUnits = this.organizationalUnits.filter(f => myForeis.includes(f.organizationCode))
+    // this.gridOrganizationalUnits = this.organizationalUnits.filter(f => myForeis.includes(f.organizationCode))
   }
 
   onCellClicked(event: CellClickedEvent): void {
@@ -203,22 +221,22 @@ export class FacilityComponent {
       console.log('No files selected!');
       return;
     }
-  
+
     this.progress = 0;
     const fileArray = Array.from(files);
     let completed = 0;
     this.checkFileStatus = true;
     // this.form.controls.floorPlans.controls.floorPlan.setErrors({'incorrect': false});
 
-    fileArray.forEach((file, index)=>{
-      const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
+    fileArray.forEach((file, index) => {
+      const permitTypes = ["pdf", "docx", "xlsx", "png", "jpeg"];
       const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
-      const checkFileSize = (file.size/1024)<13000
-      if (!(checkFileSize && checkFileType)) 
+      const checkFileSize = (file.size / 1024) < 13000
+      if (!(checkFileSize && checkFileType))
         this.checkFileStatus = false
-    })  
-  
-    if (this.checkFileStatus){
+    })
+
+    if (this.checkFileStatus) {
       fileArray.forEach((file, index) => {
         this.uploadService.upload(file).subscribe({
           next: (event: any) => {
@@ -235,15 +253,15 @@ export class FacilityComponent {
           complete: () => {
             completed++;
             if (completed === fileArray.length) {
-                // this.form.controls.floorPlans.controls.questionFile.setValue( this.uploadObjectIDs);
+              // this.form.controls.floorPlans.controls.questionFile.setValue( this.uploadObjectIDs);
               this.form.markAsDirty();
-              console.log('All uploads complete:',  this.uploadObjectIDs);
+              console.log('All uploads complete:', this.uploadObjectIDs);
             }
           },
         });
       });
     } else {
-        // this.form.controls.floorPlans.controls.questionFile.setErrors({'incorrect': true});
+      // this.form.controls.floorPlans.controls.questionFile.setErrors({'incorrect': true});
     }
   }
 
@@ -257,16 +275,16 @@ export class FacilityComponent {
   selectLevel(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value.split(':')[1].trim();
-    if (value=='Όροφος') {
+    if (value == 'Όροφος') {
       this.planFloorsNumField = 1;
-    } else if (value=='Ισόγειο') {
+    } else if (value == 'Ισόγειο') {
       this.planFloorsNumField = 2;
-    } else if (value=='Υπόγειο') {
+    } else if (value == 'Υπόγειο') {
       this.planFloorsNumField = 3;
-    }else if (value=='Ημιυπόγειο' || value=='Ημιόροφος' || value=='Ταράτσα' ) {
+    } else if (value == 'Ημιυπόγειο' || value == 'Ημιόροφος' || value == 'Ταράτσα') {
       this.planFloorsNumField = 4;
     } else {
-     this.planFloorsNumField = 0;
+      this.planFloorsNumField = 0;
     }
   }
 
