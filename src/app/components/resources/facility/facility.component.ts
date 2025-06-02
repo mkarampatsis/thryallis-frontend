@@ -8,17 +8,11 @@ import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-
 import { ConstFacilityService } from 'src/app/shared/services/const-facility.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { UserService } from 'src/app/shared/services/user.service';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/shared/state/app.state';
-// import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
-import { selectOrganizationalUnits$ } from 'src/app/shared/state/organizational-units.state';
-import { selectOrganizationByCode$ } from 'src/app/shared/state/organizations.state';
-
 import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
-import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 import { IFacility } from 'src/app/shared/interfaces/facility/facility';
 
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -43,19 +37,13 @@ export class FacilityComponent {
   constFacilityService = inject(ConstFacilityService);
   constService = inject(ConstService);
   userService = inject(UserService);
+  modalService = inject(ModalService);
   uploadService = inject(FileUploadService);
-
-  organizationalUnits: IOrganizationUnitList[] = [];
-  gridOrganizationalUnits: IOrganizationUnitList[] = [];
 
   organizations: IOrganizationList[] = [];
 
-  store = inject(Store<AppState>);
-  organizationalUits$ = selectOrganizationalUnits$;
-  organization$ = selectOrganizationByCode$
-
   facilities: IFacility[] | null = [];
-  noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
+  // noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
 
   loading = false;
   showForm = false;
@@ -68,23 +56,19 @@ export class FacilityComponent {
   USE_OF_FACILITY = this.constFacilityService.USE_OF_FACILITY;
   FLOORPLANS = this.constFacilityService.FLOORPLANS;
 
-  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
-  organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
-  organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
-
   organization: string = '';
   organizationCode: string = '';
   organizationalUnit: string = '';
   organizationalUnitCode: string = ''
 
-  defaultColDef = this.constFacilityService.defaultColDef;
-  organizationalUnitsColDefs: ColDef[] = this.constFacilityService.ORGANIZATIONAL_UNITS_COL_DEFS;
-  autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
+  // defaultColDef = this.constFacilityService.defaultColDef;
+  // organizationalUnitsColDefs: ColDef[] = this.constFacilityService.ORGANIZATIONAL_UNITS_COL_DEFS;
+  // autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
 
-  loadingOverlayComponent = GridLoadingOverlayComponent;
-  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
+  // loadingOverlayComponent = GridLoadingOverlayComponent;
+  // loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
-  gridApi: GridApi;
+  // gridApi: GridApi;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -134,77 +118,74 @@ export class FacilityComponent {
   floorPlans = this.form.get('floorPlans') as FormArray;
 
   ngOnInit() {
-    const foreis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
-
-    for (let forea of foreis) {
-      this.store
-        .select(this.organization$(forea))
-        .pipe(take(1))
-        .subscribe((org) => {
-          console.log("Init>>",org);
-          // return this.organization = this.organization.concat(...org);
-        });
-    }
+    this.organizations= this.userService.getMyFacilites()
   }
 
-  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
-    this.gridApi = params.api;
-    this.gridApi.showLoadingOverlay();
-    this.store
-      .select(this.organizationalUits$)
-      .pipe(take(1))
-      .subscribe((data) => {
-        this.organizationalUnits = data.map((org) => {
-          return {
-            ...org,
-            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
-            organization: this.organizationCodesMap.get(org.organizationCode),
-            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
-          };
-        });
-        this.gridOrganizationalUnits = this.organizationalUnits;
-        this.gridApi.hideOverlay();
-      });
-  }
-  allFacilities() {
-    this.gridOrganizationalUnits = this.organizationalUnits;
-  }
+  // onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+  //   this.gridApi = params.api;
+  //   this.gridApi.showLoadingOverlay();
+  //   this.store
+  //     .select(this.organizationalUits$)
+  //     .pipe(take(1))
+  //     .subscribe((data) => {
+  //       this.organizationalUnits = data.map((org) => {
+  //         return {
+  //           ...org,
+  //           organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
+  //           organization: this.organizationCodesMap.get(org.organizationCode),
+  //           subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
+  //         };
+  //       });
+  //       this.gridOrganizationalUnits = this.organizationalUnits;
+  //       this.gridApi.hideOverlay();
+  //     });
+  // }
 
-  myFacilities() {
-    const myForeis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
-    // this.gridOrganizationalUnits = this.organizationalUnits.filter(f => myForeis.includes(f.organizationCode))
-  }
+  // allFacilities() {
+  //   this.gridOrganizationalUnits = this.organizationalUnits;
+  // }
 
-  onCellClicked(event: CellClickedEvent): void {
-    const action = (event.event.target as HTMLElement).getAttribute('data-action');
-    if (!action) return;
+  // myFacilities() {
+  //   const myForeis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
+  //   // this.gridOrganizationalUnits = this.organizationalUnits.filter(f => myForeis.includes(f.organizationCode))
+  // }
 
-    this.organization = event.data.organization;
-    this.organizationCode = event.data.organizationCode;
-    this.organizationalUnit = event.data.preferredLabel;
-    this.organizationalUnitCode = event.data.code;
+  // onCellClicked(event: CellClickedEvent): void {
+  //   const action = (event.event.target as HTMLElement).getAttribute('data-action');
+  //   if (!action) return;
 
-    if (action === 'info') {
-      this.showFacility(event.data);
-    } else if (action === 'edit') {
-      this.editFacility(event.data);
-    } else if (action === 'delete') {
-      this.deleteFacility(event.data)
-    }
-  }
+  //   this.organization = event.data.organization;
+  //   this.organizationCode = event.data.organizationCode;
+  //   this.organizationalUnit = event.data.preferredLabel;
+  //   this.organizationalUnitCode = event.data.code;
 
-  editFacility(data: IOrganizationList) {
-    console.log("Edit", data)
+  //   if (action === 'info') {
+  //     this.showFacility(event.data);
+  //   } else if (action === 'edit') {
+  //     this.editFacility(event.data);
+  //   } else if (action === 'delete') {
+  //     this.deleteFacility(event.data)
+  //   }
+  // }
+
+  newFacility(data: IOrganizationList) {
+    this.organization = data.preferredLabel
+    this.organizationCode = data.code
     this.initiazeForm();
     this.showForm = true;
   }
 
-  showFacility(data: IOrganizationList) {
-    console.log("Show", data)
+  showOrganizationDetails(code: string): void {
+    this.modalService.showOrganizationDetails(code);
   }
 
-  deleteFacility(data: IOrganizationList) {
-    console.log("Delete", data)
+  chooseOrganizationalUnit(){
+    this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
+      .subscribe(result => {
+        this.organizationalUnit = result.preferredLabel;
+        this.organizationalUnitCode = result.code;
+        this.initiazeForm();
+      })
   }
 
   hasFacilityAdminRole() {

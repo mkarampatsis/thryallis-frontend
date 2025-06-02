@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ILegalAct } from '../interfaces/legal-act/legal-act.interface';
 import { ILegalProvision } from '../interfaces/legal-provision/legal-provision.interface';
+import { IOrganizationUnit } from '../interfaces/organization-unit';
 
 import { Observable, take } from 'rxjs';
 
@@ -31,6 +32,7 @@ import { HelpboxAnswerComponent } from '../modals/helpbox-answer/helpbox-answer.
 import { FaqAnswerComponent } from '../modals/faq-answer/faq-answer.component';
 import { IGeneralInfo } from '../interfaces/helpbox/helpbox.interface';
 import { GeneralInfoModalComponent } from '../modals/general-info-modal/general-info-modal.component';
+import { OrganizationUnitsByOrganizationCodeComponent } from '../modals/organization-units-by-organization-code/organization-units-by-organization-code.component';
 
 @Injectable({
     providedIn: 'root',
@@ -282,6 +284,16 @@ export class ModalService {
     });
     modalRef.componentInstance.data = data;
     modalRef.componentInstance.modalRef = modalRef;
+  }
+
+  showOrganizationUnitsByOrganizationCode(code: string) {
+    const modalRef = this.modalService.open(OrganizationUnitsByOrganizationCodeComponent, {
+        size: 'xl',
+        centered: true,
+    });
+    modalRef.componentInstance.code = code;
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<IOrganizationUnit>;
   }
 }
 

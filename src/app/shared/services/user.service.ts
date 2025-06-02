@@ -1,9 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { AuthService } from './auth.service';
+
 import { IUser } from '../interfaces/auth';
+import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
+
+// Store
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/shared/state/app.state';
+import { selectOrganizationByCode$ } from 'src/app/shared/state/organizations.state';
 
 const APIPREFIX_USER = `${environment.apiUrl}/user`;
 
@@ -15,6 +22,9 @@ export class UserService {
   authService = inject(AuthService);
   user = this.authService.user;
 
+  store = inject(Store<AppState>);
+  organization$ = selectOrganizationByCode$
+
   getAllUsers(): Observable<IUser[]> {
     const url = `${APIPREFIX_USER}/all`;
     return this.http.get<IUser[]>(url);
@@ -24,6 +34,24 @@ export class UserService {
     const url = `${APIPREFIX_USER}/myaccesses`;
     return this.http.get<{ organizations: string[]; organizational_units: string[] }>(url);
   }
+
+  getMyFacilites() {
+    const foreis = this.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
+    
+    let organizations: IOrganizationList[] = [];
+
+    for (let forea of foreis) {
+      this.store
+        .select(this.organization$(forea))
+        .pipe(take(1))
+        .subscribe((org) => {
+          organizations = organizations.concat(...org);
+        });
+    }
+
+    return organizations;
+  }
+  
 
   hasHelpDeskRole() {
     return this.user().roles.some((role) => role.role === 'HELPDESK');

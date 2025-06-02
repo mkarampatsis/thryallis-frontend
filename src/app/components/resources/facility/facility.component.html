@@ -1,6 +1,57 @@
-<h1 class="govgr-heading-sm">Ακίνητα Ελληνικού Δημοσίου</h1>
+<h1 class="govgr-heading-md">Ακίνητα Ελληνικού Δημοσίου</h1>
 
-<div class="d-flex justify-content-between mb-2 ">
+@if (hasFacilityAdminRole() || hasFacilityEditorRole()) {
+  <h4 class="govgr-heading-sm">Οι προσβάσεις σας</h4>
+
+  <p class="govgr-body">
+    Στους παρακάτω πίνακες εμφανίζονται οι φορείς που έχετε πρόσβαση και οι επιτρεπτές ενέργειες.
+  </p>
+
+  <h5 class="govgr-heading-md d-flex align-items-center gap-2">
+    Φορείς
+    @if (!organizations) {
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    }
+  </h5>
+
+  @if (organizations.length > 0) {
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Κωδικός</th>
+          <th scope="col">Ονομασία</th>
+          <th scope="col">Ενέργειες</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (organization of organizations; track organization) {
+        <tr class="align-middle">
+          <td>{{ organization.code }}</td>
+          <td>{{ organization.preferredLabel }}</td>
+          <td class="d-flex gap-2 fs-5">
+            <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
+              ngbTooltip="Στοιχεία Φορέα"></i>
+
+            <i class="bi bi-pencil-square" role="button" (click)="newFacility(organization)"
+              ngbTooltip="Επεξεργασία Φορέα"></i>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } @else {
+    <div class="alert alert-info w-25 mb-4 text-center fw-semibold" role="alert">
+      Δεν έχετε πρόσβαση σε φορείς.
+    </div>
+  }
+}
+
+
+<!-- <div class="d-flex justify-content-between mb-2 ">
   <div>
     <span>Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω σε μια γραμμή</span>
   </div>
@@ -14,236 +65,244 @@
     </button>
     }
   </div>
-</div>
+</div> -->
 
-<ag-grid-angular [domLayout]="'autoHeight'" [rowData]="gridOrganizationalUnits" [defaultColDef]="defaultColDef"
+<!-- <ag-grid-angular [domLayout]="'autoHeight'" [rowData]="gridOrganizationalUnits" [defaultColDef]="defaultColDef"
   [columnDefs]="organizationalUnitsColDefs" [pagination]="true" [paginationPageSize]="20"
   [loadingOverlayComponent]="loadingOverlayComponent" [loadingOverlayComponentParams]="loadingOverlayComponentParams"
   (cellClicked)="onCellClicked($event)" (gridReady)="onGridReady($event)" class="ag-theme-balham">
-</ag-grid-angular>
+</ag-grid-angular> -->
 
 <div class="mt-5 mb-5">
   @if(showForm) {
-    <form [formGroup]="form">
-      <p class="h5 mb-3">Εισαγωγή Νέου Ακινήτου και των σχετικών χώρων του</p>
-      
-        <fieldset class="form-group border p-3 mb-3">
-          <legend class="w-auto">Στοιχεία Φορέα/Μονάδας:</legend>
+  <form [formGroup]="form">
+    <p class="h5 mb-3">Εισαγωγή Νέου Ακινήτου και των σχετικών χώρων του</p>
 
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <input type="text" id="kaek" class="form-control" formControlName="organization">
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Στοιχεία Φορέα:</legend>
+
+      <div class="row mb-3">
+        <div class="col-sm-6">
+          <input type="text" id="kaek" class="form-control" formControlName="organization">
+        </div>
+
+        <div class="col-sm-6">
+          <input type="text" id="kaek" class="form-control" formControlName="organizationCode">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-2">
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            (click)="chooseOrganizationalUnit()"
+          >
+            Επιλογή Μονάδας
+          </button>
+        </div>
+
+        <div class="col-sm-5">
+          <input type="text" id="kaek" class="form-control" formControlName="organizationalUnit">
+        </div>
+
+        <div class="col-sm-5">
+          <input type="text" id="kaek" class="form-control" formControlName="organizationalUnitCode">
+        </div>
+      </div>
+
+    </fieldset>
+
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Στοιχεία ακινήτου:</legend>
+
+      <div class="row mb-3">
+        <div class="col-sm-6">
+          <label for="kaek" class="form-label">
+            Κωδικός Ακινήτου Εθνικού Κτηματολογίου:
+          </label>
+          <input type="text" id="kaek" class="form-control" formControlName="kaek">
+        </div>
+
+        <div class="col-sm-6">
+          <label for="belongsTo" class="form-label">
+            ΚΑΕΚ του Γηπέδου ως ανεξάρτητη χωρική υποδομή:
+          </label>
+          <input type="text" id="belongsTo" class="form-control" formControlName="belongsTo">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-5">
+          <label for="distinctiveNameOfFacility" class="form-label">
+            Διακριτή ονομασία του ακινήτου:
+          </label>
+          <input type="text" id="distinctiveNameOfFacility" class="form-control"
+            formControlName="distinctiveNameOfFacility">
+        </div>
+
+        <div class="col-sm-3">
+          <label for="useOfFacility" class="form-label">
+            Χρήση Ακινήτου:
+          </label>
+          <select class="form-select" aria-label="Default select example" id="useOfFacility"
+            formControlName="useOfFacility">
+            <option value="" disabled selected>
+              Επιλέξτε Τύπο Χρήσης
+            </option>
+            @for (item of USE_OF_FACILITY; track item) {
+            <option [ngValue]="item">{{ item }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-sm-4">
+          <span>Aποκλειστική χρήση ακινήτου:</span>
+          <div class="row row-cols-lg-auto g-3 align-items-center">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="uniqueUserOfFacility"
+                id="UniqueUserOfFacility1" value="true" checked>
+              <label class="form-check-label" for="UniqueUserOfFacility1">ΝΑΙ</label>,
             </div>
-
-            <div class="col-sm-6">
-              <input type="text" id="kaek" class="form-control" formControlName="organizationCode">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="uniqueUserOfFacility"
+                id="UniqueUserOfFacility2" value="false">
+              <label class="form-check-label" for="UniqueUserOfFacility2">ΟΧΙ</label>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <input type="text" id="kaek" class="form-control" formControlName="organizationalUnit">
-            </div>
+      <div class="row mb-3">
+        <div class="col-sm-5">
+          <label for="coveredPremisesArea" class="form-label">
+            Συνολικός στεγασμένος χώρος του ακινήτου σε τ.μ:
+          </label>
+          <input type="text" id="coveredPremisesArea" class="form-control" formControlName="coveredPremisesArea">
+        </div>
 
-            <div class="col-sm-6">
-              <input type="text" id="kaek" class="form-control" formControlName="organizationalUnitCode">
-            </div>
-          </div>
+        <div class="col-sm-7">
+          <label for="floorsOrLevels" class="form-label">
+            Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων:
+          </label>
+          <input type="text" id="floorsOrLevels" class="form-control" formControlName="floorsOrLevels">
+        </div>
+      </div>
+    </fieldset>
 
-        </fieldset>
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Καταγραφή ορόφων:</legend>
+      <div class="mb-3" formArrayName="floorPlans">
+        <div *ngFor="let p of floorPlans.controls; let i = index" [formGroupName]="i">
+          <div class="row g-3 mb-3">
 
-        <fieldset class="form-group border p-3 mb-3">
-          <legend class="w-auto">Στοιχεία ακινήτου:</legend>
-
-          <div class="row mb-3">
-            <div class="col-sm-6">
-              <label for="kaek" class="form-label">
-                Κωδικός Ακινήτου Εθνικού Κτηματολογίου:
-              </label>
-              <input type="text" id="kaek" class="form-control" formControlName="kaek">
-            </div>
-
-            <div class="col-sm-6">
-              <label for="belongsTo" class="form-label">
-                ΚΑΕΚ του Γηπέδου ως ανεξάρτητη χωρική υποδομή:
-              </label>
-              <input type="text" id="belongsTo" class="form-control" formControlName="belongsTo">
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-sm-5">
-              <label for="distinctiveNameOfFacility" class="form-label">
-                Διακριτή ονομασία του ακινήτου:
-              </label>
-              <input type="text" id="distinctiveNameOfFacility" class="form-control"
-                formControlName="distinctiveNameOfFacility">
-            </div>
-
-            <div class="col-sm-3">
-              <label for="useOfFacility" class="form-label">
-                Χρήση Ακινήτου:
-              </label>
-              <select class="form-select" aria-label="Default select example" id="useOfFacility"
-                formControlName="useOfFacility">
+            <div class="col-sm-2">
+              <select class="form-select" aria-label="Default select example" formControlName="level"
+                (change)="selectLevel($event)">
                 <option value="" disabled selected>
-                  Επιλέξτε Τύπο Χρήσης
+                  Επιλέξτε επίπεδο
                 </option>
-                @for (item of USE_OF_FACILITY; track item) {
-                  <option [ngValue]="item">{{ item }}</option>
+                @for (item of FLOORPLANS; track item) {
+                <option [ngValue]="item">{{ item }}</option>
                 }
               </select>
             </div>
 
+            <div class="col-sm-2">
+              @if (planFloorsNumField === 1) {
+              <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num"
+                formControlName="num">
+              } @else if (planFloorsNumField === 2) {
+              <input type="number" class="form-control" min="0" max="0" placeholder="Επίπεδο" aria-label="num"
+                formControlName="num">
+              } @else if (planFloorsNumField === 3) {
+              <input type="number" class="form-control" max="-1" placeholder="Επίπεδο" aria-label="num"
+                formControlName="num">
+              } @else if (planFloorsNumField === 4) {
+              <input type="number" class="form-control" min="1000" max="1000" placeholder="Επίπεδο" aria-label="num"
+                formControlName="num">
+              }
+            </div>
+
+            <div class="col-sm-3">
+              <input type="text" class="form-control" placeholder="Έμβαδόν ορόφου/επιπέδου σε τ.μ"
+                aria-label="floor area" formControlName="floorArea">
+            </div>
+
             <div class="col-sm-4">
-              <span>Aποκλειστική χρήση ακινήτου:</span>
-              <div class="row row-cols-lg-auto g-3 align-items-center">
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" formControlName="uniqueUserOfFacility"
-                    id="UniqueUserOfFacility1" value="true" checked>
-                  <label class="form-check-label" for="UniqueUserOfFacility1">ΝΑΙ</label>,
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" formControlName="uniqueUserOfFacility"
-                    id="UniqueUserOfFacility2" value="false">
-                  <label class="form-check-label" for="UniqueUserOfFacility2">ΟΧΙ</label>
+              <!-- <input type="text" class="form-control" placeholder="Αρχείο κάτοψης του ορόφου/επιπέδου:" aria-label="floor file" formControlName="floorPlan"> -->
+
+              <input #fileInput class="form-control" type="file" multiple (change)="selectFile($event)" />
+              <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
+              @if (progress) {
+              <div class="progress mt-2">
+                <div class="progress-bar progress-bar-info" role="progressbar" attr.aria-valuenow="{{ progress }}"
+                  aria-valuemin="0" aria-valuemax="100" [ngStyle]="{ width: progress + '%' }">
+                  {{ progress }}%
                 </div>
               </div>
+              }
+              @if (!checkFileStatus){
+              <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
+              }
             </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-sm-5">
-              <label for="coveredPremisesArea" class="form-label">
-                Συνολικός στεγασμένος χώρος του ακινήτου σε τ.μ:
-              </label>
-              <input type="text" id="coveredPremisesArea" class="form-control" formControlName="coveredPremisesArea">
-            </div>
-
-            <div class="col-sm-7">
-              <label for="floorsOrLevels" class="form-label">
-                Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων:
-              </label>
-              <input type="text" id="floorsOrLevels" class="form-control" formControlName="floorsOrLevels">
-            </div>
-          </div>
-      </fieldset>
-            
-      <fieldset class="form-group border p-3 mb-3">
-        <legend class="w-auto">Καταγραφή ορόφων:</legend>
-        <div class="mb-3" formArrayName="floorPlans">          
-          <div *ngFor="let p of floorPlans.controls; let i = index" [formGroupName]="i">
-            <div class="row g-3 mb-3">
-              
-              <div class="col-sm-2">
-                <select class="form-select" aria-label="Default select example" formControlName="level" (change)="selectLevel($event)">
-                  <option value="" disabled selected>
-                    Επιλέξτε επίπεδο
-                  </option>
-                  @for (item of FLOORPLANS; track item) {
-                    <option [ngValue]="item">{{ item }}</option>
-                  }
-                </select>
-              </div>
-
-              <div class="col-sm-2">
-                @if (planFloorsNumField === 1) {
-                  <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                } @else if (planFloorsNumField === 2) {
-                  <input type="number" class="form-control" min="0" max="0" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                } @else if (planFloorsNumField === 3) {
-                  <input type="number" class="form-control"  max="-1" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                } @else if (planFloorsNumField === 4) {
-                  <input type="number" class="form-control" min="1000"  max="1000" placeholder="Επίπεδο" aria-label="num" formControlName="num">
-                }
-              </div>
-
-              <div class="col-sm-3">
-                <input type="text" class="form-control" placeholder="Έμβαδόν ορόφου/επιπέδου σε τ.μ" aria-label="floor area" formControlName="floorArea">
-              </div>
-  
-              <div class="col-sm-4">
-                <!-- <input type="text" class="form-control" placeholder="Αρχείο κάτοψης του ορόφου/επιπέδου:" aria-label="floor file" formControlName="floorPlan"> -->
-
-                <input
-                  #fileInput
-                  class="form-control"
-                  type="file"
-                  multiple
-                  (change)="selectFile($event)" />
-                  <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
-                  @if (progress) {
-                    <div class="progress mt-2">
-                      <div
-                        class="progress-bar progress-bar-info"
-                        role="progressbar"
-                        attr.aria-valuenow="{{ progress }}"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                        [ngStyle]="{ width: progress + '%' }">
-                        {{ progress }}%
-                      </div>
-                    </div>
-                  }
-                  @if (!checkFileStatus){
-                    <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
-                  }    
-              </div>
-              <div class="col-sm-1 d-flex gap-2">
-                <!-- {{floorPlans.controls[i].valid && i === floorPlans.controls.length - 1}} -->
-                <button *ngIf="i === floorPlans.controls.length - 1" (click)="addFloorPlan()">
-                  <i class="bi bi-plus-circle text-primary fs-5"></i>
-                </button>
-                <button *ngIf="floorPlans.controls.length > 1" (click)="removeFloorPlan(i)">
-                  <i class="bi bi-x-square text-danger fs-5"></i>
-                </button>
-              </div>
+            <div class="col-sm-1 d-flex gap-2">
+              <!-- {{floorPlans.controls[i].valid && i === floorPlans.controls.length - 1}} -->
+              <button *ngIf="i === floorPlans.controls.length - 1" (click)="addFloorPlan()">
+                <i class="bi bi-plus-circle text-primary fs-5"></i>
+              </button>
+              <button *ngIf="floorPlans.controls.length > 1" (click)="removeFloorPlan(i)">
+                <i class="bi bi-x-square text-danger fs-5"></i>
+              </button>
             </div>
           </div>
         </div>
-      </fieldset>
-
-      <fieldset class="form-group border p-3 mb-3">
-        <legend class="w-auto">Στοιχεία διεύθυνσης ακινήτου:</legend>
-        <div formGroupName="addressOfFacility">
-          <div class="row g-3 mb-3">
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="Οδός" aria-label="street" formControlName="street">
-              </div>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="Αριθμός" aria-label="number" formControlName="number">
-              </div>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="ΤΚ" aria-label="postcode" formControlName="postcode">
-              </div>
-          </div>
-          <div class="row g-3 mb-3">
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="Τοποθεσία" aria-label="area" formControlName="area">
-              </div>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="Δήμος" aria-label="municipality" formControlName="municipality">
-              </div>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="Γεωγραφική Περιφέρεια" aria-label="geographic region" formControlName="geographicRegion">
-              </div>
-          </div>
-          <div class="row g-3 mb-3">
-              <div class="col-sm-4">
-                <input type="text" class="form-control" placeholder="Χώρα" aria-label="country" formControlName="country">
-              </div>
-          </div>
-        </div>
-      </fieldset>
-      
-      <fieldset class="form-group border p-3 mb-3">
-        <legend class="w-auto">Επιμέρους χώροι ακινήτου:</legend>
-      </fieldset>
-
-      <div class="d-flex gap-2">
-        <button class="btn btn-primary">Υποβολή</button>
-        <button class="btn btn-danger">Καθάρισμα</button>
       </div>
-    </form>
+    </fieldset>
+
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Στοιχεία διεύθυνσης ακινήτου:</legend>
+      <div formGroupName="addressOfFacility">
+        <div class="row g-3 mb-3">
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="Οδός" aria-label="street" formControlName="street">
+          </div>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="Αριθμός" aria-label="number" formControlName="number">
+          </div>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="ΤΚ" aria-label="postcode" formControlName="postcode">
+          </div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="Τοποθεσία" aria-label="area" formControlName="area">
+          </div>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="Δήμος" aria-label="municipality"
+              formControlName="municipality">
+          </div>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="Γεωγραφική Περιφέρεια" aria-label="geographic region"
+              formControlName="geographicRegion">
+          </div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-4">
+            <input type="text" class="form-control" placeholder="Χώρα" aria-label="country" formControlName="country">
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Επιμέρους χώροι ακινήτου:</legend>
+    </fieldset>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary">Υποβολή</button>
+      <button class="btn btn-danger">Καθάρισμα</button>
+    </div>
+  </form>
   }
 </div>

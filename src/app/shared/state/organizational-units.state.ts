@@ -78,8 +78,8 @@ export const selectOrganizationCodeByOrganizationalUnitCode$ = (organizationalUn
 export const selectOrganizationalUnitCodeByOrganizationCode$ = (organizationCode: string) =>
     createSelector(selectOrganizationalUnits$, (organizationalUnits) => {
         const codes = organizationalUnits
-                    .filter(ou => ou.organizationCode === organizationCode)
-                    .map(ou => ou.code);
+            .filter(ou => ou.organizationCode === organizationCode)
+            .map(ou => ou.code);
         return codes ? codes : null;
     });    
 
@@ -87,7 +87,7 @@ export const selectOrganizationalUnitCodeByOrganizationCode$ = (organizationCode
 export const selectOrganizationalUnitByOrganizationCode$ = (organizationCode: string) =>
     createSelector(selectOrganizationalUnits$, (organizationalUnits) => {
         const codes = organizationalUnits
-                    .filter(ou => ou.organizationCode === organizationCode)
+            .filter(ou => ou.organizationCode === organizationCode)
         return codes ? codes : null;
     });
 
@@ -95,10 +95,9 @@ export const selectOrganizationalUnitByOrganizationCode$ = (organizationCode: st
 export const selectOrganizationalUnitBysupervisorUnitCode$ = (code: string) =>
 createSelector(selectOrganizationalUnits$, (organizationalUnits) => {
     const codes = organizationalUnits
-                .filter(ou => ou.supervisorUnitCode === code)
+        .filter(ou => ou.supervisorUnitCode === code)
     return codes ? codes : null;
 });
-
 
 // Organizational Units Effects
 export const getOrganizationalUnitsEffect = createEffect(
