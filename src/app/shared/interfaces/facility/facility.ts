@@ -31,6 +31,7 @@ export interface IFacility {
 }
 
 export interface ISpace {
+  facilityID: string;
   spaceName: string;
   spaceUse: string;
   spaceUseTree: string[];

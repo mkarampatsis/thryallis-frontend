@@ -33,6 +33,8 @@ import { FaqAnswerComponent } from '../modals/faq-answer/faq-answer.component';
 import { IGeneralInfo } from '../interfaces/helpbox/helpbox.interface';
 import { GeneralInfoModalComponent } from '../modals/general-info-modal/general-info-modal.component';
 import { OrganizationUnitsByOrganizationCodeComponent } from '../modals/organization-units-by-organization-code/organization-units-by-organization-code.component';
+import { FaciltySpaceComponent } from '../modals/facilty-space/facilty-space.component';
+import { IFacility, ISpace } from '../interfaces/facility/facility';
 
 @Injectable({
     providedIn: 'root',
@@ -294,6 +296,16 @@ export class ModalService {
     modalRef.componentInstance.code = code;
     modalRef.componentInstance.modalRef = modalRef;
     return modalRef.dismissed.pipe(take(1)) as Observable<IOrganizationUnit>;
+  }
+
+  addFaciltySpace(facility: IFacility) {
+    const modalRef = this.modalService.open(FaciltySpaceComponent, {
+        size: 'xl',
+        centered: true,
+    });
+    modalRef.componentInstance.facilty = facility;
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<ISpace>;
   }
 }
 

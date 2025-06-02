@@ -16,6 +16,7 @@ import { IOrganizationList } from 'src/app/shared/interfaces/organization/organi
 import { IFacility } from 'src/app/shared/interfaces/facility/facility';
 
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { take } from 'rxjs';
 
@@ -26,7 +27,8 @@ import { take } from 'rxjs';
     CommonModule,
     AgGridAngular,
     AgGridNoRowsOverlayComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbTooltipModule
   ],
   templateUrl: './facility.component.html',
   styleUrl: './facility.component.css'
@@ -79,7 +81,7 @@ export class FacilityComponent {
     belongsTo: new FormControl('', Validators.required),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
     useOfFacility: new FormControl('', Validators.required),
-    uniqueUserOfFacility: new FormControl(''),
+    uniqueUserOfFacility: new FormControl('true'),
     coveredPremisesArea: new FormControl('', Validators.required),
     floorsOrLevels: new FormControl('', Validators.required),
     floorPlans: new FormArray([
@@ -99,20 +101,7 @@ export class FacilityComponent {
       geographicRegion: new FormControl('', Validators.required),
       country: new FormControl('ΕΛΛΑΣ', Validators.required),
     }),
-    spaces: new FormArray([
-      new FormGroup({
-        spaceName: new FormControl('', Validators.required),
-        spaceUse: new FormControl('', Validators.required),
-        spaceUseTree: new FormControl('', Validators.required),
-        spaceArea: new FormControl('', Validators.required),
-        spaceLength: new FormControl('', Validators.required),
-        spaceWidth: new FormControl('', Validators.required),
-        entrances: new FormControl('', Validators.required),
-        windows: new FormControl('', Validators.required),
-        floor_level: new FormControl('', Validators.required)
-      })
-    ]),
-    finalized: new FormControl(false, Validators.required),
+    finalized: new FormControl('false'),
   });
 
   floorPlans = this.form.get('floorPlans') as FormArray;
@@ -171,7 +160,8 @@ export class FacilityComponent {
   newFacility(data: IOrganizationList) {
     this.organization = data.preferredLabel
     this.organizationCode = data.code
-    this.initiazeForm();
+    this.form.controls.organization.setValue(this.organization);
+    this.form.controls.organizationCode.setValue(this.organizationCode);
     this.showForm = true;
   }
 
@@ -184,7 +174,8 @@ export class FacilityComponent {
       .subscribe(result => {
         this.organizationalUnit = result.preferredLabel;
         this.organizationalUnitCode = result.code;
-        this.initiazeForm();
+        this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
+        this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
       })
   }
 
@@ -246,11 +237,43 @@ export class FacilityComponent {
     }
   }
 
-  initiazeForm(): void {
-    this.form.controls.organization.setValue(this.organization);
-    this.form.controls.organizationCode.setValue(this.organizationCode);
-    this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
-    this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
+  initializeForm(): void {
+    this.form.controls.organizationalUnit.setValue('');
+    this.form.controls.organizationalUnitCode.setValue('');
+    this.form.patchValue({
+      organization: '',
+      organizationCode: '',
+      organizationalUnit: '',
+      organizationalUnitCode: '',
+      kaek: '',
+      belongsTo: '',
+      distinctiveNameOfFacility: '',
+      useOfFacility: '',
+      uniqueUserOfFacility: '',
+      coveredPremisesArea: '',
+      floorsOrLevels: '',
+      floorPlans: [],
+      addressOfFacility: {
+        street: '',
+        number: '',
+        postcode: '',
+        area: '',
+        municipality: '',
+        geographicRegion: '',
+        country: '',
+      },
+      finalized: 'false',
+    });
+
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+
+    // Clear the native file input selection
+    if (this.fileInput?.nativeElement) {
+        this.fileInput.nativeElement.value = '';
+    }
+
+    this.progress = 0;
   };
 
   selectLevel(event: Event): void {
@@ -283,37 +306,46 @@ export class FacilityComponent {
   removeFloorPlan(index: number) {
     this.floorPlans.removeAt(index);
   }
-}
 
-export class HtmlCellRenderer implements ICellRendererAngularComp {
-  params: any;
-  showFullText = false;
-  shortText = '';
-  isLongText = false;
-
-  agInit(params: any): void {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
-    }
+  resetForm(){
+    this.initializeForm(); 
   }
 
-  refresh(params: any): boolean {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
-    }
-    this.showFullText = false; // Reset the text display state
-    return true;
+  submitForm(){
+    console.log(this.form.value);
   }
 
-  toggleText(): void {
-    this.showFullText = !this.showFullText;
+  addSpace(){
+    console.log("Add space");
+    const facilty: IFacility = {
+      organization: {
+        code: '',
+        preferredLabel: ''
+      },
+      kaek: '',
+      belongsTo: '',
+      distinctiveNameOfFacility: '',
+      useOfFacility: '',
+      uniqueUserOfFacility: false,
+      coveredPremisesArea: 0,
+      floors_levels: 0,
+      floorplans: [],
+      addressOfFacility: {
+        street: '',
+        number: 0,
+        postcode: '',
+        area: '',
+        municipality: '',
+        geographicRegion: '',
+        country: ''
+      },
+      finalized: ''
+    };
+    
+    this.modalService.addFaciltySpace(facilty)
+      .subscribe(result => {
+        console.log("Space", result)
+      })
   }
+
 }
