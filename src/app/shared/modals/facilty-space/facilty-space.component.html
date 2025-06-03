@@ -9,9 +9,32 @@
     <form [formGroup]="form">
       <div class="row mb-3">
         <div class="col-sm-6">
-          <label for="spaceName">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου</label>
+          <label for="spaceName" class="form-label">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου</label>
           <input type="text" id="spaceName" class="form-control" formControlName="spaceName">
         </div>
+      </div>
+
+      <div class="row mb-3" formGroupName="spaceUse">
+        <div class="col-sm-4">
+          <select class="form-select" formControlName="type" (change)="onTypeChange()">
+            <option value="">-- Επιλογή Τύπου --</option>
+            <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="subtypes.length > 0" class="col-sm-4">
+            <select class="form-select" formControlName="subtype" (change)="onSubtypeChange()">
+              <option value="">-- Επιλογή Υποτύπου --</option>
+              <option *ngFor="let st of subtypes" [value]="st">{{ st }}</option>
+          </select>
+        </div>
+
+        <div class="col-sm-4">
+          <select class="form-select" formControlName="space">
+            <option value="">-- Επιλογή Χώρου --</option>
+            <option *ngFor="let s of spaces" [value]="s">{{ s }}</option>
+          </select>
+        </div >
       </div>
       
       <div class="d-flex gap-2">

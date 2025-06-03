@@ -488,19 +488,6 @@ export class ConstFacilityService {
     },
   ];
 
-  getSpaceUse(spaceUse1Code: string, spaceUse2Code: string): string[] | null {
-    const spaceUse1 = this.SPACE_USE.find((item) => item.type === spaceUse1Code);
-    if (!spaceUse1) return null;
-
-    const spaceUse2 = spaceUse1.spaces.find((item) => item["type"] === spaceUse2Code);
-    if (!spaceUse2) return null;
-
-    // const cofog3 = cofog2.cofog3.find((cofog) => cofog.code === cofog3Code);
-    // if (!cofog3) return null;
-
-    return [spaceUse1.spaces, spaceUse2["spaces"]];
-  }
-
   removeAccents(input: string): string {
     return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
