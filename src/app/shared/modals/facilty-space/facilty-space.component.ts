@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+
+import { ConstFacilityService } from '../../services/const-facility.service';
+
 import { IFacility } from '../../interfaces/facility/facility';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -10,9 +13,15 @@ import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Va
   styleUrl: './facilty-space.component.css'
 })
 export class FaciltySpaceComponent {
-
+  constFacilityService = inject(ConstFacilityService)
   modalRef: any;
   facilty: IFacility;
+
+  cofog1 = this.constService.COFOG;
+  cofog2: ICofog2[] = [];
+  cofog3: ICofog3[] = [];
+  cofog1_selected: boolean = false;
+  cofog2_selected: boolean = false;
 
   form = new FormGroup({
     facilityID: new FormControl('', Validators.required),
