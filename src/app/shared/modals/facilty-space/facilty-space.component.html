@@ -8,7 +8,7 @@
     
     <form [formGroup]="form">
       <div class="row mb-3">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
           <label for="spaceName" class="form-label">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου</label>
           <input type="text" id="spaceName" class="form-control" formControlName="spaceName">
         </div>
@@ -16,25 +16,97 @@
 
       <div class="row mb-3" formGroupName="spaceUse">
         <div class="col-sm-4">
-          <select class="form-select" formControlName="type" (change)="onTypeChange()">
-            <option value="">-- Επιλογή Τύπου --</option>
+          <select class="form-select" id="type" formControlName="type" (change)="onTypeChange()">
+            <option value="">Τρόπος χρήσης χώρου</option>
             <option *ngFor="let t of types" [value]="t">{{ t }}</option>
           </select>
         </div>
 
         <div *ngIf="subtypes.length > 0" class="col-sm-4">
-            <select class="form-select" formControlName="subtype" (change)="onSubtypeChange()">
-              <option value="">-- Επιλογή Υποτύπου --</option>
-              <option *ngFor="let st of subtypes" [value]="st">{{ st }}</option>
+          <select class="form-select" id="subtype" formControlName="subtype" (change)="onSubtypeChange()">
+            <option value="">Επιλογή Υποτύπου</option>
+            <option *ngFor="let st of subtypes" [value]="st">{{ st }}</option>
           </select>
         </div>
 
-        <div class="col-sm-4">
+        <div *ngIf="spaces.length > 0" class="col-sm-4">
           <select class="form-select" formControlName="space">
-            <option value="">-- Επιλογή Χώρου --</option>
+            <option value="">Επιλογή Χώρου</option>
             <option *ngFor="let s of spaces" [value]="s">{{ s }}</option>
           </select>
         </div >
+      </div>
+
+      <!-- <div class="row mb-3">
+        <div class="col-sm-12">
+          <select class="form-select" formControlName="auxiliarySpace">
+            <option>Βοηθητικός Χώρος</option>
+            <option *ngFor="let s of AUXILIARY_SPACES" [value]="s">{{ s }}</option>
+          </select> 
+        </div>
+      </div> -->
+
+      <div class="row mb-3">
+        <div class="col-sm-4">
+          <label for="spaceArea" class="form-label">Το εμβαδόν του χώρου σε τετραγωνικά μέτρα</label>
+          <input type="number" id="spaceArea" min="0" class="form-control" formControlName="spaceArea">
+        </div>
+
+        <div class="col-sm-4">
+          <label for="spaceLength" class="form-label">Το μήκος του χώρου σε μέτρα</label>
+          <input type="number" min="0" id="spaceLength" class="form-control" formControlName="spaceLength">
+        </div >
+
+        <div class="col-sm-4">
+          <label for="spaceWidth" class="form-label">Το πλάτος του χώρου σε μέτρα</label>
+          <input type="number" min="0" id="spaceWidth" class="form-control" formControlName="spaceWidth">
+        </div >
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-6">
+          <label for="entrances" class="form-label">Ο αριθμός των εισόδων του χώρου</label>
+          <input type="number" min="0" id="entrances" class="form-control" formControlName="entrances">
+        </div>
+
+        <div class="col-sm-6">
+          <label for="windows" class="form-label">Ο αριθμός των παραθύρων του χώρου</label>
+          <input type="number" min="0" id="windows" class="form-control" formControlName="windows">
+        </div >
+      </div>
+
+      <div class="row mb-3" formGroupName="floorPlans">
+        <div class="col-sm-6">
+          <label for="level" class="form-label">Εισάγετε τον όροφο/επίπεδο στο οποίο βρίσκεται ο χώρος</label>
+          <select class="form-select" aria-label="Area Level" id="level" formControlName="level"
+            (change)="selectLevel($event)">
+            <option value="">
+              Επιλέξτε επίπεδο
+            </option>
+            @for (item of FLOORPLANS; track item) {
+            <option [ngValue]="item">{{ item }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-sm-6">
+          @if (planFloorsNumField!=0) {
+            <label for="num" class="form-label">Επιλέξτε επίπεδο</label>
+          }
+          @if (planFloorsNumField === 1) {
+          <input type="number" class="form-control" id="num" min="1" placeholder="Επίπεδο" aria-label="num"
+            formControlName="num">
+          } @else if (planFloorsNumField === 2) {
+          <input type="number" class="form-control" id="num" min="0" max="0" placeholder="Επίπεδο" aria-label="num"
+            formControlName="num">
+          } @else if (planFloorsNumField === 3) {
+          <input type="number" class="form-control" id="num" max="-1" placeholder="Επίπεδο" aria-label="num"
+            formControlName="num">
+          } @else if (planFloorsNumField === 4) {
+          <input type="number" class="form-control" id="num" min="1000" max="1000" placeholder="Επίπεδο" aria-label="num"
+            formControlName="num">
+          }
+        </div>
       </div>
       
       <div class="d-flex gap-2">
