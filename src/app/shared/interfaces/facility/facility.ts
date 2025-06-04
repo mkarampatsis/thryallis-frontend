@@ -1,26 +1,26 @@
 export interface IFloorPlans {
   level: string;
-  num: number;
-  floorArea: number;
-  floorPlan: string
+  num: string;
+  floorArea: string;
+  floorPlan: string[];
 }
 
 export interface IFacility {
-  organization: {
-    code: string;
-    preferredLabel: string;
-  };
-  kaek: string,
-  belongsTo: string,
+  organization: string;
+  organizationCode: string;
+  organizationalUnit: string;
+  organizationalUnitCode: string;
+  kaek: string;
+  belongsTo: string;
   distinctiveNameOfFacility: string;
   useOfFacility: string;
-  uniqueUserOfFacility: boolean;
-  coveredPremisesArea: number;
-  floors_levels: number;
-  floorplans: IFloorPlans[];
+  uniqueUseOfFacility: string;
+  coveredPremisesArea: string;
+  floorsOrLevels: string;
+  floorPlans: IFloorPlans[];
   addressOfFacility: {
     street: string;
-    number: number;
+    number: string;
     postcode: string;
     area: string;
     municipality: string;

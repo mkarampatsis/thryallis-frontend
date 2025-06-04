@@ -7,47 +7,47 @@ import { IRemit } from '../interfaces/remit/remit.interface';
 const APIPREFIX = `${environment.apiUrl}/remit`;
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class RemitService {
-    http = inject(HttpClient);
+  http = inject(HttpClient);
 
-    remitsNeedUpdate = signal<boolean>(false);
+  remitsNeedUpdate = signal<boolean>(false);
 
-    newRemit(data: IRemit): Observable<{ msg: string; index: IRemit }> {
-        return this.http.post<{ msg: string; index: IRemit }>(APIPREFIX, data);
-    }
+  newRemit(data: IRemit): Observable<{ msg: string; index: IRemit }> {
+    return this.http.post<{ msg: string; index: IRemit }>(APIPREFIX, data);
+  }
 
-    updateRemit(data: IRemit): Observable<{ msg: string; index: IRemit }> {
-        return this.http.put<{ msg: string; index: IRemit }>(APIPREFIX, data);
-    }
+  updateRemit(data: IRemit): Observable<{ msg: string; index: IRemit }> {
+    return this.http.put<{ msg: string; index: IRemit }>(APIPREFIX, data);
+  }
 
-    getAllRemits(): Observable<IRemit[]> {
-        return this.http.get<IRemit[]>(APIPREFIX);
-    }
+  getAllRemits(): Observable<IRemit[]> {
+    return this.http.get<IRemit[]>(APIPREFIX);
+  }
 
-    getRemitsByCode(code: string): Observable<IRemit[]> {
-        const url = `${APIPREFIX}/by_code/${code}`;
-        return this.http.get<IRemit[]>(url);
-    }
+  getRemitsByCode(code: string): Observable<IRemit[]> {
+    const url = `${APIPREFIX}/by_code/${code}`;
+    return this.http.get<IRemit[]>(url);
+  }
 
-    copyRemit(id: string): Observable<{ msg: string; remit: IRemit }> {
-        const url = `${APIPREFIX}/copy/${id}`;
-        return this.http.get<{ msg: string; remit: IRemit }>(url);
-    }
+  copyRemit(id: string): Observable<{ msg: string; remit: IRemit }> {
+    const url = `${APIPREFIX}/copy/${id}`;
+    return this.http.get<{ msg: string; remit: IRemit }>(url);
+  }
 
-    count(): Observable<{ count: number }> {
-        const url = `${APIPREFIX}/count`;
-        return this.http.get<{ count: number }>(url);
-    }
+  count(): Observable<{ count: number }> {
+    const url = `${APIPREFIX}/count`;
+    return this.http.get<{ count: number }>(url);
+  }
 
-    changeStatus(id: string, status: string): Observable<{ msg: string }> {
-        const url = `${APIPREFIX}/status/${id}`;
-        return this.http.put<{ msg: string }>(url, { status });
-    }
+  changeStatus(id: string, status: string): Observable<{ msg: string }> {
+    const url = `${APIPREFIX}/status/${id}`;
+    return this.http.put<{ msg: string }>(url, { status });
+  }
 
-    deleteRemitByID(remitID: string): Observable<{message: string}> {
-        const url = `${APIPREFIX}/${remitID}`;
-        return this.http.delete<{ message: string }>(url);
-    }
+  deleteRemitByID(remitID: string): Observable<{ message: string }> {
+    const url = `${APIPREFIX}/${remitID}`;
+    return this.http.delete<{ message: string }>(url);
+  }
 }

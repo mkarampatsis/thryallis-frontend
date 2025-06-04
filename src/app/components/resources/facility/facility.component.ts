@@ -10,6 +10,7 @@ import { ConstService } from 'src/app/shared/services/const.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
+import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
@@ -41,6 +42,7 @@ export class FacilityComponent {
   userService = inject(UserService);
   modalService = inject(ModalService);
   uploadService = inject(FileUploadService);
+  resourcesService = inject(ResourcesService);
 
   organizations: IOrganizationList[] = [];
 
@@ -75,13 +77,13 @@ export class FacilityComponent {
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationalUnit: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationalUnitCode: new FormControl({ value: '', disabled: true }, Validators.required),
+    organizationalUnit: new FormControl({ value: '', disabled: true }),
+    organizationalUnitCode: new FormControl({ value: '', disabled: true }),
     kaek: new FormControl('', Validators.required),
     belongsTo: new FormControl('', Validators.required),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
     useOfFacility: new FormControl('', Validators.required),
-    uniqueUserOfFacility: new FormControl('true'),
+    uniqueUseOfFacility: new FormControl('true'),
     coveredPremisesArea: new FormControl('', Validators.required),
     floorsOrLevels: new FormControl('', Validators.required),
     floorPlans: new FormArray([
@@ -249,10 +251,15 @@ export class FacilityComponent {
       belongsTo: '',
       distinctiveNameOfFacility: '',
       useOfFacility: '',
-      uniqueUserOfFacility: '',
+      uniqueUseOfFacility: 'true',
       coveredPremisesArea: '',
       floorsOrLevels: '',
-      floorPlans: [],
+      floorPlans: [{
+        level: '',
+        num: '',
+        floorArea: '',
+        floorPlan: [],
+      }],
       addressOfFacility: {
         street: '',
         number: '',
@@ -276,17 +283,29 @@ export class FacilityComponent {
     this.progress = 0;
   };
 
-  selectLevel(event: Event): void {
+  selectLevel(event: Event, i: number): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value.split(':')[1].trim();
+    
+    const selectedOption = this.floorPlans.at(i).get('level')?.value;
+    this.floorPlans.at(i).get('num').enable();
+    this.floorPlans.at(i).get('floorArea').enable();
+    this.floorPlans.at(i).get('floorPlan').enable();
+
+    console.log("Index", i)
+
     if (value == 'Όροφος') {
       this.planFloorsNumField = 1;
     } else if (value == 'Ισόγειο') {
+      this.floorPlans.at(i).get('num').setValue('0')
+      this.floorPlans.at(i).get('num').disable({ emitEvent: false })
       this.planFloorsNumField = 2;
     } else if (value == 'Υπόγειο') {
       this.planFloorsNumField = 3;
     } else if (value == 'Ημιυπόγειο' || value == 'Ημιόροφος' || value == 'Ταράτσα') {
       this.planFloorsNumField = 4;
+      this.floorPlans.at(i).get('num').setValue('-')
+      this.floorPlans.at(i).get('num').disable({ emitEvent: false })
     } else {
       this.planFloorsNumField = 0;
     }
@@ -296,9 +315,9 @@ export class FacilityComponent {
     this.floorPlans.push(
       new FormGroup({
         level: new FormControl('', Validators.required),
-        num: new FormControl('', Validators.required),
-        floorArea: new FormControl('', Validators.required),
-        floorPlan: new FormControl([]),
+        num: new FormControl({value: '', disabled: true}, Validators.required),
+        floorArea: new FormControl({value: '', disabled: true}, Validators.required),
+        floorPlan: new FormControl({value: [], disabled: true}),
       }),
     );
   }
@@ -313,33 +332,50 @@ export class FacilityComponent {
 
   submitForm(){
     console.log(this.form.value);
+    const data = this.form.value as IFacility;
+    data["organization"] = this.organization;
+    data["organizationCode"] = this.organizationCode;
+
+    data["organizationalUnit"] = this.organizationalUnit;
+    data["organizationalUnitCode"] = this.organizationalUnitCode;
+    console.log(data);
+
+    this.resourcesService.newFacility(data)
+      .subscribe(result => {
+        console.log("Add facility", result)
+      })
   }
 
   addSpace(){
     console.log("Add space");
     const facilty: IFacility = {
-      organization: {
-        code: '',
-        preferredLabel: ''
-      },
+      organization: '',
+      organizationCode: '',
       kaek: '',
       belongsTo: '',
       distinctiveNameOfFacility: '',
       useOfFacility: '',
-      uniqueUserOfFacility: false,
-      coveredPremisesArea: 0,
-      floors_levels: 0,
-      floorplans: [],
+      uniqueUseOfFacility: 'true',
+      coveredPremisesArea: '',
+      floorsOrLevels: '',
+      floorPlans: [{
+        level: '',
+        num: '',
+        floorArea: '',
+        floorPlan: [],
+      }],
       addressOfFacility: {
         street: '',
-        number: 0,
+        number: '',
         postcode: '',
         area: '',
         municipality: '',
         geographicRegion: '',
         country: ''
       },
-      finalized: ''
+      finalized: '',
+      organizationalUnit: '',
+      organizationalUnitCode: ''
     };
     
     this.modalService.addFaciltySpace(facilty)

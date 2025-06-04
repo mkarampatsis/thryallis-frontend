@@ -150,12 +150,12 @@
           <span>Aποκλειστική χρήση ακινήτου:</span>
           <div class="row row-cols-lg-auto g-3 align-items-center">
             <div class="form-check">
-              <input class="form-check-input" type="radio" formControlName="uniqueUserOfFacility"
+              <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
                 id="UniqueUserOfFacility1" value="true">
               <label class="form-check-label" for="UniqueUserOfFacility1">ΝΑΙ</label>,
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" formControlName="uniqueUserOfFacility"
+              <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
                 id="UniqueUserOfFacility2" value="false">
               <label class="form-check-label" for="UniqueUserOfFacility2">ΟΧΙ</label>
             </div>
@@ -175,7 +175,7 @@
           <label for="floorsOrLevels" class="form-label">
             Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων:
           </label>
-          <input type="text" id="floorsOrLevels" class="form-control" formControlName="floorsOrLevels">
+          <input type="number" min="0" id="floorsOrLevels" class="form-control" formControlName="floorsOrLevels">
         </div>
       </div>
     </fieldset>
@@ -188,28 +188,28 @@
 
             <div class="col-sm-2">
               <select class="form-select" aria-label="Default select example" formControlName="level"
-                (change)="selectLevel($event)">
+                (change)="selectLevel($event, i)">
                 <option value="" disabled selected>
                   Επιλέξτε επίπεδο
                 </option>
                 @for (item of FLOORPLANS; track item) {
-                <option [ngValue]="item">{{ item }}</option>
+                  <option [ngValue]="item">{{ item }}</option>
                 }
               </select>
             </div>
 
             <div class="col-sm-2">
               @if (planFloorsNumField === 1) {
-              <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num"
+                <input type="number" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num"
                 formControlName="num">
               } @else if (planFloorsNumField === 2) {
-              <input type="number" class="form-control" min="0" max="0" placeholder="Επίπεδο" aria-label="num"
+                <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num"
                 formControlName="num">
               } @else if (planFloorsNumField === 3) {
-              <input type="number" class="form-control" max="-1" placeholder="Επίπεδο" aria-label="num"
+                <input type="number" class="form-control" max="-1" placeholder="Επίπεδο" aria-label="num"
                 formControlName="num">
               } @else if (planFloorsNumField === 4) {
-              <input type="number" class="form-control" min="1000" max="1000" placeholder="Επίπεδο" aria-label="num"
+                <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num"
                 formControlName="num">
               }
             </div>
@@ -220,7 +220,6 @@
             </div>
 
             <div class="col-sm-4">
-              <!-- <input type="text" class="form-control" placeholder="Αρχείο κάτοψης του ορόφου/επιπέδου:" aria-label="floor file" formControlName="floorPlan"> -->
 
               <input #fileInput class="form-control" type="file" multiple (change)="selectFile($event)" />
               <div class="invalid-feedback">Μπορείτε να μεταφορτώσετε ένα αρχείο PDF</div>
