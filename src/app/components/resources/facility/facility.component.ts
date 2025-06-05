@@ -47,10 +47,11 @@ export class FacilityComponent {
   organizations: IOrganizationList[] = [];
 
   facilities: IFacility[] | null = [];
-  // noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
+  noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
 
   loading = false;
   showForm = false;
+  showGrid = false;
   planFloorsNumField: number = 0;
 
   uploadObjectIDs: string[] = [];
@@ -65,14 +66,14 @@ export class FacilityComponent {
   organizationalUnit: string = '';
   organizationalUnitCode: string = ''
 
-  // defaultColDef = this.constFacilityService.defaultColDef;
-  // organizationalUnitsColDefs: ColDef[] = this.constFacilityService.ORGANIZATIONAL_UNITS_COL_DEFS;
-  // autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
+  defaultColDef = this.constFacilityService.defaultColDef;
+  facilityColDefs: ColDef[] = this.constFacilityService.FACILTY_COL_DEFS;
+  autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
 
-  // loadingOverlayComponent = GridLoadingOverlayComponent;
-  // loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
-  // gridApi: GridApi;
+  gridApi: GridApi;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -112,25 +113,11 @@ export class FacilityComponent {
     this.organizations= this.userService.getMyFacilites()
   }
 
-  // onGridReady(params: GridReadyEvent<IOrganizationList>): void {
-  //   this.gridApi = params.api;
-  //   this.gridApi.showLoadingOverlay();
-  //   this.store
-  //     .select(this.organizationalUits$)
-  //     .pipe(take(1))
-  //     .subscribe((data) => {
-  //       this.organizationalUnits = data.map((org) => {
-  //         return {
-  //           ...org,
-  //           organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
-  //           organization: this.organizationCodesMap.get(org.organizationCode),
-  //           subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
-  //         };
-  //       });
-  //       this.gridOrganizationalUnits = this.organizationalUnits;
-  //       this.gridApi.hideOverlay();
-  //     });
-  // }
+  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.getFacilitiesByOrganizationCode();
+  }
 
   // allFacilities() {
   //   this.gridOrganizationalUnits = this.organizationalUnits;
@@ -141,30 +128,32 @@ export class FacilityComponent {
   //   // this.gridOrganizationalUnits = this.organizationalUnits.filter(f => myForeis.includes(f.organizationCode))
   // }
 
-  // onCellClicked(event: CellClickedEvent): void {
-  //   const action = (event.event.target as HTMLElement).getAttribute('data-action');
-  //   if (!action) return;
+  onCellClicked(event: CellClickedEvent): void {
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    if (!action) return;
+    console.log("Cell", action);
+    // this.organization = event.data.organization;
+    // this.organizationCode = event.data.organizationCode;
+    // this.organizationalUnit = event.data.preferredLabel;
+    // this.organizationalUnitCode = event.data.code;
 
-  //   this.organization = event.data.organization;
-  //   this.organizationCode = event.data.organizationCode;
-  //   this.organizationalUnit = event.data.preferredLabel;
-  //   this.organizationalUnitCode = event.data.code;
-
-  //   if (action === 'info') {
-  //     this.showFacility(event.data);
-  //   } else if (action === 'edit') {
-  //     this.editFacility(event.data);
-  //   } else if (action === 'delete') {
-  //     this.deleteFacility(event.data)
-  //   }
-  // }
+    // if (action === 'info') {
+    //   this.showFacility(event.data);
+    // } else if (action === 'edit') {
+    //   this.editFacility(event.data);
+    // } else if (action === 'delete') {
+    //   this.deleteFacility(event.data)
+    // }
+  }
 
   newFacility(data: IOrganizationList) {
     this.organization = data.preferredLabel
     this.organizationCode = data.code
     this.form.controls.organization.setValue(this.organization);
     this.form.controls.organizationCode.setValue(this.organizationCode);
+    this.getFacilitiesByOrganizationCode()
     this.showForm = true;
+    this.showGrid = true;
   }
 
   showOrganizationDetails(code: string): void {
@@ -292,20 +281,18 @@ export class FacilityComponent {
     this.floorPlans.at(i).get('floorArea').enable();
     this.floorPlans.at(i).get('floorPlan').enable();
 
-    console.log("Index", i)
-
     if (value == 'Όροφος') {
       this.planFloorsNumField = 1;
     } else if (value == 'Ισόγειο') {
       this.floorPlans.at(i).get('num').setValue('0')
-      this.floorPlans.at(i).get('num').disable({ emitEvent: false })
+      // this.floorPlans.at(i).get('num').disable({ emitEvent: false })
       this.planFloorsNumField = 2;
     } else if (value == 'Υπόγειο') {
       this.planFloorsNumField = 3;
     } else if (value == 'Ημιυπόγειο' || value == 'Ημιόροφος' || value == 'Ταράτσα') {
       this.planFloorsNumField = 4;
       this.floorPlans.at(i).get('num').setValue('-')
-      this.floorPlans.at(i).get('num').disable({ emitEvent: false })
+      // this.floorPlans.at(i).get('num').disable({ emitEvent: false })
     } else {
       this.planFloorsNumField = 0;
     }
@@ -331,18 +318,20 @@ export class FacilityComponent {
   }
 
   submitForm(){
-    console.log(this.form.value);
     const data = this.form.value as IFacility;
     data["organization"] = this.organization;
     data["organizationCode"] = this.organizationCode;
 
     data["organizationalUnit"] = this.organizationalUnit;
     data["organizationalUnitCode"] = this.organizationalUnitCode;
-    console.log(data);
 
     this.resourcesService.newFacility(data)
-      .subscribe(result => {
-        console.log("Add facility", result)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 201) {
+          this.getFacilitiesByOrganizationCode();
+        }
       })
   }
 
@@ -384,4 +373,15 @@ export class FacilityComponent {
       })
   }
 
+  getFacilitiesByOrganizationCode(){
+    this.resourcesService.getFacilitiesByOrganizationCode(this.organizationCode)
+    .subscribe(result => {
+      const body = result.body;          
+      const status = result.status;  
+      if (status===200) {
+        this.facilities = body
+        this.gridApi.hideOverlay();
+      }
+    })
+  }
 }

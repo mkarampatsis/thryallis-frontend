@@ -489,24 +489,24 @@ export class ConstFacilityService {
     | SizeColumnsToFitProvidedWidthStrategy
     | SizeColumnsToContentStrategy = { type: 'fitCellContents' };
 
-  ORGANIZATIONAL_UNITS_COL_DEFS: ColDef[] = [
-    { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
+    FACILTY_COL_DEFS: ColDef[] = [
+    { field: 'distinctiveNameOfFacility', headerName: 'Ονομασία Ακινήτου', flex: 1 },
+    { field: 'useOfFacility', headerName: 'Τύπος Χρήσης', flex: 1 },
+    { field: 'kaek', headerName: 'ΚΑΕΚ', flex: 1 },
     { field: 'organization', headerName: 'Φορέας', flex: 1 },
-    { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
-    { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
-    { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
+    { field: 'organizationalUnit', headerName: 'Μονάδα', flex: 1 },
     {
       field: 'actionCell',
       headerName: 'Ενέργειες',
       cellRenderer: (params) => {
         if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
           return `
-            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Ακινήτου" role="button"></i>
             <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία" role="button"></i>
             <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή" role="button"></i>
           `;
         } else {
-          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Πληροφορίας" role="button"></i>`
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Ακινήτου" role="button"></i>`
         }
       },
       filter: false,

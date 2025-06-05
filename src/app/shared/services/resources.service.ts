@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
@@ -18,17 +18,17 @@ export class ResourcesService {
     return this.http.get<IFacility[]>(APIPREFIX_FACILITY);
   }
 
-  getFacilityByID(id: string): Observable<IFacility> {
+  getFacilityByID(id: string): Observable<HttpResponse<IFacility>> {
     const url = `${APIPREFIX_FACILITY}/${id}`;
-    return this.http.get<IFacility>(url);
+    return this.http.get<IFacility>(url, { observe: 'response' });
   }
 
-  getFacilitiesByOrganizationCode(code: string): Observable<IFacility[]> {
-    const url = `${APIPREFIX_FACILITY}/${code}`;
-    return this.http.get<IFacility[]>(url);
+  getFacilitiesByOrganizationCode(code: string): Observable<HttpResponse<IFacility[]>> {
+    const url = `${APIPREFIX_FACILITY}/organization/${code}`;
+    return this.http.get<IFacility[]>(url, { observe: 'response' });
   }
 
-  newFacility(data: IFacility): Observable<{ msg: string }> {
-    return this.http.post<{ msg: string }>(APIPREFIX_FACILITY, data);
+  newFacility(data: IFacility): Observable<HttpResponse<{ message: string }>> {
+    return this.http.post<{ message: string }>(APIPREFIX_FACILITY , data, { observe: 'response' });
   }
 }
