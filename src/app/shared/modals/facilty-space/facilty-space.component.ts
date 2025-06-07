@@ -16,7 +16,7 @@ import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Va
 export class FaciltySpaceComponent implements OnInit {
   constFacilityService = inject(ConstFacilityService)
   modalRef: any;
-  facilty: IFacility;
+  facility: IFacility;
 
   types: string[] = [];
   subtypes: string[] = [];
@@ -47,13 +47,14 @@ export class FaciltySpaceComponent implements OnInit {
   })
 
   ngOnInit(){
+    console.log("Facility", this.facility)
     this.types = this.SPACE_USE.map(d => d.type);
     this.initializeForm();
   }
 
   initializeForm(){
     this.form.patchValue({
-      facilityID: this.facilty["_id"],
+      facilityID: this.facility["_id"],
       spaceName: '',
       spaceUse: {
         type: '',

@@ -47,6 +47,7 @@ export class FacilityComponent {
   organizations: IOrganizationList[] = [];
 
   facilities: IFacility[] | null = [];
+
   noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
 
   loading = false;
@@ -131,19 +132,37 @@ export class FacilityComponent {
   onCellClicked(event: CellClickedEvent): void {
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
-    console.log("Cell", action);
-    // this.organization = event.data.organization;
-    // this.organizationCode = event.data.organizationCode;
-    // this.organizationalUnit = event.data.preferredLabel;
-    // this.organizationalUnitCode = event.data.code;
+    console.log("Cell", action, event.data);
+    
+    if (action === 'info') {
+      this.showFacility(event.data);
+    } else if (action === 'edit') {
+      this.editFacility(event.data);
+    } else if (action === 'delete') {
+      this.deleteFacility(event.data)
+    } else if (action === 'add') {
+      this.addSpace(event.data)
+    }
+  }
 
-    // if (action === 'info') {
-    //   this.showFacility(event.data);
-    // } else if (action === 'edit') {
-    //   this.editFacility(event.data);
-    // } else if (action === 'delete') {
-    //   this.deleteFacility(event.data)
-    // }
+  showFacility(facilty: IFacility){
+    console.log("Info", facilty)
+  }
+
+  editFacility(facilty: IFacility){
+    console.log("Info", facilty)
+  }
+
+  deleteFacility(facilty: IFacility){
+    console.log("Info", facilty)
+  }
+
+  addSpace(facility: IFacility){
+    console.log(">>", facility);
+    this.modalService.addFaciltySpace(facility)
+      .subscribe(result => {
+        console.log("Space", result)
+      })
   }
 
   newFacility(data: IOrganizationList) {
@@ -335,44 +354,6 @@ export class FacilityComponent {
       })
   }
 
-  addSpace(){
-    console.log("Add space");
-    const facilty: IFacility = {
-      organization: '',
-      organizationCode: '',
-      kaek: '',
-      belongsTo: '',
-      distinctiveNameOfFacility: '',
-      useOfFacility: '',
-      uniqueUseOfFacility: 'true',
-      coveredPremisesArea: '',
-      floorsOrLevels: '',
-      floorPlans: [{
-        level: '',
-        num: '',
-        floorArea: '',
-        floorPlan: [],
-      }],
-      addressOfFacility: {
-        street: '',
-        number: '',
-        postcode: '',
-        area: '',
-        municipality: '',
-        geographicRegion: '',
-        country: ''
-      },
-      finalized: '',
-      organizationalUnit: '',
-      organizationalUnitCode: ''
-    };
-    
-    this.modalService.addFaciltySpace(facilty)
-      .subscribe(result => {
-        console.log("Space", result)
-      })
-  }
-
   getFacilitiesByOrganizationCode(){
     this.resourcesService.getFacilitiesByOrganizationCode(this.organizationCode)
     .subscribe(result => {
@@ -380,7 +361,7 @@ export class FacilityComponent {
       const status = result.status;  
       if (status===200) {
         this.facilities = body
-        this.gridApi.hideOverlay();
+        // this.gridApi.hideOverlay();
       }
     })
   }

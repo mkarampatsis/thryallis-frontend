@@ -501,12 +501,13 @@ export class ConstFacilityService {
       cellRenderer: (params) => {
         if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
           return `
-            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Ακινήτου" role="button"></i>
-            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία" role="button"></i>
-            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή" role="button"></i>
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία ακινήτου" role="button"></i>
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία ακινήτου" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή ακινήτου" role="button"></i>
+            <i class="bi bi-file-plus text-info fs-6 action-icon"  data-action="add" title="Εισαγωγή χώρου" role="button"></i>
           `;
         } else {
-          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία Ακινήτου" role="button"></i>`
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία ακινήτου" role="button"></i>`
         }
       },
       filter: false,

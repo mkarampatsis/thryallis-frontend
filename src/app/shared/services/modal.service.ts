@@ -303,7 +303,7 @@ export class ModalService {
         size: 'xl',
         centered: true,
     });
-    modalRef.componentInstance.facilty = facility;
+    modalRef.componentInstance.facility = facility;
     modalRef.componentInstance.modalRef = modalRef;
     return modalRef.dismissed.pipe(take(1)) as Observable<ISpace>;
   }
