@@ -33,12 +33,18 @@ export interface IFacility {
 export interface ISpace {
   facilityID: string;
   spaceName: string;
-  spaceUse: string;
-  spaceUseTree: string[];
-  spaceArea: number;
+  spaceUse: {
+    type: string;
+    subtype: string;
+    space: string;
+  };
+  spaceArea: string;
   spaceLength: string;
   spaceWidth: string;
-  entrances: number;
-  windows: number;
-  floor_level: number;
+  entrances: string
+  windows: string;
+  floorPlans: {
+    level: string;
+    num: string;
+  }
 }

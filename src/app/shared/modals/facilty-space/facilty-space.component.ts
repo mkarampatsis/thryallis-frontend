@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ConstFacilityService } from '../../services/const-facility.service';
 
-import { IFacility } from '../../interfaces/facility/facility';
+import { IFacility, ISpace } from '../../interfaces/facility/facility';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -30,16 +30,16 @@ export class FaciltySpaceComponent implements OnInit {
     facilityID: new FormControl(''),
     spaceName: new FormControl('', Validators.required),
     spaceUse: new FormGroup({
-      type: new FormControl('', Validators.required),
+      type: new FormControl({value:'', disabled: true}, Validators.required),
       subtype: new FormControl(''),
       space: new FormControl('', Validators.required),
     }),    
     // auxiliarySpace: new FormControl('', Validators.required),
-    spaceArea: new FormControl('', Validators.required),
-    spaceLength: new FormControl('', Validators.required),
-    spaceWidth: new FormControl('', Validators.required),
-    entrances: new FormControl('', Validators.required),
-    windows: new FormControl('', Validators.required),
+    spaceArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
+    spaceLength: new FormControl('',[Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
+    spaceWidth: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
+    entrances: new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
+    windows: new FormControl('', [Validators.required, Validators.pattern(/^\d+?$/)]),
     floorPlans: new FormGroup({
       level: new FormControl('', Validators.required),
       num: new FormControl('', Validators.required),
@@ -47,17 +47,18 @@ export class FaciltySpaceComponent implements OnInit {
   })
 
   ngOnInit(){
-    console.log("Facility", this.facility)
+    console.log("Facility", this.facility["_id"]["$oid"], this.facility)
     this.types = this.SPACE_USE.map(d => d.type);
     this.initializeForm();
+    this.onTypeChange();
   }
 
   initializeForm(){
     this.form.patchValue({
-      facilityID: this.facility["_id"],
+      facilityID: this.facility["_id"]["$oid"],
       spaceName: '',
       spaceUse: {
-        type: '',
+        type: this.facility.useOfFacility,
         subtype: '',
         space: '',
       },    
@@ -79,6 +80,7 @@ export class FaciltySpaceComponent implements OnInit {
     this.subtypes = [];
 
     const selectedType = this.form.controls.spaceUse.get('type')?.value;
+    console.log("selectedType", selectedType)
     const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
 
     if (!selectedItem) return;
@@ -111,14 +113,22 @@ export class FaciltySpaceComponent implements OnInit {
   selectLevel(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value.split(':')[1].trim();
+    
+    const selectedOption = this.form.controls.floorPlans.get('level')?.value;
+    this.form.controls.floorPlans.get('num').enable();
+
     if (value == 'Όροφος') {
       this.planFloorsNumField = 1;
     } else if (value == 'Ισόγειο') {
+      this.form.controls.floorPlans.get('num').setValue('0')
+      // this.floorPlans.at(i).get('num').disable({ emitEvent: false })
       this.planFloorsNumField = 2;
     } else if (value == 'Υπόγειο') {
       this.planFloorsNumField = 3;
     } else if (value == 'Ημιυπόγειο' || value == 'Ημιόροφος' || value == 'Ταράτσα') {
       this.planFloorsNumField = 4;
+      this.form.controls.floorPlans.get('num').setValue('-')
+      // this.floorPlans.at(i).get('num').disable({ emitEvent: false })
     } else {
       this.planFloorsNumField = 0;
     }
@@ -134,7 +144,11 @@ export class FaciltySpaceComponent implements OnInit {
     //     }
     //     console.log(invalid)
     //     // return invalid;
-    console.log(this.form.value)
+    
+    const data = this.form.value as ISpace;
+    data["facilityID"] = this.facility["_id"]["$oid"];
+    data["spaceUse"]["type"] = this.facility.useOfFacility;
+    console.log(">>",data)
   }
 
   resetForm(){

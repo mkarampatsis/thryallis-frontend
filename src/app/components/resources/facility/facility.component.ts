@@ -132,8 +132,7 @@ export class FacilityComponent {
   onCellClicked(event: CellClickedEvent): void {
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
-    console.log("Cell", action, event.data);
-    
+        
     if (action === 'info') {
       this.showFacility(event.data);
     } else if (action === 'edit') {
@@ -158,7 +157,6 @@ export class FacilityComponent {
   }
 
   addSpace(facility: IFacility){
-    console.log(">>", facility);
     this.modalService.addFaciltySpace(facility)
       .subscribe(result => {
         console.log("Space", result)

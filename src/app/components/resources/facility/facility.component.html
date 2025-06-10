@@ -54,13 +54,6 @@
   @if(showGrid) {
     <div class="d-flex justify-content-between mb-1">
       <p class="h5 mb-3">Κατάσταση Ακινήτων Φορέα</p>
-      <!-- <button
-        *ngIf="facilities.length > 0"
-        class="btn btn-sm btn-primary"
-        (click)="addSpace()"
-      >
-      Εισαγωγή χώρων ακινήτου
-      </button> -->
    </div> 
 
     <ag-grid-angular 
@@ -88,11 +81,11 @@
 
       <div class="row mb-3">
         <div class="col-sm-6">
-          <input type="text" id="kaek" class="form-control" formControlName="organization">
+          <input type="text" class="form-control" formControlName="organization">
         </div>
 
         <div class="col-sm-6">
-          <input type="text" id="kaek" class="form-control" formControlName="organizationCode">
+          <input type="text" class="form-control" formControlName="organizationCode">
         </div>
       </div>
 
@@ -108,11 +101,11 @@
         </div>
 
         <div class="col-sm-5">
-          <input type="text" id="kaek" class="form-control" formControlName="organizationalUnit">
+          <input type="text" class="form-control" formControlName="organizationalUnit">
         </div>
 
         <div class="col-sm-5">
-          <input type="text" id="kaek" class="form-control" formControlName="organizationalUnitCode">
+          <input type="text" class="form-control" formControlName="organizationalUnitCode">
         </div>
       </div>
 
@@ -215,7 +208,7 @@
 
             <div class="col-sm-2">
               @if (planFloorsNumField === 1) {
-                <input type="text" class="form-control" min="1" placeholder="Επίπεδο" aria-label="num"
+                <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num"
                 formControlName="num">
               } @else if (planFloorsNumField === 2) {
                 <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num"

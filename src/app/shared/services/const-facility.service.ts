@@ -480,7 +480,9 @@ export class ConstFacilityService {
     filter: true,
     sortable: true,
     floatingFilter: true,
-    wrapHeaderText: true,
+    wrapText: true, // Wrap Text
+    autoHeight: true,
+    wrapHeaderText: true, // Wrap Header Text
     autoHeaderHeight: true,
   };
 
@@ -502,9 +504,9 @@ export class ConstFacilityService {
         if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
           return `
             <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία ακινήτου" role="button"></i>
+            <i class="bi bi-building-add me-2 text-primary fs-6 action-icon" data-action="add" role="button" title="Εισαγωγή ακινήτου"></i>
             <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία ακινήτου" role="button"></i>
             <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή ακινήτου" role="button"></i>
-            <i class="bi bi-file-plus text-info fs-6 action-icon"  data-action="add" title="Εισαγωγή χώρου" role="button"></i>
           `;
         } else {
           return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Στοιχεία ακινήτου" role="button"></i>`
@@ -514,8 +516,8 @@ export class ConstFacilityService {
       sortable: false,
       floatingFilter: false,
       resizable: false,
-      flex: 1,
-    },
+      flex: 0.7,
+    }    
   ];
 
   removeAccents(input: string): string {
