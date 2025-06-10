@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ConstFacilityService } from '../../services/const-facility.service';
+import { ResourcesService } from '../../services/resources.service';
 
 import { IFacility, ISpace } from '../../interfaces/facility/facility';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,7 +15,8 @@ import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Va
   styleUrl: './facilty-space.component.css'
 })
 export class FaciltySpaceComponent implements OnInit {
-  constFacilityService = inject(ConstFacilityService)
+  constFacilityService = inject(ConstFacilityService);
+  resourcesService = inject(ResourcesService);
   modalRef: any;
   facility: IFacility;
 
@@ -27,7 +29,7 @@ export class FaciltySpaceComponent implements OnInit {
   planFloorsNumField: number = 0;
 
   form = new FormGroup({
-    facilityID: new FormControl(''),
+    facilityId: new FormControl(''),
     spaceName: new FormControl('', Validators.required),
     spaceUse: new FormGroup({
       type: new FormControl({value:'', disabled: true}, Validators.required),
@@ -55,7 +57,7 @@ export class FaciltySpaceComponent implements OnInit {
 
   initializeForm(){
     this.form.patchValue({
-      facilityID: this.facility["_id"]["$oid"],
+      facilityId: this.facility["_id"]["$oid"],
       spaceName: '',
       spaceUse: {
         type: this.facility.useOfFacility,
@@ -115,20 +117,19 @@ export class FaciltySpaceComponent implements OnInit {
     const value = target.value.split(':')[1].trim();
     
     const selectedOption = this.form.controls.floorPlans.get('level')?.value;
-    this.form.controls.floorPlans.get('num').enable();
 
     if (value == 'Όροφος') {
+      this.form.controls.floorPlans.get('num').setValue('1')
       this.planFloorsNumField = 1;
     } else if (value == 'Ισόγειο') {
       this.form.controls.floorPlans.get('num').setValue('0')
-      // this.floorPlans.at(i).get('num').disable({ emitEvent: false })
       this.planFloorsNumField = 2;
     } else if (value == 'Υπόγειο') {
+      this.form.controls.floorPlans.get('num').setValue('-1')
       this.planFloorsNumField = 3;
     } else if (value == 'Ημιυπόγειο' || value == 'Ημιόροφος' || value == 'Ταράτσα') {
       this.planFloorsNumField = 4;
       this.form.controls.floorPlans.get('num').setValue('-')
-      // this.floorPlans.at(i).get('num').disable({ emitEvent: false })
     } else {
       this.planFloorsNumField = 0;
     }
@@ -146,9 +147,14 @@ export class FaciltySpaceComponent implements OnInit {
     //     // return invalid;
     
     const data = this.form.value as ISpace;
-    data["facilityID"] = this.facility["_id"]["$oid"];
+    data["facilityId"] = this.facility["_id"]["$oid"];
     data["spaceUse"]["type"] = this.facility.useOfFacility;
     console.log(">>",data)
+    this.resourcesService.addSpace(data)
+      .subscribe(result => {
+        console.log(result);
+        this.modalRef.dismiss(result);
+      })
   }
 
   resetForm(){

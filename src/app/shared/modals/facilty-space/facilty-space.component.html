@@ -156,22 +156,13 @@
           @if (planFloorsNumField!=0) {
             <label for="num" class="form-label">Επιλέξτε επίπεδο</label>
           }
-          @if (planFloorsNumField === 1 || planFloorsNumField === 3) {
-            <input 
-              type="text" 
-              class="form-control" 
-              placeholder="Επίπεδο" 
-              aria-label="num" 
-              formControlName="num"
-            >
-            {{planFloorsNumField===1}}, {{form.controls.floorPlans.controls.num.touched}}, {{+form.controls.floorPlans.controls.num.value<= 0}}
-            @if (planFloorsNumField===1  && form.controls.floorPlans.controls.num.touched && +form.controls.floorPlans.controls.num.value<= 0) {
-              <div class="invalid-feedback">Μόνο αριθμοί επιτρέπονται (π.χ 5)</div>
-            }
-
+          @if (planFloorsNumField === 1) {
+            <input type="number" min = "1" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num">
           } @else if (planFloorsNumField === 2 || planFloorsNumField === 4) {
-          <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num" readonly>
-          } 
+            <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num" readonly>
+          } @else if (planFloorsNumField === 3) {
+            <input type="number" max="-1" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+          }
         </div>
 
       </div>
