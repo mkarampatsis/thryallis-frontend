@@ -533,7 +533,7 @@ export class ConstFacilityService {
       field: 'actionCell',
       headerName: 'Ενέργειες',
       cellRenderer: (params) => {
-        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.facilityId.organizationCode)) {
           return `
             <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editSpace" title="Επεξεργασία χώρου" role="button"></i>
             <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteSpace" title="Διαγραφή χώρου" role="button"></i>

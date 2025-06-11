@@ -49,7 +49,6 @@ export class FaciltySpaceComponent implements OnInit {
   })
 
   ngOnInit(){
-    console.log("Facility", this.facility["_id"]["$oid"], this.facility)
     this.types = this.SPACE_USE.map(d => d.type);
     this.initializeForm();
     this.onTypeChange();
@@ -82,7 +81,6 @@ export class FaciltySpaceComponent implements OnInit {
     this.subtypes = [];
 
     const selectedType = this.form.controls.spaceUse.get('type')?.value;
-    console.log("selectedType", selectedType)
     const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
 
     if (!selectedItem) return;
@@ -149,16 +147,13 @@ export class FaciltySpaceComponent implements OnInit {
     const data = this.form.value as ISpace;
     data["facilityId"] = this.facility["_id"]["$oid"];
     data["spaceUse"]["type"] = this.facility.useOfFacility;
-    console.log(">>",data)
     this.resourcesService.addSpace(data)
       .subscribe(result => {
-        console.log(result);
         this.modalRef.dismiss(result);
       })
   }
 
   resetForm(){
-    console.log("reset")
     this.initializeForm();
   }
 }
