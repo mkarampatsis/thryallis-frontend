@@ -35,8 +35,11 @@
             <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
               ngbTooltip="Στοιχεία Φορέα"></i>
 
+            <i class="bi bi-building" role="button" (click)="showFacilitiesGrids(organization)"
+              ngbTooltip="Εμφάνιση Ακινήτων"></i>
+
             <i class="bi bi-pencil-square" role="button" (click)="newFacility(organization)"
-              ngbTooltip="Επεξεργασία Φορέα"></i>
+              ngbTooltip="Νέο Ακίνητο"></i>
           </td>
         </tr>
         }
@@ -141,14 +144,32 @@
           <label for="kaek" class="form-label">
             Κωδικός Ακινήτου Εθνικού Κτηματολογίου:
           </label>
-          <input type="text" id="kaek" class="form-control" formControlName="kaek">
+          <input 
+            type="text" 
+            id="kaek" 
+            class="form-control" 
+            formControlName="kaek"
+            [class.is-invalid]="form.controls.kaek.touched && form.controls.kaek.invalid"  
+          >
+          @if (form.controls.kaek.touched && form.controls.kaek.invalid) {
+            <div class="invalid-feedback">Δεν έχετε συμπληρώσει ΚΑΕΚ</div>
+          }
         </div>
 
         <div class="col-sm-6">
           <label for="belongsTo" class="form-label">
             ΚΑΕΚ του Γηπέδου ως ανεξάρτητη χωρική υποδομή:
           </label>
-          <input type="text" id="belongsTo" class="form-control" formControlName="belongsTo">
+          <input 
+            type="text" 
+            id="belongsTo" 
+            class="form-control" 
+            formControlName="belongsTo"
+            [class.is-invalid]="form.controls.belongsTo.touched && form.controls.belongsTo.invalid"   
+          >
+          @if (form.controls.belongsTo.touched && form.controls.belongsTo.invalid) {
+            <div class="invalid-feedback">Δεν έχετε συμπληρώσει ΚΑΕΚ του Γηπέδου</div>
+          }
         </div>
       </div>
 
@@ -157,16 +178,29 @@
           <label for="distinctiveNameOfFacility" class="form-label">
             Διακριτή ονομασία του ακινήτου:
           </label>
-          <input type="text" id="distinctiveNameOfFacility" class="form-control"
-            formControlName="distinctiveNameOfFacility">
+          <input 
+            type="text" 
+            id="distinctiveNameOfFacility" 
+            class="form-control"
+            formControlName="distinctiveNameOfFacility"
+            [class.is-invalid]="form.controls.distinctiveNameOfFacility.touched && form.controls.distinctiveNameOfFacility.invalid"
+          >
+          @if (form.controls.distinctiveNameOfFacility.touched && form.controls.distinctiveNameOfFacility.invalid) {
+            <div class="invalid-feedback">Δεν έχετε συμπληρώσει την ονομασία του ακινήτου</div>
+          }
         </div>
 
         <div class="col-sm-3">
           <label for="useOfFacility" class="form-label">
             Χρήση Ακινήτου:
           </label>
-          <select class="form-select" aria-label="Default select example" id="useOfFacility"
-            formControlName="useOfFacility">
+          <select 
+            class="form-select" 
+            aria-label="Default select example" 
+            id="useOfFacility"
+            formControlName="useOfFacility"
+            [class.is-invalid]="form.controls.useOfFacility.touched && form.controls.useOfFacility.invalid"  
+          >
             <option value="" disabled selected>
               Επιλέξτε Τύπο Χρήσης
             </option>
@@ -174,6 +208,9 @@
             <option [ngValue]="item">{{ item }}</option>
             }
           </select>
+          @if (form.controls.useOfFacility.touched && form.controls.useOfFacility.invalid) {
+            <div class="invalid-feedback">Δεν έχετε επιλέξει τύπο χρήσης</div>
+          }
         </div>
 
         <div class="col-sm-4">
@@ -198,14 +235,33 @@
           <label for="coveredPremisesArea" class="form-label">
             Συνολικός στεγασμένος χώρος του ακινήτου σε τ.μ:
           </label>
-          <input type="text" id="coveredPremisesArea" class="form-control" formControlName="coveredPremisesArea">
+          <input 
+            type="text" 
+            id="coveredPremisesArea" 
+            class="form-control" 
+            formControlName="coveredPremisesArea"
+            [class.is-invalid]="form.controls.coveredPremisesArea.touched && form.controls.coveredPremisesArea.invalid"  
+          >
+          @if (form.controls.coveredPremisesArea.touched && form.controls.coveredPremisesArea.invalid) {
+            <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
+          }
         </div>
 
         <div class="col-sm-7">
           <label for="floorsOrLevels" class="form-label">
             Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων:
           </label>
-          <input type="number" min="0" id="floorsOrLevels" class="form-control" formControlName="floorsOrLevels">
+          <input 
+            type="number" 
+            min="0" 
+            id="floorsOrLevels" 
+            class="form-control" 
+            formControlName="floorsOrLevels"
+            [class.is-invalid]="form.controls.floorsOrLevels.touched && form.controls.floorsOrLevels.invalid"
+          >
+          @if (form.controls.floorsOrLevels.touched && form.controls.floorsOrLevels.invalid) {
+            <div class="invalid-feedback">Μόνο αριθμοί επιτρέπονται (π.χ 5)</div>
+          }
         </div>
       </div>
     </fieldset>
@@ -284,26 +340,84 @@
       <div formGroupName="addressOfFacility">
         <div class="row g-3 mb-3">
           <div class="col-sm-4">
-            <input type="text" class="form-control" placeholder="Οδός" aria-label="street" formControlName="street">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Οδός" 
+              aria-label="street" 
+              formControlName="street"
+              [class.is-invalid]="form.controls.addressOfFacility.controls.street.touched && form.controls.addressOfFacility.controls.street.invalid"  
+            >
+            @if (form.controls.addressOfFacility.controls.street.touched && form.controls.addressOfFacility.controls.street.invalid) {
+              <div class="invalid-feedback">Δεν έχετε εισάγει οδό</div>
+            }
           </div>
           <div class="col-sm-4">
-            <input type="text" class="form-control" placeholder="Αριθμός" aria-label="number" formControlName="number">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Αριθμός" 
+              aria-label="number" 
+              formControlName="number"
+              [class.is-invalid]="form.controls.addressOfFacility.controls.number.touched && form.controls.addressOfFacility.controls.number.invalid"
+            >
+            @if (form.controls.addressOfFacility.controls.number.touched && form.controls.addressOfFacility.controls.number.invalid) {
+              <div class="invalid-feedback">Δεν έχετε εισάγει αριθμό</div>
+            }
           </div>
           <div class="col-sm-4">
-            <input type="text" class="form-control" placeholder="ΤΚ" aria-label="postcode" formControlName="postcode">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="ΤΚ" 
+              aria-label="postcode" 
+              formControlName="postcode"
+              [class.is-invalid]="form.controls.addressOfFacility.controls.postcode.touched && form.controls.addressOfFacility.controls.postcode.invalid"  
+            >
+            @if (form.controls.addressOfFacility.controls.postcode.touched && form.controls.addressOfFacility.controls.postcode.invalid) {
+              <div class="invalid-feedback">Δεν έχετε εισάγει ΤΚ</div>
+            }
           </div>
         </div>
         <div class="row g-3 mb-3">
           <div class="col-sm-4">
-            <input type="text" class="form-control" placeholder="Τοποθεσία" aria-label="area" formControlName="area">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Τοποθεσία" 
+              aria-label="area" 
+              formControlName="area"
+              [class.is-invalid]="form.controls.addressOfFacility.controls.area.touched && form.controls.addressOfFacility.controls.area.invalid"  
+            >
+            @if (form.controls.addressOfFacility.controls.area.touched && form.controls.addressOfFacility.controls.area.invalid) {
+              <div class="invalid-feedback">Δεν έχετε εισάγει τοποθεσία</div>
+            }
           </div>
           <div class="col-sm-4">
-            <input type="text" class="form-control" placeholder="Δήμος" aria-label="municipality"
-              formControlName="municipality">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Δήμος" 
+              aria-label="municipality"
+              formControlName="municipality"
+              [class.is-invalid]="form.controls.addressOfFacility.controls.municipality.touched && form.controls.addressOfFacility.controls.municipality.invalid" 
+            >
+            @if (form.controls.addressOfFacility.controls.municipality.touched && form.controls.addressOfFacility.controls.municipality.invalid) {
+              <div class="invalid-feedback">Δεν έχετε εισάγει δήμο</div>
+            }
           </div>
           <div class="col-sm-4">
-            <input type="text" class="form-control" placeholder="Γεωγραφική Περιφέρεια" aria-label="geographic region"
-              formControlName="geographicRegion">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Γεωγραφική Περιφέρεια" 
+              aria-label="geographic region"
+              formControlName="geographicRegion"
+              [class.is-invalid]="form.controls.addressOfFacility.controls.geographicRegion.touched && form.controls.addressOfFacility.controls.geographicRegion.invalid"  
+            >
+             @if (form.controls.addressOfFacility.controls.geographicRegion.touched && form.controls.addressOfFacility.controls.geographicRegion.invalid) {
+              <div class="invalid-feedback">Δεν έχετε εισάγει γεωγραφική περιφέρεια</div>
+            }
           </div>
         </div>
         <div class="row g-3 mb-3">

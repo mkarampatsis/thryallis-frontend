@@ -13,13 +13,14 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
-import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
+import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { take } from 'rxjs';
+
 
 @Component({
   selector: 'app-facility',
@@ -90,8 +91,8 @@ export class FacilityComponent {
     distinctiveNameOfFacility: new FormControl('', Validators.required),
     useOfFacility: new FormControl('', Validators.required),
     uniqueUseOfFacility: new FormControl('true'),
-    coveredPremisesArea: new FormControl('', Validators.required),
-    floorsOrLevels: new FormControl('', Validators.required),
+    coveredPremisesArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
+    floorsOrLevels: new FormControl('', [Validators.required, Validators.pattern(/^\d+?$/)]),
     floorPlans: new FormArray([
       new FormGroup({
         level: new FormControl('', Validators.required),
@@ -195,6 +196,11 @@ export class FacilityComponent {
     this.form.controls.organizationCode.setValue(this.organizationCode);
     this.getFacilitiesByOrganizationCode()
     this.showForm = true;
+    this.showGrid = true;
+  }
+
+  showFacilitiesGrids(data: IOrganizationList){
+    this.organizationCode = data.code
     this.showGrid = true;
   }
 
