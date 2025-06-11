@@ -520,6 +520,34 @@ export class ConstFacilityService {
     }    
   ];
 
+  SPACE_COL_DEFS: ColDef[] = [
+    { field: 'spaceName', headerName: 'Ονομασία Χώρου', flex: 1 },
+    { field: 'spaceUse.type', headerName: 'Τύπος Χρήσης', flex: 1 },
+    { field: 'spaceUse.space', headerName: 'Χρήση', flex: 1 },
+    { field: 'spaceArea', headerName: 'Εμβαδόν', flex: 0.5 },
+    { field: 'spaceLength', headerName: 'Μήκος', flex: 0.5 },
+    { field: 'spaceWidth', headerName: 'Πλάτος', flex: 0.5 },
+    { field: 'floorPlans.level', headerName: 'Όροφος', flex: 0.5 },
+    { field: 'floorPlans.num', headerName: 'Επίπεδο', flex: 0.5 },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: (params) => {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
+          return `
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editSpace" title="Επεξεργασία χώρου" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteSpace" title="Διαγραφή χώρου" role="button"></i>
+          `;
+        } 
+      },
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      resizable: false,
+      flex: 0.5,
+    }    
+  ];
+
   removeAccents(input: string): string {
     return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }

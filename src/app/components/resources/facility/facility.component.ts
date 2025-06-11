@@ -14,7 +14,7 @@ import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
-import { IFacility } from 'src/app/shared/interfaces/facility/facility';
+import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -47,12 +47,14 @@ export class FacilityComponent {
   organizations: IOrganizationList[] = [];
 
   facilities: IFacility[] | null = [];
+  spaces: ISpace[] | null = [];
 
   noRowsOverlayComponent: any = AgGridNoRowsOverlayComponent;
 
   loading = false;
   showForm = false;
   showGrid = false;
+  showGridSpace = false;
   planFloorsNumField: number = 0;
 
   uploadObjectIDs: string[] = [];
@@ -69,12 +71,14 @@ export class FacilityComponent {
 
   defaultColDef = this.constFacilityService.defaultColDef;
   facilityColDefs: ColDef[] = this.constFacilityService.FACILTY_COL_DEFS;
+  spaceColDefs: ColDef[] = this.constFacilityService.SPACE_COL_DEFS;
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
   gridApi: GridApi;
+  gridApiSpace: GridApi; 
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -120,6 +124,13 @@ export class FacilityComponent {
     this.getFacilitiesByOrganizationCode();
   }
 
+  onGridReadySpace(params: GridReadyEvent<ISpace[]>): void {
+    this.gridApiSpace = params.api;
+    this.gridApiSpace.showLoadingOverlay();
+    if (this.spaces.length > 0)
+      this.gridApiSpace.hideOverlay();
+  }
+
   // allFacilities() {
   //   this.gridOrganizationalUnits = this.organizationalUnits;
   // }
@@ -134,7 +145,7 @@ export class FacilityComponent {
     if (!action) return;
         
     if (action === 'info') {
-      this.showFacility(event.data);
+      this.showSpaces(event.data);
     } else if (action === 'edit') {
       this.editFacility(event.data);
     } else if (action === 'delete') {
@@ -144,8 +155,22 @@ export class FacilityComponent {
     }
   }
 
-  showFacility(facilty: IFacility){
-    console.log("Info", facilty)
+  onCellClickedSpace(event: CellClickedEvent): void {
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    if (!action) return;
+        
+    if (action === 'editSpace') {
+      // this.showSpaces(event.data);
+      console.log("EDIT SPACE", event.data)
+    } else if (action === 'deleteSpace') {
+      // this.editFacility(event.data);
+      console.log("DELETE SPACE", event.data)
+    } 
+  }
+
+
+  showSpaces(facilty: IFacility){
+    this.getSpacesFacilityId(facilty["_id"]["$oid"])
   }
 
   editFacility(facilty: IFacility){
@@ -359,8 +384,25 @@ export class FacilityComponent {
       const status = result.status;  
       if (status===200) {
         this.facilities = body
-        // this.gridApi.hideOverlay();
       }
     })
+  }
+
+  getSpacesFacilityId(id:string) {
+    this.resourcesService.getSpacesByFacilityId(id)
+      .subscribe(result => {
+        const body = result.body;          
+        const status = result.status;  
+        if (status===200) {
+          this.spaces = body
+          if ( this.spaces.length > 0 ) {
+            this.showGridSpace = true;
+          }
+          else {
+            this.showGridSpace = false;
+          }
+          
+        }
+      })
   }
 }

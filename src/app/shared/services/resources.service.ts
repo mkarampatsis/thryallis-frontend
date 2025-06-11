@@ -35,6 +35,11 @@ export class ResourcesService {
   // Facility Space
   addSpace(data: ISpace): Observable<HttpResponse<{ message: string }>> {
     const facilityId = data.facilityId
-    return this.http.post<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}` , data, { observe: 'response' });
+    return this.http.post<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space` , data, { observe: 'response' });
+  }
+
+  getSpacesByFacilityId(id: string): Observable<HttpResponse<ISpace[]>> {
+    const url = `${APIPREFIX_FACILITY}/${id}/space`;
+    return this.http.get<ISpace[]>(url, { observe: 'response' });
   }
 }

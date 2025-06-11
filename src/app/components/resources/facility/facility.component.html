@@ -72,6 +72,28 @@
   }
 </div>
 
+<div class="mb-3">
+  @if(showGridSpace) {
+    <div class="d-flex justify-content-between mb-1">
+      <p class="h5 mb-3">Κατάσταση Χώρων Ακινήτου</p>
+   </div> 
+
+    <ag-grid-angular 
+      [domLayout]="'autoHeight'" 
+      [rowData]="spaces" 
+      [defaultColDef]="defaultColDef"
+      [columnDefs]="spaceColDefs" 
+      [pagination]="true" 
+      [paginationPageSize]="20"
+      [loadingOverlayComponent]="loadingOverlayComponent" 
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (cellClicked)="onCellClickedSpace($event)" 
+      (gridReady)="onGridReadySpace($event)" 
+      class="ag-theme-balham">
+    </ag-grid-angular>
+  }
+</div>
+
 
 <div class="mt-5 mb-5">
   @if(showForm) {
