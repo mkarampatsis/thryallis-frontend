@@ -52,6 +52,7 @@ export class FaciltySpaceComponent implements OnInit {
     this.types = this.SPACE_USE.map(d => d.type);
     this.initializeForm();
     this.onTypeChange();
+    console.log(this.facility);
   }
 
   initializeForm(){
@@ -81,6 +82,7 @@ export class FaciltySpaceComponent implements OnInit {
     this.subtypes = [];
 
     const selectedType = this.form.controls.spaceUse.get('type')?.value;
+    console.log()
     const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
 
     if (!selectedItem) return;

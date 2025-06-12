@@ -32,7 +32,12 @@ export class ResourcesService {
     return this.http.post<{ message: string }>(APIPREFIX_FACILITY , data, { observe: 'response' });
   }
 
-  // Facility Space
+  deleteFacilityById(id:string): Observable<HttpResponse<IFacility>> {
+    const url = `${APIPREFIX_FACILITY}/${id}`;
+    return this.http.delete<IFacility>(url, { observe: 'response' });
+  }
+
+  // FACILITY SPACE
   addSpace(data: ISpace): Observable<HttpResponse<{ message: string }>> {
     const facilityId = data.facilityId
     return this.http.post<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space` , data, { observe: 'response' });
@@ -41,5 +46,10 @@ export class ResourcesService {
   getSpacesByFacilityId(id: string): Observable<HttpResponse<ISpace[]>> {
     const url = `${APIPREFIX_FACILITY}/${id}/space`;
     return this.http.get<ISpace[]>(url, { observe: 'response' });
+  }
+
+  deleteSpaceById(id:string): Observable<HttpResponse<ISpace>> {
+    const url = `${APIPREFIX_FACILITY}/space/${id}`;
+    return this.http.delete<ISpace>(url, { observe: 'response' });
   }
 }

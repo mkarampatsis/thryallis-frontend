@@ -132,15 +132,6 @@ export class FacilityComponent {
       this.gridApiSpace.hideOverlay();
   }
 
-  // allFacilities() {
-  //   this.gridOrganizationalUnits = this.organizationalUnits;
-  // }
-
-  // myFacilities() {
-  //   const myForeis = this.userService.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
-  //   // this.gridOrganizationalUnits = this.organizationalUnits.filter(f => myForeis.includes(f.organizationCode))
-  // }
-
   onCellClicked(event: CellClickedEvent): void {
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
@@ -161,14 +152,11 @@ export class FacilityComponent {
     if (!action) return;
     
     if (action === 'editSpace') {
-      // this.showSpaces(event.data);
       console.log("EDIT SPACE", event.data)
     } else if (action === 'deleteSpace') {
-      // this.editFacility(event.data);
-      console.log("DELETE SPACE", event.data)
+      this.deleteSpace(event.data);
     } 
   }
-
 
   showSpaces(facilty: IFacility){
     this.getSpacesFacilityId(facilty["_id"]["$oid"])
@@ -178,8 +166,25 @@ export class FacilityComponent {
     console.log("Info", facilty)
   }
 
-  deleteFacility(facilty: IFacility){
-    console.log("Info", facilty)
+  deleteFacility(facility: IFacility){
+    console.log("Info", facility)
+    const facilityId =  facility["_id"]["$oid"];
+    this.modalService.getUserConsent(
+      "Πρόκειται να διαγράψετε κάποιο ακίνητο και τους χώρους του. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+    )
+    .subscribe((result) => {
+      if (result) {
+        this.resourcesService.deleteFacilityById(facilityId)
+          .subscribe(response => {
+            const body = response.body;          
+            const status = response.status;        
+            if (status === 201) {
+              this.getFacilitiesByOrganizationCode()
+              this.getSpacesFacilityId(facilityId)
+            }
+          })
+      }
+    })
   }
 
   addSpace(facility: IFacility){
@@ -187,6 +192,26 @@ export class FacilityComponent {
       .subscribe(result => {
         this.getSpacesFacilityId(facility["_id"]["$oid"])
       })
+  }
+
+  deleteSpace(data:ISpace){
+    const spaceId = data["id"]
+    const facilityId = data.facilityId["id"]
+    this.modalService.getUserConsent(
+      "Πρόκειται να διαγράψετε κάποιο χώρο του ακινήτου. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+    )
+    .subscribe((result) => {
+      if (result) {
+        this.resourcesService.deleteSpaceById(spaceId)
+          .subscribe(response => {
+            const body = response.body;          
+            const status = response.status;        
+            if (status === 201) {
+              this.getSpacesFacilityId(facilityId)
+            }
+          })
+      }
+    })
   }
 
   newFacility(data: IOrganizationList) {
@@ -197,7 +222,7 @@ export class FacilityComponent {
     this.getFacilitiesByOrganizationCode()
     this.showForm = true;
     this.showGrid = true;
-  }
+  } 
 
   showFacilitiesGrids(data: IOrganizationList){
     this.organizationCode = data.code
