@@ -1,1 +1,108 @@
-<p>equipment works!</p>
+<h1 class="govgr-heading-md">Εξοπλισμός Ελληνικού Δημοσίου</h1>
+
+@if (hasEquipmentAdminRole() || hasEquipmentEditorRole()) {
+  <h4 class="govgr-heading-sm">Οι προσβάσεις σας</h4>
+
+  <p class="govgr-body">
+    Στους παρακάτω πίνακες εμφανίζονται οι φορείς που έχετε πρόσβαση και οι επιτρεπτές ενέργειες.
+  </p>
+
+  <h5 class="govgr-heading-md d-flex align-items-center gap-2">
+    Φορείς
+    @if (!organizations) {
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    }
+  </h5>
+
+  @if (organizations.length > 0) {
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Κωδικός</th>
+          <th scope="col">Ονομασία</th>
+          <th scope="col">Ενέργειες</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (organization of organizations; track organization) {
+        <tr class="align-middle">
+          <td>{{ organization.code }}</td>
+          <td>{{ organization.preferredLabel }}</td>
+          <td class="d-flex gap-2 fs-5">
+            <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
+              ngbTooltip="Στοιχεία Φορέα"></i>
+
+            <!-- <i class="bi bi-building" role="button" (click)="showFacilitiesGrids(organization)"
+              ngbTooltip="Εμφάνιση Ακινήτων"></i>-->
+
+            <i class="bi bi-pencil-square" role="button" (click)="newEquipment(organization)"
+              ngbTooltip="Νέος Εξοπλισμός"></i> 
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } @else {
+    <div class="alert alert-info w-25 mb-4 text-center fw-semibold" role="alert">
+      Δεν έχετε πρόσβαση σε φορείς.
+    </div>
+  }
+}
+
+<div class="mt-5 mb-5">
+  @if(showForm) {
+  <form [formGroup]="form">
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Στοιχεία Φορέα:</legend>
+
+      <div class="row mb-3">
+        <div class="col-sm-6">
+          <input type="text" class="form-control" formControlName="organization">
+        </div>
+
+        <div class="col-sm-6">
+          <input type="text" class="form-control" formControlName="organizationCode">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-2">
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            (click)="chooseOrganizationalUnit()"
+          >
+            Επιλογή Μονάδας
+          </button>
+        </div>
+
+        <div class="col-sm-5">
+          <input type="text" class="form-control" formControlName="organizationalUnit">
+        </div>
+
+        <div class="col-sm-5">
+          <input type="text" class="form-control" formControlName="organizationalUnitCode">
+        </div>
+      </div>
+
+    </fieldset>
+
+    <fieldset class="form-group border p-3 mb-3">
+      <legend class="w-auto">Στοιχεία εξοπλισμού:</legend>
+      <select class="form-select" aria-label="Default select example" formControlName="type"
+        (change)="selectKind($event)">
+        <option value="" disabled selected>
+          Επιλέξτε επίπεδο
+        </option>
+        @for (item of type; track item) {
+          <option [ngValue]="item">{{ item }}</option>
+        }
+      </select>
+    </fieldset>
+  </form>
+  }
+</div>

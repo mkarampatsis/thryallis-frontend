@@ -3,7 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { IFacility, ISpace } from '../interfaces/facility/facility';
-import { IEquipmentCongif } from '../interfaces/equipment/equipmentConfig';
+import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
@@ -55,8 +55,8 @@ export class ResourcesService {
   }
 
   // EQUIPMENT 
-  equipmentCategories(): Observable<IEquipmentCongif[]> {
+  getEquipmentCategories(): Observable<IEquipmentConfig[]> {
     const url = `${APIPREFIX_EQUIPMENT}/config`;
-    return this.http.get<IEquipmentCongif[]>(url);
+    return this.http.get<IEquipmentConfig[]>(url);
   }
 }

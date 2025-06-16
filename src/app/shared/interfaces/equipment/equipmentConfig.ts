@@ -1,4 +1,4 @@
-export interface IEquipmentCongif {
+export interface IEquipmentConfig {
   type: string
   kind: Kind[]
 }

@@ -35,6 +35,21 @@ export class UserService {
     return this.http.get<{ organizations: string[]; organizational_units: string[] }>(url);
   }
 
+  
+  
+
+  hasHelpDeskRole() {
+    return this.user().roles.some((role) => role.role === 'HELPDESK');
+  }
+
+  hasEditorRole() {
+    return this.user().roles.some((role) => role.role === 'EDITOR');
+  }
+
+  hasAdminRole() {
+    return this.user().roles.some((role) => role.role === 'ADMIN');
+  }
+
   getMyFacilites() {
     const foreis = this.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
     
@@ -50,19 +65,6 @@ export class UserService {
     }
 
     return organizations;
-  }
-  
-
-  hasHelpDeskRole() {
-    return this.user().roles.some((role) => role.role === 'HELPDESK');
-  }
-
-  hasEditorRole() {
-    return this.user().roles.some((role) => role.role === 'EDITOR');
-  }
-
-  hasAdminRole() {
-    return this.user().roles.some((role) => role.role === 'ADMIN');
   }
 
   hasFacilityAdminRole() {
@@ -84,6 +86,47 @@ export class UserService {
   hasFacilityEditorRoleInOrganization(code:string) {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code));
+    }
+
+    return false;
+  }
+
+  hasEquipmentAdminRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN');
+    }
+
+    return false;
+  }
+
+  getMyEquipments() {
+    const foreis = this.user().roles.find(r => r.role === 'EQUIPMENT_EDITOR')?.foreas ?? [];
+    
+    let organizations: IOrganizationList[] = [];
+
+    for (let forea of foreis) {
+      this.store
+        .select(this.organization$(forea))
+        .pipe(take(1))
+        .subscribe((org) => {
+          organizations = organizations.concat(...org);
+        });
+    }
+
+    return organizations;
+  }
+
+  hasEquipmentEditorRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR');
+    }
+
+    return false;
+  }
+
+  hasEquipmentEditorRoleInOrganization(code:string) {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.foreas.includes(code));
     }
 
     return false;

@@ -19,9 +19,6 @@ import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { take } from 'rxjs';
-
-
 @Component({
   selector: 'app-facility',
   standalone: true,
@@ -158,12 +155,12 @@ export class FacilityComponent {
     } 
   }
 
-  showSpaces(facilty: IFacility){
-    this.getSpacesFacilityId(facilty["_id"]["$oid"])
+  showSpaces(facility: IFacility){
+    this.getSpacesFacilityId(facility["_id"]["$oid"])
   }
 
-  editFacility(facilty: IFacility){
-    console.log("Info", facilty)
+  editFacility(facility: IFacility){
+    console.log("Info", facility)
   }
 
   deleteFacility(facility: IFacility){
