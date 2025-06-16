@@ -3,6 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { IFacility, ISpace } from '../interfaces/facility/facility';
+import { IEquipmentCongif } from '../interfaces/equipment/equipmentConfig';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
@@ -51,5 +52,11 @@ export class ResourcesService {
   deleteSpaceById(id:string): Observable<HttpResponse<ISpace>> {
     const url = `${APIPREFIX_FACILITY}/space/${id}`;
     return this.http.delete<ISpace>(url, { observe: 'response' });
+  }
+
+  // EQUIPMENT 
+  equipmentCategories(): Observable<IEquipmentCongif[]> {
+    const url = `${APIPREFIX_EQUIPMENT}/config`;
+    return this.http.get<IEquipmentCongif[]>(url);
   }
 }
