@@ -7,6 +7,7 @@ import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Va
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
+import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
 
 
 @Component({
@@ -29,7 +30,11 @@ export class EquipmentComponent implements OnInit {
   organizationCode: string = '';
   organizationalUnit: string = '';
   organizationalUnitCode: string = ''
-  type: string[];
+  equipmentConfig: IEquipmentConfig[] = [];
+  type: string[] = [];
+  kind: string[] = [];
+  category: string[] = [];
+  values: string[] = [];
 
   showForm = false;
 
@@ -39,7 +44,7 @@ export class EquipmentComponent implements OnInit {
     organizationalUnit: new FormControl({ value: '', disabled: true }),
     organizationalUnitCode: new FormControl({ value: '', disabled: true }),
     type: new FormControl('', Validators.required),
-    kind: new FormControl({ value: '', disabled: true }, Validators.required),
+    kind: new FormControl('', Validators.required),
   })
 
   ngOnInit(): void {
@@ -48,6 +53,7 @@ export class EquipmentComponent implements OnInit {
         console.log(result);
         this.type = result.map(data => data.type);
         console.log(this.type);
+        this.equipmentConfig = result;
       })
     this.organizations= this.userService.getMyEquipments();
   }
@@ -72,9 +78,20 @@ export class EquipmentComponent implements OnInit {
       })
   }
 
-  selectKind(event: Event){
-    console.log(event);
-    this.type.filter(data => data)
+  selectKind(){
+    const selected = this.form.controls.type.value;
+    console.log("selectedType", selected);
+    this.kind = this.equipmentConfig.filter(data => { 
+      if (data.type===selected) {
+        return data
+      }
+    }).map(data => data.kind.map(data => data.type))[0];
+    console.log("Selection", this.kind);
+  }
+
+  selectCategory(){
+    const selected = this.form.controls.kind.value;
+    console.log("selectedType", selected);
   }
 
   showOrganizationDetails(code: string): void {
