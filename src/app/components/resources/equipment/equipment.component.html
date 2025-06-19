@@ -97,7 +97,7 @@
         
         <div class="col-sm-4">
           <select class="form-select" aria-label="Default select example" formControlName="type"
-            (change)="selectKind()">
+            (change)="onTypeChange($event)">
             <option value="" disabled selected>
               Επιλέξτε τύπο
             </option>
@@ -110,9 +110,9 @@
         @if (kind.length > 0) {
           <div class="col-sm-4">
             <select class="form-select" aria-label="Default select example" formControlName="kind"
-              (change)="selectCategory()">
+              (change)="onKindChange($event)">
               <option value="" disabled selected>
-                Επιλέξτε κατηγορία
+                Επιλέξτε Είδος
               </option>
               @for (item of kind; track item) {
                 <option [ngValue]="item">{{ item }}</option>
@@ -120,8 +120,51 @@
             </select>
           </div>
         }
+
+        @if (category.length > 0) {
+          <div class="col-sm-4">
+            <select class="form-select" aria-label="Default select example" formControlName="category"
+              (change)="onCategoryChange($event)">
+              <option value="" disabled selected>
+                Επιλέξτε κατηγορία
+              </option>
+              @for (item of category; track item) {
+                <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </div>
+        }        
       </div>
+
+      @if (values.length > 0) {
+        <div class="row mb-3"  formArrayName="values">
+          <div *ngFor="let v of valuesFormArray.controls let i = index" [formGroupName]="i">
+            <div class="col-sm-4">
+              <label class="form-label">{{ v.get('description').value }}</label>
+              <input class="form-control" type="text" placeholder="Πληκτρολογήστε τιμή" formControlName="value">
+            </div>
+          </div>
+        </div>
+      }
+      
     </fieldset>
+
+    <div class="d-flex gap-2">
+      <button
+        type="button" 
+        class="btn btn-primary"
+        [disabled]="form.invalid"
+        (click)="submitForm()"
+      >
+        Υποβολή
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="resetForm()">
+          Καθάρισμα
+      </button>
+    </div>
   </form>
   }
 </div>
