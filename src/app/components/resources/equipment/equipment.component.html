@@ -137,10 +137,12 @@
       </div>
 
       @if (values.length > 0) {
-        <div class="row mb-3"  formArrayName="values">
-          <div *ngFor="let v of valuesFormArray.controls let i = index" [formGroupName]="i">
+        <div formArrayName="values">
+          <div *ngFor="let v of valuesFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
             <div class="col-sm-4">
               <label class="form-label">{{ v.get('description').value }}</label>
+            </div>
+            <div class="col-sm-4">
               <input class="form-control" type="text" placeholder="Πληκτρολογήστε τιμή" formControlName="value">
             </div>
           </div>
