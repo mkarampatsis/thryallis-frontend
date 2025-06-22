@@ -181,15 +181,15 @@ export class EquipmentComponent implements OnInit {
     const typeDoc = this.equipmentConfig
       .find( data => data.type === type)
     const kindDoc = typeDoc.kind.find(data => data.type === kindType) 
-    return kindDoc.category;
+    return kindDoc.category.map(data => data.type);
   }
   
   getValues(type: string, kindType: string, category: string) {
     const typeDoc = this.equipmentConfig
       .find( data => data.type === type.trim());
     const kindDoc = typeDoc.kind.find(data => data.type === kindType);
-    const valuesDoc = kindDoc.values.find(data => data.category === category);
-    return valuesDoc.values
+    const categoryDoc = kindDoc.category.find(data => data.type === category)
+    return categoryDoc.values
   }
 
   get valuesFormArray() {

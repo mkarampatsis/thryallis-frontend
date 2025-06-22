@@ -5,11 +5,11 @@ export interface IEquipmentConfig {
 
 export interface Kind {
   type: string
-  category: string[]
-  values: Value[]
+  category: Category[]
 }
 
-export interface Value {
-  category: string
+export interface Category {
+  type: string
   values: string[]
+  info?: string[]
 }
