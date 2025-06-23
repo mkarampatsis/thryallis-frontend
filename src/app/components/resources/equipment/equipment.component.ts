@@ -52,6 +52,7 @@ export class EquipmentComponent implements OnInit {
       new FormGroup({
         value: new FormControl('', Validators.required),
         description:new FormControl({ value: '', disabled: true }, Validators.required),
+        info: new FormControl({ value: '', disabled: true }, Validators.required)
       })
     ])
   })
@@ -199,11 +200,16 @@ export class EquipmentComponent implements OnInit {
   setValueFields(values: string[]) {
     this.clearValues();
     values.forEach(v => {
-      const [description] = v.split('=');
+      const [description, info] = v.split('=');
+      console.log("1>",v);
+      console.log("2>",description);
+      console.log("3>",v.split('='));
+      console.log("4>", [description]);
       this.valuesFormArray.push(
         new FormGroup({
           value: new FormControl('', Validators.required),
-          description: new FormControl({ value: description.trim(), disabled: true }, Validators.required)
+          description: new FormControl({ value: description.trim(), disabled: true }, Validators.required),
+          info: new FormControl({ value: info.trim(), disabled: true }, Validators.required),
         })
       );
     });
@@ -249,7 +255,8 @@ export class EquipmentComponent implements OnInit {
       category:'',
       values: [{
         value: '',
-        description: ''
+        description: '',
+        info:''
       }]
     });
 
