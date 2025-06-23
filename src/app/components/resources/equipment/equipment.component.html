@@ -143,12 +143,15 @@
               <label class="form-label">{{ v.get('description').value }} ({{ v.get('info').value }})</label>
             </div>
             <div class="col-sm-4">
+              @if (v.get('description').value == "Άλλο (προσδιορίστε)"){
+                <textarea formControlName="value" cols="10" rows="10" class="form-control"></textarea>
+              } @else {
               <input class="form-control" type="text" placeholder="Πληκτρολογήστε τιμή" formControlName="value">
+            }
             </div>
           </div>
         </div>
       }
-      
     </fieldset>
 
     <div class="d-flex gap-2">

@@ -39,6 +39,7 @@ export class EquipmentComponent implements OnInit {
   values: string[] = [];
 
   showForm = false;
+  showOtherField = false;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -97,17 +98,6 @@ export class EquipmentComponent implements OnInit {
     this.clearValues();
   }
   
-  // selectKind(){
-  //   this.form.controls.kind.setValue('');
-  //   this.form.controls.category.setValue('');
-  //   this.category = [];
-
-  //   const typeSelected = this.form.controls.type.value;
-  //   const selection = this.equipmentConfig
-  //     .find(data => data.type===typeSelected)
-  //   this.kind = selection.kind.map(data => data.type)
-  // }
-
   onKindChange(event: Event) {
     const kind = (event.target as HTMLSelectElement).value.split(':')[1].trim();
     this.category = this.getCategories(this.form.value.type, kind);
@@ -116,46 +106,20 @@ export class EquipmentComponent implements OnInit {
     this.values = [];
   }
 
-  // selectCategory(){
-  //   this.form.controls.category.setValue('');
-  //   this.form.controls.values.setValue([{
-  //     value: '',
-  //     description:''     
-  //   }]);
-  //   this.values = [];
-    
-  //   const typeSelected = this.form.controls.type.value;
-  //   const kindSelected = this.form.controls.kind.value;
-    
-  //   const typeDoc = this.equipmentConfig
-  //     .find( data => data.type === typeSelected)
-  //   const kindDoc = typeDoc.kind.find(data => data.type === kindSelected) 
-  //   this.category = kindDoc.category;
-  // }
-
   onCategoryChange(event: Event){
     const category = (event.target as HTMLSelectElement).value.split(':')[1].trim(); 
     this.values = this.getValues(this.form.value.type, this.form.value.kind, category);
-    this.setValueFields(this.values);
+    
+    if (category==='Άλλο (προσδιορίστε)'){
+      this.values = ['Άλλο (προσδιορίστε)']
+      this.showOtherField = true;
+      this.setOtherFields();
+    } else {
+      this.showOtherField = false;
+      this.setValueFields(this.values);
+    }
   }
   
-  // selectValue(){
-  //   const typeSelected = this.form.controls.type.value;
-  //   const kindSelected = this.form.controls.kind.value;
-  //   const categroyrSelected = this.form.controls.category.value;
-    
-  //   console.log("Category", categroyrSelected)
-
-  //   const typeDoc = this.equipmentConfig
-  //     .find( data => data.type === typeSelected);
-  //   const kindDoc = typeDoc.kind.find(data => data.type === kindSelected);
-  //   const valuesDoc = kindDoc.values.find(data => data.category === categroyrSelected);
-  //   this.values = valuesDoc.values;
-
-  //   console.log("valuesDoc1", valuesDoc);
-  //   console.log("valuesDoc2", this.values);
-  // }
-
   showOrganizationDetails(code: string): void {
     this.modalService.showOrganizationDetails(code);
   }
@@ -201,10 +165,6 @@ export class EquipmentComponent implements OnInit {
     this.clearValues();
     values.forEach(v => {
       const [description, info] = v.split('=');
-      console.log("1>",v);
-      console.log("2>",description);
-      console.log("3>",v.split('='));
-      console.log("4>", [description]);
       this.valuesFormArray.push(
         new FormGroup({
           value: new FormControl('', Validators.required),
@@ -213,6 +173,17 @@ export class EquipmentComponent implements OnInit {
         })
       );
     });
+  }
+
+  setOtherFields() {
+    this.clearValues();
+    this.valuesFormArray.push(
+      new FormGroup({
+        value: new FormControl('', Validators.required),
+        description: new FormControl({ value: "Άλλο (προσδιορίστε)", disabled: true }, Validators.required),
+        info: new FormControl({ value: "", disabled: true }, Validators.required),
+      })      
+    );
   }
 
   clearValues() {
