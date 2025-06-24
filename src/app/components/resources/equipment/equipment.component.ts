@@ -121,7 +121,7 @@ export class EquipmentComponent implements OnInit {
         const status = response.status;        
         console.log(response)
         if (status === 200) {
-          this.spaces = body;
+          this.spaces = body["data"];
           console.log(this.spaces);
           this.showGrid = true
         }
