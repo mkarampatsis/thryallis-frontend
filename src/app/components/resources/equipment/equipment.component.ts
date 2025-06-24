@@ -80,7 +80,7 @@ export class EquipmentComponent implements OnInit {
     // this.showGrid = true;
   }
 
-  chooseOrganizationalUnit(){
+  chooseSpaces(){
     this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
       .subscribe(result => {
         this.organizationalUnit = result.preferredLabel;
