@@ -1,5 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { ColDef, GridApi, GridReadyEvent, CellClickedEvent } from 'ag-grid-community';
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
+import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-no-rows-overlay/ag-grid-no-rows-overlay.component';
+
+import { ConstFacilityService } from 'src/app/shared/services/const-facility.service';
+import { ConstService } from 'src/app/shared/services/const.service';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
@@ -9,6 +17,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
+import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 
 
 @Component({
@@ -17,7 +26,9 @@ import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentC
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    AgGridAngular,
+    AgGridNoRowsOverlayComponent,
   ],
   templateUrl: './equipment.component.html',
   styleUrl: './equipment.component.css'
@@ -26,13 +37,19 @@ export class EquipmentComponent implements OnInit {
   userService = inject(UserService);
   resourceService = inject(ResourcesService)
   modalService = inject(ModalService);
+  constFacilityService = inject(ConstFacilityService);
+  constService = inject(ConstService);
 
   organizations: IOrganizationList[] = [];
+  equipmentConfig: IEquipmentConfig[] = [];
+  facilities: IFacility[] | null = [];
+  spaces: ISpace[] | null = [];
+
   organization: string = '';
   organizationCode: string = '';
   organizationalUnit: string = '';
   organizationalUnitCode: string = ''
-  equipmentConfig: IEquipmentConfig[] = [];
+  
   type: string[] = [];
   kind: string[] = [];
   category: string[] = [];
@@ -40,12 +57,32 @@ export class EquipmentComponent implements OnInit {
 
   showForm = false;
   showOtherField = false;
+  showGrid = false;
+  loading = false;
+
+  autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
+  defaultColDef = this.constFacilityService.defaultColDef;
+  spaceColDefs: ColDef[] = this.constFacilityService.SPACE_EQUIPMENT_COL_DEFS;
+  
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
+
+  gridApi: GridApi;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationalUnit: new FormControl({ value: '', disabled: true }),
-    organizationalUnitCode: new FormControl({ value: '', disabled: true }),
+    organizationalUnit: new FormArray([
+      new FormGroup({
+        organizationalUnit: new FormControl({ value: '', disabled: true }),
+        organizationalUnitCode: new FormControl({ value: '', disabled: true }),
+      })
+    ]),
+    facilityId: new FormArray([
+      new FormGroup({
+        facilityId: new FormControl('', Validators.required) 
+      })
+    ]),
     type: new FormControl('', Validators.required),
     kind: new FormControl('', Validators.required),
     category: new FormControl('', Validators.required),
@@ -78,16 +115,41 @@ export class EquipmentComponent implements OnInit {
     // this.getFacilitiesByOrganizationCode()
     this.showForm = true;
     // this.showGrid = true;
+    this.resourceService.getSpacesByOrganizationCode(this.organizationCode)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        console.log(response)
+        if (status === 200) {
+          this.spaces = body;
+          console.log(this.spaces);
+          this.showGrid = true
+        }
+      })
   }
 
   chooseOrganizationalUnit(){
     this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
       .subscribe(result => {
+        console.log(result);
+        // this.facilities.push(result);
         this.organizationalUnit = result.preferredLabel;
         this.organizationalUnitCode = result.code;
-        this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
-        this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
+        // this.setOrganizationalUnitsFields(result.preferredLabel, result.code)
       })
+  }
+
+  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    if (this.spaces.length > 0)
+      this.gridApi.hideOverlay();
+  }
+
+
+  onCellClicked(event: CellClickedEvent): void {
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    console.log(action)
   }
 
   onTypeChange(event: Event) {
@@ -190,6 +252,37 @@ export class EquipmentComponent implements OnInit {
     this.valuesFormArray.clear();
   }
 
+  get valuesOrganizationalUnits() {
+    return this.form.get('organizationalUnit') as FormArray;
+  }
+
+  setOrganizationalUnitsFields(ouName:string, ouCode:string) {
+    // this.clearOrganizationalUnits();
+    this.valuesOrganizationalUnits.push(
+      new FormGroup({
+        organizationalUnit: new FormControl({ value: ouName.trim(), disabled: true }, Validators.required),
+        organizationalUnitCode: new FormControl({ value: ouCode.trim(), disabled: true }, Validators.required),
+      })
+    );
+  }
+
+  clearOrganizationalUnits() {
+    this.valuesOrganizationalUnits.clear();
+  }
+
+  addOrganizationalUnit() {
+    this.valuesOrganizationalUnits.push(
+      new FormGroup({
+        organizationalUnit: new FormControl({ value: '', disabled: true }, Validators.required),
+        organizationalUnitCode: new FormControl({ value: '', disabled: true }, Validators.required),
+      }),
+    );
+  }
+
+  removeOrganizationalUnit(index: number) {
+    this.valuesOrganizationalUnits.removeAt(index);
+  }
+
   resetForm(){
     this.initializeForm(); 
   }
@@ -214,13 +307,16 @@ export class EquipmentComponent implements OnInit {
   }
 
   initializeForm(): void {
-    this.form.controls.organizationalUnit.setValue('');
-    this.form.controls.organizationalUnitCode.setValue('');
+    // this.form.controls.organizationalUnit.setValue('');
+    // this.form.controls.organizationalUnitCode.setValue('');
     this.form.patchValue({
       organization: '',
       organizationCode: '',
-      organizationalUnit: '',
-      organizationalUnitCode: '',
+      organizationalUnit: [{
+        organizationalUnit: '',
+        organizationalUnitCode: '',
+      }],
+      
       type: '',
       kind: '',
       category:'',
@@ -230,6 +326,9 @@ export class EquipmentComponent implements OnInit {
         info:''
       }]
     });
+
+    this.clearOrganizationalUnits();
+    this.clearValues();
 
     this.form.markAsPristine();
     this.form.markAsUntouched();

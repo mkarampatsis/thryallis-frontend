@@ -67,27 +67,58 @@
         <div class="col-sm-6">
           <input type="text" class="form-control" formControlName="organizationCode">
         </div>
-      </div>
 
-      <div class="row mb-3">
-        <div class="col-sm-2">
+        <!-- <div class="col-sm-2" >
           <button 
             type="button" 
             class="btn btn-secondary" 
             (click)="chooseOrganizationalUnit()"
           >
-            Επιλογή Μονάδας
+            Προσθήκη Ακίνητου
           </button>
-        </div>
-
-        <div class="col-sm-5">
-          <input type="text" class="form-control" formControlName="organizationalUnit">
-        </div>
-
-        <div class="col-sm-5">
-          <input type="text" class="form-control" formControlName="organizationalUnitCode">
-        </div>
+        </div> -->
       </div>
+
+      <div class="mb-3">
+        @if(showGrid) {
+          <div class="d-flex justify-content-between mb-1">
+            <p class="h5 mb-3">Κατάσταση Χώρων Ακινήτου</p>
+        </div> 
+
+          <ag-grid-angular 
+            [domLayout]="'autoHeight'" 
+            [rowData]="spaces" 
+            [defaultColDef]="defaultColDef"
+            [columnDefs]="spaceColDefs" 
+            [pagination]="true" 
+            [paginationPageSize]="20"
+            [loadingOverlayComponent]="loadingOverlayComponent" 
+            [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+            (cellClicked)="onCellClicked($event)" 
+            (gridReady)="onGridReady($event)" 
+            class="ag-theme-balham">
+          </ag-grid-angular>
+        }
+      </div>
+      <!-- <div formArrayName="organizationalUnit">
+        <div class="row mb-3"  *ngFor="let p of valuesOrganizationalUnits.controls; let i = index" [formGroupName]="i">
+          
+
+          <div class="col-sm-5">
+            <input type="text" class="form-control" formControlName="organizationalUnit">
+          </div>
+
+          <div class="col-sm-5">
+            <input type="text" class="form-control" formControlName="organizationalUnitCode">
+          </div>
+
+          <div class="col-sm-2 d-flex gap-2">
+            <button *ngIf="valuesOrganizationalUnits.controls.length > 1" (click)="removeOrganizationalUnit(i)">
+              <i class="bi bi-x-square text-danger fs-5"></i>
+            </button>
+          </div>
+        </div>
+      </div> -->
 
     </fieldset>
 

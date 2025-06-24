@@ -45,7 +45,12 @@ export class ResourcesService {
   }
 
   getSpacesByFacilityId(id: string): Observable<HttpResponse<ISpace[]>> {
-    const url = `${APIPREFIX_FACILITY}/${id}/space`;
+    const url = `${APIPREFIX_FACILITY}/${id}/spaces`;
+    return this.http.get<ISpace[]>(url, { observe: 'response' });
+  }
+
+  getSpacesByOrganizationCode(code: string): Observable<HttpResponse<ISpace[]>> {
+    const url = `${APIPREFIX_FACILITY}/organization/${code}/spaces`;
     return this.http.get<ISpace[]>(url, { observe: 'response' });
   }
 
