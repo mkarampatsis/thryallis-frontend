@@ -19,6 +19,7 @@ import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
 import { IFacility } from 'src/app/shared/interfaces/facility/facility';
 import { IFacilitySpace } from 'src/app/shared/interfaces/facility/facility-space';
+import { IEquipment } from 'src/app/shared/interfaces/equipment/equipment';
 
 
 @Component({
@@ -36,7 +37,7 @@ import { IFacilitySpace } from 'src/app/shared/interfaces/facility/facility-spac
 })
 export class EquipmentComponent implements OnInit {
   userService = inject(UserService);
-  resourceService = inject(ResourcesService)
+  resourcesService = inject(ResourcesService)
   modalService = inject(ModalService);
   constFacilityService = inject(ConstFacilityService);
   constService = inject(ConstService);
@@ -85,14 +86,14 @@ export class EquipmentComponent implements OnInit {
     values: new FormArray([
       new FormGroup({
         value: new FormControl('', Validators.required),
-        description:new FormControl({ value: '', disabled: true }, Validators.required),
-        info: new FormControl({ value: '', disabled: true }, Validators.required)
+        description:new FormControl('', Validators.required),
+        info: new FormControl('', Validators.required)
       })
     ])
   })
 
   ngOnInit(): void {
-    this.resourceService.getEquipmentCategories()
+    this.resourcesService.getEquipmentCategories()
       .subscribe(result => {
         this.equipmentConfig = result;
         this.type = this.getTypes()
@@ -106,7 +107,7 @@ export class EquipmentComponent implements OnInit {
     this.form.controls.organization.setValue(this.organization);
     this.form.controls.organizationCode.setValue(this.organizationCode);
     this.showForm = true;
-    this.resourceService.getSpacesByOrganizationCode(this.organizationCode)
+    this.resourcesService.getSpacesByOrganizationCode(this.organizationCode)
       .subscribe(response => {
         const body = response.body;          
         const status = response.status;        
@@ -216,8 +217,8 @@ export class EquipmentComponent implements OnInit {
       this.valuesFormArray.push(
         new FormGroup({
           value: new FormControl('', Validators.required),
-          description: new FormControl({ value: description.trim(), disabled: true }, Validators.required),
-          info: new FormControl({ value: info.trim(), disabled: true }, Validators.required),
+          description: new FormControl( description.trim(), Validators.required),
+          info: new FormControl( info.trim(), Validators.required),
         })
       );
     });
@@ -274,25 +275,20 @@ export class EquipmentComponent implements OnInit {
     //   }
     // }
     // console.log(invalid)
-   
-    const data = {
-      organization: this.form.controls.organization.value,
-      organizationCode: this.form.controls.organizationCode.value,
-      space: this.getfrmSpaceFieldsId(),
-      type: this.form.controls.type.value,
-      kind: this.form.controls.kind.value,
-      category: this.form.controls.category.value
-    }
 
-    console.log(data)
-    // this.resourcesService.newFacility(data)
-    //   .subscribe(response => {
-    //     const body = response.body;          
-    //     const status = response.status;        
-    //     if (status === 201) {
-    //       this.getFacilitiesByOrganizationCode();
-    //     }
-    //   })
+    const data = this.form.value as IEquipment;
+    data['organization'] = this.organization;
+    data['organizationCode'] = this.organizationCode;
+    data['spaceId'] = this.getfrmSpaceFieldsId()
+    this.resourcesService.addEquipment(data)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 201) {
+          // this.getFacilitiesByOrganizationCode();
+          console.log(body)
+        }
+      })
   }
 
   initializeForm(): void {

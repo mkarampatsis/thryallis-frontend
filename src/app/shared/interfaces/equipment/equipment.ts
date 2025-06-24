@@ -1,7 +1,7 @@
-export interface IEquipement {
+export interface IEquipment {
   organization: string;
   organizationCode: string;
-  space: string[];
+  spaceId: string[];
   type: string;
   kind: string;
   category: string;

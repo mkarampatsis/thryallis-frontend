@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { IFacility, ISpace } from '../interfaces/facility/facility';
 import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 import { IFacilitySpace } from '../interfaces/facility/facility-space';
+import { IEquipment } from '../interfaces/equipment/equipment';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
@@ -64,5 +65,9 @@ export class ResourcesService {
   getEquipmentCategories(): Observable<IEquipmentConfig[]> {
     const url = `${APIPREFIX_EQUIPMENT}/config`;
     return this.http.get<IEquipmentConfig[]>(url);
+  }
+
+  addEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {
+    return this.http.post<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
   }
 }
