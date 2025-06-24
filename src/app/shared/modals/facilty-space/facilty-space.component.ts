@@ -136,16 +136,6 @@ export class FaciltySpaceComponent implements OnInit {
   }
 
   submitForm(){
-    // const invalid = [];
-    //     const controls = this.form.controls;
-    //     for (const name in controls) {
-    //         if (controls[name].invalid) {
-    //             invalid.push(name);
-    //         }
-    //     }
-    //     console.log(invalid)
-    //     // return invalid;
-    
     const data = this.form.value as ISpace;
     data["facilityId"] = this.facility["_id"]["$oid"];
     data["spaceUse"]["type"] = this.facility.useOfFacility;

@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { IFacility, ISpace } from '../interfaces/facility/facility';
 import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
+import { IFacilitySpace } from '../interfaces/facility/facility-space';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
@@ -49,9 +50,9 @@ export class ResourcesService {
     return this.http.get<ISpace[]>(url, { observe: 'response' });
   }
 
-  getSpacesByOrganizationCode(code: string): Observable<HttpResponse<ISpace[]>> {
+  getSpacesByOrganizationCode(code: string): Observable<HttpResponse<IFacilitySpace[]>> {
     const url = `${APIPREFIX_FACILITY}/organization/${code}/spaces`;
-    return this.http.get<ISpace[]>(url, { observe: 'response' });
+    return this.http.get<IFacilitySpace[]>(url, { observe: 'response' });
   }
 
   deleteSpaceById(id:string): Observable<HttpResponse<ISpace>> {

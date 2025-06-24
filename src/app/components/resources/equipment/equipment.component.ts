@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ColDef, GridApi, GridReadyEvent, CellClickedEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, CellClickedEvent, RowClickedEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-no-rows-overlay/ag-grid-no-rows-overlay.component';
@@ -17,7 +17,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
-import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
+import { IFacility } from 'src/app/shared/interfaces/facility/facility';
+import { IFacilitySpace } from 'src/app/shared/interfaces/facility/facility-space';
 
 
 @Component({
@@ -43,7 +44,8 @@ export class EquipmentComponent implements OnInit {
   organizations: IOrganizationList[] = [];
   equipmentConfig: IEquipmentConfig[] = [];
   facilities: IFacility[] | null = [];
-  spaces: ISpace[] | null = [];
+  spaces: IFacilitySpace[] | null = [];
+  selectedSpaces: IFacilitySpace[] = [];
 
   organization: string = '';
   organizationCode: string = '';
@@ -72,15 +74,9 @@ export class EquipmentComponent implements OnInit {
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationalUnit: new FormArray([
+    spaceId: new FormArray([
       new FormGroup({
-        organizationalUnit: new FormControl({ value: '', disabled: true }),
-        organizationalUnitCode: new FormControl({ value: '', disabled: true }),
-      })
-    ]),
-    facilityId: new FormArray([
-      new FormGroup({
-        facilityId: new FormControl('', Validators.required) 
+        id: new FormControl('', Validators.required) 
       })
     ]),
     type: new FormControl('', Validators.required),
@@ -98,9 +94,6 @@ export class EquipmentComponent implements OnInit {
   ngOnInit(): void {
     this.resourceService.getEquipmentCategories()
       .subscribe(result => {
-        // console.log(result);
-        // this.type = result.map(data => data.type);
-        // console.log(this.type);
         this.equipmentConfig = result;
         this.type = this.getTypes()
       })
@@ -112,30 +105,15 @@ export class EquipmentComponent implements OnInit {
     this.organizationCode = data.code
     this.form.controls.organization.setValue(this.organization);
     this.form.controls.organizationCode.setValue(this.organizationCode);
-    // this.getFacilitiesByOrganizationCode()
     this.showForm = true;
-    // this.showGrid = true;
     this.resourceService.getSpacesByOrganizationCode(this.organizationCode)
       .subscribe(response => {
         const body = response.body;          
         const status = response.status;        
-        console.log(response)
         if (status === 200) {
           this.spaces = body["data"];
-          console.log(this.spaces);
           this.showGrid = true
         }
-      })
-  }
-
-  chooseSpaces(){
-    this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
-      .subscribe(result => {
-        console.log(result);
-        // this.facilities.push(result);
-        this.organizationalUnit = result.preferredLabel;
-        this.organizationalUnitCode = result.code;
-        // this.setOrganizationalUnitsFields(result.preferredLabel, result.code)
       })
   }
 
@@ -147,9 +125,17 @@ export class EquipmentComponent implements OnInit {
   }
 
 
-  onCellClicked(event: CellClickedEvent): void {
-    const action = (event.event.target as HTMLElement).getAttribute('data-action');
-    console.log(action)
+  onRowSelected(event: RowClickedEvent): void {
+    const selectedNodes = event.api.getSelectedNodes();
+    this.selectedSpaces = selectedNodes.map(node => node.data);
+    this.setfrmSpaceFieldsId();
+  }
+
+  clearSelections() {
+    if (this.gridApi) {
+      this.gridApi.deselectAll(); // Clear all selected rows
+      this.gridApi.setFilterModel(null);
+    }
   }
 
   onTypeChange(event: Event) {
@@ -252,35 +238,27 @@ export class EquipmentComponent implements OnInit {
     this.valuesFormArray.clear();
   }
 
-  get valuesOrganizationalUnits() {
-    return this.form.get('organizationalUnit') as FormArray;
+  get frmSpaceFieldsId() {
+    return this.form.get('spaceId') as FormArray;
   }
 
-  setOrganizationalUnitsFields(ouName:string, ouCode:string) {
-    // this.clearOrganizationalUnits();
-    this.valuesOrganizationalUnits.push(
-      new FormGroup({
-        organizationalUnit: new FormControl({ value: ouName.trim(), disabled: true }, Validators.required),
-        organizationalUnitCode: new FormControl({ value: ouCode.trim(), disabled: true }, Validators.required),
-      })
-    );
+  setfrmSpaceFieldsId() {
+    this.clearfrmSpaceFieldsId();
+    this.selectedSpaces.forEach(data => {
+      this.frmSpaceFieldsId.push(
+        new FormGroup({
+          id: new FormControl(data.spaces._id.$oid, Validators.required),
+        })
+      )
+    })
   }
 
-  clearOrganizationalUnits() {
-    this.valuesOrganizationalUnits.clear();
+  clearfrmSpaceFieldsId() {
+    this.frmSpaceFieldsId.clear();
   }
 
-  addOrganizationalUnit() {
-    this.valuesOrganizationalUnits.push(
-      new FormGroup({
-        organizationalUnit: new FormControl({ value: '', disabled: true }, Validators.required),
-        organizationalUnitCode: new FormControl({ value: '', disabled: true }, Validators.required),
-      }),
-    );
-  }
-
-  removeOrganizationalUnit(index: number) {
-    this.valuesOrganizationalUnits.removeAt(index);
+  getfrmSpaceFieldsId() {
+    return this.selectedSpaces.map(data => data.spaces._id.$oid)
   }
 
   resetForm(){
@@ -288,14 +266,25 @@ export class EquipmentComponent implements OnInit {
   }
 
   submitForm(){
-    console.log(this.form.value)
-    // const data = this.form.value as IEquipmentConfig;
-    // data["organization"] = this.organization;
-    // data["organizationCode"] = this.organizationCode;
+    // const invalid = [];
+    // const controls = this.form.controls;
+    // for (const name in controls) {
+    //   if (controls[name].invalid) {
+    //     invalid.push(name);
+    //   }
+    // }
+    // console.log(invalid)
+   
+    const data = {
+      organization: this.form.controls.organization.value,
+      organizationCode: this.form.controls.organizationCode.value,
+      space: this.getfrmSpaceFieldsId(),
+      type: this.form.controls.type.value,
+      kind: this.form.controls.kind.value,
+      category: this.form.controls.category.value
+    }
 
-    // data["organizationalUnit"] = this.organizationalUnit;
-    // data["organizationalUnitCode"] = this.organizationalUnitCode;
-
+    console.log(data)
     // this.resourcesService.newFacility(data)
     //   .subscribe(response => {
     //     const body = response.body;          
@@ -307,16 +296,12 @@ export class EquipmentComponent implements OnInit {
   }
 
   initializeForm(): void {
-    // this.form.controls.organizationalUnit.setValue('');
-    // this.form.controls.organizationalUnitCode.setValue('');
     this.form.patchValue({
       organization: '',
       organizationCode: '',
-      organizationalUnit: [{
-        organizationalUnit: '',
-        organizationalUnitCode: '',
+      spaceId: [{
+        id:''
       }],
-      
       type: '',
       kind: '',
       category:'',
@@ -326,9 +311,8 @@ export class EquipmentComponent implements OnInit {
         info:''
       }]
     });
-
-    this.clearOrganizationalUnits();
     this.clearValues();
+    this.clearfrmSpaceFieldsId();
 
     this.form.markAsPristine();
     this.form.markAsUntouched();

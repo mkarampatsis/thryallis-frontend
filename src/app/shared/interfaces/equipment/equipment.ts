@@ -1,11 +1,7 @@
 export interface IEquipement {
   organization: string;
   organizationCode: string;
-  organizationalUnit: [{
-    organizationalUnit: string;
-    organizationalUnitCode: string;
-  }]
-  facilityId: string[];
+  space: string[];
   type: string;
   kind: string;
   category: string;

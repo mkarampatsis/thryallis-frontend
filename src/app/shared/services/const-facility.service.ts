@@ -549,29 +549,12 @@ export class ConstFacilityService {
   ];
 
   SPACE_EQUIPMENT_COL_DEFS: ColDef[] = [
-    { field: 'organization', headerName: 'Φορέας', flex: 1 },
+    { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
     { field: 'organizationalUnit', headerName: 'Μονάδα', flex: 1 },
     { field: 'distinctiveNameOfFacility', headerName: 'Ονομασία Ακινήτου', flex: 1 },
     { field: 'spaces.spaceName', headerName: 'Ονομασία Χώρου', flex: 1 },
     { field: 'spaces.spaceUse.type', headerName: 'Τύπος Χρήσης', flex: 1 },
     { field: 'spaces.spaceUse.space', headerName: 'Χρήση', flex: 1 },
-    {
-      field: 'actionCell',
-      headerName: 'Ενέργειες',
-      cellRenderer: (params) => {
-        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
-          return `
-            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editSpace" title="Επεξεργασία χώρου" role="button"></i>
-            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteSpace" title="Διαγραφή χώρου" role="button"></i>
-          `;
-        } 
-      },
-      filter: false,
-      sortable: false,
-      floatingFilter: false,
-      resizable: false,
-      flex: 0.5,
-    }    
   ];
 
   removeAccents(input: string): string {
