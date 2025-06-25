@@ -558,25 +558,38 @@ export class ConstFacilityService {
   ];
 
   EQUIPMENT_COL_DEFS: ColDef[] = [
-    // {
-    //   field: 'spaces',
-    //   headerName: 'Χώρος',
-    //   cellRenderer: (params) => {
-    //     const spaceNames = [];
-    //     params.value.forEach((data) => {
-    //         spaceNames.push(data.spaceName);
-    //     });
-    //     return spaceNames.join(', ');
-    //   }, 
-    //   unSortIcon: true,
-    //   filter: false,
-    //   flex:1
-    // },
+    {
+      field: 'spaces',
+      headerName: 'Χώρος',
+      cellRenderer: (params) => {
+        const spaceNames = [];
+        params.value.forEach((data) => {
+            spaceNames.push(data.spaceName);
+        });
+        return spaceNames.join(', ');
+      }, 
+      unSortIcon: true,
+      filter: false,
+      flex:1
+    },
     { field: 'type', headerName: 'Τύπος', flex: 1 },
     { field: 'kind', headerName: 'Είδος', flex: 1 },
     { field: 'category', headerName: 'Κατηγορία', flex: 1 },
-    // { field: 'values', headerName: 'Στοιχεία', flex: 1 },
-
+    { 
+      field: 'values', 
+      headerName: 'Τιμές',
+      cellRenderer: (params) => {
+        const values = [];
+        params.value.forEach((data) => {
+          const item = data.description + '=' + data.value;
+          values.push(item);
+        });
+        return values.join(', ');
+      },  
+      flex: 1,
+      unSortIcon: true,
+      filter: false, 
+    },
     {
       field: 'actionCell',
       headerName: 'Ενέργειες',

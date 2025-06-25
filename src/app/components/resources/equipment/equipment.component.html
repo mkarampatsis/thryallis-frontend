@@ -51,21 +51,22 @@
   }
 }
 
-<div class="mt-5 mb-5">
-  <ag-grid-angular 
-    [domLayout]="'autoHeight'" 
-    [rowData]="equipments" 
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="equipmentColDefs" 
-    [pagination]="true" 
-    [paginationPageSize]="20"
-    [loadingOverlayComponent]="loadingOverlayComponent" 
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (gridReady)="onGridReady($event)" 
-    class="ag-theme-balham">
-  </ag-grid-angular>
-</div>
-
+@if (equipments.length>0){
+  <div class="mt-5 mb-5">
+    <ag-grid-angular 
+      [domLayout]="'autoHeight'" 
+      [rowData]="equipments" 
+      [defaultColDef]="defaultColDef"
+      [columnDefs]="equipmentColDefs" 
+      [pagination]="true" 
+      [paginationPageSize]="20"
+      [loadingOverlayComponent]="loadingOverlayComponent" 
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (gridReady)="onGridReady($event)" 
+      class="ag-theme-balham">
+    </ag-grid-angular>
+  </div>
+}
 <div class="mt-5 mb-5">
   @if(showForm) {
   <form [formGroup]="form">
