@@ -125,9 +125,9 @@ export class EquipmentComponent implements OnInit {
     this.resourcesService.getEquipmentsByOrganizationCode(code)
       .subscribe(results => {
         console.log(results)
-        this.equipments = results;
-        if (this.spaces.length > 0)
-        this.gridApiEquipment.hideOverlay();
+        this.equipments = results["data"];
+        if (this.equipments.length > 0)
+          this.gridApiEquipment.hideOverlay();
       })
   }
 
