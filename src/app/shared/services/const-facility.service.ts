@@ -557,6 +557,40 @@ export class ConstFacilityService {
     { field: 'spaces.spaceUse.space', headerName: 'Χρήση', flex: 1 },
   ];
 
+  EQUIPMENT_COL_DEFS: ColDef[] = [
+    // {
+    //   field: 'spaces',
+    //   headerName: 'Χώρος',
+    //   cellRenderer: (params) => {
+    //     const spaceNames = [];
+    //     params.value.forEach((data) => {
+    //         spaceNames.push(data.spaceName);
+    //     });
+    //     return spaceNames.join(', ');
+    //   }, 
+    //   unSortIcon: true,
+    //   filter: false,
+    //   flex:1
+    // },
+    { field: 'type', headerName: 'Τύπος', flex: 1 },
+    { field: 'kind', headerName: 'Είδος', flex: 1 },
+    { field: 'category', headerName: 'Κατηγορία', flex: 1 },
+    // { field: 'values', headerName: 'Στοιχεία', flex: 1 },
+
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: (params) => {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
+          return `
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editSpace" title="Επεξεργασία εξοπλισμού" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteSpace" title="Διαγραφή εξοπλισμού" role="button"></i>
+          `;
+        } 
+      },
+    }
+  ];
+
   removeAccents(input: string): string {
     return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }

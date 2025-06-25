@@ -47,6 +47,7 @@ export class EquipmentComponent implements OnInit {
   facilities: IFacility[] | null = [];
   spaces: IFacilitySpace[] | null = [];
   selectedSpaces: IFacilitySpace[] = [];
+  equipments: IEquipment[] | null =[];
 
   organization: string = '';
   organizationCode: string = '';
@@ -66,11 +67,13 @@ export class EquipmentComponent implements OnInit {
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
   defaultColDef = this.constFacilityService.defaultColDef;
   spaceColDefs: ColDef[] = this.constFacilityService.SPACE_EQUIPMENT_COL_DEFS;
+  equipmentColDefs: ColDef[] = this.constFacilityService.EQUIPMENT_COL_DEFS;
   
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
   gridApi: GridApi;
+  gridApiEquipment: GridApi;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -116,6 +119,16 @@ export class EquipmentComponent implements OnInit {
           this.showGrid = true
         }
       })
+  }    
+  
+  showEquipments(code: string){
+    this.resourcesService.getEquipmentsByOrganizationCode(code)
+      .subscribe(results => {
+        console.log(results)
+        this.equipments = results;
+        if (this.spaces.length > 0)
+        this.gridApiEquipment.hideOverlay();
+      })
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
@@ -130,6 +143,13 @@ export class EquipmentComponent implements OnInit {
     const selectedNodes = event.api.getSelectedNodes();
     this.selectedSpaces = selectedNodes.map(node => node.data);
     this.setfrmSpaceFieldsId();
+  }
+
+  onGridEquipmentReady(params: GridReadyEvent<IEquipment>): void {
+    this.gridApiEquipment = params.api;
+    this.gridApiEquipment.showLoadingOverlay();
+    if (this.equipments.length > 0)
+      this.gridApiEquipment.hideOverlay();
   }
 
   clearSelections() {
