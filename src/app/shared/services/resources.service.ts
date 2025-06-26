@@ -67,9 +67,9 @@ export class ResourcesService {
     return this.http.get<IEquipmentConfig[]>(url);
   }
 
-  getEquipmentsByOrganizationCode(code:string): Observable<IEquipment[]> {
+  getEquipmentsByOrganizationCode(code:string): Observable<HttpResponse<IEquipment[]>> {
     const url = `${APIPREFIX_EQUIPMENT}/organization/${code}`;
-    return this.http.get<IEquipment[]>(url);
+    return this.http.get<IEquipment[]>(url, { observe: 'response' });
   }
 
   addEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {

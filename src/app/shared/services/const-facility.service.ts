@@ -568,13 +568,12 @@ export class ConstFacilityService {
         });
         return spaceNames.join(', ');
       }, 
-      unSortIcon: true,
-      filter: false,
+      filter: true,
       flex:1
     },
-    { field: 'type', headerName: 'Τύπος', flex: 1 },
+    { field: 'type', headerName: 'Υποκατηγορία', flex: 1 },
     { field: 'kind', headerName: 'Είδος', flex: 1 },
-    { field: 'category', headerName: 'Κατηγορία', flex: 1 },
+    { field: 'category', headerName: 'Τύπος', flex: 1 },
     { 
       field: 'values', 
       headerName: 'Τιμές',
@@ -587,8 +586,7 @@ export class ConstFacilityService {
         return values.join(', ');
       },  
       flex: 1,
-      unSortIcon: true,
-      filter: false, 
+      filter: true, 
     },
     {
       field: 'actionCell',
@@ -601,6 +599,8 @@ export class ConstFacilityService {
           `;
         } 
       },
+      filter: false, 
+      flex:0.5
     }
   ];
 

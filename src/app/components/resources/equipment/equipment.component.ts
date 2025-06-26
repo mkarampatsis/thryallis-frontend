@@ -62,7 +62,7 @@ export class EquipmentComponent implements OnInit {
   showForm = false;
   showOtherField = false;
   showGrid = false;
-  loading = false;
+  showGridEquipment = false;
 
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
   defaultColDef = this.constFacilityService.defaultColDef;
@@ -123,10 +123,16 @@ export class EquipmentComponent implements OnInit {
   
   showEquipments(code: string){
     this.resourcesService.getEquipmentsByOrganizationCode(code)
-      .subscribe(results => {
-        this.equipments = results["data"];
-        
-      })
+    .subscribe(response => {
+      console.log(response);
+      const body = response.body["data"];          
+      const status = response.status;        
+      if (status === 200) {
+        console.log(body)
+        this.equipments = body;
+      } 
+    })
+    this.showGridEquipment = true;
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
@@ -146,7 +152,7 @@ export class EquipmentComponent implements OnInit {
   onGridEquipmentReady(params: GridReadyEvent<IEquipment>): void {
     this.gridApiEquipment = params.api;
     this.gridApiEquipment.showLoadingOverlay();
-    if (this.equipments.length > 0)
+     if (this.equipments.length > 0)
       this.gridApiEquipment.hideOverlay();
   }
 
@@ -331,5 +337,4 @@ export class EquipmentComponent implements OnInit {
     this.form.markAsPristine();
     this.form.markAsUntouched();
   };
-
 }

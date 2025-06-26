@@ -51,7 +51,7 @@
   }
 }
 
-@if (equipments.length>0){
+@if (showGridEquipment){
   <div class="mt-5 mb-5">
     <ag-grid-angular 
       [domLayout]="'autoHeight'" 
@@ -62,7 +62,7 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (gridReady)="onGridReady($event)" 
+      (gridReady)="onGridEquipmentReady($event)" 
       class="ag-theme-balham">
     </ag-grid-angular>
   </div>
@@ -129,7 +129,7 @@
           <select class="form-select" aria-label="Default select example" formControlName="type"
             (change)="onTypeChange($event)">
             <option value="" disabled selected>
-              Επιλέξτε τύπο
+              Επιλέξτε υποκατηγορία
             </option>
             @for (item of type; track item) {
               <option [ngValue]="item">{{ item }}</option>
@@ -156,7 +156,7 @@
             <select class="form-select" aria-label="Default select example" formControlName="category"
               (change)="onCategoryChange($event)">
               <option value="" disabled selected>
-                Επιλέξτε κατηγορία
+                Επιλέξτε τύπος
               </option>
               @for (item of category; track item) {
                 <option [ngValue]="item">{{ item }}</option>
