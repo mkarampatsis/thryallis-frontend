@@ -126,12 +126,12 @@
       <div class="row mb-3">
         
         <div class="col-sm-4">
-          <select class="form-select" aria-label="Default select example" formControlName="type"
-            (change)="onTypeChange($event)">
+          <select class="form-select" aria-label="Default select example" formControlName="resourceSubcategory"
+            (change)="onResourcesubcategoryChange($event)">
             <option value="" disabled selected>
               Επιλέξτε υποκατηγορία
             </option>
-            @for (item of type; track item) {
+            @for (item of resourceSubcategory; track item) {
               <option [ngValue]="item">{{ item }}</option>
             }
           </select>
@@ -151,14 +151,14 @@
           </div>
         }
 
-        @if (category.length > 0) {
+        @if (type.length > 0) {
           <div class="col-sm-4">
-            <select class="form-select" aria-label="Default select example" formControlName="category"
-              (change)="onCategoryChange($event)">
+            <select class="form-select" aria-label="Default select example" formControlName="type"
+              (change)="onTypeChange($event)">
               <option value="" disabled selected>
                 Επιλέξτε τύπος
               </option>
-              @for (item of category; track item) {
+              @for (item of type; track item) {
                 <option [ngValue]="item">{{ item }}</option>
               }
             </select>
@@ -166,9 +166,9 @@
         }        
       </div>
 
-      @if (values.length > 0) {
-        <div formArrayName="values">
-          <div *ngFor="let v of valuesFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
+      @if (itemDescription.length > 0) {
+        <div class="mb-3" formArrayName="itemDescription">
+          <div *ngFor="let v of itemDescriptionFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
             <div class="col-sm-4">
               <label class="form-label">{{ v.get('description').value }} ({{ v.get('info').value }})</label>
             </div>
@@ -182,6 +182,25 @@
           </div>
         </div>
       }
+
+      <div class="row mb-3">
+        <div class="col-sm-6">
+          <label class="form-label fw-bold" for="acquisitionDate">Ημερομηνία απόκτησης:</label>
+          <input type="date" class="form-control" id="acquisitionDate" formControlName="acquisitionDate">
+        </div>
+
+        <div class="col-sm-6">
+          <label class="form-label fw-bold" for="status">Κατάσταση του Αντικειμένου</label>
+          <select class="form-select" id="status" formControlName="status">
+            <option value="" disabled selected>
+              Επιλέξτε Κατάσταση
+            </option>
+            <option νalue="Σε λειτουργία">Σε λειτουργία</option>
+            <option νalue="Προς Διάθεση (stock)">Προς Διάθεση (stock)</option>
+            <option νalue="Προς Απόσυρση">Προς Απόσυρση</option>
+          </select>
+        </div>
+      </div>
     </fieldset>
 
     <div class="d-flex gap-2">

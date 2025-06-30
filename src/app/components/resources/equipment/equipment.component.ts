@@ -54,10 +54,10 @@ export class EquipmentComponent implements OnInit {
   organizationalUnit: string = '';
   organizationalUnitCode: string = ''
   
-  type: string[] = [];
+  resourceSubcategory: string[] = [];
   kind: string[] = [];
-  category: string[] = [];
-  values: string[] = [];
+  type: string[] = [];
+  itemDescription: string[] = [];
 
   showForm = false;
   showOtherField = false;
@@ -78,28 +78,31 @@ export class EquipmentComponent implements OnInit {
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    spaceId: new FormArray([
+    spaceWithinFacility: new FormArray([
       new FormGroup({
         id: new FormControl('', Validators.required) 
       })
     ]),
-    type: new FormControl('', Validators.required),
+    resourceCategory:new FormControl ('Εξοπλισμός'),
+    resourceSubcategory: new FormControl('', Validators.required),
     kind: new FormControl('', Validators.required),
-    category: new FormControl('', Validators.required),
-    values: new FormArray([
+    type: new FormControl('', Validators.required),
+    itemDescription: new FormArray([
       new FormGroup({
         value: new FormControl('', Validators.required),
         description:new FormControl('', Validators.required),
         info: new FormControl('', Validators.required)
       })
-    ])
+    ]),
+    acquisitionDate: new FormControl('', Validators.required),
+    status: new FormControl('', Validators.required),
   })
 
   ngOnInit(): void {
     this.resourcesService.getEquipmentCategories()
       .subscribe(result => {
         this.equipmentConfig = result;
-        this.type = this.getTypes()
+        this.resourceSubcategory = this.getResourceSubcategory()
       })
     this.organizations= this.userService.getMyEquipments();
   }
@@ -124,11 +127,9 @@ export class EquipmentComponent implements OnInit {
   showEquipments(code: string){
     this.resourcesService.getEquipmentsByOrganizationCode(code)
     .subscribe(response => {
-      console.log(response);
       const body = response.body["data"];          
       const status = response.status;        
       if (status === 200) {
-        console.log(body)
         this.equipments = body;
       } 
     })
@@ -163,33 +164,33 @@ export class EquipmentComponent implements OnInit {
     }
   }
 
-  onTypeChange(event: Event) {
-    const type = (event.target as HTMLSelectElement).value.split(':')[1].trim();
-    this.kind = this.getKinds(type);
-    this.form.patchValue({ kind: '', category: '' });
-    this.category = [];
-    this.clearValues();
+  onResourcesubcategoryChange(event: Event) {
+    const resourcesubcategory = (event.target as HTMLSelectElement).value.split(':')[1].trim();
+    this.kind = this.getKinds(resourcesubcategory);
+    this.form.patchValue({ kind: '', type: '' });
+    this.type = [];
+    this.clearitemDescription();
   }
   
   onKindChange(event: Event) {
     const kind = (event.target as HTMLSelectElement).value.split(':')[1].trim();
-    this.category = this.getCategories(this.form.value.type, kind);
-    this.form.patchValue({ category: '' });
-    this.clearValues();
-    this.values = [];
+    this.type = this.getTypes(this.form.value.resourceSubcategory, kind);
+    this.form.patchValue({ type: '' });
+    this.clearitemDescription();
+    this.itemDescription = [];
   }
 
-  onCategoryChange(event: Event){
-    const category = (event.target as HTMLSelectElement).value.split(':')[1].trim(); 
-    this.values = this.getValues(this.form.value.type, this.form.value.kind, category);
+  onTypeChange(event: Event){
+    const type = (event.target as HTMLSelectElement).value.split(':')[1].trim(); 
+    this.itemDescription = this.getItemDescriptions(this.form.value.resourceSubcategory, this.form.value.kind, type);
     
-    if (category==='Άλλο (προσδιορίστε)'){
-      this.values = ['Άλλο (προσδιορίστε)']
+    if (type==='Άλλο (προσδιορίστε)'){
+      this.itemDescription = ['Άλλο (προσδιορίστε)']
       this.showOtherField = true;
       this.setOtherFields();
     } else {
       this.showOtherField = false;
-      this.setValueFields(this.values);
+      this.setValueFields(this.itemDescription);
     }
   }
   
@@ -205,40 +206,40 @@ export class EquipmentComponent implements OnInit {
     return this.userService.hasEquipmentEditorRole()
   }
 
-  getTypes() {
-    return this.equipmentConfig.map(data => data.type); // top-level type
+  getResourceSubcategory() {
+    return this.equipmentConfig.map(data => data.resourceSubcategory); 
   }
 
-  getKinds(type: string) {
-    const typeDoc = this.equipmentConfig
-      .find(data => data.type===type)
-    return typeDoc.kind.map(data => data.type);
+  getKinds(resourceSubcategory: string) {
+    const resourcecategoryDoc = this.equipmentConfig
+      .find(data => data.resourceSubcategory===resourceSubcategory)
+    return resourcecategoryDoc.kind.map(data => data.name);
   }
 
-  getCategories(type: string, kindType: string) {
-    const typeDoc = this.equipmentConfig
-      .find( data => data.type === type)
-    const kindDoc = typeDoc.kind.find(data => data.type === kindType) 
-    return kindDoc.category.map(data => data.type);
+  getTypes(resourceSubcategory: string, kindName: string) {
+    const resourceSubcategoryDoc = this.equipmentConfig
+      .find( data => data.resourceSubcategory === resourceSubcategory)
+    const kindDoc = resourceSubcategoryDoc.kind.find(data => data.name === kindName) 
+    return kindDoc.type.map(data => data.name);
   }
   
-  getValues(type: string, kindType: string, category: string) {
-    const typeDoc = this.equipmentConfig
-      .find( data => data.type === type.trim());
-    const kindDoc = typeDoc.kind.find(data => data.type === kindType);
-    const categoryDoc = kindDoc.category.find(data => data.type === category)
-    return categoryDoc.values
+  getItemDescriptions(resourceSubcategory: string, kindName: string, type: string) {
+    const resourceSubcategoryDoc = this.equipmentConfig
+      .find( data => data.resourceSubcategory === resourceSubcategory.trim());
+    const kindDoc = resourceSubcategoryDoc.kind.find(data => data.name === kindName);
+    const typeDoc = kindDoc.type.find(data => data.name === type)
+    return typeDoc.itemDescription
   }
 
-  get valuesFormArray() {
-    return this.form.get('values') as FormArray;
+  get itemDescriptionFormArray() {
+    return this.form.get('itemDescription') as FormArray;
   }
 
-  setValueFields(values: string[]) {
-    this.clearValues();
-    values.forEach(v => {
+  setValueFields(itemDescription: string[]) {
+    this.clearitemDescription();
+    itemDescription.forEach(v => {
       const [description, info] = v.split('=');
-      this.valuesFormArray.push(
+      this.itemDescriptionFormArray.push(
         new FormGroup({
           value: new FormControl('', Validators.required),
           description: new FormControl( description.trim(), Validators.required),
@@ -249,8 +250,8 @@ export class EquipmentComponent implements OnInit {
   }
 
   setOtherFields() {
-    this.clearValues();
-    this.valuesFormArray.push(
+    this.clearitemDescription();
+    this.itemDescriptionFormArray.push(
       new FormGroup({
         value: new FormControl('', Validators.required),
         description: new FormControl({ value: "Άλλο (προσδιορίστε)", disabled: true }, Validators.required),
@@ -259,12 +260,12 @@ export class EquipmentComponent implements OnInit {
     );
   }
 
-  clearValues() {
-    this.valuesFormArray.clear();
+  clearitemDescription() {
+    this.itemDescriptionFormArray.clear();
   }
 
   get frmSpaceFieldsId() {
-    return this.form.get('spaceId') as FormArray;
+    return this.form.get('spaceWithinFacility') as FormArray;
   }
 
   setfrmSpaceFieldsId() {
@@ -303,14 +304,15 @@ export class EquipmentComponent implements OnInit {
     const data = this.form.value as IEquipment;
     data['organization'] = this.organization;
     data['organizationCode'] = this.organizationCode;
-    data['spaceId'] = this.getfrmSpaceFieldsId()
+    data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
     this.resourcesService.addEquipment(data)
       .subscribe(response => {
         const body = response.body;          
         const status = response.status;        
         if (status === 201) {
-          // this.getFacilitiesByOrganizationCode();
-          console.log(body)
+          this.initializeForm()
+          this.showEquipments(this.organizationCode);
+          this.showForm = false;
         }
       })
   }
@@ -319,20 +321,24 @@ export class EquipmentComponent implements OnInit {
     this.form.patchValue({
       organization: '',
       organizationCode: '',
-      spaceId: [{
+      spaceWithinFacility: [{
         id:''
       }],
-      type: '',
+      resourceSubcategory: '',
       kind: '',
-      category:'',
-      values: [{
+      type:'',
+      itemDescription: [{
         value: '',
         description: '',
         info:''
-      }]
+      }],
+      acquisitionDate: '',
+      status: ''
     });
-    this.clearValues();
+    this.clearitemDescription();
     this.clearfrmSpaceFieldsId();
+    this.clearSelections();
+    this.selectedSpaces = [];
 
     this.form.markAsPristine();
     this.form.markAsUntouched();

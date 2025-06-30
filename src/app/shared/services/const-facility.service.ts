@@ -571,11 +571,11 @@ export class ConstFacilityService {
       filter: true,
       flex:1
     },
-    { field: 'type', headerName: 'Υποκατηγορία', flex: 1 },
+    { field: 'resourceSubcategory', headerName: 'Υποκατηγορία', flex: 1 },
     { field: 'kind', headerName: 'Είδος', flex: 1 },
-    { field: 'category', headerName: 'Τύπος', flex: 1 },
+    { field: 'type', headerName: 'Τύπος', flex: 1 },
     { 
-      field: 'values', 
+      field: 'itemDescription', 
       headerName: 'Τιμές',
       cellRenderer: (params) => {
         const values = [];

@@ -1,15 +1,15 @@
 export interface IEquipmentConfig {
-  type: string
+  resourceSubcategory: string
   kind: Kind[]
 }
 
 export interface Kind {
-  type: string
-  category: Category[]
+  name: string
+  type: Type[]
 }
 
-export interface Category {
-  type: string
-  values: string[]
+export interface Type {
+  name: string
+  itemDescription: string[]
   info?: string[]
 }
