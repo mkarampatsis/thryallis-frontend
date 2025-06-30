@@ -157,6 +157,71 @@ export class EquipmentComponent implements OnInit {
       this.gridApiEquipment.hideOverlay();
   }
 
+  onCellEquipmentClicked(event: CellClickedEvent): void {
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    if (!action) return;
+        
+    if (action === 'editEquipment') {
+      this.editEquipment(event.data);
+    } else if (action === 'deleteEquipment') {
+      this.deleteEquipment(event.data)
+    } 
+  }
+
+  editEquipment(data: IEquipment){
+    console.log(data);
+    this.form.patchValue({
+      organization: data.organization,
+      organizationCode: data.organizationCode,
+      // spaceWithinFacility: [{
+      //   id:''
+      // }],
+      resourceSubcategory: data.resourceSubcategory,
+      kind: data.kind,
+      type: data.type,
+      // itemDescription: [{
+      //   value: '',
+      //   description: '',
+      //   info:''
+      // }],
+      acquisitionDate: data.acquisitionDate,
+      status: data.status
+    });
+    this.showForm = true;
+    this.kind = this.getKinds(data.resourceSubcategory);
+    this.type = this.getTypes(data.resourceSubcategory, data.kind);
+    this.itemDescription = this.getItemDescriptions(data.resourceSubcategory, data.kind, data.type);
+    data.itemDescription.forEach(v => {
+      this.itemDescriptionFormArray.push(
+        new FormGroup({
+          value: new FormControl(v.value, Validators.required),
+          description: new FormControl( v.description.trim(), Validators.required),
+          info: new FormControl( v.info.trim(), Validators.required),
+        })
+      );
+    })
+  }
+
+  deleteEquipment(data: IEquipment){
+    console.log(data);
+    const equipmentId =  data["_id"]["$oid"];
+    this.modalService.getUserConsent(
+      "Πρόκειται να διαγράψετε κάποιον εξοπλισμό. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+    )
+    .subscribe((result) => {
+      if (result) {
+        this.resourcesService.deleteEquipmentById(equipmentId)
+          .subscribe(response => {
+            const body = response.body;          
+            const status = response.status;        
+            if (status === 201) {
+              this.equipments = this.equipments.filter(obj => obj["_id"]["$oid"] != equipmentId)
+            }
+          })
+      }
+    })
+  }
+
   clearSelections() {
     if (this.gridApi) {
       this.gridApi.deselectAll(); // Clear all selected rows
@@ -190,7 +255,7 @@ export class EquipmentComponent implements OnInit {
       this.setOtherFields();
     } else {
       this.showOtherField = false;
-      this.setValueFields(this.itemDescription);
+      this.setitemDescriptionFields(this.itemDescription);
     }
   }
   
@@ -235,7 +300,7 @@ export class EquipmentComponent implements OnInit {
     return this.form.get('itemDescription') as FormArray;
   }
 
-  setValueFields(itemDescription: string[]) {
+  setitemDescriptionFields(itemDescription: string[]) {
     this.clearitemDescription();
     itemDescription.forEach(v => {
       const [description, info] = v.split('=');

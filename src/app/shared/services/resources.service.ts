@@ -75,4 +75,9 @@ export class ResourcesService {
   addEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {
     return this.http.post<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
   }
+
+  deleteEquipmentById(id:string): Observable<HttpResponse<IEquipment>> {
+    const url = `${APIPREFIX_EQUIPMENT}/${id}`;
+    return this.http.delete<IEquipment>(url, { observe: 'response' });
+  }
 }

@@ -164,7 +164,6 @@ export class FacilityComponent {
   }
 
   deleteFacility(facility: IFacility){
-    console.log("Info", facility)
     const facilityId =  facility["_id"]["$oid"];
     this.modalService.getUserConsent(
       "Πρόκειται να διαγράψετε κάποιο ακίνητο και τους χώρους του. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."

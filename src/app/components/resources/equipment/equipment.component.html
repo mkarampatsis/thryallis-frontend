@@ -62,6 +62,7 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (cellClicked)="onCellEquipmentClicked($event)"
       (gridReady)="onGridEquipmentReady($event)" 
       class="ag-theme-balham">
     </ag-grid-angular>

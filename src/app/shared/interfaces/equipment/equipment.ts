@@ -3,7 +3,7 @@ export interface IEquipment {
   organizationCode: string;
   spaceWithinFacility: string[];
   resourceCategory: string;
-  resourcesubcategory: string;
+  resourceSubcategory: string;
   kind: string;
   type: string;
   itemDescription: [{
