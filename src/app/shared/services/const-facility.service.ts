@@ -549,7 +549,15 @@ export class ConstFacilityService {
 
   SPACE_EQUIPMENT_COL_DEFS: ColDef[] = [
     { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
-    { field: 'organizationalUnit', headerName: 'Μονάδα', flex: 1 },
+    { 
+      field: 'organizationalUnit', 
+      headerName: 'Μονάδα', 
+      cellRenderer: (params) => {
+        const label = params.data.spaces.organizationalUnit.map(item => item.organizationalUnit) 
+        return label.join(', ');
+      },  
+      flex: 1 
+    },
     { field: 'distinctiveNameOfFacility', headerName: 'Ονομασία Ακινήτου', flex: 1 },
     { field: 'spaces.spaceName', headerName: 'Ονομασία Χώρου', flex: 1 },
     { field: 'spaces.spaceUse.type', headerName: 'Τύπος Χρήσης', flex: 1 },

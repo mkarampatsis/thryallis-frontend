@@ -153,15 +153,10 @@ export class EquipmentComponent implements OnInit {
   }
 
   onFirstDataRendered(params: any): void {
-    // Ensure gridApi is set
     if (!this.gridApi) return;
 
-    // Now it is safe to access all rendered nodes
     this.gridApi.forEachNode((node) => {
-      console.log("Node data:", node.data);
-      console.log("selectedSpaces:", this.selectedSpaces);
-      
-      // Example: select nodes matching some criteria
+    
       if (this.selectedSpaceIds.includes(node.data._id["$oid"])) {
         node.setSelected(true);
       }

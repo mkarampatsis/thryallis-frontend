@@ -6,25 +6,50 @@
 <div class="modal-body">
   <div class="mb-3 mt-3 p-2">
     <p><strong>Φορέας: </strong>{{facility.organization}}</p>
-    
+
     <p><strong>Διακριτή ονομασία του Ακινήτου: </strong>{{facility.distinctiveNameOfFacility}}</p>
   </div>
+
+  <ul>
+    @for (unit of selectedData; track unit ){
+    <li><strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+    }
+  </ul>
+
+  <div class="d-flex justify-content-between small">
+    <div>
+      <span>Eπιλέξτε τις μονάδες που επιθυμείτε να εισάγετε</span>
+    </div>
+    <div>
+      <a (click)="clearSelection()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+    </div>
+  </div>
+
+  <ag-grid-angular 
+    [domLayout]="'autoHeight'" 
+    [rowData]="monades" 
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs" 
+    [pagination]="true" 
+    [paginationPageSize]="10"
+    [loadingOverlayComponent]="loadingOverlayComponent" 
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    rowSelection="multiple" 
+    (rowSelected)="onRowSelected($event)" 
+    (gridReady)="onGridReady($event)"
+    class="ag-theme-balham">
+  </ag-grid-angular>
 
   <div class="mb-3 mt-3 p-2">
     <form [formGroup]="form">
       <div class="row mb-3">
         <div class="col-sm-12">
           <label for="spaceName" class="form-label">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου</label>
-          <input 
-            type="text" 
-            id="spaceName" 
-            class="form-control" 
-            formControlName="spaceName"
-            [class.is-invalid]="form.controls.spaceName.touched && form.controls.spaceName.invalid"
-          >
+          <input type="text" id="spaceName" class="form-control" formControlName="spaceName"
+            [class.is-invalid]="form.controls.spaceName.touched && form.controls.spaceName.invalid">
           @if (form.controls.spaceName.touched && form.controls.spaceName.invalid) {
-            <div class="invalid-feedback">Δεν έχετε συμπληρώσει το πεδίο ονομασία/αριθμός του χώρου</div>
-          }   
+          <div class="invalid-feedback">Δεν έχετε συμπληρώσει το πεδίο ονομασία/αριθμός του χώρου</div>
+          }
         </div>
       </div>
 
@@ -48,7 +73,7 @@
             <option value="">Επιλογή Χώρου</option>
             <option *ngFor="let s of spaces" [value]="s">{{ s }}</option>
           </select>
-        </div >
+        </div>
       </div>
 
       <!-- <div class="row mb-3">
@@ -63,77 +88,50 @@
       <div class="row mb-3">
         <div class="col-sm-4">
           <label for="spaceArea" class="form-label">Το εμβαδόν του χώρου σε τετραγωνικά μέτρα</label>
-          <input 
-            type="string" 
-            id="spaceArea" 
-            class="form-control" 
-            formControlName="spaceArea"
-            [class.is-invalid]="form.controls.spaceArea.touched && form.controls.spaceArea.invalid"
-          >
+          <input type="string" id="spaceArea" class="form-control" formControlName="spaceArea"
+            [class.is-invalid]="form.controls.spaceArea.touched && form.controls.spaceArea.invalid">
           @if (form.controls.spaceArea.touched && form.controls.spaceArea.invalid) {
-            <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
-          }   
+          <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
+          }
         </div>
 
         <div class="col-sm-4">
           <label for="spaceLength" class="form-label">Το μήκος του χώρου σε μέτρα</label>
-          <input 
-            type="string" 
-            id="spaceLength" 
-            class="form-control" 
-            formControlName="spaceLength"
-            [class.is-invalid]="form.controls.spaceLength.touched && form.controls.spaceLength.invalid"
-          >
+          <input type="string" id="spaceLength" class="form-control" formControlName="spaceLength"
+            [class.is-invalid]="form.controls.spaceLength.touched && form.controls.spaceLength.invalid">
           @if (form.controls.spaceLength.touched && form.controls.spaceLength.invalid) {
-            <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
-          }           
-        </div >
+          <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
+          }
+        </div>
 
         <div class="col-sm-4">
           <label for="spaceWidth" class="form-label">Το πλάτος του χώρου σε μέτρα</label>
-          <input 
-            type="string" 
-            id="spaceWidth" 
-            class="form-control" 
-            formControlName="spaceWidth"
-            [class.is-invalid]="form.controls.spaceWidth.touched && form.controls.spaceWidth.invalid"
-          >
+          <input type="string" id="spaceWidth" class="form-control" formControlName="spaceWidth"
+            [class.is-invalid]="form.controls.spaceWidth.touched && form.controls.spaceWidth.invalid">
           @if (form.controls.spaceWidth.touched && form.controls.spaceWidth.invalid) {
-            <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
-          } 
-        </div >
+          <div class="invalid-feedback">Μόνο αριθμοί ή δεκαδικοί επιτρέπονται (π.χ 5, 4.3)</div>
+          }
+        </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-sm-6">
           <label for="entrances" class="form-label">Ο αριθμός των εισόδων του χώρου</label>
-          <input 
-            type="number" 
-            min="0" 
-            id="entrances" 
-            class="form-control" 
-            formControlName="entrances"
-            [class.is-invalid]="form.controls.entrances.touched && form.controls.entrances.invalid"
-          >
+          <input type="number" min="0" id="entrances" class="form-control" formControlName="entrances"
+            [class.is-invalid]="form.controls.entrances.touched && form.controls.entrances.invalid">
           @if (form.controls.entrances.touched && form.controls.entrances.invalid) {
-            <div class="invalid-feedback">Μόνο αριθμοί επιτρέπονται (π.χ 5)</div>
+          <div class="invalid-feedback">Μόνο αριθμοί επιτρέπονται (π.χ 5)</div>
           }
         </div>
 
         <div class="col-sm-6">
           <label for="windows" class="form-label">Ο αριθμός των παραθύρων του χώρου</label>
-          <input 
-            type="number" 
-            min="0" 
-            id="windows" 
-            class="form-control" 
-            formControlName="windows"
-            [class.is-invalid]="form.controls.windows.touched && form.controls.windows.invalid"  
-          >
+          <input type="number" min="0" id="windows" class="form-control" formControlName="windows"
+            [class.is-invalid]="form.controls.windows.touched && form.controls.windows.invalid">
           @if (form.controls.windows.touched && form.controls.windows.invalid) {
-            <div class="invalid-feedback">Μόνο αριθμοί επιτρέπονται (π.χ 5)</div>
+          <div class="invalid-feedback">Μόνο αριθμοί επιτρέπονται (π.χ 5)</div>
           }
-        </div >
+        </div>
       </div>
 
       <div class="row mb-3" formGroupName="floorPlans">
@@ -152,35 +150,29 @@
 
         <div class="col-sm-6">
           @if (planFloorsNumField!=0) {
-            <label for="num" class="form-label">Επιλέξτε επίπεδο</label>
+          <label for="num" class="form-label">Επιλέξτε επίπεδο</label>
           }
           @if (planFloorsNumField === 1) {
-            <input type="number" min = "1" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+          <input type="number" min="1" class="form-control" placeholder="Επίπεδο" aria-label="num"
+            formControlName="num">
           } @else if (planFloorsNumField === 2 || planFloorsNumField === 4) {
-            <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num" readonly>
+          <input type="text" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num" readonly>
           } @else if (planFloorsNumField === 3) {
-            <input type="number" max="-1" class="form-control" placeholder="Επίπεδο" aria-label="num" formControlName="num">
+          <input type="number" max="-1" class="form-control" placeholder="Επίπεδο" aria-label="num"
+            formControlName="num">
           }
         </div>
 
       </div>
-      
+
       <div class="d-flex gap-2">
-      <button
-        type="button" 
-        class="btn btn-primary"
-        [disabled]="form.invalid"
-        (click)="submitForm()"
-      >
-        Υποβολή
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="resetForm()">
+        <button type="button" class="btn btn-primary" [disabled]="form.invalid" (click)="submitForm()">
+          Υποβολή
+        </button>
+        <button type="button" class="btn btn-danger" (click)="resetForm()">
           Καθάρισμα
-      </button>
-    </div>
+        </button>
+      </div>
     </form>
   </div>
 </div>

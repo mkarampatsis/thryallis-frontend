@@ -2,21 +2,39 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ConstFacilityService } from '../../services/const-facility.service';
+import { ConstService } from 'src/app/shared/services/const.service';
 import { ResourcesService } from '../../services/resources.service';
 
 import { IFacility, ISpace } from '../../interfaces/facility/facility';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
+import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
+import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-no-rows-overlay/ag-grid-no-rows-overlay.component';
+
+import { selectOrganizationalUnitByOrganizationCode$, } from 'src/app/shared/state/organizational-units.state';
+import { AppState } from 'src/app/shared/state/app.state';
+import { Store } from '@ngrx/store';
+
+import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
+import { Observable, Subscription, take } from 'rxjs';
+
 @Component({
   selector: 'app-facilty-space',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AgGridAngular],
   templateUrl: './facilty-space.component.html',
   styleUrl: './facilty-space.component.css'
 })
 export class FaciltySpaceComponent implements OnInit {
   constFacilityService = inject(ConstFacilityService);
+  constService = inject(ConstService);
   resourcesService = inject(ResourcesService);
+
+  store = inject(Store<AppState>);
+  organizational_units$ = selectOrganizationalUnitByOrganizationCode$
+
   modalRef: any;
   facility: IFacility;
 
@@ -28,17 +46,38 @@ export class FaciltySpaceComponent implements OnInit {
   FLOORPLANS = this.constFacilityService.FLOORPLANS;
   planFloorsNumField: number = 0;
 
+  defaultColDef = this.constService.defaultColDef;
+  colDefs: ColDef[] = this.constService.ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES
+  autoSizeStrategy = this.constService.autoSizeStrategy;
+  gridApi: GridApi<IOrganizationUnitList>;
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
+  selectedData = [];
+
+  monades: IOrganizationUnitList[] = [];
+  subscriptions: Subscription[] = [];
+  
+  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+  organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
+  organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
+
   form = new FormGroup({
     facilityId: new FormControl(''),
+    organizationalUnit: new FormArray([
+      new FormGroup({
+        organizationalUnit: new FormControl('', Validators.required),
+        organizationalUnitCode: new FormControl('', Validators.required)
+      })
+    ]),
     spaceName: new FormControl('', Validators.required),
     spaceUse: new FormGroup({
-      type: new FormControl({value:'', disabled: true}, Validators.required),
+      type: new FormControl({ value: '', disabled: true }, Validators.required),
       subtype: new FormControl(''),
       space: new FormControl('', Validators.required),
-    }),    
+    }),
     // auxiliarySpace: new FormControl('', Validators.required),
     spaceArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
-    spaceLength: new FormControl('',[Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
+    spaceLength: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
     spaceWidth: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
     entrances: new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
     windows: new FormControl('', [Validators.required, Validators.pattern(/^\d+?$/)]),
@@ -48,14 +87,70 @@ export class FaciltySpaceComponent implements OnInit {
     })
   })
 
-  ngOnInit(){
+  ngOnInit() {
     this.types = this.SPACE_USE.map(d => d.type);
     this.initializeForm();
     this.onTypeChange();
-    console.log(this.facility);
   }
 
-  initializeForm(){
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  onGridReady(params: GridReadyEvent<IOrganizationUnitList>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.subscriptions.push(
+      this.store.select(this.organizational_units$(this.facility.organizationCode)).subscribe((data) => {
+        this.monades = data.map((org) => {
+          return {
+            ...org,
+            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
+            organization: this.organizationCodesMap.get(org.organizationCode),
+            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
+          };
+        });
+        this.gridApi.hideOverlay();
+      }),
+    )
+  }
+
+  onRowSelected(event: any) {
+    const selectedNodes = event.api.getSelectedNodes();
+
+    // Log selected rows to the console
+    this.selectedData = selectedNodes.map(node => node.data);
+    this.setOrganizationalUnitFormArray(this.selectedData);
+  }
+
+  clearSelection() {
+    if (this.gridApi) {
+      this.gridApi.deselectAll(); // Clear all selected rows
+      this.gridApi.setFilterModel(null);
+    }
+  }
+
+  get organizationalUnitFormArray() {
+    return this.form.get('organizationalUnit') as FormArray;
+  }
+
+  setOrganizationalUnitFormArray(item: IOrganizationUnitList[]) {
+    this.clearOrganizationalUnitFormArray();
+    item.forEach(v => {
+      this.organizationalUnitFormArray.push(
+        new FormGroup({
+          organizationalUnit: new FormControl(v.preferredLabel, Validators.required),
+          organizationalUnitCode: new FormControl(v.code, Validators.required)
+        })
+      );
+    });
+  }
+
+  clearOrganizationalUnitFormArray() {
+    this.organizationalUnitFormArray.clear();
+  }
+
+  initializeForm() {
     this.form.patchValue({
       facilityId: this.facility["_id"]["$oid"],
       spaceName: '',
@@ -63,7 +158,7 @@ export class FaciltySpaceComponent implements OnInit {
         type: this.facility.useOfFacility,
         subtype: '',
         space: '',
-      },    
+      },
       // auxiliarySpace: '',
       spaceArea: '',
       spaceLength: '',
@@ -71,18 +166,24 @@ export class FaciltySpaceComponent implements OnInit {
       entrances: '',
       windows: '',
       floorPlans: {
-        level:'',
-        num:''
+        level: '',
+        num: ''
       }
     })
+
+    this.clearOrganizationalUnitFormArray();
+    this.clearSelection();
+
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
   }
+  
   onTypeChange(): void {
     this.form.controls.spaceUse.patchValue({ subtype: '', space: '' });
     this.spaces = [];
     this.subtypes = [];
 
     const selectedType = this.form.controls.spaceUse.get('type')?.value;
-    console.log()
     const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
 
     if (!selectedItem) return;
@@ -115,7 +216,7 @@ export class FaciltySpaceComponent implements OnInit {
   selectLevel(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value.split(':')[1].trim();
-    
+
     const selectedOption = this.form.controls.floorPlans.get('level')?.value;
 
     if (value == 'Όροφος') {
@@ -135,17 +236,19 @@ export class FaciltySpaceComponent implements OnInit {
     }
   }
 
-  submitForm(){
+  submitForm() {
     const data = this.form.value as ISpace;
     data["facilityId"] = this.facility["_id"]["$oid"];
     data["spaceUse"]["type"] = this.facility.useOfFacility;
+    data["organizationalUnit"] = this.form.controls.organizationalUnit.value;
+
     this.resourcesService.addSpace(data)
       .subscribe(result => {
         this.modalRef.dismiss(result);
       })
   }
 
-  resetForm(){
+  resetForm() {
     this.initializeForm();
   }
 }
