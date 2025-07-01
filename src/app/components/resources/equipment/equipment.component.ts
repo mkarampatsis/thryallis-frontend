@@ -17,7 +17,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
-import { IFacility } from 'src/app/shared/interfaces/facility/facility';
+import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 import { IFacilitySpace } from 'src/app/shared/interfaces/facility/facility-space';
 import { IEquipment } from 'src/app/shared/interfaces/equipment/equipment';
 
@@ -47,6 +47,7 @@ export class EquipmentComponent implements OnInit {
   facilities: IFacility[] | null = [];
   spaces: IFacilitySpace[] | null = [];
   selectedSpaces: IFacilitySpace[] = [];
+  selectedSpaceIds: string[] = [];
   equipments: IEquipment[] | null =[];
 
   organization: string = '';
@@ -108,6 +109,7 @@ export class EquipmentComponent implements OnInit {
   }
 
   newEquipment(data: IOrganizationList) {
+    this.initializeForm()
     this.organization = data.preferredLabel
     this.organizationCode = data.code
     this.form.controls.organization.setValue(this.organization);
@@ -136,7 +138,7 @@ export class EquipmentComponent implements OnInit {
     this.showGridEquipment = true;
   }
 
-  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+  onGridReady(params: GridReadyEvent<ISpace>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
     if (this.spaces.length > 0)
@@ -148,6 +150,22 @@ export class EquipmentComponent implements OnInit {
     const selectedNodes = event.api.getSelectedNodes();
     this.selectedSpaces = selectedNodes.map(node => node.data);
     this.setfrmSpaceFieldsId();
+  }
+
+  onFirstDataRendered(params: any): void {
+    // Ensure gridApi is set
+    if (!this.gridApi) return;
+
+    // Now it is safe to access all rendered nodes
+    this.gridApi.forEachNode((node) => {
+      console.log("Node data:", node.data);
+      console.log("selectedSpaces:", this.selectedSpaces);
+      
+      // Example: select nodes matching some criteria
+      if (this.selectedSpaceIds.includes(node.data._id["$oid"])) {
+        node.setSelected(true);
+      }
+    });
   }
 
   onGridEquipmentReady(params: GridReadyEvent<IEquipment>): void {
@@ -170,27 +188,21 @@ export class EquipmentComponent implements OnInit {
 
   editEquipment(data: IEquipment){
     console.log(data);
+
     this.form.patchValue({
       organization: data.organization,
       organizationCode: data.organizationCode,
-      // spaceWithinFacility: [{
-      //   id:''
-      // }],
       resourceSubcategory: data.resourceSubcategory,
       kind: data.kind,
       type: data.type,
-      // itemDescription: [{
-      //   value: '',
-      //   description: '',
-      //   info:''
-      // }],
-      acquisitionDate: data.acquisitionDate,
+      acquisitionDate: new Date(data.acquisitionDate["$date"]).toISOString().split('T')[0],
       status: data.status
     });
     this.showForm = true;
     this.kind = this.getKinds(data.resourceSubcategory);
     this.type = this.getTypes(data.resourceSubcategory, data.kind);
     this.itemDescription = this.getItemDescriptions(data.resourceSubcategory, data.kind, data.type);
+    this.clearitemDescription();
     data.itemDescription.forEach(v => {
       this.itemDescriptionFormArray.push(
         new FormGroup({
@@ -200,6 +212,19 @@ export class EquipmentComponent implements OnInit {
         })
       );
     })
+
+    this.resourcesService.getSpacesByOrganizationCode(data.organizationCode)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 200) {
+          this.spaces = body["data"];
+          this.showGrid = true;
+          this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
+          console.log(this.selectedSpaceIds);
+
+        }
+      })
   }
 
   deleteEquipment(data: IEquipment){

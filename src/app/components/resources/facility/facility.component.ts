@@ -64,8 +64,6 @@ export class FacilityComponent {
 
   organization: string = '';
   organizationCode: string = '';
-  organizationalUnit: string = '';
-  organizationalUnitCode: string = ''
 
   defaultColDef = this.constFacilityService.defaultColDef;
   facilityColDefs: ColDef[] = this.constFacilityService.FACILTY_COL_DEFS;
@@ -81,8 +79,6 @@ export class FacilityComponent {
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationalUnit: new FormControl({ value: '', disabled: true }),
-    organizationalUnitCode: new FormControl({ value: '', disabled: true }),
     kaek: new FormControl('', Validators.required),
     belongsTo: new FormControl('', Validators.required),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
@@ -229,15 +225,15 @@ export class FacilityComponent {
     this.modalService.showOrganizationDetails(code);
   }
 
-  chooseOrganizationalUnit(){
-    this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
-      .subscribe(result => {
-        this.organizationalUnit = result.preferredLabel;
-        this.organizationalUnitCode = result.code;
-        this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
-        this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
-      })
-  }
+  // chooseOrganizationalUnit(){
+  //   this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
+  //     .subscribe(result => {
+  //       this.organizationalUnit = result.preferredLabel;
+  //       this.organizationalUnitCode = result.code;
+  //       this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
+  //       this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
+  //     })
+  // }
 
   hasFacilityAdminRole() {
     return this.userService.hasFacilityAdminRole()
@@ -298,13 +294,11 @@ export class FacilityComponent {
   }
 
   initializeForm(): void {
-    this.form.controls.organizationalUnit.setValue('');
-    this.form.controls.organizationalUnitCode.setValue('');
+    // this.form.controls.organizationalUnit.setValue('');
+    // this.form.controls.organizationalUnitCode.setValue('');
     this.form.patchValue({
       organization: '',
       organizationCode: '',
-      organizationalUnit: '',
-      organizationalUnitCode: '',
       kaek: '',
       belongsTo: '',
       distinctiveNameOfFacility: '',
@@ -391,15 +385,13 @@ export class FacilityComponent {
     data["organization"] = this.organization;
     data["organizationCode"] = this.organizationCode;
 
-    data["organizationalUnit"] = this.organizationalUnit;
-    data["organizationalUnitCode"] = this.organizationalUnitCode;
-
     this.resourcesService.newFacility(data)
       .subscribe(response => {
         const body = response.body;          
         const status = response.status;        
         if (status === 201) {
           this.getFacilitiesByOrganizationCode();
+          this.initializeForm();
         }
       })
   }
@@ -428,7 +420,6 @@ export class FacilityComponent {
           else {
             this.showGridSpace = false;
           }
-          
         }
       })
   }

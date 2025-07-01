@@ -8,8 +8,6 @@ export interface IFloorPlans {
 export interface IFacility {
   organization: string;
   organizationCode: string;
-  organizationalUnit: string;
-  organizationalUnitCode: string;
   kaek: string;
   belongsTo: string;
   distinctiveNameOfFacility: string;

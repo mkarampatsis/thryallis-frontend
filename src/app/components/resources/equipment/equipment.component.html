@@ -116,6 +116,7 @@
             rowSelection="multiple"
             (rowSelected)="onRowSelected($event)" 
             (gridReady)="onGridReady($event)" 
+            (firstDataRendered)="onFirstDataRendered($event)"
             class="ag-theme-balham">
           </ag-grid-angular>
         }

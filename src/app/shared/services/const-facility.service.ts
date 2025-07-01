@@ -496,7 +496,6 @@ export class ConstFacilityService {
     { field: 'useOfFacility', headerName: 'Τύπος Χρήσης', flex: 1 },
     { field: 'kaek', headerName: 'ΚΑΕΚ', flex: 1 },
     { field: 'organization', headerName: 'Φορέας', flex: 1 },
-    { field: 'organizationalUnit', headerName: 'Μονάδα', flex: 1 },
     {
       field: 'actionCell',
       headerName: 'Ενέργειες',
