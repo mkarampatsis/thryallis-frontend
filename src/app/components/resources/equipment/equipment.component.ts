@@ -156,8 +156,10 @@ export class EquipmentComponent implements OnInit {
     if (!this.gridApi) return;
 
     this.gridApi.forEachNode((node) => {
-    
-      if (this.selectedSpaceIds.includes(node.data._id["$oid"])) {
+      console.log("Node", node);
+      console.log("selectedSpaceIds", this.selectedSpaceIds);
+      if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+
         node.setSelected(true);
       }
     });
@@ -198,6 +200,7 @@ export class EquipmentComponent implements OnInit {
     this.type = this.getTypes(data.resourceSubcategory, data.kind);
     this.itemDescription = this.getItemDescriptions(data.resourceSubcategory, data.kind, data.type);
     this.clearitemDescription();
+    
     data.itemDescription.forEach(v => {
       this.itemDescriptionFormArray.push(
         new FormGroup({
@@ -215,9 +218,9 @@ export class EquipmentComponent implements OnInit {
         if (status === 200) {
           this.spaces = body["data"];
           this.showGrid = true;
+          console.log("Spaces", this.spaces);
           this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
           console.log(this.selectedSpaceIds);
-
         }
       })
   }
