@@ -64,6 +64,7 @@ export class EquipmentComponent implements OnInit {
   showOtherField = false;
   showGrid = false;
   showGridEquipment = false;
+  updateEquipment: IEquipment | null;
 
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
   defaultColDef = this.constFacilityService.defaultColDef;
@@ -205,6 +206,8 @@ export class EquipmentComponent implements OnInit {
     this.type = this.getTypes(data.resourceSubcategory, data.kind);
     this.itemDescription = this.getItemDescriptions(data.resourceSubcategory, data.kind, data.type);
     this.clearitemDescription();
+
+    this.updateEquipment = data;
     
     data.itemDescription.forEach(v => {
       this.itemDescriptionFormArray.push(
@@ -216,8 +219,8 @@ export class EquipmentComponent implements OnInit {
       );
     })
 
+    this
     data.itemQuantity.forEach(v => {
-      console.log(v.spaceId["$oid"],v.quantity);
       this.itemQuantityFormArray.push(
         new FormGroup({
           spaceName: new FormControl(v.spaceName, Validators.required),
@@ -395,13 +398,30 @@ export class EquipmentComponent implements OnInit {
 
   setitemQuantityFields() {
     this.clearitemQuantity();
+    console.log("Update", this.updateEquipment);
+    console.log("selectedSpaces",this.selectedSpaces);
     this.selectedSpaces.forEach(v => {
+      let quantity = null;
+      let codes = "";
+      
+      if (this.updateEquipment && this.updateEquipment.itemQuantity) {
+        const match = this.updateEquipment.itemQuantity.find(item => {
+          return item.spaceId?.["$oid"] === v.spaces._id?.["$oid"];
+        });
+
+        if (match) {
+          quantity = match.quantity;
+          codes = match.codes;
+          console.log("Matched Quantity:", quantity, "Codes:", codes);
+        }
+      }
+  
       this.itemQuantityFormArray.push(
         new FormGroup({
           spaceName: new FormControl(v.spaces.spaceName, Validators.required),
           spaceId: new FormControl( v.spaces._id.$oid, Validators.required),
-          quantity: new FormControl("", Validators.required),
-          codes: new FormControl("")
+          quantity: new FormControl(quantity, Validators.required),
+          codes: new FormControl(codes)
         })
       );
     });
@@ -424,8 +444,6 @@ export class EquipmentComponent implements OnInit {
     //   }
     // }
     // console.log(invalid)
-
-    // const data = this.form.value as IEquipment;
     const data: IEquipment = {
       organization: this.organization,
       organizationCode: this.organizationCode,
@@ -439,21 +457,30 @@ export class EquipmentComponent implements OnInit {
       acquisitionDate: this.form.controls.acquisitionDate.value,
       depreciationDate: '',
       status: this.form.controls.status.value
-    } 
-    data['organization'] = this.organization;
-    data['organizationCode'] = this.organizationCode;
-    data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
+    }
     console.log(data);
-    this.resourcesService.addEquipment(data)
-      .subscribe(response => {
-        const body = response.body;          
-        const status = response.status;        
-        if (status === 201) {
-          this.initializeForm()
-          this.showEquipments(this.organizationCode);
-          this.showForm = false;
-        }
-      })
+    
+    if (this.updateEquipment) {
+      console.log("update>>",this.updateEquipment)
+      data["_id"] = this.updateEquipment["_id"]["$oid"];
+    } else {
+      this.resourcesService.addEquipment(data)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.initializeForm()
+            this.showEquipments(this.organizationCode);
+            this.showForm = false;
+          }
+        })
+    }
+ 
+    // data['organization'] = this.organization;
+    // data['organizationCode'] = this.organizationCode;
+    // data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
+    
+   
   }
 
   initializeForm(): void {
@@ -479,6 +506,7 @@ export class EquipmentComponent implements OnInit {
     this.clearfrmSpaceFieldsId();
     this.clearSelections();
     this.selectedSpaces = [];
+    this.updateEquipment = null;
 
     this.form.markAsPristine();
     this.form.markAsUntouched();
