@@ -31,6 +31,7 @@ export interface IFacility {
 export interface ISpace {
   facilityId: string;
   spaceName: string;
+  organizationalUnit: { organizationalUnit: string; organizationalUnitCode: string}[]
   spaceUse: {
     type: string;
     subtype: string;

@@ -192,6 +192,10 @@ export class EquipmentComponent implements OnInit {
   }
 
   editEquipment(data: IEquipment){
+    this.initializeForm()
+    this.organization = data.organization
+    this.organizationCode = data.organizationCode
+    
     this.form.patchValue({
       organization: data.organization,
       organizationCode: data.organizationCode,
@@ -398,8 +402,6 @@ export class EquipmentComponent implements OnInit {
 
   setitemQuantityFields() {
     this.clearitemQuantity();
-    console.log("Update", this.updateEquipment);
-    console.log("selectedSpaces",this.selectedSpaces);
     this.selectedSpaces.forEach(v => {
       let quantity = null;
       let codes = "";
@@ -412,7 +414,6 @@ export class EquipmentComponent implements OnInit {
         if (match) {
           quantity = match.quantity;
           codes = match.codes;
-          console.log("Matched Quantity:", quantity, "Codes:", codes);
         }
       }
   
@@ -458,11 +459,20 @@ export class EquipmentComponent implements OnInit {
       depreciationDate: '',
       status: this.form.controls.status.value
     }
-    console.log(data);
     
     if (this.updateEquipment) {
       console.log("update>>",this.updateEquipment)
       data["_id"] = this.updateEquipment["_id"]["$oid"];
+      this.resourcesService.modifyEquipment(data)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.initializeForm()
+            this.showEquipments(this.organizationCode);
+            this.showForm = false;
+          }
+        })
     } else {
       this.resourcesService.addEquipment(data)
         .subscribe(response => {

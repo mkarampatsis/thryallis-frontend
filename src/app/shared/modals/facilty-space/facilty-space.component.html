@@ -5,9 +5,9 @@
 </div>
 <div class="modal-body">
   <div class="mb-3 mt-3 p-2">
-    <p><strong>Φορέας: </strong>{{facility.organization}}</p>
+    <p><strong>Φορέας: </strong>{{organization}}</p>
 
-    <p><strong>Διακριτή ονομασία του Ακινήτου: </strong>{{facility.distinctiveNameOfFacility}}</p>
+    <p><strong>Διακριτή ονομασία του Ακινήτου: </strong>{{distinctiveNameOfFacility}}</p>
   </div>
 
   <ul>
@@ -37,6 +37,7 @@
     rowSelection="multiple" 
     (rowSelected)="onRowSelected($event)" 
     (gridReady)="onGridReady($event)"
+    (firstDataRendered)="onFirstDataRendered($event)"
     class="ag-theme-balham">
   </ag-grid-angular>
 

@@ -46,6 +46,11 @@ export class ResourcesService {
     return this.http.post<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space` , data, { observe: 'response' });
   }
 
+  modifySpace(data: ISpace): Observable<HttpResponse<{ message: string }>> {
+    const facilityId = data.facilityId
+    return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space` , data, { observe: 'response' });
+  }
+
   getSpacesByFacilityId(id: string): Observable<HttpResponse<ISpace[]>> {
     const url = `${APIPREFIX_FACILITY}/${id}/spaces`;
     return this.http.get<ISpace[]>(url, { observe: 'response' });
@@ -74,6 +79,10 @@ export class ResourcesService {
 
   addEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {
     return this.http.post<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
+  }
+
+  modifyEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {
+    return this.http.put<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
   }
 
   deleteEquipmentById(id:string): Observable<HttpResponse<IEquipment>> {

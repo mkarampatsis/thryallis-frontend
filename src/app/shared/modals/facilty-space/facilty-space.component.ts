@@ -19,6 +19,7 @@ import { Store } from '@ngrx/store';
 
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 import { Observable, Subscription, take } from 'rxjs';
+import { TmplAstSwitchBlockCase } from '@angular/compiler';
 
 @Component({
   selector: 'app-facilty-space',
@@ -37,6 +38,12 @@ export class FaciltySpaceComponent implements OnInit {
 
   modalRef: any;
   facility: IFacility;
+  space: ISpace;
+
+  organization: string;
+  organizationCode: string;
+  distinctiveNameOfFacility: string
+  selectedOrganizationalCodes: string[];
 
   types: string[] = [];
   subtypes: string[] = [];
@@ -88,9 +95,15 @@ export class FaciltySpaceComponent implements OnInit {
   })
 
   ngOnInit() {
+    this.organization = this.facility ? this.facility.organization : this.space.facilityId["organization"];
+    this.organizationCode = this.facility ? this.facility.organizationCode : this.space.facilityId["organizationCode"];
+    this.distinctiveNameOfFacility = this.facility ? this.facility.distinctiveNameOfFacility : this.space.facilityId["distinctiveNameOfFacility"];
     this.types = this.SPACE_USE.map(d => d.type);
     this.initializeForm();
     this.onTypeChange();
+    if (this.space) {
+      this.editSpace(this.space);
+    }
   }
 
   ngOnDestroy(): void {
@@ -101,7 +114,7 @@ export class FaciltySpaceComponent implements OnInit {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
     this.subscriptions.push(
-      this.store.select(this.organizational_units$(this.facility.organizationCode)).subscribe((data) => {
+      this.store.select(this.organizational_units$(this.organizationCode)).subscribe((data) => {
         this.monades = data.map((org) => {
           return {
             ...org,
@@ -117,10 +130,19 @@ export class FaciltySpaceComponent implements OnInit {
 
   onRowSelected(event: any) {
     const selectedNodes = event.api.getSelectedNodes();
-
     // Log selected rows to the console
     this.selectedData = selectedNodes.map(node => node.data);
     this.setOrganizationalUnitFormArray(this.selectedData);
+  }
+
+   onFirstDataRendered(params: any): void {
+    if (!this.gridApi) return;
+
+    this.gridApi.forEachNode((node) => {
+      if (this.selectedOrganizationalCodes.includes(node.data.code)) {
+        node.setSelected(true);
+      }
+    });
   }
 
   clearSelection() {
@@ -151,11 +173,13 @@ export class FaciltySpaceComponent implements OnInit {
   }
 
   initializeForm() {
+    const facilityId = this.facility ? this.facility["_id"]["$oid"] : this.space.facilityId["id"];
+    const spaceUseType = this.facility ? this.facility.useOfFacility : this.space.spaceUse.type;
     this.form.patchValue({
-      facilityId: this.facility["_id"]["$oid"],
+      facilityId: facilityId,
       spaceName: '',
       spaceUse: {
-        type: this.facility.useOfFacility,
+        type: spaceUseType,
         subtype: '',
         space: '',
       },
@@ -236,16 +260,61 @@ export class FaciltySpaceComponent implements OnInit {
     }
   }
 
+  editSpace(space: ISpace){
+    this.form.patchValue({
+      facilityId: this.space.facilityId,
+      spaceName: this.space.spaceName,
+      spaceUse: {
+        type: this.space.spaceUse.type,
+        subtype: this.space.spaceUse.subtype,
+        space: this.space.spaceUse.space,
+      },
+      // auxiliarySpace: '',
+      spaceArea: this.space.spaceArea,
+      spaceLength: this.space.spaceLength,
+      spaceWidth: this.space.spaceWidth,
+      entrances: this.space.entrances,
+      windows: this.space.windows,
+      floorPlans: {
+        level: this.space.floorPlans.level,
+        num: this.space.floorPlans.num
+      }
+    })
+
+    const floorLevel = this.space.floorPlans.level
+    if (floorLevel == 'Όροφος') {
+      this.planFloorsNumField = 1;
+    } else if (floorLevel == 'Ισόγειο') {
+      this.planFloorsNumField = 2;
+    } else if (floorLevel == 'Υπόγειο') {
+      this.planFloorsNumField = 3;
+    } else if (floorLevel == 'Ημιυπόγειο' || floorLevel == 'Ημιόροφος' || floorLevel == 'Ταράτσα') {
+      this.planFloorsNumField = 4;
+    } else {
+      this.planFloorsNumField = 0;
+    }
+
+    this.selectedOrganizationalCodes = this.space.organizationalUnit.map(item => item.organizationalUnitCode)
+  }
+
   submitForm() {
     const data = this.form.value as ISpace;
-    data["facilityId"] = this.facility["_id"]["$oid"];
-    data["spaceUse"]["type"] = this.facility.useOfFacility;
-    data["organizationalUnit"] = this.form.controls.organizationalUnit.value;
+    data["facilityId"] = this.facility ? this.facility["_id"]["$oid"] : this.space.facilityId["id"];
+    data["spaceUse"]["type"] = this.facility ? this.facility.useOfFacility : this.space.spaceUse.type;
+    data["organizationalUnit"] = this.form.controls.organizationalUnit.value as { organizationalUnit: string; organizationalUnitCode: string; }[];
 
-    this.resourcesService.addSpace(data)
-      .subscribe(result => {
-        this.modalRef.dismiss(result);
-      })
+    if (this.space){
+      data["id"] = this.space["id"]
+      this.resourcesService.modifySpace(data)
+        .subscribe(result => {
+          this.modalRef.dismiss(result);
+        })
+    } else {
+      this.resourcesService.addSpace(data)
+        .subscribe(result => {
+          this.modalRef.dismiss(result);
+        })
+      }
   }
 
   resetForm() {

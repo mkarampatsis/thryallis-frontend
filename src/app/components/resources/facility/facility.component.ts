@@ -145,7 +145,7 @@ export class FacilityComponent {
     if (!action) return;
     
     if (action === 'editSpace') {
-      console.log("EDIT SPACE", event.data)
+      this.editSpace(event.data);
     } else if (action === 'deleteSpace') {
       this.deleteSpace(event.data);
     } 
@@ -183,6 +183,13 @@ export class FacilityComponent {
     this.modalService.addFaciltySpace(facility)
       .subscribe(result => {
         this.getSpacesFacilityId(facility["_id"]["$oid"])
+      })
+  }
+
+  editSpace(space:ISpace){
+    this.modalService.modifyFaciltySpace(space)
+      .subscribe(result => {
+        this.getSpacesFacilityId(space.facilityId["id"])
       })
   }
 
@@ -224,16 +231,6 @@ export class FacilityComponent {
   showOrganizationDetails(code: string): void {
     this.modalService.showOrganizationDetails(code);
   }
-
-  // chooseOrganizationalUnit(){
-  //   this.modalService.showOrganizationUnitsByOrganizationCode(this.organizationCode)
-  //     .subscribe(result => {
-  //       this.organizationalUnit = result.preferredLabel;
-  //       this.organizationalUnitCode = result.code;
-  //       this.form.controls.organizationalUnit.setValue(this.organizationalUnit);
-  //       this.form.controls.organizationalUnitCode.setValue(this.organizationalUnitCode);
-  //     })
-  // }
 
   hasFacilityAdminRole() {
     return this.userService.hasFacilityAdminRole()
