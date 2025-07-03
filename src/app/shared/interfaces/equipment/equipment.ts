@@ -6,11 +6,8 @@ export interface IEquipment {
   resourceSubcategory: string;
   kind: string;
   type: string;
-  itemDescription: [{
-    value: string;
-    description: string;
-    info: string;
-  }],
+  itemDescription: { value: string; description: string; info: string }[],
+  itemQuantity: { spaceName: string; spaceId: string; quantity: number; codes: string; }[],
   acquisitionDate: string;
   depreciationDate: string;
   status: string;

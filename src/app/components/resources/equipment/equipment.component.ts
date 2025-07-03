@@ -99,11 +99,12 @@ export class EquipmentComponent implements OnInit {
       new FormGroup({
         spaceName: new FormControl('', Validators.required),
         spaceId: new FormControl('', Validators.required),
-        quantity: new FormControl('', Validators.required),
+        quantity: new FormControl(0, Validators.required),
         codes: new FormControl(''),
       })
     ]),
     acquisitionDate: new FormControl('', Validators.required),
+    depreciationDate: new FormControl(''),
     status: new FormControl('', Validators.required),
   })
 
@@ -213,6 +214,18 @@ export class EquipmentComponent implements OnInit {
           info: new FormControl( v.info.trim(), Validators.required),
         })
       );
+    })
+
+    data.itemQuantity.forEach(v => {
+      console.log(v.spaceId["$oid"],v.quantity);
+      this.itemQuantityFormArray.push(
+        new FormGroup({
+          spaceName: new FormControl(v.spaceName, Validators.required),
+          spaceId: new FormControl( v.spaceId["$oid"], Validators.required),
+          quantity: new FormControl(v.quantity, Validators.required),
+          codes: new FormControl(v.codes)
+        })
+      )
     })
 
     this.resourcesService.getSpacesByOrganizationCode(data.organizationCode)
@@ -412,7 +425,21 @@ export class EquipmentComponent implements OnInit {
     // }
     // console.log(invalid)
 
-    const data = this.form.value as IEquipment;
+    // const data = this.form.value as IEquipment;
+    const data: IEquipment = {
+      organization: this.organization,
+      organizationCode: this.organizationCode,
+      spaceWithinFacility: this.getfrmSpaceFieldsId(),
+      resourceCategory: this.form.controls.resourceCategory.value,
+      resourceSubcategory: this.form.controls.resourceSubcategory.value,
+      kind: this.form.controls.kind.value,
+      type: this.form.controls.type.value,
+      itemDescription: this.form.controls.itemDescription.value as { value: string; description: string; info: string }[],
+      itemQuantity: this.form.controls.itemQuantity.value as { spaceName: string; spaceId: string; quantity: number; codes: string;}[],
+      acquisitionDate: this.form.controls.acquisitionDate.value,
+      depreciationDate: '',
+      status: this.form.controls.status.value
+    } 
     data['organization'] = this.organization;
     data['organizationCode'] = this.organizationCode;
     data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
