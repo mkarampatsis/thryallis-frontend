@@ -165,10 +165,7 @@ export class EquipmentComponent implements OnInit {
     if (!this.gridApi) return;
 
     this.gridApi.forEachNode((node) => {
-      console.log("Node", node);
-      console.log("selectedSpaceIds", this.selectedSpaceIds);
       if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
-
         node.setSelected(true);
       }
     });
@@ -193,8 +190,6 @@ export class EquipmentComponent implements OnInit {
   }
 
   editEquipment(data: IEquipment){
-    console.log(data);
-
     this.form.patchValue({
       organization: data.organization,
       organizationCode: data.organizationCode,
@@ -227,15 +222,12 @@ export class EquipmentComponent implements OnInit {
         if (status === 200) {
           this.spaces = body["data"];
           this.showGrid = true;
-          console.log("Spaces", this.spaces);
           this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
-          console.log(this.selectedSpaceIds);
         }
       })
   }
 
   deleteEquipment(data: IEquipment){
-    console.log(data);
     const equipmentId =  data["_id"]["$oid"];
     this.modalService.getUserConsent(
       "Πρόκειται να διαγράψετε κάποιον εξοπλισμό. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
@@ -425,16 +417,16 @@ export class EquipmentComponent implements OnInit {
     data['organizationCode'] = this.organizationCode;
     data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
     console.log(data);
-    // this.resourcesService.addEquipment(data)
-    //   .subscribe(response => {
-    //     const body = response.body;          
-    //     const status = response.status;        
-    //     if (status === 201) {
-    //       this.initializeForm()
-    //       this.showEquipments(this.organizationCode);
-    //       this.showForm = false;
-    //     }
-    //   })
+    this.resourcesService.addEquipment(data)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 201) {
+          this.initializeForm()
+          this.showEquipments(this.organizationCode);
+          this.showForm = false;
+        }
+      })
   }
 
   initializeForm(): void {
