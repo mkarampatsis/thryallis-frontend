@@ -84,43 +84,6 @@
         </div>
       </div>
 
-      <div class="mb-3">
-        @if(showGrid) {
-          <div class="d-flex justify-content-between mb-1">
-            <p class="h5 mb-3">Κατάσταση Χώρων Φορέα</p>
-          </div>
-          
-          <ul>
-            @for (unit of selectedSpaces; track unit ){
-              <li><strong>Ακίνητο: </strong>{{ unit["spaces"]["spaceName"] }}</li>
-            }
-          </ul>
-
-          <div class="d-flex justify-content-between small">
-            <div>
-                <span>Eπιλέξτε τους χώρους που επιθυμείτε για το νέο εξοπλισμό</span>
-            </div>
-            <div *ngIf="selectedSpaces.length > 0">
-              <button class="btn btn-danger btn-sm mb-1" (click)="clearSelections()">Καθάρισμα επιλογών</button>
-            </div>
-          </div>
-          <ag-grid-angular 
-            [domLayout]="'autoHeight'" 
-            [rowData]="spaces" 
-            [defaultColDef]="defaultColDef"
-            [columnDefs]="spaceColDefs" 
-            [pagination]="true" 
-            [paginationPageSize]="20"
-            [loadingOverlayComponent]="loadingOverlayComponent" 
-            [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-            rowSelection="multiple"
-            (rowSelected)="onRowSelected($event)" 
-            (gridReady)="onGridReady($event)" 
-            (firstDataRendered)="onFirstDataRendered($event)"
-            class="ag-theme-balham">
-          </ag-grid-angular>
-        }
-      </div>
     </fieldset>
 
     <fieldset class="form-group border p-3 mb-3">
@@ -202,6 +165,50 @@
             <option νalue="Προς Απόσυρση">Προς Απόσυρση</option>
           </select>
         </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="border p-3 mb-3">
+      <legend class="w-auto">Στοιχεία Χώρων:</legend>
+      <div class="d-flex justify-content-between small">
+        <div>
+            <span>Eπιλέξτε τους χώρους που επιθυμείτε για το νέο εξοπλισμό</span>
+        </div>
+        <div *ngIf="selectedSpaces.length > 0">
+          <button class="btn btn-danger btn-sm mb-1" (click)="clearSelections()">Καθάρισμα επιλογών</button>
+        </div>
+      </div>
+      <ag-grid-angular 
+        [domLayout]="'autoHeight'" 
+        [rowData]="spaces" 
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="spaceColDefs" 
+        [pagination]="true" 
+        [paginationPageSize]="20"
+        [loadingOverlayComponent]="loadingOverlayComponent" 
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        rowSelection="multiple"
+        (rowSelected)="onRowSelected($event)" 
+        (gridReady)="onGridReady($event)" 
+        (firstDataRendered)="onFirstDataRendered($event)"
+        class="ag-theme-balham">
+      </ag-grid-angular>
+
+      <div class="mb-3">
+        @if(showGrid) {
+        
+          <div class="row">
+             @for (unit of selectedSpaces; track unit ){
+              <div class="col-sm-4">
+                  <li><strong>Ακίνητο: </strong>{{ unit["spaces"]["spaceName"] }}</li>
+              </div>
+
+              <div class="col-sm-4">
+                <strong>Ποσότητα: </strong> <input class="form-control" type="number" min="1">
+              </div>
+          }
+          </div>
+        }
       </div>
     </fieldset>
 
