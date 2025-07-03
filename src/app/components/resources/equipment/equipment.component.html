@@ -194,19 +194,26 @@
         class="ag-theme-balham">
       </ag-grid-angular>
 
-      <div class="mb-3">
+      <div class="mb-3 mt-3">
         @if(showGrid) {
-        
-          <div class="row">
-             @for (unit of selectedSpaces; track unit ){
+          <div class="mb-3" formArrayName="itemQuantity">
+            <div *ngFor="let v of itemQuantityFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
               <div class="col-sm-4">
-                  <li><strong>Ακίνητο: </strong>{{ unit["spaces"]["spaceName"] }}</li>
+                <label for="">Ακίνητο:</label>
+                <input type="text" class="form-control" formControlName="spaceName" readonly>
               </div>
 
               <div class="col-sm-4">
-                <strong>Ποσότητα: </strong> <input class="form-control" type="number" min="1">
+                <label for="">Ποσότητα:</label>
+                <input type="number" class="form-control" formControlName="quantity">
               </div>
-          }
+
+              <div class="col-sm-4">
+                <label for="">Κωδικοί εξοπλισμού:</label>
+                <textarea class="form-control" formControlName="codes"></textarea>
+                <div class="form-text">Διαχωριστικό με το σύμβολο "~"</div>
+              </div>
+            </div>
           </div>
         }
       </div>

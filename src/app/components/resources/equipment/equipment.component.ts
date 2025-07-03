@@ -95,6 +95,14 @@ export class EquipmentComponent implements OnInit {
         info: new FormControl('', Validators.required)
       })
     ]),
+    itemQuantity: new FormArray([
+      new FormGroup({
+        spaceName: new FormControl('', Validators.required),
+        spaceId: new FormControl('', Validators.required),
+        quantity: new FormControl('', Validators.required),
+        codes: new FormControl(''),
+      })
+    ]),
     acquisitionDate: new FormControl('', Validators.required),
     status: new FormControl('', Validators.required),
   })
@@ -150,6 +158,7 @@ export class EquipmentComponent implements OnInit {
     const selectedNodes = event.api.getSelectedNodes();
     this.selectedSpaces = selectedNodes.map(node => node.data);
     this.setfrmSpaceFieldsId();
+    this.setitemQuantityFields();
   }
 
   onFirstDataRendered(params: any): void {
@@ -375,6 +384,28 @@ export class EquipmentComponent implements OnInit {
     return this.selectedSpaces.map(data => data.spaces._id.$oid)
   }
 
+  get itemQuantityFormArray() {
+    return this.form.get('itemQuantity') as FormArray;
+  }
+
+  setitemQuantityFields() {
+    this.clearitemQuantity();
+    this.selectedSpaces.forEach(v => {
+      this.itemQuantityFormArray.push(
+        new FormGroup({
+          spaceName: new FormControl(v.spaces.spaceName, Validators.required),
+          spaceId: new FormControl( v.spaces._id.$oid, Validators.required),
+          quantity: new FormControl("", Validators.required),
+          codes: new FormControl("")
+        })
+      );
+    });
+  }
+
+  clearitemQuantity() {
+    this.itemQuantityFormArray.clear();
+  }
+
   resetForm(){
     this.initializeForm(); 
   }
@@ -393,16 +424,17 @@ export class EquipmentComponent implements OnInit {
     data['organization'] = this.organization;
     data['organizationCode'] = this.organizationCode;
     data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
-    this.resourcesService.addEquipment(data)
-      .subscribe(response => {
-        const body = response.body;          
-        const status = response.status;        
-        if (status === 201) {
-          this.initializeForm()
-          this.showEquipments(this.organizationCode);
-          this.showForm = false;
-        }
-      })
+    console.log(data);
+    // this.resourcesService.addEquipment(data)
+    //   .subscribe(response => {
+    //     const body = response.body;          
+    //     const status = response.status;        
+    //     if (status === 201) {
+    //       this.initializeForm()
+    //       this.showEquipments(this.organizationCode);
+    //       this.showForm = false;
+    //     }
+    //   })
   }
 
   initializeForm(): void {
@@ -424,6 +456,7 @@ export class EquipmentComponent implements OnInit {
       status: ''
     });
     this.clearitemDescription();
+    this.clearitemQuantity()
     this.clearfrmSpaceFieldsId();
     this.clearSelections();
     this.selectedSpaces = [];
