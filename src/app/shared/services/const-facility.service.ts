@@ -8,6 +8,7 @@ import {
   SizeColumnsToFitProvidedWidthStrategy
 } from 'ag-grid-community';
 import { UserService } from './user.service';
+import { isNgTemplate } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -492,7 +493,18 @@ export class ConstFacilityService {
     | SizeColumnsToContentStrategy = { type: 'fitCellContents' };
 
     FACILTY_COL_DEFS: ColDef[] = [
-    { field: 'distinctiveNameOfFacility', headerName: 'Ονομασία Ακινήτου', flex: 1 },
+    { 
+      field: 'addressOfFacility', 
+      headerName: 'Ακίνητο', 
+      cellRenderer: (params) => {
+        let item = '';
+        const data = params.value;
+        item = data.street + ',' + data.number + ',' + data.number + ',' + data.postcode + ',' + data.area + ',' + data.municipality;
+        return item;
+      },
+      flex: 1 
+    },
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή ονομασία', flex: 1 },
     { field: 'useOfFacility', headerName: 'Τύπος Χρήσης', flex: 1 },
     { field: 'kaek', headerName: 'ΚΑΕΚ', flex: 1 },
     { field: 'organization', headerName: 'Φορέας', flex: 1 },
@@ -558,7 +570,18 @@ export class ConstFacilityService {
       },  
       flex: 1 
     },
-    { field: 'distinctiveNameOfFacility', headerName: 'Ονομασία Ακινήτου', flex: 1 },
+    // { 
+    //   field: 'addressOfFacility', 
+    //   headerName: 'Ακίνητο', 
+    //   cellRenderer: (params) => {
+    //     let item = '';
+    //     const data = params.value;
+    //     item = data.street + ',' + data.number + ',' + data.number + ',' + data.postcode + ',' + data.area + ',' + data.municipality;
+    //     return item;
+    //   },
+    //   flex: 1 
+    // },
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή ονομασία', flex: 1 },
     { field: 'spaces.spaceName', headerName: 'Ονομασία Χώρου', flex: 1 },
     { field: 'spaces.spaceUse.type', headerName: 'Τύπος Χρήσης', flex: 1 },
     { field: 'spaces.spaceUse.space', headerName: 'Χρήση', flex: 1 },
