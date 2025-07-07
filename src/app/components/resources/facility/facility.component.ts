@@ -80,7 +80,7 @@ export class FacilityComponent {
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
     kaek: new FormControl('', Validators.required),
-    belongsTo: new FormControl('', Validators.required),
+    belongsTo: new FormControl(''),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
     useOfFacility: new FormControl('', Validators.required),
     uniqueUseOfFacility: new FormControl('true'),
