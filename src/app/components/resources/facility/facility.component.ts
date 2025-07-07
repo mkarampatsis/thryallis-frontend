@@ -90,7 +90,7 @@ export class FacilityComponent {
       new FormGroup({
         level: new FormControl('', Validators.required),
         num: new FormControl('', Validators.required),
-        floorArea: new FormControl('', Validators.required),
+        floorArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
         floorPlan: new FormControl([]),
       })
     ]),
