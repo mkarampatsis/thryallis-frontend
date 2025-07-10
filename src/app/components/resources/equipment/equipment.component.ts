@@ -167,6 +167,7 @@ export class EquipmentComponent implements OnInit {
     if (!this.gridApi) return;
 
     this.gridApi.forEachNode((node) => {
+      console.log("3>>", this.selectedSpaceIds, node.data.spaces._id["$oid"])
       if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
         node.setSelected(true);
       }
@@ -223,7 +224,6 @@ export class EquipmentComponent implements OnInit {
       );
     })
 
-    this
     data.itemQuantity.forEach(v => {
       this.itemQuantityFormArray.push(
         new FormGroup({
@@ -243,6 +243,14 @@ export class EquipmentComponent implements OnInit {
           this.spaces = body["data"];
           this.showGrid = true;
           this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
+          console.log("1>>",this.selectedSpaceIds)
+          this.gridApi.forEachNode((node) => {
+            console.log("2>>", this.selectedSpaceIds, node.data.spaces._id["$oid"])
+            if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+              node.setSelected(true);
+            }
+          });
+          
         }
       })
   }
@@ -516,6 +524,7 @@ export class EquipmentComponent implements OnInit {
     this.clearfrmSpaceFieldsId();
     this.clearSelections();
     this.selectedSpaces = [];
+    this.selectedSpaceIds = []
     this.updateEquipment = null;
 
     this.form.markAsPristine();

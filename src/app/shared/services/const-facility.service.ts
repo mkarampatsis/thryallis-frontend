@@ -412,36 +412,7 @@ export class ConstFacilityService {
       ]
     },
     {
-      "type":"Βοηθητικοί Χώροι",
-      "spaces": [
-        "Κεντρική Είσοδος",
-        "Διάδρομος",
-        "Τουαλέτα",
-        "Χώρος ντους",
-        "Αποδυτήρια",
-        "Κουζίνα",
-        "Τραπεζαρία",
-        "Κλίμακα",
-        "Αποθήκη",
-        "Ιατρείο",
-        "Αναρρωτήριο",
-        "Φρεάτιο Ανελκυστήρα",
-        "Μηχανισμός Ανελκυστήρα",
-        "Χώρος Ηλεκτροπαραγωγών Ζευγών (Η/Ζ, Γεννητριών)",
-        "Θέση Στάθμευσης Στεγασμένη",
-        "Θέση Στάθμευσης Ανοιχτή",
-        "Είσοδος/έξοδος οχημάτων - ράμπα",
-        "Κυλικείο-Εντευκτήριο",
-        "Προαύλιο",
-        "Κήπος",
-        "Αίθριο",
-        "Ταράτσα",
-        "Βεράντα/εξώστης",
-        "Άλλος βοηθητικός χώρος"
-      ]
-    },
-    {
-      "type": "Άλλος Τύπος Χρήσης",
+      "type": "Άλλη Χρήση",
       "spaces": [
         "Άλλο"
       ]
@@ -560,7 +531,7 @@ export class ConstFacilityService {
   ];
 
   SPACE_EQUIPMENT_COL_DEFS: ColDef[] = [
-    { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
+    { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, filter: false, flex: 0.5 },
     { 
       field: 'organizationalUnit', 
       headerName: 'Μονάδα', 
@@ -568,6 +539,7 @@ export class ConstFacilityService {
         const label = params.data.spaces.organizationalUnit.map(item => item.organizationalUnit) 
         return label.join(', ');
       },  
+      filter: true,
       flex: 1 
     },
     // { 
