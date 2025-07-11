@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ColDef, GridApi, GridReadyEvent, CellClickedEvent, RowClickedEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, CellClickedEvent, RowClickedEvent, FirstDataRenderedEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { AgGridNoRowsOverlayComponent } from 'src/app/shared/components/ag-grid-no-rows-overlay/ag-grid-no-rows-overlay.component';
@@ -163,11 +163,10 @@ export class EquipmentComponent implements OnInit {
     this.setitemQuantityFields();
   }
 
-  onFirstDataRendered(params: any): void {
+  onFirstDataRendered(params: FirstDataRenderedEvent): void {
     if (!this.gridApi) return;
 
     this.gridApi.forEachNode((node) => {
-      console.log("3>>", this.selectedSpaceIds, node.data.spaces._id["$oid"])
       if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
         node.setSelected(true);
       }
@@ -243,14 +242,17 @@ export class EquipmentComponent implements OnInit {
           this.spaces = body["data"];
           this.showGrid = true;
           this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
-          console.log("1>>",this.selectedSpaceIds)
-          this.gridApi.forEachNode((node) => {
-            console.log("2>>", this.selectedSpaceIds, node.data.spaces._id["$oid"])
-            if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
-              node.setSelected(true);
-            }
-          });
           
+          setTimeout(() => {
+            if (!this.gridApi) return;
+            
+            this.clearSelections();
+            this.gridApi.forEachNode((node) => {
+              if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+                node.setSelected(true);
+              }
+            });
+          }, 50) // 50ms delay to wait for grid to stabilize
         }
       })
   }
