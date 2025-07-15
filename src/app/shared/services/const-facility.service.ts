@@ -574,7 +574,7 @@ export class ConstFacilityService {
       flex:1
     },
     {
-      field: 'spaces',
+      field: 'itemQuantity',
       headerName: 'Κωδικοί',
       cellRenderer: (params) => {
         const spaceNames = [];
