@@ -77,7 +77,7 @@ export class ResourcesService {
     return this.http.get<IEquipment[]>(url, { observe: 'response' });
   }
 
-  addEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {
+  addEquipment(data: IEquipment[]): Observable<HttpResponse<{ message: string }>> {
     return this.http.post<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
   }
 

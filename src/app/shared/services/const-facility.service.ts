@@ -573,6 +573,19 @@ export class ConstFacilityService {
       filter: true,
       flex:1
     },
+    {
+      field: 'spaces',
+      headerName: 'Κωδικοί',
+      cellRenderer: (params) => {
+        const spaceNames = [];
+        params.value.forEach((data) => {
+            spaceNames.push(data.codes);
+        });
+        return spaceNames.join(', ');
+      }, 
+      filter: true,
+      flex:1
+    },
     { field: 'resourceSubcategory', headerName: 'Υποκατηγορία', flex: 1 },
     { field: 'kind', headerName: 'Είδος', flex: 1 },
     { field: 'type', headerName: 'Τύπος', flex: 1 },

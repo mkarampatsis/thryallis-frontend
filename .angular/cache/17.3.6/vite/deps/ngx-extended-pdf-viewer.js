@@ -87,10 +87,10 @@ import {
   ɵɵtwoWayProperty,
   ɵɵviewQuery
 } from "./chunk-EMKR74KR.js";
+import "./chunk-SAVXX6OM.js";
 import {
   firstValueFrom
 } from "./chunk-SG3BCSKH.js";
-import "./chunk-SAVXX6OM.js";
 import {
   Subject,
   take

@@ -198,17 +198,22 @@
         @if(showGrid) {
           <div class="mb-3" formArrayName="itemQuantity">
             <div *ngFor="let v of itemQuantityFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
-              <div class="col-sm-4">
+              <div class="col-sm-3">
                 <label for="">Ακίνητο:</label>
+                <input type="text" class="form-control" formControlName="distinctiveNameOfFacility" readonly>
+              </div>
+
+              <div class="col-sm-3">
+                <label for="">Χώρος:</label>
                 <input type="text" class="form-control" formControlName="spaceName" readonly>
               </div>
 
-              <div class="col-sm-4">
+               <div class="col-sm-3">
                 <label for="">Ποσότητα:</label>
                 <input type="number" min="0" class="form-control" formControlName="quantity">
               </div>
 
-              <div class="col-sm-4">
+              <div class="col-sm-3">
                 <label for="">Κωδικοί εξοπλισμού:</label>
                 <textarea class="form-control" formControlName="codes"></textarea>
                 <div class="form-text">Διαχωριστικό με το σύμβολο "$" (Παράδειγμα κωδικός$κωδικός$..)</div>

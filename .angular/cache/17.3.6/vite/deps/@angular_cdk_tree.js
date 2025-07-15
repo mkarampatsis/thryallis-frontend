@@ -44,10 +44,10 @@ import {
   ɵɵqueryRefresh,
   ɵɵviewQuery
 } from "./chunk-EMKR74KR.js";
+import "./chunk-SAVXX6OM.js";
 import {
   isObservable
 } from "./chunk-SG3BCSKH.js";
-import "./chunk-SAVXX6OM.js";
 import {
   BehaviorSubject,
   Subject,

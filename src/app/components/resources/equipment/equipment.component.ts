@@ -80,11 +80,8 @@ export class EquipmentComponent implements OnInit {
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    spaceWithinFacility: new FormArray([
-      new FormGroup({
-        id: new FormControl('', Validators.required) 
-      })
-    ]),
+    hostingFacility: new FormControl(''),
+    spaceWithinFacility: new FormControl(''),
     resourceCategory:new FormControl ('Εξοπλισμός'),
     resourceSubcategory: new FormControl('', Validators.required),
     kind: new FormControl('', Validators.required),
@@ -98,6 +95,8 @@ export class EquipmentComponent implements OnInit {
     ]),
     itemQuantity: new FormArray([
       new FormGroup({
+        distinctiveNameOfFacility: new FormControl('', Validators.required),
+        facilityId: new FormControl('', Validators.required),
         spaceName: new FormControl('', Validators.required),
         spaceId: new FormControl('', Validators.required),
         quantity: new FormControl(0, Validators.required),
@@ -142,6 +141,7 @@ export class EquipmentComponent implements OnInit {
       const body = response.body["data"];          
       const status = response.status;        
       if (status === 200) {
+        console.log("Equipments", body);
         this.equipments = body;
       } 
     })
@@ -159,7 +159,7 @@ export class EquipmentComponent implements OnInit {
   onRowSelected(event: RowClickedEvent): void {
     const selectedNodes = event.api.getSelectedNodes();
     this.selectedSpaces = selectedNodes.map(node => node.data);
-    this.setfrmSpaceFieldsId();
+    // this.setfrmSpaceFieldsId();
     this.setitemQuantityFields();
   }
 
@@ -226,6 +226,8 @@ export class EquipmentComponent implements OnInit {
     data.itemQuantity.forEach(v => {
       this.itemQuantityFormArray.push(
         new FormGroup({
+          distinctiveNameOfFacility: new FormControl(v.distinctiveNameOfFacility, Validators.required),
+          facilityId: new FormControl( v.facilityId["$oid"], Validators.required),
           spaceName: new FormControl(v.spaceName, Validators.required),
           spaceId: new FormControl( v.spaceId["$oid"], Validators.required),
           quantity: new FormControl(v.quantity, Validators.required),
@@ -241,7 +243,7 @@ export class EquipmentComponent implements OnInit {
         if (status === 200) {
           this.spaces = body["data"];
           this.showGrid = true;
-          this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
+          // this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
           
           setTimeout(() => {
             if (!this.gridApi) return;
@@ -383,24 +385,24 @@ export class EquipmentComponent implements OnInit {
     this.itemDescriptionFormArray.clear();
   }
 
-  get frmSpaceFieldsId() {
-    return this.form.get('spaceWithinFacility') as FormArray;
-  }
+  // get frmSpaceFieldsId() {
+  //   return this.form.get('spaceWithinFacility') as FormArray;
+  // }
 
-  setfrmSpaceFieldsId() {
-    this.clearfrmSpaceFieldsId();
-    this.selectedSpaces.forEach(data => {
-      this.frmSpaceFieldsId.push(
-        new FormGroup({
-          id: new FormControl(data.spaces._id.$oid, Validators.required),
-        })
-      )
-    })
-  }
+  // setfrmSpaceFieldsId() {
+  //   this.clearfrmSpaceFieldsId();
+  //   this.selectedSpaces.forEach(data => {
+  //     this.frmSpaceFieldsId.push(
+  //       new FormGroup({
+  //         id: new FormControl(data.spaces._id.$oid, Validators.required),
+  //       })
+  //     )
+  //   })
+  // }
 
-  clearfrmSpaceFieldsId() {
-    this.frmSpaceFieldsId.clear();
-  }
+  // clearfrmSpaceFieldsId() {
+  //   this.frmSpaceFieldsId.clear();
+  // }
 
   getfrmSpaceFieldsId() {
     return this.selectedSpaces.map(data => data.spaces._id.$oid)
@@ -429,6 +431,8 @@ export class EquipmentComponent implements OnInit {
   
       this.itemQuantityFormArray.push(
         new FormGroup({
+          distinctiveNameOfFacility: new FormControl(v.distinctiveNameOfFacility, Validators.required),
+          facilityId: new FormControl( v["_id"]["$oid"], Validators.required),
           spaceName: new FormControl(v.spaces.spaceName, Validators.required),
           spaceId: new FormControl( v.spaces._id.$oid, Validators.required),
           quantity: new FormControl(quantity, Validators.required),
@@ -455,36 +459,57 @@ export class EquipmentComponent implements OnInit {
     //   }
     // }
     // console.log(invalid)
-    const data: IEquipment = {
-      organization: this.organization,
-      organizationCode: this.organizationCode,
-      spaceWithinFacility: this.getfrmSpaceFieldsId(),
-      resourceCategory: this.form.controls.resourceCategory.value,
-      resourceSubcategory: this.form.controls.resourceSubcategory.value,
-      kind: this.form.controls.kind.value,
-      type: this.form.controls.type.value,
-      itemDescription: this.form.controls.itemDescription.value as { value: string; description: string; info: string }[],
-      itemQuantity: this.form.controls.itemQuantity.value as { spaceName: string; spaceId: string; quantity: number; codes: string;}[],
-      acquisitionDate: this.form.controls.acquisitionDate.value,
-      depreciationDate: '',
-      status: this.form.controls.status.value
+
+    const equiments = [];
+
+    for (let item of this.form.controls.itemQuantity.value) {
+      console.log("Item>>",item)
+      
+      const quantity = item.quantity;
+      const codes = item.codes ? item.codes.split('$') : [];
+
+      for (let i = 0; i < quantity; i++) {
+        const data: IEquipment = {
+          organization: this.organization,
+          organizationCode: this.organizationCode,
+          hostingFacility: item.facilityId,
+          spaceWithinFacility: item.spaceId,
+          resourceCategory: this.form.controls.resourceCategory.value,
+          resourceSubcategory: this.form.controls.resourceSubcategory.value,
+          kind: this.form.controls.kind.value,
+          type: this.form.controls.type.value,
+          itemDescription: this.form.controls.itemDescription.value as { value: string; description: string; info: string }[],
+          itemQuantity: [{
+            distinctiveNameOfFacility: item.distinctiveNameOfFacility,
+            facilityId: item.facilityId,
+            spaceName: item.spaceName,
+            spaceId: item.spaceId,
+            quantity: 1,  // Only one per code
+            codes: codes[i] ? codes[i] : "-"
+          }],
+          acquisitionDate: this.form.controls.acquisitionDate.value,
+          depreciationDate: '',
+          status: this.form.controls.status.value
+        };
+        equiments.push(data)
+      }           
     }
     
     if (this.updateEquipment) {
       console.log("update>>",this.updateEquipment)
-      data["_id"] = this.updateEquipment["_id"]["$oid"];
-      this.resourcesService.modifyEquipment(data)
-        .subscribe(response => {
-          const body = response.body;          
-          const status = response.status;        
-          if (status === 201) {
-            this.initializeForm()
-            this.showEquipments(this.organizationCode);
-            this.showForm = false;
-          }
-        })
+      // equiments["_id"] = this.updateEquipment["_id"]["$oid"];
+      // this.resourcesService.modifyEquipment(equiments)
+      //   .subscribe(response => {
+      //     const body = response.body;          
+      //     const status = response.status;        
+      //     if (status === 201) {
+      //       this.initializeForm()
+      //       this.showEquipments(this.organizationCode);
+      //       this.showForm = false;
+      //     }
+      //   })
     } else {
-      this.resourcesService.addEquipment(data)
+      this.resourcesService.addEquipment(equiments)
         .subscribe(response => {
           const body = response.body;          
           const status = response.status;        
@@ -495,21 +520,14 @@ export class EquipmentComponent implements OnInit {
           }
         })
     }
- 
-    // data['organization'] = this.organization;
-    // data['organizationCode'] = this.organizationCode;
-    // data['spaceWithinFacility'] = this.getfrmSpaceFieldsId()
-    
-   
   }
 
   initializeForm(): void {
     this.form.patchValue({
       organization: '',
       organizationCode: '',
-      spaceWithinFacility: [{
-        id:''
-      }],
+      hostingFacility: '',
+      spaceWithinFacility: '',
       resourceSubcategory: '',
       kind: '',
       type:'',
@@ -523,7 +541,7 @@ export class EquipmentComponent implements OnInit {
     });
     this.clearitemDescription();
     this.clearitemQuantity()
-    this.clearfrmSpaceFieldsId();
+    // this.clearfrmSpaceFieldsId();
     this.clearSelections();
     this.selectedSpaces = [];
     this.selectedSpaceIds = []
