@@ -16,7 +16,7 @@
     }
   </ul>
 
-  <div class="d-flex justify-content-between small">
+  <div *ngIf="!auxiliarySpace" class="d-flex justify-content-between small">
     <div>
       <span>Eπιλέξτε τις μονάδες που επιθυμείτε να εισάγετε</span>
     </div>
@@ -26,6 +26,7 @@
   </div>
 
   <ag-grid-angular 
+    *ngIf="!auxiliarySpace"
     [domLayout]="'autoHeight'" 
     [rowData]="monades" 
     [defaultColDef]="defaultColDef"
@@ -44,7 +45,7 @@
   <div class="mb-3 mt-3 p-2">
     <form [formGroup]="form">
       <div class="row mb-3">
-        <div class="col-sm-12">
+        <div class="col-sm-8">
           <label for="spaceName" class="form-label">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου</label>
           <input type="text" id="spaceName" class="form-control" formControlName="spaceName"
             [class.is-invalid]="form.controls.spaceName.touched && form.controls.spaceName.invalid">
@@ -52,6 +53,23 @@
           <div class="invalid-feedback">Δεν έχετε συμπληρώσει το πεδίο ονομασία/αριθμός του χώρου</div>
           }
         </div>
+
+        <div class="col-sm-4">
+          <label class="form-label">Βοηθητικός χώρος</label>
+          <div class="row row-cols-lg-auto g-3 align-items-cente">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="auxiliarySpace"
+                id="auxiliarySpaceYes" [value]="true" (change)="onAuxiliarySpaceChange(true)">
+              <label class="form-check-label" for="auxiliarySpaceYes">ΝΑΙ</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="auxiliarySpace"
+                id="auxiliarySpaceNo" [value]="false" (change)="onAuxiliarySpaceChange(false)">
+              <label class="form-check-label" for="auxiliarySpaceNo">ΟΧΙ</label>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="row mb-3" formGroupName="spaceUse">
@@ -62,31 +80,31 @@
           </select>
         </div>
 
-        <div *ngIf="subtypes.length > 0" class="col-sm-4">
+        <div *ngIf="subtypes.length > 0 && !auxiliarySpace" class="col-sm-4">
           <select class="form-select" id="subtype" formControlName="subtype" (change)="onSubtypeChange()">
             <option value="">Επιλογή Υποτύπου</option>
             <option *ngFor="let st of subtypes" [value]="st">{{ st }}</option>
           </select>
         </div>
 
-        
-
-        <div *ngIf="spaces.length > 0" class="col-sm-4">
+        <div *ngIf="spaces.length > 0 && !auxiliarySpace" class="col-sm-4">
           <select class="form-select" formControlName="space">
             <option value="">Επιλογή Χώρου</option>
             <option *ngFor="let s of spaces" [value]="s">{{ s }}</option>
           </select>
         </div>
-      </div>
-
-      <!-- <div class="row mb-3">
-        <div class="col-sm-12">
-          <select class="form-select" formControlName="auxiliarySpace">
-            <option>Βοηθητικός Χώρος</option>
+      
+        <div *ngIf="auxiliarySpace" class="col-sm-4">
+          <select class="form-select" formControlName="space">
+            <option value="">Βοηθητικός Χώρος</option>
             <option *ngFor="let s of AUXILIARY_SPACES" [value]="s">{{ s }}</option>
           </select> 
         </div>
-      </div> -->
+        
+      </div>
+      
+
+      
 
       <div class="row mb-3">
         <div class="col-sm-4">

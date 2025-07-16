@@ -37,6 +37,7 @@ export interface ISpace {
     subtype: string;
     space: string;
   };
+  auxiliarySpace:boolean
   spaceArea: string;
   spaceLength: string;
   spaceWidth: string;

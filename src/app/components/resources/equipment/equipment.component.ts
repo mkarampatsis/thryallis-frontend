@@ -47,7 +47,7 @@ export class EquipmentComponent implements OnInit {
   facilities: IFacility[] | null = [];
   spaces: IFacilitySpace[] | null = [];
   selectedSpaces: IFacilitySpace[] = [];
-  selectedSpaceIds: string[] = [];
+  selectedSpaceIds: string = '';
   equipments: IEquipment[] | null =[];
 
   organization: string = '';
@@ -141,7 +141,6 @@ export class EquipmentComponent implements OnInit {
       const body = response.body["data"];          
       const status = response.status;        
       if (status === 200) {
-        console.log("Equipments", body);
         this.equipments = body;
       } 
     })
@@ -167,7 +166,8 @@ export class EquipmentComponent implements OnInit {
     if (!this.gridApi) return;
 
     this.gridApi.forEachNode((node) => {
-      if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+      // if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+      if (this.selectedSpaceIds["$oid"] === node.data.spaces._id["$oid"]) {
         node.setSelected(true);
       }
     });
@@ -244,13 +244,15 @@ export class EquipmentComponent implements OnInit {
           this.spaces = body["data"];
           this.showGrid = true;
           // this.selectedSpaceIds = data.spaceWithinFacility.map(item => item["$oid"]);
+          this.selectedSpaceIds = data.spaceWithinFacility["$oid"];
           
           setTimeout(() => {
             if (!this.gridApi) return;
             
             this.clearSelections();
             this.gridApi.forEachNode((node) => {
-              if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+              // if (this.selectedSpaceIds.includes(node.data.spaces._id["$oid"])) {
+              if (this.selectedSpaceIds === node.data.spaces._id["$oid"]) {
                 node.setSelected(true);
               }
             });
@@ -463,7 +465,6 @@ export class EquipmentComponent implements OnInit {
     const equiments = [];
 
     for (let item of this.form.controls.itemQuantity.value) {
-      console.log("Item>>",item)
       
       const quantity = item.quantity;
       const codes = item.codes ? item.codes.split('$') : [];
@@ -496,18 +497,18 @@ export class EquipmentComponent implements OnInit {
     }
     
     if (this.updateEquipment) {
-      console.log("update>>",this.updateEquipment)
-      // equiments["_id"] = this.updateEquipment["_id"]["$oid"];
-      // this.resourcesService.modifyEquipment(equiments)
-      //   .subscribe(response => {
-      //     const body = response.body;          
-      //     const status = response.status;        
-      //     if (status === 201) {
-      //       this.initializeForm()
-      //       this.showEquipments(this.organizationCode);
-      //       this.showForm = false;
-      //     }
-      //   })
+      let updateEquipment = equiments[0]
+      updateEquipment["_id"] = this.updateEquipment["_id"]["$oid"];
+      this.resourcesService.modifyEquipment(updateEquipment)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.initializeForm()
+            this.showEquipments(this.organizationCode);
+            this.showForm = false;
+          }
+        })
     } else {
       this.resourcesService.addEquipment(equiments)
         .subscribe(response => {
@@ -544,7 +545,7 @@ export class EquipmentComponent implements OnInit {
     // this.clearfrmSpaceFieldsId();
     this.clearSelections();
     this.selectedSpaces = [];
-    this.selectedSpaceIds = []
+    this.selectedSpaceIds = ""
     this.updateEquipment = null;
 
     this.form.markAsPristine();

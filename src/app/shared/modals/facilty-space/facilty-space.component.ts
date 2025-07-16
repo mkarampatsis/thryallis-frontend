@@ -44,6 +44,7 @@ export class FaciltySpaceComponent implements OnInit {
   organizationCode: string;
   distinctiveNameOfFacility: string
   selectedOrganizationalCodes: string[];
+  auxiliarySpace: boolean = false;
 
   types: string[] = [];
   subtypes: string[] = [];
@@ -82,7 +83,7 @@ export class FaciltySpaceComponent implements OnInit {
       subtype: new FormControl(''),
       space: new FormControl('', Validators.required),
     }),
-    // auxiliarySpace: new FormControl('', Validators.required),
+    auxiliarySpace: new FormControl(false),
     spaceArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
     spaceLength: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
     spaceWidth: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
@@ -183,7 +184,7 @@ export class FaciltySpaceComponent implements OnInit {
         subtype: '',
         space: '',
       },
-      // auxiliarySpace: '',
+      auxiliarySpace: false,
       spaceArea: '',
       spaceLength: '',
       spaceWidth: '',
@@ -260,6 +261,10 @@ export class FaciltySpaceComponent implements OnInit {
     }
   }
 
+  onAuxiliarySpaceChange(status:boolean){
+    return this.auxiliarySpace = status? true: false;
+  }
+
   editSpace(space: ISpace){
     this.form.patchValue({
       facilityId: this.space.facilityId,
@@ -269,7 +274,7 @@ export class FaciltySpaceComponent implements OnInit {
         subtype: this.space.spaceUse.subtype,
         space: this.space.spaceUse.space,
       },
-      // auxiliarySpace: '',
+      auxiliarySpace: this.space.auxiliarySpace,
       spaceArea: this.space.spaceArea,
       spaceLength: this.space.spaceLength,
       spaceWidth: this.space.spaceWidth,
@@ -280,6 +285,8 @@ export class FaciltySpaceComponent implements OnInit {
         num: this.space.floorPlans.num
       }
     })
+
+    this.auxiliarySpace = this.space.auxiliarySpace;
 
     const floorLevel = this.space.floorPlans.level
     if (floorLevel == 'Όροφος') {

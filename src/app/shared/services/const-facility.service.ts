@@ -535,10 +535,14 @@ export class ConstFacilityService {
     { 
       field: 'organizationalUnit', 
       headerName: 'Μονάδα', 
-      cellRenderer: (params) => {
-        const label = params.data.spaces.organizationalUnit.map(item => item.organizationalUnit) 
-        return label.join(', ');
-      },  
+      valueGetter: (params) => {
+        if (!params.data.spaces) return '';
+        return params.data.spaces.organizationalUnit.map(s => s.organizationalUnit).join(', ');
+      },
+      // cellRenderer: (params) => {
+      //   const label = params.data.spaces.organizationalUnit.map(item => item.organizationalUnit) 
+      //   return label.join(', ');
+      // },  
       filter: true,
       flex: 1 
     },
@@ -563,26 +567,20 @@ export class ConstFacilityService {
     {
       field: 'spaces',
       headerName: 'Χώρος',
-      cellRenderer: (params) => {
-        const spaceNames = [];
-        params.value.forEach((data) => {
-            spaceNames.push(data.spaceName);
-        });
-        return spaceNames.join(', ');
-      }, 
+      valueGetter: (params) => {
+        if (!params.data.spaces) return '';
+        return params.data.spaces.map(s => s.spaceName).join(', ');
+      },
       filter: true,
       flex:1
     },
     {
       field: 'itemQuantity',
       headerName: 'Κωδικοί',
-      cellRenderer: (params) => {
-        const spaceNames = [];
-        params.value.forEach((data) => {
-            spaceNames.push(data.codes);
-        });
-        return spaceNames.join(', ');
-      }, 
+      valueGetter: (params) => {
+        if (!params.data.itemQuantity) return '';
+        return params.data.itemQuantity.map(s => s.codes).join(', ');
+      },
       filter: true,
       flex:1
     },
@@ -592,14 +590,10 @@ export class ConstFacilityService {
     { 
       field: 'itemDescription', 
       headerName: 'Τιμές',
-      cellRenderer: (params) => {
-        const values = [];
-        params.value.forEach((data) => {
-          const item = data.description + '=' + data.value;
-          values.push(item);
-        });
-        return values.join(', ');
-      },  
+      valueGetter: (params) => {
+        if (!params.data.itemDescription) return '';
+        return params.data.itemDescription.map(s => s.description + '=' + s.value).join(', ');
+      },
       flex: 1,
       filter: true, 
     },
