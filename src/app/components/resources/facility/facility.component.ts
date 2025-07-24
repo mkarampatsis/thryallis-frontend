@@ -83,7 +83,7 @@ export class FacilityComponent {
     belongsTo: new FormControl(''),
     distinctiveNameOfFacility: new FormControl('', Validators.required),
     useOfFacility: new FormControl('', Validators.required),
-    uniqueUseOfFacility: new FormControl('true'),
+    uniqueUseOfFacility: new FormControl(true),
     coveredPremisesArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
     floorsOrLevels: new FormControl('', [Validators.required, Validators.pattern(/^\d+?$/)]),
     floorPlans: new FormArray([
@@ -103,7 +103,7 @@ export class FacilityComponent {
       geographicRegion: new FormControl('', Validators.required),
       country: new FormControl('ΕΛΛΑΣ', Validators.required),
     }),
-    finalized: new FormControl('false'),
+    finalized: new FormControl(false),
   });
 
   floorPlans = this.form.get('floorPlans') as FormArray;
@@ -156,7 +156,35 @@ export class FacilityComponent {
   }
 
   editFacility(facility: IFacility){
+    this.showForm = true;
     console.log("Info", facility)
+    this.form.patchValue({
+      organization: facility.organization,
+      organizationCode: facility.organizationCode,
+      kaek: facility.kaek,
+      belongsTo: facility.belongsTo,
+      distinctiveNameOfFacility: facility.distinctiveNameOfFacility,
+      useOfFacility: facility.useOfFacility,
+      uniqueUseOfFacility: facility.uniqueUseOfFacility,
+      coveredPremisesArea: facility.coveredPremisesArea,
+      floorsOrLevels: facility.floorsOrLevels,
+      floorPlans: [{
+        level: '',
+        num: '',
+        floorArea: '',
+        floorPlan: [],
+      }],
+      addressOfFacility: {
+        street: facility.addressOfFacility.street,
+        number: facility.addressOfFacility.number,
+        postcode: facility.addressOfFacility.postcode,
+        area: facility.addressOfFacility.area,
+        municipality: facility.addressOfFacility.municipality,
+        geographicRegion: facility.addressOfFacility.geographicRegion,
+        country: facility.addressOfFacility.country,
+      },
+      finalized: facility.finalized,
+    });
   }
 
   deleteFacility(facility: IFacility){
@@ -300,7 +328,7 @@ export class FacilityComponent {
       belongsTo: '',
       distinctiveNameOfFacility: '',
       useOfFacility: '',
-      uniqueUseOfFacility: 'true',
+      uniqueUseOfFacility: true,
       coveredPremisesArea: '',
       floorsOrLevels: '',
       floorPlans: [{
@@ -318,7 +346,7 @@ export class FacilityComponent {
         geographicRegion: '',
         country: '',
       },
-      finalized: 'false',
+      finalized: false,
     });
 
     this.form.markAsPristine();

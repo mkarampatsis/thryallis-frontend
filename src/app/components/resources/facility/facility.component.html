@@ -218,12 +218,12 @@
           <div class="row row-cols-lg-auto g-3 align-items-center">
             <div class="form-check">
               <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
-                id="UniqueUserOfFacility1" value="true">
+                id="UniqueUserOfFacility1"  [value]="true">
               <label class="form-check-label" for="UniqueUserOfFacility1">ΝΑΙ</label>,
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
-                id="UniqueUserOfFacility2" value="false">
+                id="UniqueUserOfFacility2" [value]="false">
               <label class="form-check-label" for="UniqueUserOfFacility2">ΟΧΙ</label>
             </div>
           </div>
@@ -432,12 +432,12 @@
         <div class="row row-cols-lg-auto g-3 align-items-center">
           <div class="form-check">
             <input class="form-check-input" type="radio" formControlName="finalized"
-              id="finalized1" value="true">
+              id="finalized1" [value]="true">
             <label class="form-check-label" for="finalized1">ΝΑΙ</label>,
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" formControlName="finalized"
-              id="finalized2" value="false">
+              id="finalized2" [value]="false">
             <label class="form-check-label" for="finalized2">ΟΧΙ</label>
           </div>
         </div>

@@ -12,7 +12,7 @@ export interface IFacility {
   belongsTo: string;
   distinctiveNameOfFacility: string;
   useOfFacility: string;
-  uniqueUseOfFacility: string;
+  uniqueUseOfFacility: boolean;
   coveredPremisesArea: string;
   floorsOrLevels: string;
   floorPlans: IFloorPlans[];
@@ -25,7 +25,7 @@ export interface IFacility {
     geographicRegion: string;
     country: string;
   }
-  finalized: string;
+  finalized: boolean;
 }
 
 export interface ISpace {
