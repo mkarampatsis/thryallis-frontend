@@ -64,6 +64,7 @@ export class FacilityComponent {
 
   organization: string = '';
   organizationCode: string = '';
+  updatedFacilityId: string = '';
 
   defaultColDef = this.constFacilityService.defaultColDef;
   facilityColDefs: ColDef[] = this.constFacilityService.FACILTY_COL_DEFS;
@@ -106,7 +107,14 @@ export class FacilityComponent {
     finalized: new FormControl(false),
   });
 
-  floorPlans = this.form.get('floorPlans') as FormArray;
+  get floorPlans() {
+    return this.form.get('floorPlans') as FormArray;
+  }
+
+  clearFloorPlans() {
+    this.floorPlans.clear();
+  }
+  // floorPlans = this.form.get('floorPlans') as FormArray;
 
   ngOnInit() {
     this.organizations= this.userService.getMyFacilites()
@@ -156,11 +164,15 @@ export class FacilityComponent {
   }
 
   editFacility(facility: IFacility){
+    console.log("Edit", facility)
+    
+    this.initializeForm();
     this.showForm = true;
-    console.log("Info", facility)
+
+    this.organization = facility.organization
+    this.organizationCode = facility.organizationCode
+    
     this.form.patchValue({
-      organization: facility.organization,
-      organizationCode: facility.organizationCode,
       kaek: facility.kaek,
       belongsTo: facility.belongsTo,
       distinctiveNameOfFacility: facility.distinctiveNameOfFacility,
@@ -168,12 +180,6 @@ export class FacilityComponent {
       uniqueUseOfFacility: facility.uniqueUseOfFacility,
       coveredPremisesArea: facility.coveredPremisesArea,
       floorsOrLevels: facility.floorsOrLevels,
-      floorPlans: [{
-        level: '',
-        num: '',
-        floorArea: '',
-        floorPlan: [],
-      }],
       addressOfFacility: {
         street: facility.addressOfFacility.street,
         number: facility.addressOfFacility.number,
@@ -185,6 +191,32 @@ export class FacilityComponent {
       },
       finalized: facility.finalized,
     });
+
+    facility.floorPlans.forEach((v,index) => {
+      this.floorPlans.push(
+        new FormGroup({
+          level: new FormControl(v.level, Validators.required),
+          num: new FormControl(v.num, Validators.required),
+          floorArea: new FormControl(v.floorArea, Validators.required),
+          floorPlan: new FormControl(v.floorPlan),
+        })
+      )
+      if (v.level == 'Όροφος') {
+        this.planFloorsNumField = 1;
+      } else if (v.level == 'Ισόγειο') {
+        this.floorPlans.at(index).get('num').setValue('0')
+        this.planFloorsNumField = 2;
+      } else if (v.level == 'Υπόγειο') {
+        this.planFloorsNumField = 3;
+      } else if (v.level == 'Ημιυπόγειο' || v.level == 'Ημιόροφος' || v.level == 'Ταράτσα') {
+        this.planFloorsNumField = 4;
+        this.floorPlans.at(index).get('num').setValue('-')
+      } else {
+        this.planFloorsNumField = 0;
+      }
+    });
+
+    this.updatedFacilityId = facility["_id"]["$oid"];
   }
 
   deleteFacility(facility: IFacility){
@@ -349,6 +381,9 @@ export class FacilityComponent {
       finalized: false,
     });
 
+    this.clearFloorPlans();
+    this.updatedFacilityId = '';
+
     this.form.markAsPristine();
     this.form.markAsUntouched();
 
@@ -409,7 +444,11 @@ export class FacilityComponent {
     const data = this.form.value as IFacility;
     data["organization"] = this.organization;
     data["organizationCode"] = this.organizationCode;
+    console.log("Submit", data)
 
+    if (this.updatedFacilityId) {
+      console.log("Update", this.updatedFacilityId, data);  
+    } else {
     this.resourcesService.newFacility(data)
       .subscribe(response => {
         const body = response.body;          
@@ -419,6 +458,7 @@ export class FacilityComponent {
           this.initializeForm();
         }
       })
+    }
   }
 
   getFacilitiesByOrganizationCode(){
