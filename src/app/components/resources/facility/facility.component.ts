@@ -300,7 +300,8 @@ export class FacilityComponent {
     return this.userService.hasFacilityEditorRole()
   }
 
-  selectFile(event: any): void {
+  selectFile(event:any, floorIndex: number): void {
+    console.log("Index", floorIndex )
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
       console.log('No files selected!');
@@ -338,16 +339,26 @@ export class FacilityComponent {
           complete: () => {
             completed++;
             if (completed === fileArray.length) {
-              // this.form.controls.floorPlans.controls.questionFile.setValue( this.uploadObjectIDs);
+              this.floorPlans.at(floorIndex).get('floorPlan').setValue(this.uploadObjectIDs);
               this.form.markAsDirty();
               console.log('All uploads complete:', this.uploadObjectIDs);
+              this.uploadObjectIDs = []
             }
           },
         });
       });
     } else {
-      // this.form.controls.floorPlans.controls.questionFile.setErrors({'incorrect': true});
+      this.floorPlans.at(floorIndex).get('floorPlan').setErrors({'incorrect': true});
     }
+  }
+
+  deleteFile(facilityId:string, fileId:string){
+    console.log(facilityId, fileId)
+    // this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
+    //   .subscribe(result => {
+    //     this.generalInfoToUpdate.file = result.data.file;
+    //     this.getAllGeneralInfo();
+    //   })
   }
 
   initializeForm(): void {
@@ -383,6 +394,7 @@ export class FacilityComponent {
 
     this.clearFloorPlans();
     this.updatedFacilityId = '';
+    this.showForm = false;
 
     this.form.markAsPristine();
     this.form.markAsUntouched();
@@ -430,6 +442,7 @@ export class FacilityComponent {
         floorPlan: new FormControl({value: [], disabled: true}),
       }),
     );
+    this.progress = 0
   }
 
   removeFloorPlan(index: number) {
