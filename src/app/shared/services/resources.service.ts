@@ -89,4 +89,11 @@ export class ResourcesService {
     const url = `${APIPREFIX_EQUIPMENT}/${id}`;
     return this.http.delete<IEquipment>(url, { observe: 'response' });
   }
+
+  // General Requests
+  deleteFile(fileId:string): Observable<HttpResponse<{ message: string }>> {
+    const url = `${APIPREFIX_FACILITY}/file/${fileId}`;
+    return this.http.delete<{ message: string }>(url, { observe: 'response' });
+  }
 }
+

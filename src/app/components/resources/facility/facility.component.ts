@@ -11,6 +11,7 @@ import { UserService } from 'src/app/shared/services/user.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
@@ -18,6 +19,7 @@ import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-facility',
@@ -41,6 +43,7 @@ export class FacilityComponent {
   modalService = inject(ModalService);
   uploadService = inject(FileUploadService);
   resourcesService = inject(ResourcesService);
+  helpboxService = inject(HelpboxService);
 
   organizations: IOrganizationList[] = [];
 
@@ -75,7 +78,7 @@ export class FacilityComponent {
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
   gridApi: GridApi;
-  gridApiSpace: GridApi; 
+  gridApiSpace: GridApi;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -117,7 +120,7 @@ export class FacilityComponent {
   // floorPlans = this.form.get('floorPlans') as FormArray;
 
   ngOnInit() {
-    this.organizations= this.userService.getMyFacilites()
+    this.organizations = this.userService.getMyFacilites()
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
@@ -136,7 +139,7 @@ export class FacilityComponent {
   onCellClicked(event: CellClickedEvent): void {
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
-        
+
     if (action === 'info') {
       this.showSpaces(event.data);
     } else if (action === 'edit') {
@@ -151,27 +154,26 @@ export class FacilityComponent {
   onCellClickedSpace(event: CellClickedEvent): void {
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
-    
+
     if (action === 'editSpace') {
       this.editSpace(event.data);
     } else if (action === 'deleteSpace') {
       this.deleteSpace(event.data);
-    } 
+    }
   }
 
-  showSpaces(facility: IFacility){
+  showSpaces(facility: IFacility) {
     this.getSpacesFacilityId(facility["_id"]["$oid"])
   }
 
-  editFacility(facility: IFacility){
-    console.log("Edit", facility)
-    
+  editFacility(facility: IFacility) {
+
     this.initializeForm();
     this.showForm = true;
 
     this.organization = facility.organization
     this.organizationCode = facility.organizationCode
-    
+
     this.form.patchValue({
       kaek: facility.kaek,
       belongsTo: facility.belongsTo,
@@ -192,7 +194,7 @@ export class FacilityComponent {
       finalized: facility.finalized,
     });
 
-    facility.floorPlans.forEach((v,index) => {
+    facility.floorPlans.forEach((v, index) => {
       this.floorPlans.push(
         new FormGroup({
           level: new FormControl(v.level, Validators.required),
@@ -219,58 +221,58 @@ export class FacilityComponent {
     this.updatedFacilityId = facility["_id"]["$oid"];
   }
 
-  deleteFacility(facility: IFacility){
-    const facilityId =  facility["_id"]["$oid"];
+  deleteFacility(facility: IFacility) {
+    const facilityId = facility["_id"]["$oid"];
     this.modalService.getUserConsent(
       "Πρόκειται να διαγράψετε κάποιο ακίνητο και τους χώρους του. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
     )
-    .subscribe((result) => {
-      if (result) {
-        this.resourcesService.deleteFacilityById(facilityId)
-          .subscribe(response => {
-            const body = response.body;          
-            const status = response.status;        
-            if (status === 201) {
-              this.getFacilitiesByOrganizationCode()
-              this.getSpacesFacilityId(facilityId)
-            }
-          })
-      }
-    })
+      .subscribe((result) => {
+        if (result) {
+          this.resourcesService.deleteFacilityById(facilityId)
+            .subscribe(response => {
+              const body = response.body;
+              const status = response.status;
+              if (status === 201) {
+                this.getFacilitiesByOrganizationCode()
+                this.getSpacesFacilityId(facilityId)
+              }
+            })
+        }
+      })
   }
 
-  addSpace(facility: IFacility){
+  addSpace(facility: IFacility) {
     this.modalService.addFaciltySpace(facility)
       .subscribe(result => {
         this.getSpacesFacilityId(facility["_id"]["$oid"])
       })
   }
 
-  editSpace(space:ISpace){
+  editSpace(space: ISpace) {
     this.modalService.modifyFaciltySpace(space)
       .subscribe(result => {
         this.getSpacesFacilityId(space.facilityId["id"])
       })
   }
 
-  deleteSpace(data:ISpace){
+  deleteSpace(data: ISpace) {
     const spaceId = data["id"]
     const facilityId = data.facilityId["id"]
     this.modalService.getUserConsent(
       "Πρόκειται να διαγράψετε κάποιο χώρο του ακινήτου. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
     )
-    .subscribe((result) => {
-      if (result) {
-        this.resourcesService.deleteSpaceById(spaceId)
-          .subscribe(response => {
-            const body = response.body;          
-            const status = response.status;        
-            if (status === 201) {
-              this.getSpacesFacilityId(facilityId)
-            }
-          })
-      }
-    })
+      .subscribe((result) => {
+        if (result) {
+          this.resourcesService.deleteSpaceById(spaceId)
+            .subscribe(response => {
+              const body = response.body;
+              const status = response.status;
+              if (status === 201) {
+                this.getSpacesFacilityId(facilityId)
+              }
+            })
+        }
+      })
   }
 
   newFacility(data: IOrganizationList) {
@@ -281,9 +283,9 @@ export class FacilityComponent {
     this.getFacilitiesByOrganizationCode()
     this.showForm = true;
     this.showGrid = true;
-  } 
+  }
 
-  showFacilitiesGrids(data: IOrganizationList){
+  showFacilitiesGrids(data: IOrganizationList) {
     this.organizationCode = data.code
     this.showGrid = true;
   }
@@ -300,8 +302,8 @@ export class FacilityComponent {
     return this.userService.hasFacilityEditorRole()
   }
 
-  selectFile(event:any, floorIndex: number): void {
-    console.log("Index", floorIndex )
+  selectFile(event: any, floorIndex: number): void {
+    console.log("Index", floorIndex)
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
       console.log('No files selected!');
@@ -348,17 +350,51 @@ export class FacilityComponent {
         });
       });
     } else {
-      this.floorPlans.at(floorIndex).get('floorPlan').setErrors({'incorrect': true});
+      this.floorPlans.at(floorIndex).get('floorPlan').setErrors({ 'incorrect': true });
     }
   }
 
-  deleteFile(facilityId:string, fileId:string){
-    console.log(facilityId, fileId)
-    // this.helpboxService.deleteFileFromGeneralInfo(generalInfoId, fileId)
-    //   .subscribe(result => {
-    //     this.generalInfoToUpdate.file = result.data.file;
-    //     this.getAllGeneralInfo();
-    //   })
+  deleteFile(fileId: string) {
+    console.log(fileId)
+    this.resourcesService.deleteFile(fileId)
+      .subscribe(response => {
+        const body = response.body;
+        const status = response.status;
+        if (status === 201) {
+          console.log(body);
+          // this.generalInfoToUpdate.file = result.data.file;
+          // this.getAllGeneralInfo();
+        }
+      })
+  }
+
+  displayFile(fileId: string) {
+    this.uploadService
+      .getUploadByID(fileId)
+      .pipe(take(1))
+      .subscribe((data) => {
+        if (data.type === "application/pdf") {
+          const url = window.URL.createObjectURL(data);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'document.pdf';
+          this.modalService.showPdfViewer(link);
+        } else {
+          // const type = data.type.split('/')[1];
+          if (data.type === 'image/png') {
+            this.helpboxService.downloadFile(data, 'image.png', 'image/png');
+          }
+          if (data.type == 'image/jpeg') {
+            this.helpboxService.downloadFile(data, 'photo.jpg', 'image/png');
+          }
+          if (data.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            this.helpboxService.downloadFile(data, 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          }
+          if (data.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            this.helpboxService.downloadFile(data, 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+          }
+        }
+      });
   }
 
   initializeForm(): void {
@@ -401,7 +437,7 @@ export class FacilityComponent {
 
     // Clear the native file input selection
     if (this.fileInput?.nativeElement) {
-        this.fileInput.nativeElement.value = '';
+      this.fileInput.nativeElement.value = '';
     }
 
     this.progress = 0;
@@ -410,7 +446,7 @@ export class FacilityComponent {
   selectLevel(event: Event, i: number): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value.split(':')[1].trim();
-    
+
     const selectedOption = this.floorPlans.at(i).get('level')?.value;
     this.floorPlans.at(i).get('num').enable();
     this.floorPlans.at(i).get('floorArea').enable();
@@ -437,9 +473,9 @@ export class FacilityComponent {
     this.floorPlans.push(
       new FormGroup({
         level: new FormControl('', Validators.required),
-        num: new FormControl({value: '', disabled: true}, Validators.required),
-        floorArea: new FormControl({value: '', disabled: true}, Validators.required),
-        floorPlan: new FormControl({value: [], disabled: true}),
+        num: new FormControl({ value: '', disabled: true }, Validators.required),
+        floorArea: new FormControl({ value: '', disabled: true }, Validators.required),
+        floorPlan: new FormControl({ value: [], disabled: true }),
       }),
     );
     this.progress = 0
@@ -449,50 +485,50 @@ export class FacilityComponent {
     this.floorPlans.removeAt(index);
   }
 
-  resetForm(){
-    this.initializeForm(); 
+  resetForm() {
+    this.initializeForm();
   }
 
-  submitForm(){
+  submitForm() {
     const data = this.form.value as IFacility;
     data["organization"] = this.organization;
     data["organizationCode"] = this.organizationCode;
     console.log("Submit", data)
 
     if (this.updatedFacilityId) {
-      console.log("Update", this.updatedFacilityId, data);  
+      console.log("Update", this.updatedFacilityId, data);
     } else {
-    this.resourcesService.newFacility(data)
-      .subscribe(response => {
-        const body = response.body;          
-        const status = response.status;        
-        if (status === 201) {
-          this.getFacilitiesByOrganizationCode();
-          this.initializeForm();
-        }
-      })
+      this.resourcesService.newFacility(data)
+        .subscribe(response => {
+          const body = response.body;
+          const status = response.status;
+          if (status === 201) {
+            this.getFacilitiesByOrganizationCode();
+            this.initializeForm();
+          }
+        })
     }
   }
 
-  getFacilitiesByOrganizationCode(){
+  getFacilitiesByOrganizationCode() {
     this.resourcesService.getFacilitiesByOrganizationCode(this.organizationCode)
-    .subscribe(result => {
-      const body = result.body;          
-      const status = result.status;  
-      if (status===200) {
-        this.facilities = body
-      }
-    })
+      .subscribe(result => {
+        const body = result.body;
+        const status = result.status;
+        if (status === 200) {
+          this.facilities = body
+        }
+      })
   }
 
-  getSpacesFacilityId(id:string) {
+  getSpacesFacilityId(id: string) {
     this.resourcesService.getSpacesByFacilityId(id)
       .subscribe(result => {
-        const body = result.body;          
-        const status = result.status;  
-        if (status===200) {
+        const body = result.body;
+        const status = result.status;
+        if (status === 200) {
           this.spaces = body
-          if ( this.spaces.length > 0 ) {
+          if (this.spaces.length > 0) {
             this.showGridSpace = true;
           }
           else {
