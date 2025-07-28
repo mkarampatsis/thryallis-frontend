@@ -320,12 +320,12 @@
                 <span class="text-danger mt-2 fs-6">Λάθος τύπος αρχείου ή πολύ μεγαλό αρχείο</span>
               }
               @if (floorPlans.at(i).get('floorPlan')?.value.length > 0 && updatedFacilityId ){
-                @for (floor of floorPlans.at(i).get('floorPlan')?.value; track floor; let idx = $index) {
+                @for (fileId of floorPlans.at(i).get('floorPlan')?.value; track fileId; let idx = $index) {
                   <div class="mt-1">
                     <strong>Αρχείo: </strong>
-                    <span role="button" class="cursor-pointer" (click)="deleteFile(floor['$oid'])">Κάτοψης {{i+1}}-{{idx+1}} </span>
-                    <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(floor['$oid'])" ngbTooltip="Εμφάνιση κάτοψης"></i>
-                    <i class="bi bi-file-x text-danger fs-6 cursor-pointer" role="button" (click)="deleteFile(floor['$oid'])" ngbTooltip="Διαγραφή κάτοψης"></i>
+                    <span role="button" class="cursor-pointer" (click)="deleteFile(fileId)">Κάτοψης {{i+1}}-{{idx+1}} </span>
+                    <i class="bi bi-file-arrow-down cursor-pointer" role="button" (click)="displayFile(fileId)" ngbTooltip="Εμφάνιση κάτοψης"></i>
+                    <i class="bi bi-file-x text-danger fs-6 cursor-pointer" role="button" (click)="deleteFile(fileId)" ngbTooltip="Διαγραφή κάτοψης"></i>
                   </div>
                 }
               }

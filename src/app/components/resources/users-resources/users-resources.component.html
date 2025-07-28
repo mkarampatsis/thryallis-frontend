@@ -1,0 +1,325 @@
+<h1 class="govgr-heading-md">Προσωπικό Ελληνικού Δημοσίου</h1>
+
+@if (hasUserResourcesAdminRole() || hasUserResourcesEditorRole()) {
+  <h4 class="govgr-heading-sm">Οι προσβάσεις σας</h4>
+
+  <p class="govgr-body">
+    Στους παρακάτω πίνακες εμφανίζονται οι φορείς που έχετε πρόσβαση και οι επιτρεπτές ενέργειες.
+  </p>
+
+  <h5 class="govgr-heading-md d-flex align-items-center gap-2">
+    Φορείς
+    @if (!organizations) {
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    }
+  </h5>
+
+  @if (organizations.length > 0) {
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Κωδικός</th>
+          <th scope="col">Ονομασία</th>
+          <th scope="col">Ενέργειες</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (organization of organizations; track organization) {
+        <tr class="align-middle">
+          <td>{{ organization.code }}</td>
+          <td>{{ organization.preferredLabel }}</td>
+          <td class="d-flex gap-2 fs-5">
+            <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
+              ngbTooltip="Στοιχεία Φορέα"></i>
+
+            <i class="bi bi-building" role="button" (click)="showUserResourcesGrid(organization)"
+              ngbTooltip="Εμφάνιση Προσωπικού"></i>
+
+            <i class="bi bi-pencil-square" role="button" (click)="newUserResources(organization)"
+              ngbTooltip="Νέο Προσωπικό"></i>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } @else {
+    <div class="alert alert-info w-25 mb-4 text-center fw-semibold" role="alert">
+      Δεν έχετε πρόσβαση σε φορείς.
+    </div>
+  }
+}
+
+<div class="mt-5 mb-5">
+  <form [formGroup]="form" class="container">
+
+    <!-- Organization Info -->
+    <!-- <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Οργανισμός</label>
+        <input type="text" class="form-control" formControlName="organization">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Κωδικός Οργανισμού</label>
+        <input type="text" class="form-control" formControlName="organizationCode">
+      </div>
+    </div> -->
+
+    <!-- Personal Info -->
+    <h5 class="mt-4">Προσωπικά Στοιχεία</h5>
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Κωδικός</label>
+        <input type="text" class="form-control" formControlName="code">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Όνομα</label>
+        <input type="text" class="form-control" formControlName="firstname">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Επώνυμο</label>
+        <input type="text" class="form-control" formControlName="lastname">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Πατρώνυμο</label>
+        <input type="text" class="form-control" formControlName="fathername">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Μητρώνυμο</label>
+        <input type="text" class="form-control" formControlName="mothername">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Αριθμός Ταυτότητας</label>
+        <input type="text" class="form-control" formControlName="identity">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Ημερομηνία Γέννησης</label>
+        <input type="date" class="form-control" formControlName="birthday">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Φύλο</label>
+        <select class="form-select" formControlName="sex">
+          <option value="Male">Άνδρας</option>
+          <option value="Female">Γυναίκα</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Οικογενειακή Κατάσταση</label>
+        <input type="text" class="form-control" formControlName="famillyStatus">
+      </div>
+    </div>
+
+    <!-- Address (Home) -->
+    <h5 class="mt-4">Διεύθυνση Κατοικίας</h5>
+    <div formGroupName="address" class="row mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Οδός</label>
+        <input type="text" class="form-control" formControlName="street">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Αριθμός</label>
+        <input type="text" class="form-control" formControlName="number">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">ΤΚ</label>
+        <input type="text" class="form-control" formControlName="postcode">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Περιοχή</label>
+        <input type="text" class="form-control" formControlName="area">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Δήμος</label>
+        <input type="text" class="form-control" formControlName="municipality">
+      </div>
+      <div class="col-md-4 mt-2">
+        <label class="form-label">Περιφέρεια</label>
+        <input type="text" class="form-control" formControlName="geographicRegion">
+      </div>
+      <div class="col-md-4 mt-2">
+        <label class="form-label">Χώρα</label>
+        <input type="text" class="form-control" formControlName="country" readonly>
+      </div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Τηλέφωνο Οικίας</label>
+        <input type="text" class="form-control" formControlName="phoneHome">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Κινητό Τηλέφωνο</label>
+        <input type="text" class="form-control" formControlName="phoneMobile">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" formControlName="email">
+      </div>
+    </div>
+
+    <!-- Address (Work) -->
+    <h5 class="mt-4">Διεύθυνση Εργασίας</h5>
+    <div formGroupName="addressWork" class="row mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Οδός</label>
+        <input type="text" class="form-control" formControlName="street">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Αριθμός</label>
+        <input type="text" class="form-control" formControlName="number">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">ΤΚ</label>
+        <input type="text" class="form-control" formControlName="postcode">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Περιοχή</label>
+        <input type="text" class="form-control" formControlName="area">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Δήμος</label>
+        <input type="text" class="form-control" formControlName="municipality">
+      </div>
+      <div class="col-md-4 mt-2">
+        <label class="form-label">Περιφέρεια</label>
+        <input type="text" class="form-control" formControlName="geographicRegion">
+      </div>
+      <div class="col-md-4 mt-2">
+        <label class="form-label">Χώρα</label>
+        <input type="text" class="form-control" formControlName="country" readonly>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Τηλέφωνο Εργασίας</label>
+        <input type="text" class="form-control" formControlName="phoneWork">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email Εργασίας</label>
+        <input type="email" class="form-control" formControlName="emailWork">
+      </div>
+    </div>
+
+    <!-- Work Info -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Κατάσταση Εργασίας</label>
+        <input type="text" class="form-control" formControlName="workStatus">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Εκπαίδευση</label>
+        <input type="text" class="form-control" formControlName="education">
+      </div>
+    </div>
+
+    <!-- Specialty -->
+    <h5 class="mt-4">Ειδικότητα</h5>
+    <div formGroupName="specialty" class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Τίτλος</label>
+        <input type="text" class="form-control" formControlName="title">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Αρχείο</label>
+        <input type="file" class="form-control" formControlName="file">
+      </div>
+    </div>
+
+    <!-- Office & Facility -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Γραφείο</label>
+        <input type="text" class="form-control" formControlName="office">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Μονάδα</label>
+        <input type="text" class="form-control" formControlName="facility">
+      </div>
+    </div>
+
+    <!-- Children -->
+    <h5 class="mt-4">Παιδιά</h5>
+    <div formArrayName="children" class="mb-3">
+      <div *ngFor="let child of form.get('children')['controls']; let i = index" [formGroupName]="i" class="row g-3 align-items-end mb-3 border rounded p-3">
+        <div class="col-md-4">
+          <label class="form-label">Όνομα</label>
+          <input type="text" class="form-control" formControlName="name">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Φύλο</label>
+          <select class="form-select" formControlName="sex">
+            <option value="Male">Άνδρας</option>
+            <option value="Female">Γυναίκα</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Ημ. Γέννησης</label>
+          <input type="date" class="form-control" formControlName="birthday">
+        </div>
+        <div class="col-md-1 d-flex flex-column align-items-center">
+          <button type="button" class="btn btn-outline-danger mt-4" (click)="removeChild(i)" *ngIf="form.get('children')['length'] > 1">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-outline-primary" (click)="addChild()">
+        <i class="bi bi-plus-circle"></i> Προσθήκη Παιδιού
+      </button>
+    </div>
+
+    <!-- Qualifications -->
+    <h5 class="mt-4">Προσόντα</h5>
+    <div formArrayName="qualifications">
+      <div *ngFor="let qual of form.get('qualifications')['controls']; let i = index" [formGroupName]="i" class="row g-3 align-items-end mb-3 border rounded p-3">
+        <div class="col-md-3">
+          <label class="form-label">Τύπος</label>
+          <input type="text" class="form-control" formControlName="type">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Τίτλος</label>
+          <input type="text" class="form-control" formControlName="title">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Οργανισμός</label>
+          <input type="text" class="form-control" formControlName="organization">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Ημερομηνία</label>
+          <input type="date" class="form-control" formControlName="date">
+        </div>
+        <div class="col-md-6 mt-2">
+          <label class="form-label">Αρχείο</label>
+          <input type="file" class="form-control" formControlName="file">
+        </div>
+        <div class="col-md-1 d-flex flex-column align-items-center">
+          <button type="button" class="btn btn-outline-danger mt-4" (click)="removeQualification(i)" *ngIf="form.get('qualifications')['length'] > 1">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-outline-primary" (click)="addQualification()">
+        <i class="bi bi-plus-circle"></i> Προσθήκη Προσόντος
+      </button>
+    </div>
+
+    <!-- Finalized -->
+    <div class="form-check mt-4 mb-3">
+      <input class="form-check-input" type="checkbox" formControlName="finalized">
+      <label class="form-check-label">Οριστικοποιημένο</label>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+  </form>
+</div>

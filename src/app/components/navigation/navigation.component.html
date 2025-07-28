@@ -91,11 +91,32 @@
                         Ακίνητα Φορέων Δ.Δ
                       </a>
                     </li>
-										<li *ngIf="hasFacilityAdminRole()|| hasFacilityEditorRole()">
+										<li *ngIf="hasEquipmentAdminRole()|| hasEquipmentEditorRole()">
                       <a class="dropdown-item"
                         routerLink="resources/equipment" 
                         routerLinkActive="fw-bold">
                         Εξοπλισμός Φορέων Δ.Δ
+                      </a>
+                    </li>
+										<li *ngIf="hasUserResourcesAdminRole()|| hasUserResourcesEditorRole()">
+                      <a class="dropdown-item"
+                        routerLink="resources/user-resources" 
+                        routerLinkActive="fw-bold">
+                        Προσωπικό Φορέων Δ.Δ
+                      </a>
+                    </li>
+										<li *ngIf="hasFacilityAdminRole()">
+                      <a class="dropdown-item"
+                        routerLink="resources/equipment-admin" 
+                        routerLinkActive="fw-bold">
+                        Διαχείριση Ειδών Εξοπλισμού
+                      </a>
+                    </li>
+										<li *ngIf="hasEquipmentAdminRole()">
+                      <a class="dropdown-item"
+                        routerLink="resources/facility-admin" 
+                        routerLinkActive="fw-bold">
+                        Διαχείριση Ειδών Ακινήτων
                       </a>
                     </li>
 										<li>
@@ -103,7 +124,7 @@
 										</li>
 										<li>
                       <a class="dropdown-item" 
-                        routerLink="search" 
+                        routerLink="resources/search-resources" 
                         routerLinkActive="fw-bold"
                       >
                         Αναζήτηση

@@ -32,4 +32,20 @@ export class NavigationComponent {
   hasFacilityEditorRole() {
     return this.userService.hasFacilityEditorRole()
   }
+
+  hasEquipmentAdminRole() {
+    return this.userService.hasEquipmentAdminRole()
+  }
+
+  hasEquipmentEditorRole() {
+    return this.userService.hasEquipmentEditorRole()
+  }
+
+  hasUserResourcesAdminRole() {
+    return this.userService.hasUserResourcesAdminRole()
+  }
+
+  hasUserResourcesEditorRole() {
+    return this.userService.hasUserResourcesEditorRole()
+  }
 }

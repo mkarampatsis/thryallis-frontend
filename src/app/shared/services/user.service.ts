@@ -91,14 +91,6 @@ export class UserService {
     return false;
   }
 
-  hasEquipmentAdminRole() {
-    if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN');
-    }
-
-    return false;
-  }
-
   getMyEquipments() {
     const foreis = this.user().roles.find(r => r.role === 'EQUIPMENT_EDITOR')?.foreas ?? [];
     
@@ -116,6 +108,14 @@ export class UserService {
     return organizations;
   }
 
+  hasEquipmentAdminRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN');
+    }
+
+    return false;
+  }
+  
   hasEquipmentEditorRole() {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR');
@@ -131,6 +131,48 @@ export class UserService {
 
     return false;
   }
+
+  hasUserResourcesAdminRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_ADMIN');
+    }
+
+    return false;
+  }
+  
+  hasUserResourcesEditorRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR');
+    }
+
+    return false;
+  }
+
+  hasUserResourcesEditorRoleInOrganization(code:string) {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.foreas.includes(code));
+    }
+
+    return false;
+  }
+
+  getMyUserResources() {
+    const foreis = this.user().roles.find(r => r.role === 'USER_RESOURCES_EDITOR')?.foreas ?? [];
+    
+    let organizations: IOrganizationList[] = [];
+
+    for (let forea of foreis) {
+      this.store
+        .select(this.organization$(forea))
+        .pipe(take(1))
+        .subscribe((org) => {
+          organizations = organizations.concat(...org);
+        });
+    }
+
+    return organizations;
+  }
+
 
   setUserAccesses(email: string, organizationCodes: string[], organizationalUnitCodes: string[]): Observable<{ msg: string }> {
     const url = `${APIPREFIX_USER}/${email}`;

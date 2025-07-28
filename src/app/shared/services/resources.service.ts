@@ -40,6 +40,10 @@ export class ResourcesService {
     return this.http.delete<IFacility>(url, { observe: 'response' });
   }
 
+  updateFacilty(data:IFacility, facilityId:string): Observable<HttpResponse<{ message: string }>> {
+    return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}` , data, { observe: 'response' });
+  }
+
   // FACILITY SPACE
   addSpace(data: ISpace): Observable<HttpResponse<{ message: string }>> {
     const facilityId = data.facilityId

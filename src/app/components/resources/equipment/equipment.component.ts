@@ -133,6 +133,7 @@ export class EquipmentComponent implements OnInit {
           this.showGrid = true
         }
       })
+    this.showGridEquipment = false;
   }    
   
   showEquipments(code: string){

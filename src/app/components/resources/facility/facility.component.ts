@@ -17,7 +17,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IFacility, ISpace } from 'src/app/shared/interfaces/facility/facility';
 
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { take } from 'rxjs';
 
@@ -200,7 +200,7 @@ export class FacilityComponent {
           level: new FormControl(v.level, Validators.required),
           num: new FormControl(v.num, Validators.required),
           floorArea: new FormControl(v.floorArea, Validators.required),
-          floorPlan: new FormControl(v.floorPlan),
+          floorPlan: new FormControl(v.floorPlan.map(item => item["$oid"])),
         })
       )
       if (v.level == 'Όροφος') {
@@ -303,7 +303,6 @@ export class FacilityComponent {
   }
 
   selectFile(event: any, floorIndex: number): void {
-    console.log("Index", floorIndex)
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
       console.log('No files selected!');
@@ -343,7 +342,6 @@ export class FacilityComponent {
             if (completed === fileArray.length) {
               this.floorPlans.at(floorIndex).get('floorPlan').setValue(this.uploadObjectIDs);
               this.form.markAsDirty();
-              console.log('All uploads complete:', this.uploadObjectIDs);
               this.uploadObjectIDs = []
             }
           },
@@ -355,17 +353,29 @@ export class FacilityComponent {
   }
 
   deleteFile(fileId: string) {
-    console.log(fileId)
-    this.resourcesService.deleteFile(fileId)
-      .subscribe(response => {
-        const body = response.body;
-        const status = response.status;
-        if (status === 201) {
-          console.log(body);
-          // this.generalInfoToUpdate.file = result.data.file;
-          // this.getAllGeneralInfo();
-        }
-      })
+    this.modalService.getUserConsent(
+      "Πρόκειται να διαγράψετε κάποιο αρχείο κάτοψης. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+    )
+    .subscribe((result) => {
+      if (result) {
+        this.resourcesService.deleteFile(fileId)
+        .subscribe(response => {
+          const body = response.body;
+          const status = response.status;
+          if (status === 201) {
+            this.floorPlans.controls.forEach((group: AbstractControl) => {
+              const floorPlanArray = group.get('floorPlan')?.value;
+              if (Array.isArray(floorPlanArray)) {
+                const updated = floorPlanArray.filter((fp: any) => {
+                  return fp !== fileId;
+                });
+                group.get('floorPlan')?.setValue(updated);
+              }
+            });
+          }
+        })
+      }
+    })
   }
 
   displayFile(fileId: string) {
@@ -493,10 +503,18 @@ export class FacilityComponent {
     const data = this.form.value as IFacility;
     data["organization"] = this.organization;
     data["organizationCode"] = this.organizationCode;
-    console.log("Submit", data)
 
     if (this.updatedFacilityId) {
-      console.log("Update", this.updatedFacilityId, data);
+      this.resourcesService.updateFacilty(data, this.updatedFacilityId)
+        .subscribe(response => {
+          const body = response.body;
+          const status = response.status;
+          if (status === 201) {
+            console.log(body)
+            this.getFacilitiesByOrganizationCode();
+            this.initializeForm();
+          }
+        })
     } else {
       this.resourcesService.newFacility(data)
         .subscribe(response => {
