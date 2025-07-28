@@ -18,8 +18,8 @@ import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
 
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
-import { Observable, Subscription, take } from 'rxjs';
-import { TmplAstSwitchBlockCase } from '@angular/compiler';
+import { Subscription } from 'rxjs';
+import { IFacilityConfig } from '../../interfaces/facility/facilityConfig';
 
 @Component({
   selector: 'app-facilty-space',
@@ -49,8 +49,9 @@ export class FaciltySpaceComponent implements OnInit {
   types: string[] = [];
   subtypes: string[] = [];
   spaces: string[] = [];
-  SPACE_USE = this.constFacilityService.SPACE_USE
-  AUXILIARY_SPACES = this.constFacilityService.AUXILIARY_SPACES
+  SPACE_USE = this.constFacilityService.SPACE_USE;
+  spaceUse: IFacilityConfig[];
+  AUXILIARY_SPACES = this.constFacilityService.AUXILIARY_SPACES;
   FLOORPLANS = this.constFacilityService.FLOORPLANS;
   planFloorsNumField: number = 0;
 
@@ -99,12 +100,24 @@ export class FaciltySpaceComponent implements OnInit {
     this.organization = this.facility ? this.facility.organization : this.space.facilityId["organization"];
     this.organizationCode = this.facility ? this.facility.organizationCode : this.space.facilityId["organizationCode"];
     this.distinctiveNameOfFacility = this.facility ? this.facility.distinctiveNameOfFacility : this.space.facilityId["distinctiveNameOfFacility"];
-    this.types = this.SPACE_USE.map(d => d.type);
-    this.initializeForm();
-    this.onTypeChange();
-    if (this.space) {
-      this.editSpace(this.space);
-    }
+    this.resourcesService.getFacilityCategories()
+      .subscribe(result => {
+        this.spaceUse = result;
+        // console.log("Space",this.spaceUse.map(d => d.type))
+        this.types = result.map(d => d.type)
+        this.initializeForm();
+        this.onTypeChange();
+        if (this.space) {
+          this.editSpace(this.space);
+        }
+      })
+    // this.types = this.SPACE_USE.map(d => d.type);
+    // console.log("Type", this.types);
+    // this.initializeForm();
+    // this.onTypeChange();
+    // if (this.space) {
+    //   this.editSpace(this.space);
+    // }
   }
 
   ngOnDestroy(): void {
@@ -210,6 +223,9 @@ export class FaciltySpaceComponent implements OnInit {
 
     const selectedType = this.form.controls.spaceUse.get('type')?.value;
     const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
+    console.log("1>>>",selectedItem);
+    const selectedItem2 = this.spaceUse.find(d => d.type === selectedType);
+    console.log("2>>>",selectedItem2);
 
     if (!selectedItem) return;
 

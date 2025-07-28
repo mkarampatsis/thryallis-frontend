@@ -6,6 +6,7 @@ import { IFacility, ISpace } from '../interfaces/facility/facility';
 import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 import { IFacilitySpace } from '../interfaces/facility/facility-space';
 import { IEquipment } from '../interfaces/equipment/equipment';
+import { IFacilityConfig } from '../interfaces/facility/facilityConfig';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
@@ -42,6 +43,11 @@ export class ResourcesService {
 
   updateFacilty(data:IFacility, facilityId:string): Observable<HttpResponse<{ message: string }>> {
     return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}` , data, { observe: 'response' });
+  }
+
+  getFacilityCategories(): Observable<IFacilityConfig[]> {
+    const url = `${APIPREFIX_FACILITY}/config`;
+    return this.http.get<IFacilityConfig[]>(url);
   }
 
   // FACILITY SPACE

@@ -64,6 +64,7 @@ export class FacilityComponent {
 
   USE_OF_FACILITY = this.constFacilityService.USE_OF_FACILITY;
   FLOORPLANS = this.constFacilityService.FLOORPLANS;
+  useOfFacility: string[];
 
   organization: string = '';
   organizationCode: string = '';
@@ -88,6 +89,7 @@ export class FacilityComponent {
     distinctiveNameOfFacility: new FormControl('', Validators.required),
     useOfFacility: new FormControl('', Validators.required),
     uniqueUseOfFacility: new FormControl(true),
+    private: new FormControl(true),
     coveredPremisesArea: new FormControl('', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]),
     floorsOrLevels: new FormControl('', [Validators.required, Validators.pattern(/^\d+?$/)]),
     floorPlans: new FormArray([
@@ -121,6 +123,10 @@ export class FacilityComponent {
 
   ngOnInit() {
     this.organizations = this.userService.getMyFacilites()
+    this.resourcesService.getFacilityCategories()
+      .subscribe(result => {
+        this.useOfFacility = result.map(item => item.type);
+      })
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
@@ -180,6 +186,7 @@ export class FacilityComponent {
       distinctiveNameOfFacility: facility.distinctiveNameOfFacility,
       useOfFacility: facility.useOfFacility,
       uniqueUseOfFacility: facility.uniqueUseOfFacility,
+      private: facility.private,
       coveredPremisesArea: facility.coveredPremisesArea,
       floorsOrLevels: facility.floorsOrLevels,
       addressOfFacility: {
@@ -418,6 +425,7 @@ export class FacilityComponent {
       distinctiveNameOfFacility: '',
       useOfFacility: '',
       uniqueUseOfFacility: true,
+      private: true,
       coveredPremisesArea: '',
       floorsOrLevels: '',
       floorPlans: [{

@@ -13,6 +13,7 @@ export interface IFacility {
   distinctiveNameOfFacility: string;
   useOfFacility: string;
   uniqueUseOfFacility: boolean;
+  private: boolean;
   coveredPremisesArea: string;
   floorsOrLevels: string;
   floorPlans: IFloorPlans[];

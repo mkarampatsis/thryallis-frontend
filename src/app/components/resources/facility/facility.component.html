@@ -140,7 +140,7 @@
       <legend class="w-auto">Στοιχεία ακινήτου:</legend>
 
       <div class="row mb-3">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
           <label for="kaek" class="form-label">
             Κωδικός Ακινήτου Εθνικού Κτηματολογίου:
           </label>
@@ -156,7 +156,7 @@
           }
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-4">
           <label for="belongsTo" class="form-label">
             ΚΑΕΚ του Γηπέδου ως ανεξάρτητη χωρική υποδομή:
           </label>
@@ -170,6 +170,22 @@
           @if (form.controls.belongsTo.touched && form.controls.belongsTo.invalid) {
             <div class="invalid-feedback">Δεν έχετε συμπληρώσει ΚΑΕΚ του Γηπέδου</div>
           }
+        </div>
+
+        <div class="col-sm-4">
+          <span>Ιδιόκτητο/Ενοικιαζόμενο:</span>
+          <div class="row row-cols-lg-auto g-3 align-items-center">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="private"
+                id="private1"  [value]="true">
+              <label class="form-check-label" for="private1">Ιδιόκτητο</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="private"
+                id="private2" [value]="false">
+              <label class="form-check-label" for="private2">Ενοικιαζόμενο</label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -204,7 +220,7 @@
             <option value="" disabled selected>
               Επιλέξτε Τύπο Χρήσης
             </option>
-            @for (item of USE_OF_FACILITY; track item) {
+            @for (item of useOfFacility; track item) {
             <option [ngValue]="item">{{ item }}</option>
             }
           </select>
