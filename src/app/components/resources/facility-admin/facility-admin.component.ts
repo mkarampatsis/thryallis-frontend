@@ -13,8 +13,6 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
   styleUrl: './facility-admin.component.css'
 })
 export class FacilityAdminComponent implements OnInit {
-  @Input() facilityData: IFacilityConfig[] = [];
-
   resourcesService = inject(ResourcesService);
 
   useOfFacility: IFacilityConfig[];
@@ -31,8 +29,8 @@ export class FacilityAdminComponent implements OnInit {
     this.resourcesService.getFacilityCategories()
     .subscribe(result => {
       this.useOfFacility = result;
+      this.loadInitialData();
     })
-    this.loadInitialData();
   }
 
   get types(): FormArray {
@@ -78,9 +76,17 @@ export class FacilityAdminComponent implements OnInit {
     this.spaceStrings(typeIndex, spaceGroupIndex).push(this.newSpaceString());
   }
 
+  // loadInitialData(): void {
+  //   this.facilityData.forEach(ft =>
+  //     this.types.push(this.newFacilityType(ft.type, ft.spaces))
+  //   );
+  // }
+
   loadInitialData(): void {
-    this.facilityData.forEach(ft =>
-      this.types.push(this.newFacilityType(ft.type, ft.spaces))
+    this.useOfFacility.forEach(ft => {
+        console.log(">>>",ft);
+        this.types.push(this.newFacilityType(ft.type, ft.spaces, ft._id["$oid"] ?? null));
+      }
     );
   }
 
