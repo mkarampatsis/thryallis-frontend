@@ -1,10 +1,10 @@
 import {
+  Directionality
+} from "./chunk-KESPK4XO.js";
+import {
   SelectionModel,
   isDataSource
 } from "./chunk-V4W3DCIG.js";
-import {
-  Directionality
-} from "./chunk-KESPK4XO.js";
 import "./chunk-5Y67LPQF.js";
 import {
   ChangeDetectionStrategy,

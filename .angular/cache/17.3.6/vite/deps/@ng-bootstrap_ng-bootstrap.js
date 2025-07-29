@@ -3,9 +3,6 @@ import {
   NG_VALUE_ACCESSOR
 } from "./chunk-ST7H66PJ.js";
 import {
-  takeUntilDestroyed
-} from "./chunk-G5F5L4B2.js";
-import {
   DOCUMENT,
   FormStyle,
   NgTemplateOutlet,
@@ -17,6 +14,9 @@ import {
   getLocaleMonthNames,
   isPlatformBrowser
 } from "./chunk-5Y67LPQF.js";
+import {
+  takeUntilDestroyed
+} from "./chunk-G5F5L4B2.js";
 import {
   ApplicationRef,
   Attribute,
