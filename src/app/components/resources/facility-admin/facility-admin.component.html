@@ -1,85 +1,99 @@
 <h1 class="govgr-heading-md">Διαχείριση Ειδών Ακινήτων</h1>
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="container mt-4">
-  <div formArrayName="types">
-    <div
-      *ngFor="let typeGroup of types.controls; let i = index"
-      [formGroupName]="i"
-      class="card mb-4"
-    >
-      <div class="card-body">
-        <div class="mb-3">
-          <label class="form-label">Facility Type</label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="type"
-            placeholder="e.g. Εκπαιδευτική Μονάδα"
-          />
-        </div>
-
-        <div formArrayName="spaces">
-          <div
-            *ngFor="let spaceGroup of spaces(i).controls; let j = index"
-            [formGroupName]="j"
-            class="mb-3 ps-3 border-start"
-          >
-            <div class="mb-2">
-              <label class="form-label">Subtype</label>
+<div class="row my-5">
+  <div class="col-sm-6">
+    <h5 class="mb-4">Φόρμα Δημιουργίας Ειδών Ακινήτων</h5>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="container">
+      <div formArrayName="types">
+        <div
+          *ngFor="let typeGroup of types.controls; let i = index"
+          [formGroupName]="i"
+          class="card mb-4"
+        >
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Κύριος Χώρος</label>
               <input
                 type="text"
                 class="form-control"
                 formControlName="type"
-                placeholder="e.g. -"
+                placeholder="e.g. Εκπαιδευτική Μονάδα"
               />
             </div>
 
             <div formArrayName="spaces">
-              <label class="form-label">Spaces</label>
               <div
-                *ngFor="let spaceControl of spaceStrings(i, j).controls; let k = index"
-                class="input-group mb-2"
+                *ngFor="let spaceGroup of spaces(i).controls; let j = index"
+                [formGroupName]="j"
+                class="mb-3 ps-3 border-start"
               >
-                <input
-                  type="text"
-                  class="form-control"
-                  [formControlName]="k"
-                  placeholder="e.g. Αίθουσα διδασκαλίας"
-                />
+                <div class="mb-2">
+                  <label class="form-label">Υποκατηγορία Χώρου</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="type"
+                    placeholder="e.g. -"
+                  />
+                </div>
+
+                <div formArrayName="spaces">
+                  <label class="form-label">Χρήση Χώρου</label>
+                  <div
+                    *ngFor="let spaceControl of spaceStrings(i, j).controls; let k = index"
+                    class="input-group mb-2"
+                  >
+                    <input
+                      type="text"
+                      class="form-control"
+                      [formControlName]="k"
+                      placeholder="e.g. Αίθουσα διδασκαλίας"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="addSpaceString(i, j)"
+                  >
+                    + Προσθήκη Χρήσης Χώρου
+                  </button>
+                </div>
               </div>
+
               <button
                 type="button"
-                class="btn btn-sm btn-outline-primary"
-                (click)="addSpaceString(i, j)"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="addSpaceGroup(i)"
               >
-                + Add Space
+                + Προσθήκη Υποκατηγορίας Χώρου
               </button>
             </div>
           </div>
-
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-sm"
-            (click)="addSpaceGroup(i)"
-          >
-            + Add Subtype Group
-          </button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="mb-3">
-    <button
-      type="button"
-      class="btn btn-success"
-      (click)="addFacilityType()"
-    >
-      + Add Facility Type
-    </button>
-  </div>
+      <div class="mb-3">
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="addFacilityType()"
+        >
+          + Προσθήκη Κύριου Χώρου
+        </button>
+      </div>
 
-  <div>
-    <button type="submit" class="btn btn-primary">Save</button>
+      <div>
+        <button type="submit" class="btn btn-primary">Υποβολή</button>
+      </div>
+    </form>
   </div>
-</form>
+  
+  <div class="col-sm-6">
+    <h5 class="mb-4">Εμφάνιση Ειδών Ακινήτων</h5>
+    <ngx-json-viewer [json]="cleanedTypes"></ngx-json-viewer>
+  </div>
+</div>
+
+
+
+

@@ -1,18 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IFacilityConfig } from 'src/app/shared/interfaces/facility/facilityConfig';
+import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 @Component({
   selector: 'app-facility-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxJsonViewerModule],
   templateUrl: './facility-admin.component.html',
   styleUrl: './facility-admin.component.css'
 })
 export class FacilityAdminComponent implements OnInit {
   @Input() facilityData: IFacilityConfig[] = [];
-  
+
+  resourcesService = inject(ResourcesService);
+
+  useOfFacility: IFacilityConfig[];
+
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
@@ -22,6 +28,10 @@ export class FacilityAdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.resourcesService.getFacilityCategories()
+    .subscribe(result => {
+      this.useOfFacility = result;
+    })
     this.loadInitialData();
   }
 
@@ -48,20 +58,13 @@ export class FacilityAdminComponent implements OnInit {
     });
   }
 
-  // newFacilityType(type = '', spaces: any[] = []): FormGroup {
-  //   return this.fb.group({
-  //     type: [type, Validators.required],
-  //     spaces: this.fb.array(spaces.map(sg => this.newSpaceGroup(sg.type, sg.spaces))),
-  //   });
-  // }
-
   newFacilityType(type = '', spaces: any[] = [], id: string | null = null): FormGroup {
-  return this.fb.group({
-    _id: [id], // Track if it's an existing doc
-    type: [type, Validators.required],
-    spaces: this.fb.array(spaces.map(sg => this.newSpaceGroup(sg.type, sg.spaces))),
-  });
-}
+    return this.fb.group({
+      _id: [id], // Track if it's an existing doc
+      type: [type, Validators.required],
+      spaces: this.fb.array(spaces.map(sg => this.newSpaceGroup(sg.type, sg.spaces))),
+    });
+  }
 
   addFacilityType(): void {
     this.types.push(this.newFacilityType());
@@ -82,7 +85,33 @@ export class FacilityAdminComponent implements OnInit {
   }
 
   submit(): void {
-    console.log(this.form.value);
-    // send this.form.value to Flask API
+    const result = this.form.value;
+
+    const newRecords = result.types.filter((t: any) => !t._id);
+    const updates = result.types.filter((t: any) => t._id);
+
+    console.log('New Records:', newRecords);
+    console.log('Updates:', updates);
   }
+
+  // Remove _id from json useOfFaclility
+  get cleanedTypes(): any {
+    return this.removeIdsFromTypes(this.useOfFacility);
+  }
+
+  private removeIdsFromTypes(data: any): any {
+    if (Array.isArray(data)) {
+      return data.map(item => this.removeIdsFromTypes(item));
+    } else if (typeof data === 'object' && data !== null) {
+      const result: any = {};
+      for (const key in data) {
+        if (key === '_id') continue;
+        result[key] = this.removeIdsFromTypes(data[key]);
+      }
+      return result;
+    } else {
+      return data;
+    }
+  }
+
 }
