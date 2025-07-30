@@ -17,13 +17,17 @@ export class FacilityAdminComponent implements OnInit {
 
   useOfFacility: IFacilityConfig[];
 
-  form: FormGroup;
+  // form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      types: this.fb.array([]),
-    });
-  }
+  // constructor(private fb: FormBuilder) {
+  //   this.form = this.fb.group({
+  //     types: this.fb.array([]),
+  //   });
+  // }
+
+  form = new FormGroup({
+    types: new FormArray([])
+  })
 
   ngOnInit(): void {
     this.resourcesService.getFacilityCategories()
@@ -46,22 +50,32 @@ export class FacilityAdminComponent implements OnInit {
   }
 
   newSpaceString(value = ''): FormControl {
-    return this.fb.control(value, Validators.required);
+    // return this.fb.control(value, Validators.required);
+    return new FormControl(value, Validators.required)
   }
 
   newSpaceGroup(type = '-', spaces: string[] = []): FormGroup {
-    return this.fb.group({
-      type: [type, Validators.required],
-      spaces: this.fb.array(spaces.map(s => this.newSpaceString(s))),
-    });
+    // return this.fb.group({
+    //   type: [type, Validators.required],
+    //   spaces: this.fb.array(spaces.map(s => this.newSpaceString(s))),
+    // });
+    return new FormGroup({
+      type: new FormControl(type, Validators.required),
+      spaces: new FormArray(spaces.map(s => this.newSpaceString(s)))   
+    })
   }
 
   newFacilityType(type = '', spaces: any[] = [], id: string | null = null): FormGroup {
-    return this.fb.group({
-      _id: [id], // Track if it's an existing doc
-      type: [type, Validators.required],
-      spaces: this.fb.array(spaces.map(sg => this.newSpaceGroup(sg.type, sg.spaces))),
-    });
+    // return this.fb.group({
+    //   _id: [id], // Track if it's an existing doc
+    //   type: [type, Validators.required],
+    //   spaces: this.fb.array(spaces.map(sg => this.newSpaceGroup(sg.type, sg.spaces))),
+    // });
+    return new FormGroup({
+      _id: new FormControl(id),
+      type: new FormControl(type, Validators.required),
+      spaces: new FormArray(spaces.map(sg => this.newSpaceGroup(sg.type, sg.spaces)))   
+    })
   }
 
   addFacilityType(): void {
@@ -100,7 +114,7 @@ export class FacilityAdminComponent implements OnInit {
     console.log('Updates:', updates);
   }
 
-  // Remove _id from json useOfFaclility
+  // Remove _id from json useOfFaclility for NgxJsonViewerModule
   get cleanedTypes(): any {
     return this.removeIdsFromTypes(this.useOfFacility);
   }
