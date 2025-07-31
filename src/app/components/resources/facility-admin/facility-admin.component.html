@@ -18,6 +18,7 @@
                 class="form-control"
                 formControlName="type"
                 placeholder="e.g. Εκπαιδευτική Μονάδα"
+                [readonly]="typeGroup.get('readonly')?.value"
               />
             </div>
 
@@ -34,6 +35,7 @@
                     class="form-control"
                     formControlName="type"
                     placeholder="e.g. -"
+                    [readonly]="spaceGroup.get('readonly')?.value"
                   />
                 </div>
 
@@ -48,6 +50,7 @@
                       class="form-control"
                       [formControlName]="k"
                       placeholder="e.g. Αίθουσα διδασκαλίας"
+                      [readonly]="spaceControl.get('readonly')?.value"
                     />
                   </div>
                   <button
