@@ -48,20 +48,6 @@ export class FacilityAdminComponent implements OnInit {
     });
 }
 
-  // newSpaceString(value = ''): FormControl {
-  //   return new FormControl(value, Validators.required)
-  // }
-
-  // newSpaceGroup(type = '-', spaces: string[] = [], isReadonly = false): FormGroup {
-  //   console.log("SpaceGroup",isReadonly);
-  //   return new FormGroup({
-  //     type: new FormControl(type, Validators.required),
-  //     // spaces: new FormArray(spaces.map(s => this.newSpaceString(s, true))),
-  //     spaces: new FormArray(spaces.map(s => this.newSpaceString(s))),
-  //     readonly: new FormControl(isReadonly),   
-  //   })
-  // }
-
   newSpaceGroup(type = '-', spaces: string[] = [], isReadonly = false): FormGroup {
     return new FormGroup({
       type: new FormControl(type, Validators.required),
@@ -73,8 +59,6 @@ export class FacilityAdminComponent implements OnInit {
   }
 
   newFacilityType(type = '', spaces: any[] = [], id: string | null = null, isReadonly = false): FormGroup {
-    console.log("Facility",isReadonly);
-    console.log("spaces", spaces);
     return new FormGroup({
       _id: new FormControl(id),
       type: new FormControl(type, Validators.required),
@@ -110,10 +94,35 @@ export class FacilityAdminComponent implements OnInit {
     const result = this.form.value;
 
     const newRecords = result.types.filter((t: any) => !t._id);
-    const updates = result.types.filter((t: any) => t._id);
+    const updatedRecords = result.types.filter((t: any) => t._id);
 
-    console.log('New Records:', newRecords);
-    console.log('Updates:', updates);
+    if (newRecords){
+      console.log('New Records:', newRecords);
+      this.resourcesService.createFacilitiesCategories(newRecords)
+        .subscribe(response => {
+          const body = response.body;
+          const status = response.status;
+          if (status === 201) {
+            console.log("New",body)
+            // this.getFacilitiesByOrganizationCode()
+            // this.getSpacesFacilityId(facilityId)
+          }
+        })
+    }
+
+    if (updatedRecords) {
+      console.log('Updates:', updatedRecords);
+      this.resourcesService.updateFacilitiesCategories(updatedRecords)
+        .subscribe(response => {
+          const body = response.body;
+          const status = response.status;
+          if (status === 201) {
+            console.log("Uodates",body)
+            // this.getFacilitiesByOrganizationCode()
+            // this.getSpacesFacilityId(facilityId)
+          }
+        })
+    }
   }
 
   // Remove _id from json useOfFaclility for NgxJsonViewerModule

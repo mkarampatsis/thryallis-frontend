@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { IFacility, ISpace } from '../interfaces/facility/facility';
 import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 import { IFacilitySpace } from '../interfaces/facility/facility-space';
@@ -48,6 +48,16 @@ export class ResourcesService {
   getFacilityCategories(): Observable<IFacilityConfig[]> {
     const url = `${APIPREFIX_FACILITY}/config`;
     return this.http.get<IFacilityConfig[]>(url);
+  }
+
+  createFacilitiesCategories(data: IFacilityConfig[]): Observable<HttpResponse<{ message: string }>> {
+    const url = `${APIPREFIX_FACILITY}/config`;
+    return this.http.post<{ message: string }>(url, data, { observe: 'response' });
+  }
+
+  updateFacilitiesCategories(data: IFacilityConfig[]): Observable<HttpResponse<{ message: string }>> {
+    const url = `${APIPREFIX_FACILITY}/config`;
+    return this.http.put<{ message: string }>(`${url}`, data, { observe: 'response' });
   }
 
   // FACILITY SPACE
