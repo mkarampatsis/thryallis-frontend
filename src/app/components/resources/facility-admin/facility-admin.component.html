@@ -44,14 +44,17 @@
                   <div
                     *ngFor="let spaceControl of spaceStrings(i, j).controls; let k = index"
                     class="input-group mb-2"
+                    [formGroup]="asFormGroup(spaceControl)"
                   >
                     <input
                       type="text"
                       class="form-control"
-                      [formControlName]="k"
+                      [formControl]="asFormControl(spaceControl.get('value'))"
+                      [readonly]="asFormGroup(spaceControl).get('readonly')?.value"
                       placeholder="e.g. Αίθουσα διδασκαλίας"
-                      [readonly]="spaceControl.get('readonly')?.value"
                     />
+                    <!-- [formControlName]="k"
+                      [readonly]="typeGroup.get('readonly')?.value"  -->
                   </div>
                   <button
                     type="button"

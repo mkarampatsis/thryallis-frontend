@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IFacilityConfig } from 'src/app/shared/interfaces/facility/facilityConfig';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
@@ -41,22 +41,40 @@ export class FacilityAdminComponent implements OnInit {
     return this.spaces(i).at(j).get('spaces') as FormArray;
   }
 
-  newSpaceString(spaceValue = ''): FormControl {
-    // return this.fb.control(value, Validators.required);
-    return new FormControl(spaceValue, Validators.required)
-  }
+  newSpaceString(spaceValue = '', isReadonly = false): FormGroup {
+    return new FormGroup({
+      value: new FormControl(spaceValue, Validators.required),
+      readonly: new FormControl(isReadonly),
+    });
+}
+
+  // newSpaceString(value = ''): FormControl {
+  //   return new FormControl(value, Validators.required)
+  // }
+
+  // newSpaceGroup(type = '-', spaces: string[] = [], isReadonly = false): FormGroup {
+  //   console.log("SpaceGroup",isReadonly);
+  //   return new FormGroup({
+  //     type: new FormControl(type, Validators.required),
+  //     // spaces: new FormArray(spaces.map(s => this.newSpaceString(s, true))),
+  //     spaces: new FormArray(spaces.map(s => this.newSpaceString(s))),
+  //     readonly: new FormControl(isReadonly),   
+  //   })
+  // }
 
   newSpaceGroup(type = '-', spaces: string[] = [], isReadonly = false): FormGroup {
-    console.log("SpaceGroup",isReadonly);
     return new FormGroup({
       type: new FormControl(type, Validators.required),
-      spaces: new FormArray(spaces.map(s => this.newSpaceString(s))),
-      readonly: new FormControl(isReadonly),   
-    })
+      spaces: new FormArray(
+        spaces.map(s => this.newSpaceString(s, isReadonly))
+      ),
+      readonly: new FormControl(isReadonly),
+    });
   }
 
   newFacilityType(type = '', spaces: any[] = [], id: string | null = null, isReadonly = false): FormGroup {
     console.log("Facility",isReadonly);
+    console.log("spaces", spaces);
     return new FormGroup({
       _id: new FormControl(id),
       type: new FormControl(type, Validators.required),
@@ -72,9 +90,13 @@ export class FacilityAdminComponent implements OnInit {
   addSpaceGroup(typeIndex: number): void {
     this.spaces(typeIndex).push(this.newSpaceGroup());
   }
+  
+  // addSpaceString(typeIndex: number, spaceGroupIndex: number): void {
+  //   this.spaceStrings(typeIndex, spaceGroupIndex).push(this.newSpaceString());
+  // }
 
   addSpaceString(typeIndex: number, spaceGroupIndex: number): void {
-    this.spaceStrings(typeIndex, spaceGroupIndex).push(this.newSpaceString());
+    this.spaceStrings(typeIndex, spaceGroupIndex).push(this.newSpaceString('', false));
   }
 
   loadInitialData(): void {
@@ -112,6 +134,14 @@ export class FacilityAdminComponent implements OnInit {
     } else {
       return data;
     }
+  }
+
+  asFormGroup(control: AbstractControl): FormGroup {
+    return control as FormGroup;
+  }
+
+  asFormControl(control: AbstractControl): FormControl {
+    return control as FormControl;
   }
 
 }
