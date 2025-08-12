@@ -22,11 +22,7 @@ export class FacilityAdminComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    this.resourcesService.getFacilityCategories()
-    .subscribe(result => {
-      this.useOfFacility = result;
-      this.loadInitialData();
-    })
+    this.getFacilitiesCategories()
   }
 
   get types(): FormArray {
@@ -75,9 +71,6 @@ export class FacilityAdminComponent implements OnInit {
     this.spaces(typeIndex).push(this.newSpaceGroup());
   }
   
-  // addSpaceString(typeIndex: number, spaceGroupIndex: number): void {
-  //   this.spaceStrings(typeIndex, spaceGroupIndex).push(this.newSpaceString());
-  // }
 
   addSpaceString(typeIndex: number, spaceGroupIndex: number): void {
     this.spaceStrings(typeIndex, spaceGroupIndex).push(this.newSpaceString('', false));
@@ -97,32 +90,38 @@ export class FacilityAdminComponent implements OnInit {
     const updatedRecords = result.types.filter((t: any) => t._id);
 
     if (newRecords){
-      console.log('New Records:', newRecords);
+      // console.log('New Records:', newRecords);
       this.resourcesService.createFacilitiesCategories(newRecords)
         .subscribe(response => {
           const body = response.body;
           const status = response.status;
           if (status === 201) {
-            console.log("New",body)
-            // this.getFacilitiesByOrganizationCode()
-            // this.getSpacesFacilityId(facilityId)
+            // console.log("New",body)
+            this.getFacilitiesCategories()
           }
         })
     }
 
     if (updatedRecords) {
-      console.log('Updates:', updatedRecords);
+      // console.log('Updates:', updatedRecords);
       this.resourcesService.updateFacilitiesCategories(updatedRecords)
         .subscribe(response => {
           const body = response.body;
           const status = response.status;
           if (status === 201) {
-            console.log("Uodates",body)
-            // this.getFacilitiesByOrganizationCode()
-            // this.getSpacesFacilityId(facilityId)
+            // console.log("Uodates",body)
+            this.getFacilitiesCategories()
           }
         })
     }
+  }
+
+  getFacilitiesCategories(){
+    this.resourcesService.getFacilityCategories()
+    .subscribe(result => {
+      this.useOfFacility = result;
+      this.loadInitialData();
+    })
   }
 
   // Remove _id from json useOfFaclility for NgxJsonViewerModule
