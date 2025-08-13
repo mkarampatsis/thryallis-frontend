@@ -1,4 +1,5 @@
 export interface IEquipmentConfig {
+   _id?: string;
   resourceSubcategory: string
   kind: Kind[]
 }

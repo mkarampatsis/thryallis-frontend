@@ -1,1 +1,91 @@
-<p>equipment-admin works!</p>
+<h1 class="govgr-heading-md">Διαχείριση Ειδών Ακινήτων</h1>
+
+<div class="row my-5">
+  <div class="col-sm-6">
+    <h5 class="mb-4">Φόρμα Δημιουργίας Ειδών Εξοπλισμού</h5>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="container">
+      <div formArrayName="types">
+        <div
+          *ngFor="let typeGroup of types.controls; let i = index"
+          [formGroupName]="i"
+          class="card mb-4"
+        >
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Κατηγορία Εξοπλισμού</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="resourceSubcategory"
+                placeholder="π.χ Εξοπλισμός ΤΠΕ"
+                [readonly]="typeGroup.get('readonly')?.value"
+              />
+            </div>
+
+            <div formArrayName="kind">
+              <div *ngFor="let kindGroup of kind(i).controls; let j = index" [formGroupName]="j" class="mb-3 ps-3 border-start">
+                <!-- Kind name -->
+                <div class="mb-2">
+                  <label class="form-label">Υποκατηγορία</label>
+                  <input type="text" class="form-control" formControlName="name" [readonly]="kindGroup.get('readonly')?.value" />
+                </div>
+
+                <!-- Type inside Kind -->
+                <div formArrayName="type">
+                  <div *ngFor="let typeGroup of asFormArray(kindGroup.get('type')).controls; let t = index" [formGroupName]="t" class="mb-3 ps-3 border-start">
+                    
+                    <label class="form-label">Τύπος</label>
+                    <input type="text" class="form-control" formControlName="name" [readonly]="typeGroup.get('readonly')?.value" />
+
+                    <!-- Item Description -->
+                    <div formArrayName="itemDescription">
+                      <label class="form-label">Χαρακτηριστικά</label>
+                      <div *ngFor="let desc of asFormArray(typeGroup.get('itemDescription')).controls; let d = index" [formGroupName]="d" class="input-group mb-2">
+                        <input type="text" class="form-control" [formControlName]="'value'" [readonly]="desc.get('readonly')?.value" />
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="addNewItemDescription(i, j, t)">
+                        + Προσθήκη Χαρακτηριστικού
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addKindGroup(i)">
+                  + Προσθήκη Υποκατηγορίας
+                </button>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="addKindGroup(i)"
+              >
+                + Προσθήκη Υποκατηγορίας
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="addEquipmentType()"
+        >
+          + Προσθήκη Εξοπλισμού
+        </button>
+      </div>
+
+      <div>
+        <button type="submit" class="btn btn-primary">Υποβολή</button>
+      </div>
+    </form>
+  </div>
+
+
+  <div class="col-sm-6">
+    <h5 class="mb-4">Εμφάνιση Ειδών Ακινήτων</h5>
+    <ngx-json-viewer [json]="cleanedTypes"></ngx-json-viewer>
+  </div>
+</div>
