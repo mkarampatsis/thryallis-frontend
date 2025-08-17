@@ -101,11 +101,17 @@ export class EquipmentAdminComponent {
     this.types.push(this.newEquipment());
   }
 
-  addKindGroup(typeIndex: number): void {
-    this.kind(typeIndex).push(this.newKindGroup());
+  addKindGroup(kindIndex: number): void {
+    console.log(">>>",kindIndex);
+    this.kind(kindIndex).push(this.newKindGroup());
   }
-  
-  addNewItemDescription(equipIndex: number, kindIndex: number, typeIndex: number): void {
+
+  addTypeGroup(equipIndex: number, kindIndex: number): void {
+    const typeArray = this.asFormArray(this.kind(equipIndex).at(kindIndex).get('type'));
+    typeArray.push(this.newTypeGroup()); // empty type group
+  }
+
+  addItemDescription(equipIndex: number, kindIndex: number, typeIndex: number): void {
     const typeArray = this.asFormArray(this.kind(equipIndex).at(kindIndex).get('type'));
     const itemDescArray = this.asFormArray(typeArray.at(typeIndex).get('itemDescription'));
     itemDescArray.push(this.newItemDescription('', false));
@@ -123,8 +129,9 @@ export class EquipmentAdminComponent {
     const newRecords = result.types.filter((t: any) => !t._id);
     const updatedRecords = result.types.filter((t: any) => t._id);
 
-    if (newRecords){
-      console.log('New Records:', newRecords);
+    if (newRecords.length){
+      const cleanedNewRecords = this.transformData(newRecords);
+      console.log('New Records:', cleanedNewRecords);
       // this.resourcesService.createFacilitiesCategories(newRecords)
       //   .subscribe(response => {
       //     const body = response.body;
@@ -136,8 +143,9 @@ export class EquipmentAdminComponent {
       //   })
     }
 
-    if (updatedRecords) {
-      console.log('Updates:', updatedRecords);
+    if (updatedRecords.length) {
+      const cleanedUpdatedRecords = this.transformData(updatedRecords);
+      console.log('Updates:', cleanedUpdatedRecords);
       // this.resourcesService.updateFacilitiesCategories(updatedRecords)
       //   .subscribe(response => {
       //     const body = response.body;
@@ -160,5 +168,27 @@ export class EquipmentAdminComponent {
 
   asFormArray(control: AbstractControl | null): FormArray {
     return control as FormArray;
+  }
+
+  transformData(data: any[]): any[] {
+    return data
+      .map(equip => ({
+        ...(equip._id ? { _id: equip._id } : {}),
+        resourceSubcategory: equip.resourceSubcategory,
+        kind: equip.kind
+          .map((k: any) => ({
+            name: k.name,
+            type: k.type
+              .map((t: any) => ({
+                name: t.name,
+                itemDescription: t.itemDescription
+                  .map((desc: any) => desc.value)
+                  .filter((val: string) => val && val.trim() !== '') // remove empty descriptions
+              }))
+              .filter((t: any) => t.name && t.name.trim() !== '' && t.itemDescription.length > 0)
+          }))
+          .filter((k: any) => k.name && k.name.trim() !== '' && k.type.length > 0)
+      }))
+      .filter(equip => equip.resourceSubcategory && equip.resourceSubcategory.trim() !== '' && equip.kind.length > 0);
   }
 }

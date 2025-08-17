@@ -43,16 +43,16 @@
                       <div *ngFor="let desc of asFormArray(typeGroup.get('itemDescription')).controls; let d = index" [formGroupName]="d" class="input-group mb-2">
                         <input type="text" class="form-control" [formControlName]="'value'" [readonly]="desc.get('readonly')?.value" />
                       </div>
-                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="addNewItemDescription(i, j, t)">
+                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="addItemDescription(i, j, t)">
                         + Προσθήκη Χαρακτηριστικού
                       </button>
                     </div>
 
                   </div>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addTypeGroup(i,j)">
+                    + Προσθήκη Είδους
+                  </button>
                 </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addKindGroup(i)">
-                  + Προσθήκη Υποκατηγορίας
-                </button>
               </div>
 
               <button
