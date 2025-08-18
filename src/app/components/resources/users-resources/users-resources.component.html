@@ -95,7 +95,7 @@
         <input type="text" class="form-control" formControlName="mothername">
       </div>
       <div class="col-md-4">
-        <label class="form-label">Αριθμός Ταυτότητας</label>
+        <label class="form-label">Αριθμός Ταυτότητας/Α.Φ.Μ</label>
         <input type="text" class="form-control" formControlName="identity">
       </div>
     </div>
@@ -112,14 +112,14 @@
           <option value="Female">Γυναίκα</option>
         </select>
       </div>
-      <div class="col-md-4">
+      <!-- <div class="col-md-4">
         <label class="form-label">Οικογενειακή Κατάσταση</label>
         <input type="text" class="form-control" formControlName="famillyStatus">
-      </div>
+      </div> -->
     </div>
 
     <!-- Address (Home) -->
-    <h5 class="mt-4">Διεύθυνση Κατοικίας</h5>
+    <!-- <h5 class="mt-4">Διεύθυνση Κατοικίας</h5>
     <div formGroupName="address" class="row mb-3">
       <div class="col-md-3">
         <label class="form-label">Οδός</label>
@@ -149,7 +149,7 @@
         <label class="form-label">Χώρα</label>
         <input type="text" class="form-control" formControlName="country" readonly>
       </div>
-    </div>
+    </div> -->
 
     <!-- Contact Info -->
     <div class="row mb-3">
@@ -224,8 +224,22 @@
     </div>
 
     <!-- Specialty -->
-    <h5 class="mt-4">Ειδικότητα</h5>
+    <h5 class="mt-4">Στοιχεία Εργασίας</h5>
     <div formGroupName="specialty" class="row mb-3">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Ημερομηνία διορισμού</label>
+          <input type="date" class="form-control" formControlName="dateAppointment">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Σχέση Εργασίας</label>
+          <input type="text" class="form-control" formControlName="workStatus">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Σχέση εργασίας</label>
+          <input type="text" class="form-control" formControlName="workStatus">
+        </div>
+      </div>
       <div class="col-md-6">
         <label class="form-label">Τίτλος</label>
         <input type="text" class="form-control" formControlName="title">
@@ -249,7 +263,7 @@
     </div>
 
     <!-- Children -->
-    <h5 class="mt-4">Παιδιά</h5>
+    <!-- <h5 class="mt-4">Παιδιά</h5>
     <div formArrayName="children" class="mb-3">
       <div *ngFor="let child of form.get('children')['controls']; let i = index" [formGroupName]="i" class="row g-3 align-items-end mb-3 border rounded p-3">
         <div class="col-md-4">
@@ -276,7 +290,7 @@
       <button type="button" class="btn btn-outline-primary" (click)="addChild()">
         <i class="bi bi-plus-circle"></i> Προσθήκη Παιδιού
       </button>
-    </div>
+    </div> -->
 
     <!-- Qualifications -->
     <h5 class="mt-4">Προσόντα</h5>

@@ -3,6 +3,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 @Component({
@@ -14,6 +15,7 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
 })
 export class EquipmentAdminComponent {
   resourcesService = inject(ResourcesService);
+  modalService = inject(ModalService);
 
   useOfEquipment: IEquipmentConfig[];
 
@@ -102,7 +104,6 @@ export class EquipmentAdminComponent {
   }
 
   addKindGroup(kindIndex: number): void {
-    console.log(">>>",kindIndex);
     this.kind(kindIndex).push(this.newKindGroup());
   }
 
@@ -132,29 +133,43 @@ export class EquipmentAdminComponent {
     if (newRecords.length){
       const cleanedNewRecords = this.transformData(newRecords);
       console.log('New Records:', cleanedNewRecords);
-      // this.resourcesService.createFacilitiesCategories(newRecords)
-      //   .subscribe(response => {
-      //     const body = response.body;
-      //     const status = response.status;
-      //     if (status === 201) {
-      //       // console.log("New",body)
-      //       this.getCategories()
-      //     }
-      //   })
+      this.modalService.getUserConsent(
+        "Πρόκειται να εισάγεται κάποιο είδος στην βιβλιοθήκη. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+      )
+      .subscribe((result) => {
+        if (result) {
+         this.resourcesService.createEquipmentCategories(cleanedNewRecords)
+          .subscribe(response => {
+            const body = response.body;
+            const status = response.status;
+            if (status === 201) {
+              console.log("New",body)
+              this.getCategories()
+            }
+          })
+        }
+      })
     }
 
     if (updatedRecords.length) {
       const cleanedUpdatedRecords = this.transformData(updatedRecords);
       console.log('Updates:', cleanedUpdatedRecords);
-      // this.resourcesService.updateFacilitiesCategories(updatedRecords)
-      //   .subscribe(response => {
-      //     const body = response.body;
-      //     const status = response.status;
-      //     if (status === 201) {
-      //       // console.log("Uodates",body)
-      //       this.getCategories()
-      //     }
-      //   })
+      this.modalService.getUserConsent(
+        "Πρόκειται να τροποποιήσετε κάποιο είδος στην βιβλιοθήκη. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+      )
+      .subscribe((result) => {
+        if (result) {
+          this.resourcesService.updateEquipmentCategories(cleanedUpdatedRecords)
+            .subscribe(response => {
+              const body = response.body;
+              const status = response.status;
+              if (status === 201) {
+                console.log("Uodates",body)
+                this.getCategories()
+              }
+            })
+        }
+      })
     }
   }
 

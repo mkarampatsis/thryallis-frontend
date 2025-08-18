@@ -92,6 +92,16 @@ export class ResourcesService {
     return this.http.get<IEquipmentConfig[]>(url);
   }
 
+  createEquipmentCategories(data: IEquipmentConfig[]): Observable<HttpResponse<{ message: string }>> {
+    const url = `${APIPREFIX_EQUIPMENT}/config`;
+    return this.http.post<{ message: string }>(url, data, { observe: 'response' });
+  }
+
+  updateEquipmentCategories(data: IEquipmentConfig[]): Observable<HttpResponse<{ message: string }>> {
+    const url = `${APIPREFIX_EQUIPMENT}/config`;
+    return this.http.put<{ message: string }>(`${url}`, data, { observe: 'response' });
+  }
+
   getEquipmentsByOrganizationCode(code:string): Observable<HttpResponse<IEquipment[]>> {
     const url = `${APIPREFIX_EQUIPMENT}/organization/${code}`;
     return this.http.get<IEquipment[]>(url, { observe: 'response' });

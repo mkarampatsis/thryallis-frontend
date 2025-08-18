@@ -3,6 +3,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IFacilityConfig } from 'src/app/shared/interfaces/facility/facilityConfig';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 @Component({
@@ -14,6 +15,7 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
 })
 export class FacilityAdminComponent implements OnInit {
   resourcesService = inject(ResourcesService);
+  modalService = inject(ModalService);
 
   useOfFacility: IFacilityConfig[];
 
@@ -91,28 +93,42 @@ export class FacilityAdminComponent implements OnInit {
 
     if (newRecords){
       // console.log('New Records:', newRecords);
-      this.resourcesService.createFacilitiesCategories(newRecords)
-        .subscribe(response => {
-          const body = response.body;
-          const status = response.status;
-          if (status === 201) {
-            // console.log("New",body)
-            this.getFacilitiesCategories()
-          }
-        })
+      this.modalService.getUserConsent(
+        "Πρόκειται να εισάγεται κάποιο είδος στην βιβλιοθήκη. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+      )
+      .subscribe((result) => {
+        if (result) {
+          this.resourcesService.createFacilitiesCategories(newRecords)
+          .subscribe(response => {
+            const body = response.body;
+            const status = response.status;
+            if (status === 201) {
+              // console.log("New",body)
+              this.getFacilitiesCategories()
+            }
+          })
+        }
+      })
     }
 
     if (updatedRecords) {
       // console.log('Updates:', updatedRecords);
-      this.resourcesService.updateFacilitiesCategories(updatedRecords)
-        .subscribe(response => {
-          const body = response.body;
-          const status = response.status;
-          if (status === 201) {
-            // console.log("Uodates",body)
-            this.getFacilitiesCategories()
-          }
-        })
+      this.modalService.getUserConsent(
+        "Πρόκειται να τροποποιήσετε κάποιο είδος στην βιβλιοθήκη. Επιβεβαιώστε ότι θέλετε να συνεχίσετε."
+      )
+      .subscribe((result) => {
+        if (result) {
+          this.resourcesService.updateFacilitiesCategories(updatedRecords)
+          .subscribe(response => {
+            const body = response.body;
+            const status = response.status;
+            if (status === 201) {
+              // console.log("Uodates",body)
+              this.getFacilitiesCategories()
+            }
+          })
+        }
+      })
     }
   }
 
