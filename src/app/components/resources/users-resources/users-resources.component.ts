@@ -7,6 +7,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from 'src/app/shared/services/user.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
+import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { IEmployee } from 'src/app/shared/interfaces/employee/employee';
 
 @Component({
   selector: 'app-users-resources',
@@ -22,73 +24,49 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 export class UsersResourcesComponent implements OnInit {
   userService = inject(UserService);
   modalService = inject(ModalService);
+  resourceService = inject(ResourcesService);
 
   organizations: IOrganizationList[] = [];
 
   organization: string = '';
   organizationCode: string = '';
 
+  showForm: boolean = false;
+
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
-    code: new FormControl('', Validators.required),
+    organizationCode: new FormControl('', Validators.required),
+    code: new FormControl({ value: '', disabled: true }),
     firstname: new FormControl(''),
     lastname: new FormControl('', Validators.required),
     fathername: new FormControl('', Validators.required),
-    mothername: new FormControl(true),
+    mothername: new FormControl('', Validators.required),
     identity: new FormControl('', Validators.required),
-    birthday: new FormControl('', Validators.required),
-    address: new FormGroup({
-      street: new FormControl('', Validators.required),
-      number: new FormControl('', Validators.required),
-      postcode: new FormControl('', Validators.required),
-      area: new FormControl('', Validators.required),
-      municipality: new FormControl('', Validators.required),
-      geographicRegion: new FormControl('', Validators.required),
-      country: new FormControl('ΕΛΛΑΣ', Validators.required),
-    }),
-    phoneHome: new FormControl('', Validators.required),
-    phoneMobile: new FormControl('', Validators.required),
-    email: new FormControl('', Validators.required),
-    addressWork: new FormGroup({
-      street: new FormControl('', Validators.required),
-      number: new FormControl('', Validators.required),
-      postcode: new FormControl('', Validators.required),
-      area: new FormControl('', Validators.required),
-      municipality: new FormControl('', Validators.required),
-      geographicRegion: new FormControl('', Validators.required),
-      country: new FormControl('ΕΛΛΑΣ', Validators.required),
-    }),
-    phoneWork: new FormControl('', Validators.required),
-    emailWork: new FormControl('', Validators.required),
-    sex: new FormControl('Male', Validators.required),
-    famillyStatus: new FormControl('', Validators.required),
-    children: new FormArray([
-      new FormGroup({
-        name: new FormControl('', Validators.required),
-        sex: new FormControl('', Validators.required),
-        birthday: new FormControl('', Validators.required),
-      })
-    ]),
-    workStatus: new FormControl('', Validators.required),
-    education: new FormControl('', Validators.required),
-    specialty: new FormGroup({
-      title: new FormControl('', Validators.required),
-      file: new FormControl('', Validators.required),
-    }),
-    office: new FormControl('', Validators.required),
-    facility: new FormControl('Male', Validators.required),
-    qualifications: new FormArray([
-      new FormGroup({
-        type: new FormControl('', Validators.required),
-        title: new FormControl('', Validators.required),
-        organization: new FormControl('', Validators.required),
-        date: new FormControl('', Validators.required),
-        file: new FormControl('', Validators.required)
-      })
-    ]),
-    finalized: new FormControl(false)
+    birthday: new FormControl(''),
+    sex: new FormControl(''),
+    dateAppointment: new FormControl(''),
+    workStatus: new FormControl(''),
+    workCategory: new FormControl(''),
+    workSector: new FormControl(''),
+    organizationalUnit: new FormControl('',Validators.required),
+    organizationalUnitCode: new FormControl(''),
+    building: new FormControl(''),
+    office: new FormControl(''),
+    phoneWork: new FormControl(''),
+    emailWork: new FormControl('', Validators.email),
+    finalized: new FormControl(false),
+    qualifications: new FormArray([this.createQualification()]),
   });
+
+  createQualification(): FormGroup {
+    return new FormGroup({
+      qualification: new FormControl(''),
+      qualificationTitle: new FormControl(''),
+      qualificationOrganization: new FormControl(''),
+      date: new FormControl(''),
+      file: new FormControl(null)
+    });
+  }
 
   ngOnInit() {
     this.organizations = this.userService.getMyUserResources()
@@ -101,10 +79,11 @@ export class UsersResourcesComponent implements OnInit {
   newUserResources(data: IOrganizationList) {
     this.organization = data.preferredLabel
     this.organizationCode = data.code
+    console.log(this.organization, this.organizationCode);
     this.form.controls.organization.setValue(this.organization);
     this.form.controls.organizationCode.setValue(this.organizationCode);
     // this.getFacilitiesByOrganizationCode()
-    // this.showForm = true;
+    this.showForm = true;
     // this.showGrid = true;
   }
 
@@ -114,40 +93,29 @@ export class UsersResourcesComponent implements OnInit {
     // this.showGrid = true;
   }
 
-  get children(): FormArray {
-    return this.form.get('children') as FormArray;
-  }
-
-  addChild() {
-    const childGroup = new FormGroup({
-      name: new FormControl('', Validators.required),
-      sex: new FormControl('', Validators.required),
-      birthday: new FormControl('', Validators.required)
-    });
-    this.children.push(childGroup);
-  }
-
-  removeChild(index: number) {
-    this.children.removeAt(index);
-  }
-
   get qualifications(): FormArray {
     return this.form.get('qualifications') as FormArray;
   }
 
-  addQualification() {
-    const qualGroup = new FormGroup({
-      type: new FormControl('', Validators.required),
-      title: new FormControl('', Validators.required),
-      organization: new FormControl('', Validators.required),
-      date: new FormControl('', Validators.required),
-      file: new FormControl('', Validators.required)
-    });
-    this.qualifications.push(qualGroup);
+  addQualification(): void {
+    this.qualifications.push(this.createQualification());
   }
 
-  removeQualification(index: number) {
-    this.qualifications.removeAt(index);
+  removeQualification(index: number): void {
+    if (this.qualifications.length > 1) {
+      this.qualifications.removeAt(index);
+    }
+  }
+
+  onSubmit(): void {
+
+    const employeeData = this.form.getRawValue() as unknown as IEmployee;
+    console.log('Form Value:', employeeData);
+    
+    if (this.form.valid) {
+      console.log('Form Value:', employeeData); // getRawValue includes disabled fields
+      this.resourceService.newEmployee(employeeData)
+    }  
   }
 
   hasUserResourcesAdminRole() {

@@ -7,9 +7,11 @@ import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 import { IFacilitySpace } from '../interfaces/facility/facility-space';
 import { IEquipment } from '../interfaces/equipment/equipment';
 import { IFacilityConfig } from '../interfaces/facility/facilityConfig';
+import { IEmployee } from '../interfaces/employee/employee';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
+const APIPREFIX_EMPLOYEE = `${environment.apiUrl}/employee`;
 
 @Injectable({
   providedIn: 'root'
@@ -118,6 +120,25 @@ export class ResourcesService {
   deleteEquipmentById(id:string): Observable<HttpResponse<IEquipment>> {
     const url = `${APIPREFIX_EQUIPMENT}/${id}`;
     return this.http.delete<IEquipment>(url, { observe: 'response' });
+  }
+
+  // Employee Requeats
+  getAllEmployess(): Observable<IEmployee[]> {
+    return this.http.get<IEmployee[]>(APIPREFIX_EMPLOYEE);
+  }
+
+  getEmployeeByID(id: string): Observable<HttpResponse<IEmployee>> {
+    const url = `${APIPREFIX_EMPLOYEE}/${id}`;
+    return this.http.get<IEmployee>(url, { observe: 'response' });
+  }
+
+  getEmployessByOrganizationCode(code: string): Observable<HttpResponse<IEmployee[]>> {
+    const url = `${APIPREFIX_EMPLOYEE}/organization/${code}`;
+    return this.http.get<IEmployee[]>(url, { observe: 'response' });
+  }
+
+  newEmployee(data: IEmployee): Observable<HttpResponse<{ message: string }>> {
+    return this.http.post<{ message: string }>(APIPREFIX_EMPLOYEE , data, { observe: 'response' });
   }
 
   // General Requests
