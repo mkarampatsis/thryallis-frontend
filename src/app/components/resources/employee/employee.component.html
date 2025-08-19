@@ -16,6 +16,24 @@
     }
   </h5>
 
+  @if (showGridEmployees){
+  <div class="mt-5 mb-5">
+    <ag-grid-angular 
+      [domLayout]="'autoHeight'" 
+      [rowData]="employees" 
+      [defaultColDef]="defaultColDef"
+      [columnDefs]="employeeColDefs" 
+      [pagination]="true" 
+      [paginationPageSize]="20"
+      [loadingOverlayComponent]="loadingOverlayComponent" 
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (cellClicked)="onCellEmployeeClicked($event)"
+      (gridReady)="onGridEquipmentReady($event)" 
+      class="ag-theme-balham">
+    </ag-grid-angular>
+  </div>
+}
+
   @if (organizations.length > 0) {
   <div class="d-flex flex-column flex-lg-row gap-2">
     <table class="table table-bordered table-striped">

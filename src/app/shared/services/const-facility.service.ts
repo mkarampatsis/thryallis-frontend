@@ -613,6 +613,56 @@ export class ConstFacilityService {
     }
   ];
 
+  EMPLOYEE_COL_DEFS: ColDef[] = [
+    {
+      field: 'spaces',
+      headerName: 'Χώρος',
+      valueGetter: (params) => {
+        if (!params.data.spaces) return '';
+        return params.data.spaces.map(s => s.spaceName).join(', ');
+      },
+      filter: true,
+      flex:1
+    },
+    {
+      field: 'itemQuantity',
+      headerName: 'Κωδικοί',
+      valueGetter: (params) => {
+        if (!params.data.itemQuantity) return '';
+        return params.data.itemQuantity.map(s => s.codes).join(', ');
+      },
+      filter: true,
+      flex:1
+    },
+    { field: 'resourceSubcategory', headerName: 'Υποκατηγορία', flex: 1 },
+    { field: 'kind', headerName: 'Είδος', flex: 1 },
+    { field: 'type', headerName: 'Τύπος', flex: 1 },
+    { 
+      field: 'itemDescription', 
+      headerName: 'Τιμές',
+      valueGetter: (params) => {
+        if (!params.data.itemDescription) return '';
+        return params.data.itemDescription.map(s => s.description + '=' + s.value).join(', ');
+      },
+      flex: 1,
+      filter: true, 
+    },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: (params) => {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
+          return `
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editEquipment" title="Επεξεργασία εξοπλισμού" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteEquipment" title="Διαγραφή εξοπλισμού" role="button"></i>
+          `;
+        } 
+      },
+      filter: false, 
+      flex:0.5
+    }
+  ];
+
   removeAccents(input: string): string {
     return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
