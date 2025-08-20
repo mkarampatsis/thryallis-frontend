@@ -5,7 +5,7 @@ import { EquipmentComponent } from './equipment/equipment.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { EquipmentAdminComponent } from './equipment-admin/equipment-admin.component';
 import { FacilityAdminComponent } from './facility-admin/facility-admin.component';
-import { SearchResourcesComponent } from './search-resources/search-resources.component';
+import { SearchComponent } from './search/search.component';
 
 export const ResourcesRoutes: Route[] = [
   {
@@ -29,7 +29,7 @@ export const ResourcesRoutes: Route[] = [
     component: FacilityAdminComponent,
   },
   {
-    path: 'search-resources',
-    component: SearchResourcesComponent,
+    path:'search',
+    component: SearchComponent
   }
 ];
