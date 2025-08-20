@@ -16,24 +16,6 @@
     }
   </h5>
 
-  @if (showGridEmployees){
-  <div class="mt-5 mb-5">
-    <ag-grid-angular 
-      [domLayout]="'autoHeight'" 
-      [rowData]="employees" 
-      [defaultColDef]="defaultColDef"
-      [columnDefs]="employeeColDefs" 
-      [pagination]="true" 
-      [paginationPageSize]="20"
-      [loadingOverlayComponent]="loadingOverlayComponent" 
-      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (cellClicked)="onCellEmployeeClicked($event)"
-      (gridReady)="onGridEquipmentReady($event)" 
-      class="ag-theme-balham">
-    </ag-grid-angular>
-  </div>
-}
-
   @if (organizations.length > 0) {
   <div class="d-flex flex-column flex-lg-row gap-2">
     <table class="table table-bordered table-striped">
@@ -53,10 +35,10 @@
             <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
               ngbTooltip="Στοιχεία Φορέα"></i>
 
-            <i class="bi bi-building" role="button" (click)="showUserResourcesGrid(organization)"
+            <i class="bi bi-building" role="button" (click)="showEmployeesGrid(organization)"
               ngbTooltip="Εμφάνιση Προσωπικού"></i>
 
-            <i class="bi bi-pencil-square" role="button" (click)="newUserResources(organization)"
+            <i class="bi bi-pencil-square" role="button" (click)="newEmployee(organization)"
               ngbTooltip="Νέο Προσωπικό"></i>
           </td>
         </tr>
@@ -69,6 +51,23 @@
       Δεν έχετε πρόσβαση σε φορείς.
     </div>
   }
+}
+
+@if (showGrid){
+  <div class="mt-5 mb-5">
+    <ag-grid-angular 
+      [domLayout]="'autoHeight'" 
+      [rowData]="employees" 
+      [defaultColDef]="defaultColDef"
+      [columnDefs]="employeeColDefs" 
+      [pagination]="true" 
+      [paginationPageSize]="20"
+      [loadingOverlayComponent]="loadingOverlayComponent" 
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (gridReady)="onGridReady($event)" 
+      class="ag-theme-balham">
+    </ag-grid-angular>
+  </div>
 }
 
 @if (showForm) {
@@ -232,8 +231,13 @@
         <label class="form-check-label">Οριστικοποιημένο</label>
       </div>
 
-      <!-- Submit -->
-      <button type="submit" class="btn btn-primary" (click)="onSubmit()">Αποθήκευση</button>
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="form.invalid"
+        (click)="onSubmit()">
+        Αποθήκευση
+      </button>
     </form>
   </div>
 }

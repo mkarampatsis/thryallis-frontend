@@ -615,52 +615,30 @@ export class ConstFacilityService {
 
   EMPLOYEE_COL_DEFS: ColDef[] = [
     {
-      field: 'spaces',
-      headerName: 'Χώρος',
-      valueGetter: (params) => {
-        if (!params.data.spaces) return '';
-        return params.data.spaces.map(s => s.spaceName).join(', ');
-      },
+      field: 'organizationalUnit',
+      headerName: 'Μονάδα',
       filter: true,
       flex:1
     },
-    {
-      field: 'itemQuantity',
-      headerName: 'Κωδικοί',
-      valueGetter: (params) => {
-        if (!params.data.itemQuantity) return '';
-        return params.data.itemQuantity.map(s => s.codes).join(', ');
-      },
-      filter: true,
-      flex:1
-    },
-    { field: 'resourceSubcategory', headerName: 'Υποκατηγορία', flex: 1 },
-    { field: 'kind', headerName: 'Είδος', flex: 1 },
-    { field: 'type', headerName: 'Τύπος', flex: 1 },
+    { field: 'firstname', headerName: 'Όνομα', filter: true, flex: 1 },
+    { field: 'lastname', headerName: 'Επίθετο', filter: true, flex: 1 },
     { 
-      field: 'itemDescription', 
-      headerName: 'Τιμές',
-      valueGetter: (params) => {
-        if (!params.data.itemDescription) return '';
-        return params.data.itemDescription.map(s => s.description + '=' + s.value).join(', ');
+      field: 'dateAppointment', 
+      headerName: 'Ημερομηνία διορισμού', 
+      valueFormatter: (params) => {
+        const raw = params.value;
+        if (raw && raw.$date) {
+          return new Date(raw.$date).toLocaleDateString('el-GR');
+        }
+        return '';
       },
-      flex: 1,
       filter: true, 
+      flex: 1 
     },
-    {
-      field: 'actionCell',
-      headerName: 'Ενέργειες',
-      cellRenderer: (params) => {
-        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
-          return `
-            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editEquipment" title="Επεξεργασία εξοπλισμού" role="button"></i>
-            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteEquipment" title="Διαγραφή εξοπλισμού" role="button"></i>
-          `;
-        } 
-      },
-      filter: false, 
-      flex:0.5
-    }
+    { field: 'workStatus', headerName: 'Σχέση Εργασίας', filter: true, flex: 1 },
+    { field: 'workCategory', headerName: 'Κατηγορία', filter: true, flex: 1 },
+    { field: 'workCategory', headerName: 'Κατηγορία', filter: true, flex: 1 },
+    { field: 'workSector', headerName: 'Κλάδος – ειδικότητα', filter: true, flex: 1 },
   ];
 
   removeAccents(input: string): string {

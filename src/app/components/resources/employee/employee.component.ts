@@ -43,7 +43,7 @@ export class EmployeeComponent implements OnInit {
   organizationCode: string = '';
 
   showForm: boolean = false;
-  showGridEmployees: boolean = false;
+  showGrid: boolean = false;
 
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
   defaultColDef = this.constFacilityService.defaultColDef;
@@ -53,7 +53,6 @@ export class EmployeeComponent implements OnInit {
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
   gridApi: GridApi;
-  gridApiEquipment: GridApi;
 
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -98,21 +97,27 @@ export class EmployeeComponent implements OnInit {
     this.modalService.showOrganizationDetails(code);
   }
 
-  newUserResources(data: IOrganizationList) {
+  newEmployee(data: IOrganizationList) {
     this.organization = data.preferredLabel
     this.organizationCode = data.code
-    console.log(this.organization, this.organizationCode);
     this.form.controls.organization.setValue(this.organization);
     this.form.controls.organizationCode.setValue(this.organizationCode);
-    // this.getFacilitiesByOrganizationCode()
     this.showForm = true;
-    // this.showGrid = true;
   }
 
-  showUserResourcesGrid(data: IOrganizationList) {
-    console.log(data)
-    // this.organizationCode = data.code
-    // this.showGrid = true;
+  showEmployeesGrid(data: IOrganizationList) {
+    this.resourceService.getEmployessByOrganizationCode(data.code)
+    .subscribe(response => {
+      const body = response.body;          
+      const status = response.status;        
+      if (status === 200) {
+        console.log(body);
+        this.employees = body;
+        if (this.employees.length > 0) {
+          this.showGrid = true;
+        }
+      }
+    })
   }
 
   get qualifications(): FormArray {
@@ -130,14 +135,65 @@ export class EmployeeComponent implements OnInit {
   }
 
   onSubmit(): void {
-
     const employeeData = this.form.getRawValue() as unknown as IEmployee;
-    console.log('Form Value:', employeeData);
-
     if (this.form.valid) {
-      console.log('Form Value:', employeeData); // getRawValue includes disabled fields
       this.resourceService.newEmployee(employeeData)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.getEmployees(this.organizationCode)
+            this.resetForm();
+          }
+        })
     }
+  }
+
+  resetForm(): void {
+    // Clear FormArray first
+    this.qualifications.clear();
+
+    // Add one empty qualification
+    this.qualifications.push(this.createQualification());
+
+    // Reset form values, keeping disabled controls
+    this.form.reset({
+      organization: '',
+      organizationCode: '',
+      code: '',
+      firstname: '',
+      lastname: '',
+      fathername: '',
+      mothername: '',
+      identity: '',
+      birthday: '',
+      sex: '',
+      dateAppointment: '',
+      workStatus: '',
+      workCategory: '',
+      workSector: '',
+      organizationalUnit: '',
+      building: '',
+      office: '',
+      phoneWork: '',
+      emailWork: '',
+      finalized: false
+    });
+    this.showForm = false;
+  }
+
+  getEmployees(code: string){
+    this.resourceService.getEmployessByOrganizationCode(code)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 200) {
+          this.employees = body;
+          if (this.employees.length > 0) {
+            this.showGrid = true;
+          }
+        }
+      })
   }
 
   hasUserResourcesAdminRole() {
@@ -153,16 +209,5 @@ export class EmployeeComponent implements OnInit {
     this.gridApi.showLoadingOverlay();
     if (this.employees.length > 0)
       this.gridApi.hideOverlay();
-  }
-
-  onCellEquipmentClicked(event: CellClickedEvent): void {
-    const action = (event.event.target as HTMLElement).getAttribute('data-action');
-    if (!action) return;
-        
-    // if (action === 'editEquipment') {
-    //   this.editEquipment(event.data);
-    // } else if (action === 'deleteEquipment') {
-    //   this.deleteEquipment(event.data)
-    // } 
   }
 }
