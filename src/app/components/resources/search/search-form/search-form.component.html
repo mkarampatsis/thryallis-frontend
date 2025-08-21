@@ -1,1 +1,474 @@
-<p>search-form works!</p>
+<h4 class="govgr-heading-md">Αναζήτηση</h4>
+
+<div class="container mt-4">
+  <form [formGroup]="form" (ngSubmit)="submitForm()" class="needs-validation" novalidate>
+
+    <!-- FACILITIES -->
+    <div class="card mb-3">
+      <div class="card-header">Facilities</div>
+      <div class="card-body" formGroupName="facilities">
+        
+        <div class="mb-3">
+          <label class="form-label">KAEK</label>
+          <input type="text" class="form-control" formControlName="kaek">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Distinctive Name</label>
+          <input type="text" class="form-control" formControlName="distinctiveNameOfFacility">
+        </div>
+
+        <!-- useOfFacility FormArray -->
+        <!-- <div>
+          <label class="form-label">Use of Facility</label>
+          <div *ngFor="let use of useOfFacilityArray.controls; let i=index" class="input-group mb-2">
+            <input type="text" class="form-control" [formControl]="use">
+            <button type="button" class="btn btn-danger" (click)="removeUseOfFacility(i)">Remove</button>
+          </div>
+          <button type="button" class="btn btn-primary mt-2" (click)="addUseOfFacility()">Add Use</button>
+        </div> -->
+        <div formArrayName="useOfFacility">
+        <label class="form-label">Use of Facility</label>
+        <div *ngFor="let use of useOfFacilityArray.controls; let i=index" class="input-group mb-2">
+          <input type="text" class="form-control" [formControlName]="i">
+          <button type="button" class="btn btn-danger" (click)="removeUseOfFacility(i)">Remove</button>
+        </div>
+        <button type="button" class="btn btn-primary mt-2" (click)="addUseOfFacility()">Add Use</button>
+      </div>
+
+      </div>
+    </div>
+
+    <!-- SPACES -->
+    <div class="card mb-3">
+      <div class="card-header">Spaces</div>
+      <div class="card-body" formGroupName="spaces">
+        <div class="mb-3">
+          <label class="form-label">Space Name</label>
+          <input type="text" class="form-control" formControlName="spaceName">
+        </div>
+
+        <!-- spaceUse FormArray -->
+        <!-- <div>
+          <label class="form-label">Space Use</label>
+          <div *ngFor="let space of spaceUseArray.controls; let i=index" [formGroup]="space" class="row mb-2">
+            <div class="col">
+              <input type="text" class="form-control" formControlName="type" placeholder="Type">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="subtype" placeholder="Subtype">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="space" placeholder="Space">
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger" (click)="removeSpaceUse(i)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary mt-2" (click)="addSpaceUse()">Add Space Use</button>
+        </div> -->
+        <div formArrayName="spaceUse">
+          <label class="form-label">Space Use</label>
+          <div *ngFor="let space of spaceUseArray.controls; let i = index" [formGroupName]="i" class="row mb-2">
+            <div class="col">
+              <input type="text" class="form-control" formControlName="type" placeholder="Type">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="subtype" placeholder="Subtype">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="space" placeholder="Space">
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger" (click)="removeSpaceUse(i)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary mt-2" (click)="addSpaceUse()">Add Space Use</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- EQUIPMENTS -->
+    <div class="card mb-3">
+      <div class="card-header">Equipments</div>
+      <div class="card-body" formGroupName="equipments">
+        <div class="mb-3">
+          <label class="form-label">Resource Subcategory</label>
+          <input type="text" class="form-control" formControlName="resourceSubcategory">
+        </div>
+
+        <!-- itemDescription FormArray -->
+        <!-- <div>
+          <label class="form-label">Item Description</label>
+          <div *ngFor="let item of itemDescriptionArray.controls; let i=index" [formGroup]="item" class="row mb-2">
+            <div class="col">
+              <input type="text" class="form-control" formControlName="value" placeholder="Value">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="description" placeholder="Description">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="info" placeholder="Info">
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary mt-2" (click)="addItemDescription()">Add Item</button>
+        </div> -->
+        <div formArrayName="itemDescription">
+          <label class="form-label">Item Description</label>
+          <div *ngFor="let item of itemDescriptionArray.controls; let i = index" [formGroupName]="i" class="row mb-2">
+            <div class="col">
+              <input type="text" class="form-control" formControlName="value" placeholder="Value">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="description" placeholder="Description">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="info" placeholder="Info">
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary mt-2" (click)="addItemDescription()">Add Item</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">Reset</button>
+      <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+  </form>
+</div>
+<!-- 
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between">
+      <span class="fw-semibold">Στοιχεία Ακινήτων</span>
+    </div>
+    <div formGroupName="organizations" class="card-body">
+      <div class="mb-3">
+        <div>
+          <input type="text" class="form-control" formControlName="preferredLabel" id="preferredLabel"
+            placeholder="Πληκτρολογήστε Στοιχεία Φορέα" />
+        </div>
+        <div class="row row-cols-lg-auto">
+          <span>Αναζήτηση στοιχείων ακινήτων ως:</span>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
+              id="preferredLabelSearch_Org1" value="words">
+            <label class="form-check-label" for="preferredLabelSearch_Org1">ξεχωριστές λέξεις</label>,
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
+              id="preferredLabelSearch_Org2" value="phrase">
+            <label class="form-check-label" for="preferredLabelSearch_Org2">ολόκληρη φράση</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="organizationType" formControlName="organizationType">
+            <option value="" disabled>Επιλέξτε Τύπο Φορέα</option>
+            <option value=""></option>
+            @for (types of organizationTypesMap.keys(); track types) {
+            <option [value]="organizationTypesMap.get(types)">
+              {{ organizationTypesMap.get(types) }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="purpose" formControlName="purpose">
+            <option value="" disabled>Επιλέξτε Σκοπό Φορέα</option>
+            <option value=""></option>
+            @for (types of organizationFunctionsMap.keys(); track types) {
+            <option [value]="organizationFunctionsMap.get(types)">
+              {{ organizationFunctionsMap.get(types) }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="level" formControlName="level">
+            <option value="" disabled>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
+            <option value=""></option>
+            @for (types of organizationLevels; track types) {
+            <option [value]="types">
+              {{ types }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <input type="text" class="form-control" formControlName="subOrganizationOf" id="subOrganizationOf"
+            placeholder="Πληκτρολογήστε Εποπτεύων Φορέα" />
+        </div>
+
+        <div class="flex-fill mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="statusActiveOrg" formControlName="statusActive">
+            <label class="form-check-label" for="statusActiveOrg">
+              Ενεργός Φορέας
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="statusInactiveOrg" formControlName="statusInactive">
+            <label class="form-check-label" for="statusInactiveOrg">
+              Ανενεργός Φορέας
+            </label>
+          </div>
+        </div>
+      </div>
+      @if(!showMoreOrganizationFields) {
+      <a role="button" class="link-primary link-offset-2" (click)="moreFields('organization')">Περισσότερα πεδία</a>
+      }
+      @if(showMoreOrganizationFields){
+      <div formGroupName="foundationDate" class="d-flex gap-3 align-items-center">
+       
+        <div class="flex-fill mb-3">
+          <label for="foundationDateFrom">Ημερομηνία Ίδρυσης: <strong>από</strong></label>
+          <input type="date" class="form-control" formControlName="from" id="foundationDateFrom" />
+        </div>
+        <div class="flex-fill mb-3">
+          <label for="foundationDateUntil"><strong>έως</strong></label>
+          <input type="date" class="form-control" formControlName="until" id="foundationDateUntil" />
+        </div>
+      </div>
+      <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <label for="terminationDateFrom">Ημερομηνία Τερματισμού: <strong>από</strong></label>
+          <input type="date" class="form-control" formControlName="from" id="terminationDateFrom" />
+        </div>
+        <div class="flex-fill mb-3">
+          <label for="terminationDateUntil"><strong>έως</strong></label>
+          <input type="date" class="form-control" formControlName="until" id="terminationDateUntil" />
+        </div>
+      </div>
+      <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <label for="foundationFekFrom">Ημερομηνία ΦΕΚ: <strong>από</strong></label>
+          <input type="date" class="form-control" formControlName="from" id="foundationFekFrom" />
+        </div>
+        <div class="flex-fill mb-3">
+          <label for="foundationFekUntil"><strong>έως</strong></label>
+          <input type="date" class="form-control" formControlName="until" id="foundationFekUntil" />
+        </div>
+      </div>
+      <a role="button" class="link-primary link-offset-2" (click)="lessFields('organization')">Λιγότερα πεδία</a>
+      }
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between">
+      <span class="fw-semibold">Στοιχεία Χώρων</span>
+    </div>
+    <div formGroupName="organizational_units" class="card-body">
+      <div class="mb-3">
+        <div>
+          <input type="text" class="form-control" formControlName="preferredLabel" id="preferredLabel"
+            placeholder="Πληκτρολογήστε Στοιχεία Μονάδας" />
+        </div>
+        <div class="row row-cols-lg-auto">
+          <span>Αναζήτηση στοιχείων χώρων ως:</span>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
+              id="preferredLabelSearch_OrgU1" value="words">
+            <label class="form-check-label" for="preferredLabelSearch_OrgU1">ξεχωριστές λέξεις</label>,
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
+              id="preferredLabelSearch_OrgU1" value="phrase">
+            <label class="form-check-label" for="preferredLabelSearch_OrgU1">ολόκληρη φράση</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="unitType" formControlName="unitType">
+            <option value="" disabled>Επιλέξτε Τύπο Μονάδας</option>
+            <option value=""></option>
+            @for (types of organizationUnitTypesMap.keys(); track types) {
+            <option [value]="organizationUnitTypesMap.get(types)">
+              {{ organizationUnitTypesMap.get(types) }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="purpose" formControlName="purpose">
+            <option value="" disabled>Επιλέξτε Σκοπό Μονάδας</option>
+            <option value=""></option>
+            @for (types of organizationUnitFunctionsMap.keys(); track types) {
+            <option [value]="organizationUnitFunctionsMap.get(types)">
+              {{ organizationUnitFunctionsMap.get(types) }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="flex-fill mb-3">
+          <input type="text" class="form-control" formControlName="supervisorUnitCode" id="supervisorUnitCode"
+            placeholder="Πληκτρολογήστε Προϊστάμενη Μονάδα" />
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <div formGroupName="remits" class="card mb-4">
+    <div class="card-header d-flex justify-content-between">
+      <span class="fw-semibold">Στοιχεία Εξοπλισμού</span>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <div>
+          <input type="text" class="form-control" formControlName="remitText" id="remitText"
+            placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας" />
+        </div>
+        <div class="row row-cols-lg-auto">
+          <span>Αναζήτηση στοιχείων αξοπλισμού ως:</span>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" formControlName="remitTextSearch" id="remitTextSearch1"
+              value="words">
+            <label class="form-check-label" for="remitTextSearch1">ξεχωριστές λέξεις</label>,
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" formControlName="remitTextSearch" id="remitTextSearch2"
+              value="phrase">
+            <label class="form-check-label" for="remitTextSearch2">ολόκληρη φράση</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="remitType" formControlName="remitType">
+            <option value="" disabled>Επιλέξτε Τύπο Αρμοδιότητας</option>
+            <option value=""></option>
+            @for (types of remitType; track types) {
+            <option [value]="types">
+              {{ types }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="flex-fill mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="statusActiveRemit" formControlName="statusActive">
+            <label class="form-check-label" for="statusActiveRemit">
+              Ενεργή Αρμοδιότητα
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="statusInactiveRemit" formControlName="statusInactive">
+            <label class="form-check-label" for="statusInactiveRemit">
+              Ανενεργή Αρμοδιότητα
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="cofog1" formControlName="cofog1">
+            <option value="" disabled>Επιλέξτε Λειτουργική Περιοχή COFOG</option>
+            <option value=""></option>
+            @for (types of cofog1; track types) {
+            <option [value]="types.code">
+              {{ types.name }}
+            </option>
+            }
+          </select>
+        </div>
+        @if (cofog1_selected) {
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="cofog2" formControlName="cofog2">
+            <option value="" disabled>Επιλέξτε Λειτουργικό Τομέα COFOG</option>
+            <option value=""></option>
+            @for (types of cofog2; track types) {
+            <option [value]="types.code">
+              {{ types.name }}
+            </option>
+            }
+          </select>
+        </div>
+        }
+        @if (cofog2_selected) {
+        <div class="flex-fill mb-3">
+          <select class="form-select" id="cofog3" formControlName="cofog3">
+            <option value="" disabled>Επιλέξτε Θεματική Περιοχή COFOG</option>
+            <option value=""></option>
+            @for (types of cofog3; track types) {
+            <option [value]="types.code">
+              {{ types.name }}
+            </option>
+            }
+          </select>
+        </div>
+        }
+      </div>
+      <div formArrayName="fekDate">
+        <div *ngFor="let remit of remitFoundations.controls; let i=index" [formGroupName]="i"
+          class="d-flex gap-3 align-items-center">
+          <div class="flex-fill mb-3">
+            <label for="fekDateFrom">Ημερομηνία Αρμοδιότητας: <strong>από</strong></label>
+            <input type="date" class="form-control" formControlName="from" id="fekDateFrom" />
+          </div>
+          <div class="flex-fill mb-3">
+            <label for="fekDateUntil"><strong>έως</strong></label>
+            <input type="date" class="form-control" formControlName="until" id="fekDateUntil" />
+          </div>
+
+          <mat-icon role="button" class="cursor-pointer" (click)=removeDate(i)>
+            delete
+          </mat-icon>
+          <mat-icon role="button" class="cursor-pointer" (click)=addDate()>
+            add
+          </mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <button type="button" class="btn btn-primary" type="submit">
+      Υποβολή
+    </button>
+    <button type="button" class="btn btn-danger" (click)="resetForm()">
+      Επαναφορά
+    </button>
+    @if (loading) {
+    <span class="d-flex align-items-center gap-2">
+      Αναμονή αποτελεσμάτων...
+      <span class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </span>
+    </span>
+    }
+  </div>
+</form> -->
+
+<!-- @if(rowData) {
+  <h5>Αποτελέσματα αναζήτησης</h5> -->
+  <!-- <app-search-grid [data]="rowData"></app-search-grid> -->
+<!-- } -->
+
+
+<!-- <div class="flex-fill mb-3">
+                        <label for="range"></label>
+                        <select
+                            class="form-select"
+                            id="range"
+                            formControlName="range">
+                            <option value="" disabled>Επιλέξτε όρια</option> -->
+                            <!-- <option value="eq">=</option> -->
+                            <!-- <option value="gt" >&gt;</option> -->
+                            <!-- <option value="gte" >από</option> -->
+                            <!-- <option value="lt" >&lt;</option> -->
+                            <!-- <option value="lte" >έως</option> -->
+                        <!-- </select> -->
+                    <!-- </div> -->
