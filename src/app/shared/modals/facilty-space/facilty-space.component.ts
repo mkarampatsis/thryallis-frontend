@@ -103,7 +103,6 @@ export class FaciltySpaceComponent implements OnInit {
     this.resourcesService.getFacilityCategories()
       .subscribe(result => {
         this.spaceUse = result;
-        // console.log("Space",this.spaceUse.map(d => d.type))
         this.types = result.map(d => d.type)
         this.initializeForm();
         this.onTypeChange();
@@ -111,13 +110,6 @@ export class FaciltySpaceComponent implements OnInit {
           this.editSpace(this.space);
         }
       })
-    // this.types = this.SPACE_USE.map(d => d.type);
-    // console.log("Type", this.types);
-    // this.initializeForm();
-    // this.onTypeChange();
-    // if (this.space) {
-    //   this.editSpace(this.space);
-    // }
   }
 
   ngOnDestroy(): void {
@@ -149,15 +141,17 @@ export class FaciltySpaceComponent implements OnInit {
     this.setOrganizationalUnitFormArray(this.selectedData);
   }
 
-   onFirstDataRendered(params: any): void {
-    if (!this.gridApi) return;
+  //  onFirstDataRendered(params: any): void {
+  //   if (!this.gridApi) return;
 
-    this.gridApi.forEachNode((node) => {
-      if (this.selectedOrganizationalCodes.includes(node.data.code)) {
-        node.setSelected(true);
-      }
-    });
-  }
+  //   this.gridApi.forEachNode((node) => {
+  //     console.log("Node>>",node);
+  //     console.log("selectedOrganizationalCodes>>",this.selectedOrganizationalCodes);
+  //     if (this.selectedOrganizationalCodes.includes(node.data.code)) {
+  //       node.setSelected(true);
+  //     }
+  //   });
+  // }
 
   clearSelection() {
     if (this.gridApi) {
@@ -223,9 +217,7 @@ export class FaciltySpaceComponent implements OnInit {
 
     const selectedType = this.form.controls.spaceUse.get('type')?.value;
     const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
-    console.log("1>>>",selectedItem);
     const selectedItem2 = this.spaceUse.find(d => d.type === selectedType);
-    console.log("2>>>",selectedItem2);
 
     if (!selectedItem) return;
 
@@ -283,28 +275,28 @@ export class FaciltySpaceComponent implements OnInit {
 
   editSpace(space: ISpace){
     this.form.patchValue({
-      facilityId: this.space.facilityId,
-      spaceName: this.space.spaceName,
+      facilityId: space.facilityId,
+      spaceName: space.spaceName,
       spaceUse: {
-        type: this.space.spaceUse.type,
-        subtype: this.space.spaceUse.subtype,
-        space: this.space.spaceUse.space,
+        type: space.spaceUse.type,
+        subtype: space.spaceUse.subtype,
+        space: space.spaceUse.space,
       },
-      auxiliarySpace: this.space.auxiliarySpace,
-      spaceArea: this.space.spaceArea,
-      spaceLength: this.space.spaceLength,
-      spaceWidth: this.space.spaceWidth,
-      entrances: this.space.entrances,
-      windows: this.space.windows,
+      auxiliarySpace: space.auxiliarySpace,
+      spaceArea: space.spaceArea,
+      spaceLength: space.spaceLength,
+      spaceWidth: space.spaceWidth,
+      entrances: space.entrances,
+      windows: space.windows,
       floorPlans: {
-        level: this.space.floorPlans.level,
-        num: this.space.floorPlans.num
+        level: space.floorPlans.level,
+        num: space.floorPlans.num
       }
     })
 
-    this.auxiliarySpace = this.space.auxiliarySpace;
+    this.auxiliarySpace = space.auxiliarySpace;
 
-    const floorLevel = this.space.floorPlans.level
+    const floorLevel = space.floorPlans.level
     if (floorLevel == 'Όροφος') {
       this.planFloorsNumField = 1;
     } else if (floorLevel == 'Ισόγειο') {
@@ -317,7 +309,15 @@ export class FaciltySpaceComponent implements OnInit {
       this.planFloorsNumField = 0;
     }
 
-    this.selectedOrganizationalCodes = this.space.organizationalUnit.map(item => item.organizationalUnitCode)
+    this.selectedOrganizationalCodes = space.organizationalUnit.map(item => item.organizationalUnitCode)
+
+    if (this.gridApi) {
+      this.gridApi.forEachNode((node) => {
+        if (this.selectedOrganizationalCodes.includes(node.data.code)) {
+          node.setSelected(true);
+        }
+      });
+    }
   }
 
   submitForm() {

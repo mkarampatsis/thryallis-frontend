@@ -86,7 +86,7 @@ export class FacilityComponent {
     organizationCode: new FormControl({ value: '', disabled: true }, Validators.required),
     kaek: new FormControl('', Validators.required),
     belongsTo: new FormControl(''),
-    distinctiveNameOfFacility: new FormControl('', Validators.required),
+    distinctiveNameOfFacility: new FormControl(''),
     useOfFacility: new FormControl('', Validators.required),
     uniqueUseOfFacility: new FormControl(true),
     private: new FormControl(true),
@@ -283,6 +283,7 @@ export class FacilityComponent {
   }
 
   newFacility(data: IOrganizationList) {
+    this.initializeForm();
     this.organization = data.preferredLabel
     this.organizationCode = data.code
     this.form.controls.organization.setValue(this.organization);
