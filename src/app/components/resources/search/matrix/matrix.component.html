@@ -1,1 +1,74 @@
-<p>matrix works!</p>
+<h4 class="govgr-heading-md">Συγκριτικά στοιχεία για Ακίνητα, Χώρους, Εξοπλισμό</h4>
+
+<div class="mt-4">
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Συνοπτική σύγκριση μεταξύ δύο ή περισσότερων ακινήτων
+    ενός φορέα</h1>
+
+  <ul>
+    @for (unit of selectedDataMatrix1; track unit ){
+    <li><strong>Φορέας: </strong>{{ unit.preferredLabel }}</li>
+    }
+  </ul>
+
+  <div class="d-flex justify-content-between small">
+    <div>
+      <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
+    </div>
+    <div>
+      <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix1()">Καθάρισμα επιλογών</button>
+    </div>
+  </div>
+
+  <ag-grid-angular 
+    [domLayout]="'autoHeight'" 
+    [rowData]="foreis" 
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs_Matrix1" 
+    [pagination]="true" 
+    [paginationPageSize]="10"
+    [loadingOverlayComponent]="loadingOverlayComponent" 
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    rowSelection="multiple" 
+    (rowSelected)="onRowSelected_Matrix1($event)" 
+    (gridReady)="onGridReady_Matrix1($event)"
+    class="ag-theme-balham">
+  </ag-grid-angular>
+
+  @if(showTable1){
+  <div class="mt-4">
+    <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
+
+    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">Εξαγωγή
+      στοιχείων σε Excel</button>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ΦΟΡΕΑΣ</th>
+          <th>ΑΚΙΝΗΤΟ</th>
+          <th>ΔΙΑΚΡΙΤΗ ΟΝΟΜΑΣΙΑ</th>
+          <th>ΧΡΗΣΗ ΑΚΙΝΗΤΟΥ</th>
+          <th>ΣΥΝΟΛΙΚΟΣ ΣΤΕΓΑΣΜΕΝΟΣ ΧΩΡΟΣ (τ.μ)</th>
+          <th>ΑΡΙΘΜΟΣ ΟΡΟΦΩΝ/ΕΠΙΠΕΔΩΝ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (forea of matrixData1; track forea ){
+        <tr>
+          <td>{{ forea.organization }}</td>
+          <td>{{ forea.kaek }}_{{forea.addressOfFacility.street}}_{{forea.addressOfFacility.number}}_{{forea.addressOfFacility.postcode}}_{{forea.addressOfFacility.municipality}}</td>
+          <td>{{ forea.distinctiveNameOfFacility }}</td>
+          <td>{{ forea.useOfFacility }}</td>
+          <td>{{ forea.coveredPremisesArea }}</td>
+          <td>{{ forea.floorsOrLevels }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>
+
+<div class="text-success mt-4">
+  <hr>
+</div>

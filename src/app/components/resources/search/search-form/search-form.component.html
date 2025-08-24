@@ -1,89 +1,275 @@
 <h4 class="govgr-heading-md">Αναζήτηση</h4>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-4">
   <form [formGroup]="form" (ngSubmit)="submitForm()" class="needs-validation" novalidate>
 
     <!-- FACILITIES -->
     <div class="card mb-3">
-      <div class="card-header">Facilities</div>
+      <div class="card-header">Στοιχεία ακινήτου</div>
       <div class="card-body" formGroupName="facilities">
         
-        <div class="mb-3">
-          <label class="form-label">KAEK</label>
-          <input type="text" class="form-control" formControlName="kaek">
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">Φορέας ακίνητου:</label>
+            <input type="text" class="form-control" formControlName="organization">
+          </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Distinctive Name</label>
-          <input type="text" class="form-control" formControlName="distinctiveNameOfFacility">
+        <!-- KAEK -->
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">Κωδικός Ακινήτου Εθνικού Κτηματολογίου:</label>
+            <input type="text" class="form-control" formControlName="kaek">
+          </div>
+
+          <!-- Distinctive Name -->
+          <div class="col">
+            <label class="form-label">Διακριτή ονομασία του ακινήτου:</label>
+            <input type="text" class="form-control" formControlName="distinctiveNameOfFacility">
+          </div>
         </div>
+        
 
         <!-- useOfFacility FormArray -->
-        <!-- <div>
-          <label class="form-label">Use of Facility</label>
+        <div formArrayName="useOfFacility" class="mb-3">
+          <label class="form-label">Χρήση Ακινήτου:</label>
           <div *ngFor="let use of useOfFacilityArray.controls; let i=index" class="input-group mb-2">
-            <input type="text" class="form-control" [formControl]="use">
-            <button type="button" class="btn btn-danger" (click)="removeUseOfFacility(i)">Remove</button>
+            <select 
+              class="form-select" 
+              aria-label="Default select example" 
+              [formControlName]="i"
+            >
+              <option value="" disabled selected>
+                Επιλέξτε Τύπο Χρήσης
+              </option>
+              @for (item of useOfFacility; track item) {
+                <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+            <mat-icon
+              role="button"
+              class="cursor-pointer mx-2"
+              (click) = removeUseOfFacility(i)  
+            >
+              delete 
+            </mat-icon>
           </div>
-          <button type="button" class="btn btn-primary mt-2" (click)="addUseOfFacility()">Add Use</button>
-        </div> -->
-        <div formArrayName="useOfFacility">
-        <label class="form-label">Use of Facility</label>
-        <div *ngFor="let use of useOfFacilityArray.controls; let i=index" class="input-group mb-2">
-          <input type="text" class="form-control" [formControlName]="i">
-          <button type="button" class="btn btn-danger" (click)="removeUseOfFacility(i)">Remove</button>
+          <button type="button" class="btn btn-primary mx-2" (click)="addUseOfFacility()">Προσθήκη</button>
         </div>
-        <button type="button" class="btn btn-primary mt-2" (click)="addUseOfFacility()">Add Use</button>
-      </div>
 
+        <!-- Covered Premises Area -->
+        <div formGroupName="coveredPremisesArea" class="row mb-3">
+          <div class="col">
+            <label class="form-label">Συνολικός στεγασμένος χώρος του ακινήτου σε τ.μ <strong>από:</strong></label>
+            <input type="text" class="form-control" formControlName="from">
+          </div>
+          <div class="col">
+            <label class="form-label"><strong>έως:</strong></label>
+            <input type="text" class="form-control" formControlName="until">
+          </div>
+        </div>
+
+        <!-- Address of Facility -->
+        <div formGroupName="addressOfFacility" class="mb-3">
+          <h6>Στοιχεία διεύθυνσης ακινήτου:</h6>
+          <div class="row">
+            <div class="col mb-2">
+              <label class="form-label">Οδός:</label>
+              <input type="text" class="form-control" formControlName="street">
+            </div>
+            <div class="col mb-2">
+              <label class="form-label">Αριθμός:</label>
+              <input type="text" class="form-control" formControlName="number">
+            </div>
+            <div class="col mb-2">
+              <label class="form-label">ΤΚ:</label>
+              <input type="text" class="form-control" formControlName="postcode">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col mb-2">
+              <label class="form-label">Τοποθεσία:</label>
+              <input type="text" class="form-control" formControlName="area">
+            </div>
+            <div class="col mb-2">
+              <label class="form-label">Δήμος:</label>
+              <input type="text" class="form-control" formControlName="municipality">
+            </div>
+            <div class="col mb-2">
+              <label class="form-label">Γεωγραφική Περιφέρεια:</label>
+              <input type="text" class="form-control" formControlName="geographicRegion">
+            </div>
+            <div class="col mb-2">
+              <label class="form-label">Χώρα:</label>
+              <input type="text" class="form-control" formControlName="country">
+            </div>
+          </div>
+        </div>
+
+        <!-- Floors or Levels -->
+        <div formGroupName="floorsOrLevels" class="row mb-3">
+          <div class="col">
+            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων από:</label>
+            <input type="text" class="form-control" formControlName="from"
+              [class.is-invalid]="form.get('facilities.floorsOrLevels.from')?.invalid && form.get('facilities.floorsOrLevels.from')?.touched">
+            <div *ngIf="form.get('facilities.floorsOrLevels.from')?.hasError('pattern') && form.get('facilities.floorsOrLevels.from')?.touched" class="invalid-feedback">
+              Μόνο αριθμοί επιτρέπονται (π.χ 5)
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων έως:</label>
+            <input type="text" class="form-control" formControlName="until"
+              [class.is-invalid]="form.get('facilities.floorsOrLevels.until')?.invalid && form.get('facilities.floorsOrLevels.until')?.touched">
+            <div *ngIf="form.get('facilities.floorsOrLevels.until')?.hasError('pattern') && form.get('facilities.floorsOrLevels.until')?.touched" class="invalid-feedback">
+              Μόνο αριθμοί επιτρέπονται (π.χ 5)
+            </div>
+          </div>
+        </div>
+
+        <!-- Unique Use of Facility & Private -->
+        <div class="form-check mb-2">
+          <span>Aποκλειστική χρήση ακινήτου:</span>
+          <div class="row row-cols-lg-auto g-3 align-items-center">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
+                id="UniqueUserOfFacility1"  [value]="true">
+              <label class="form-check-label" for="UniqueUserOfFacility1">ΝΑΙ</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
+                id="UniqueUserOfFacility2" [value]="false">
+              <label class="form-check-label" for="UniqueUserOfFacility2">ΟΧΙ</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-check mb-3">
+          <span>Ιδιόκτητο/Ενοικιαζόμενο:</span>
+          <div class="row row-cols-lg-auto g-3 align-items-center">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="private"
+                id="private1"  [value]="true">
+              <label class="form-check-label" for="private1">Ιδιόκτητο</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="private"
+                id="private2" [value]="false">
+              <label class="form-check-label" for="private2">Ενοικιαζόμενο</label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </div> 
+    
 
     <!-- SPACES -->
     <div class="card mb-3">
-      <div class="card-header">Spaces</div>
+      <div class="card-header">Χώροι ακινήτου</div>
       <div class="card-body" formGroupName="spaces">
-        <div class="mb-3">
-          <label class="form-label">Space Name</label>
-          <input type="text" class="form-control" formControlName="spaceName">
+        
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">Φορέας χώρου:</label>
+            <input type="text" class="form-control" formControlName="organization">
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-sm-12">
+            <label class="form-label">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου:</label>
+            <input type="text" class="form-control" formControlName="spaceName">
+          </div>
         </div>
 
-        <!-- spaceUse FormArray -->
-        <!-- <div>
-          <label class="form-label">Space Use</label>
-          <div *ngFor="let space of spaceUseArray.controls; let i=index" [formGroup]="space" class="row mb-2">
-            <div class="col">
-              <input type="text" class="form-control" formControlName="type" placeholder="Type">
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="subtype" placeholder="Subtype">
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="space" placeholder="Space">
-            </div>
-            <div class="col-auto">
-              <button type="button" class="btn btn-danger" (click)="removeSpaceUse(i)">Remove</button>
-            </div>
-          </div>
-          <button type="button" class="btn btn-primary mt-2" (click)="addSpaceUse()">Add Space Use</button>
-        </div> -->
+        <!-- Space Use FormArray -->
         <div formArrayName="spaceUse">
-          <label class="form-label">Space Use</label>
-          <div *ngFor="let space of spaceUseArray.controls; let i = index" [formGroupName]="i" class="row mb-2">
-            <div class="col">
-              <input type="text" class="form-control" formControlName="type" placeholder="Type">
+          <label class="form-label">Τρόπος χρήσης χώρου</label>
+          <div *ngFor="let space of spaceUseArray.controls; let i=index" [formGroupName]="i" class="row mb-2">
+            <div class="col-sm-3">
+              <select 
+                class="form-select" 
+                aria-label="Default select example" 
+                formControlName="type"
+                (change)="onTypeChange(i)"
+              >
+                <option value="" disabled selected>
+                  Επιλέξτε Τύπο Χρήσης
+                </option>
+                @for (item of useOfFacility; track item) {
+                  <option [ngValue]="item">{{ item }}</option>
+                }
+              </select>
             </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="subtype" placeholder="Subtype">
+            <div *ngIf="!space.get('auxiliarySpace')?.value && subtypesList[i]?.length > 0 && !auxiliarySpace" class="col-sm-3">
+              <select class="form-select" id="subtype" formControlName="subtype" (change)="onSubtypeChange(i)">
+                <option value="">Επιλογή Υποτύπου</option>
+                <option *ngFor="let st of subtypesList[i]" [value]="st">{{ st }}</option>
+              </select>
             </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="space" placeholder="Space">
+
+            <div *ngIf="!space.get('auxiliarySpace')?.value && spacesList[i]?.length > 0 && !auxiliarySpace" class="col-sm-3">
+              <select class="form-select" formControlName="space">
+                <option value="">Επιλογή Χώρου</option>
+                <option *ngFor="let s of spacesList[i]" [value]="s">{{ s }}</option>
+              </select>
             </div>
+          
+            <div *ngIf="space.get('auxiliarySpace')?.value" class="col-sm-3">
+              <select class="form-select" formControlName="space">
+                <option value="">Βοηθητικός Χώρος</option>
+                <option *ngFor="let s of AUXILIARY_SPACES" [value]="s">{{ s }}</option>
+              </select> 
+            </div>
+
+            <div class="col-sm-3">
+              <label class="form-label">Βοηθητικός χώρος</label>
+              <div class="row row-cols-lg-auto g-3 align-items-center">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio"
+                    formControlName="auxiliarySpace"
+                    id="auxiliarySpaceYes-{{i}}" [value]="true">
+                  <label class="form-check-label" for="auxiliarySpaceYes-{{i}}">ΝΑΙ</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio"
+                    formControlName="auxiliarySpace"
+                    id="auxiliarySpaceNo-{{i}}" [value]="false">
+                  <label class="form-check-label" for="auxiliarySpaceNo-{{i}}">ΟΧΙ</label>
+                </div>
+              </div>
+            </div>
+
             <div class="col-auto">
-              <button type="button" class="btn btn-danger" (click)="removeSpaceUse(i)">Remove</button>
+              <mat-icon
+                role="button"
+                class="cursor-pointer mx-2"
+                (click) = removeSpaceUse(i)  
+              >
+                delete 
+              </mat-icon>
             </div>
           </div>
-          <button type="button" class="btn btn-primary mt-2" (click)="addSpaceUse()">Add Space Use</button>
+          <button type="button" class="btn btn-primary mt-2" (click)="addSpaceUse()">Προσθήκη</button>
+        </div>
+
+        <!-- Space Area -->
+        <div formGroupName="spaceArea" class="row mt-3">
+          <div class="col">
+            <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα από:</label>
+            <input type="text" class="form-control" formControlName="from"
+              [class.is-invalid]="form.get('spaces.spaceArea.from')?.invalid && form.get('spaces.spaceArea.from')?.touched">
+            <div *ngIf="form.get('spaces.spaceArea.from')?.hasError('pattern') && form.get('spaces.spaceArea.from')?.touched" class="invalid-feedback">
+              Must be a valid number (e.g. 10 or 10.5).
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα έως:</label>
+            <input type="text" class="form-control" formControlName="until"
+              [class.is-invalid]="form.get('spaces.spaceArea.until')?.invalid && form.get('spaces.spaceArea.until')?.touched">
+            <div *ngIf="form.get('spaces.spaceArea.until')?.hasError('pattern') && form.get('spaces.spaceArea.until')?.touched" class="invalid-feedback">
+              Must be a valid number (e.g. 10 or 10.5).
+            </div>
+          </div>
         </div>
 
       </div>
@@ -91,366 +277,125 @@
 
     <!-- EQUIPMENTS -->
     <div class="card mb-3">
-      <div class="card-header">Equipments</div>
+      <div class="card-header">Εξοπλισμός</div>
       <div class="card-body" formGroupName="equipments">
-        <div class="mb-3">
-          <label class="form-label">Resource Subcategory</label>
-          <input type="text" class="form-control" formControlName="resourceSubcategory">
+
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">Φορέας εξοπλισμού:</label>
+            <input type="text" class="form-control" formControlName="organization">
+          </div>
         </div>
 
-        <!-- itemDescription FormArray -->
-        <!-- <div>
-          <label class="form-label">Item Description</label>
-          <div *ngFor="let item of itemDescriptionArray.controls; let i=index" [formGroup]="item" class="row mb-2">
-            <div class="col">
-              <input type="text" class="form-control" formControlName="value" placeholder="Value">
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="description" placeholder="Description">
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="info" placeholder="Info">
-            </div>
-            <div class="col-auto">
-              <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button>
-            </div>
+        <div class="row mb-3">
+        
+          <div class="col-sm-4">
+            <select class="form-select" aria-label="Default select example" formControlName="resourceSubcategory"
+              (change)="onResourcesubcategoryChange($event)">
+              <option value="" disabled selected>
+                Επιλέξτε υποκατηγορία
+              </option>
+              @for (item of resourceSubcategory; track item) {
+                <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
           </div>
-          <button type="button" class="btn btn-primary mt-2" (click)="addItemDescription()">Add Item</button>
-        </div> -->
-        <div formArrayName="itemDescription">
-          <label class="form-label">Item Description</label>
-          <div *ngFor="let item of itemDescriptionArray.controls; let i = index" [formGroupName]="i" class="row mb-2">
-            <div class="col">
-              <input type="text" class="form-control" formControlName="value" placeholder="Value">
+
+          @if (kind.length > 0) {
+            <div class="col-sm-4">
+              <select class="form-select" aria-label="Default select example" formControlName="kind"
+                (change)="onKindChange($event)">
+                <option value="" disabled selected>
+                  Επιλέξτε είδος
+                </option>
+                @for (item of kind; track item) {
+                  <option [ngValue]="item">{{ item }}</option>
+                }
+              </select>
             </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="description" placeholder="Description">
+          }
+
+          @if (type.length > 0) {
+            <div class="col-sm-4">
+              <select class="form-select" aria-label="Default select example" formControlName="type"
+                (change)="onTypeEquipmentChange($event)">
+                <option value="" disabled selected>
+                  Επιλέξτε τύπος
+                </option>
+                @for (item of type; track item) {
+                  <option [ngValue]="item">{{ item }}</option>
+                }
+              </select>
             </div>
-            <div class="col">
-              <input type="text" class="form-control" formControlName="info" placeholder="Info">
-            </div>
-            <div class="col-auto">
-              <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button>
-            </div>
-          </div>
-          <button type="button" class="btn btn-primary mt-2" (click)="addItemDescription()">Add Item</button>
+          }        
         </div>
+
+        <!-- Item Description FormArray -->
+        @if (itemDescriptionArray.length > 0) {
+          <div formArrayName="itemDescription">
+            <label class="form-label">Χαρακτηριστικά εξοπλισμού</label>
+            <div *ngFor="let item of itemDescriptionArray.controls; let i=index" [formGroupName]="i" class="row mb-2">
+              
+              <div class="col">
+                <input type="text" class="form-control" formControlName="description" placeholder="Description"
+                  [class.is-invalid]="item.get('description')?.invalid && item.get('description')?.touched">
+                <div *ngIf="item.get('description')?.hasError('required') && item.get('description')?.touched" class="invalid-feedback">
+                  Description is required.
+                </div>
+              </div>
+
+              <div class="col">
+                <input type="text" class="form-control" formControlName="value" placeholder="Value"
+                  [class.is-invalid]="item.get('value')?.invalid && item.get('value')?.touched">
+                <div *ngIf="item.get('value')?.hasError('required') && item.get('value')?.touched" class="invalid-feedback">
+                  Value is required.
+                </div>
+              </div>
+              
+              <div class="col-auto">
+                <!-- <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button> -->
+                <mat-icon role="button" class="cursor-pointer" (click)=removeItemDescription(i)>
+                  delete
+                </mat-icon>
+              </div>
+            </div>
+          </div>
+        }
+
+      
+        <div formGroupName="acquisitionDate" class="d-flex gap-3 align-items-center">
+          <div class="flex-fill mb-3">
+            <label for="foundationDateFrom">Ημερομηνία απόκτησης: <strong>από</strong></label>
+            <input type="date" class="form-control" formControlName="from" id="acquisitionDateFrom" />
+          </div>
+          <div class="flex-fill mb-3">
+            <label for="foundationDateUntil"><strong>έως</strong></label>
+            <input type="date" class="form-control" formControlName="until" id="acquisitionDateUntil" />
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <label class="form-label" for="status">Κατάσταση του Αντικειμένου</label>
+          <select class="form-select" id="status" formControlName="status">
+            <option value="" disabled selected>
+              Επιλέξτε Κατάσταση
+            </option>
+            <option νalue="Σε λειτουργία">Σε λειτουργία</option>
+            <option νalue="Προς Διάθεση (stock)">Προς Διάθεση (stock)</option>
+            <option νalue="Προς Απόσυρση">Προς Απόσυρση</option>
+          </select>
+        </div>
+
       </div>
     </div>
 
     <!-- Buttons -->
     <div class="d-flex justify-content-end">
       <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">Reset</button>
-      <button type="submit" class="btn btn-success">Submit</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
     </div>
   </form>
 </div>
-<!-- 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between">
-      <span class="fw-semibold">Στοιχεία Ακινήτων</span>
-    </div>
-    <div formGroupName="organizations" class="card-body">
-      <div class="mb-3">
-        <div>
-          <input type="text" class="form-control" formControlName="preferredLabel" id="preferredLabel"
-            placeholder="Πληκτρολογήστε Στοιχεία Φορέα" />
-        </div>
-        <div class="row row-cols-lg-auto">
-          <span>Αναζήτηση στοιχείων ακινήτων ως:</span>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
-              id="preferredLabelSearch_Org1" value="words">
-            <label class="form-check-label" for="preferredLabelSearch_Org1">ξεχωριστές λέξεις</label>,
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
-              id="preferredLabelSearch_Org2" value="phrase">
-            <label class="form-check-label" for="preferredLabelSearch_Org2">ολόκληρη φράση</label>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="organizationType" formControlName="organizationType">
-            <option value="" disabled>Επιλέξτε Τύπο Φορέα</option>
-            <option value=""></option>
-            @for (types of organizationTypesMap.keys(); track types) {
-            <option [value]="organizationTypesMap.get(types)">
-              {{ organizationTypesMap.get(types) }}
-            </option>
-            }
-          </select>
-        </div>
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="purpose" formControlName="purpose">
-            <option value="" disabled>Επιλέξτε Σκοπό Φορέα</option>
-            <option value=""></option>
-            @for (types of organizationFunctionsMap.keys(); track types) {
-            <option [value]="organizationFunctionsMap.get(types)">
-              {{ organizationFunctionsMap.get(types) }}
-            </option>
-            }
-          </select>
-        </div>
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="level" formControlName="level">
-            <option value="" disabled>Επιλέξτε Επίπεδο Διακυβέρνησης</option>
-            <option value=""></option>
-            @for (types of organizationLevels; track types) {
-            <option [value]="types">
-              {{ types }}
-            </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <input type="text" class="form-control" formControlName="subOrganizationOf" id="subOrganizationOf"
-            placeholder="Πληκτρολογήστε Εποπτεύων Φορέα" />
-        </div>
-
-        <div class="flex-fill mb-3">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="statusActiveOrg" formControlName="statusActive">
-            <label class="form-check-label" for="statusActiveOrg">
-              Ενεργός Φορέας
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="statusInactiveOrg" formControlName="statusInactive">
-            <label class="form-check-label" for="statusInactiveOrg">
-              Ανενεργός Φορέας
-            </label>
-          </div>
-        </div>
-      </div>
-      @if(!showMoreOrganizationFields) {
-      <a role="button" class="link-primary link-offset-2" (click)="moreFields('organization')">Περισσότερα πεδία</a>
-      }
-      @if(showMoreOrganizationFields){
-      <div formGroupName="foundationDate" class="d-flex gap-3 align-items-center">
-       
-        <div class="flex-fill mb-3">
-          <label for="foundationDateFrom">Ημερομηνία Ίδρυσης: <strong>από</strong></label>
-          <input type="date" class="form-control" formControlName="from" id="foundationDateFrom" />
-        </div>
-        <div class="flex-fill mb-3">
-          <label for="foundationDateUntil"><strong>έως</strong></label>
-          <input type="date" class="form-control" formControlName="until" id="foundationDateUntil" />
-        </div>
-      </div>
-      <div formGroupName="terminationDate" class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <label for="terminationDateFrom">Ημερομηνία Τερματισμού: <strong>από</strong></label>
-          <input type="date" class="form-control" formControlName="from" id="terminationDateFrom" />
-        </div>
-        <div class="flex-fill mb-3">
-          <label for="terminationDateUntil"><strong>έως</strong></label>
-          <input type="date" class="form-control" formControlName="until" id="terminationDateUntil" />
-        </div>
-      </div>
-      <div formGroupName="foundationFek" class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <label for="foundationFekFrom">Ημερομηνία ΦΕΚ: <strong>από</strong></label>
-          <input type="date" class="form-control" formControlName="from" id="foundationFekFrom" />
-        </div>
-        <div class="flex-fill mb-3">
-          <label for="foundationFekUntil"><strong>έως</strong></label>
-          <input type="date" class="form-control" formControlName="until" id="foundationFekUntil" />
-        </div>
-      </div>
-      <a role="button" class="link-primary link-offset-2" (click)="lessFields('organization')">Λιγότερα πεδία</a>
-      }
-    </div>
-  </div>
-
-  <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between">
-      <span class="fw-semibold">Στοιχεία Χώρων</span>
-    </div>
-    <div formGroupName="organizational_units" class="card-body">
-      <div class="mb-3">
-        <div>
-          <input type="text" class="form-control" formControlName="preferredLabel" id="preferredLabel"
-            placeholder="Πληκτρολογήστε Στοιχεία Μονάδας" />
-        </div>
-        <div class="row row-cols-lg-auto">
-          <span>Αναζήτηση στοιχείων χώρων ως:</span>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
-              id="preferredLabelSearch_OrgU1" value="words">
-            <label class="form-check-label" for="preferredLabelSearch_OrgU1">ξεχωριστές λέξεις</label>,
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" formControlName="preferredLabelSearch"
-              id="preferredLabelSearch_OrgU1" value="phrase">
-            <label class="form-check-label" for="preferredLabelSearch_OrgU1">ολόκληρη φράση</label>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="unitType" formControlName="unitType">
-            <option value="" disabled>Επιλέξτε Τύπο Μονάδας</option>
-            <option value=""></option>
-            @for (types of organizationUnitTypesMap.keys(); track types) {
-            <option [value]="organizationUnitTypesMap.get(types)">
-              {{ organizationUnitTypesMap.get(types) }}
-            </option>
-            }
-          </select>
-        </div>
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="purpose" formControlName="purpose">
-            <option value="" disabled>Επιλέξτε Σκοπό Μονάδας</option>
-            <option value=""></option>
-            @for (types of organizationUnitFunctionsMap.keys(); track types) {
-            <option [value]="organizationUnitFunctionsMap.get(types)">
-              {{ organizationUnitFunctionsMap.get(types) }}
-            </option>
-            }
-          </select>
-        </div>
-        <div class="flex-fill mb-3">
-          <input type="text" class="form-control" formControlName="supervisorUnitCode" id="supervisorUnitCode"
-            placeholder="Πληκτρολογήστε Προϊστάμενη Μονάδα" />
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  <div formGroupName="remits" class="card mb-4">
-    <div class="card-header d-flex justify-content-between">
-      <span class="fw-semibold">Στοιχεία Εξοπλισμού</span>
-    </div>
-    <div class="card-body">
-      <div class="mb-3">
-        <div>
-          <input type="text" class="form-control" formControlName="remitText" id="remitText"
-            placeholder="Πληκτρολογήστε Στοιχεία Αρμοδιότητας" />
-        </div>
-        <div class="row row-cols-lg-auto">
-          <span>Αναζήτηση στοιχείων αξοπλισμού ως:</span>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" formControlName="remitTextSearch" id="remitTextSearch1"
-              value="words">
-            <label class="form-check-label" for="remitTextSearch1">ξεχωριστές λέξεις</label>,
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" formControlName="remitTextSearch" id="remitTextSearch2"
-              value="phrase">
-            <label class="form-check-label" for="remitTextSearch2">ολόκληρη φράση</label>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="remitType" formControlName="remitType">
-            <option value="" disabled>Επιλέξτε Τύπο Αρμοδιότητας</option>
-            <option value=""></option>
-            @for (types of remitType; track types) {
-            <option [value]="types">
-              {{ types }}
-            </option>
-            }
-          </select>
-        </div>
-        <div class="flex-fill mb-3">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="statusActiveRemit" formControlName="statusActive">
-            <label class="form-check-label" for="statusActiveRemit">
-              Ενεργή Αρμοδιότητα
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="statusInactiveRemit" formControlName="statusInactive">
-            <label class="form-check-label" for="statusInactiveRemit">
-              Ανενεργή Αρμοδιότητα
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex gap-3 align-items-center">
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="cofog1" formControlName="cofog1">
-            <option value="" disabled>Επιλέξτε Λειτουργική Περιοχή COFOG</option>
-            <option value=""></option>
-            @for (types of cofog1; track types) {
-            <option [value]="types.code">
-              {{ types.name }}
-            </option>
-            }
-          </select>
-        </div>
-        @if (cofog1_selected) {
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="cofog2" formControlName="cofog2">
-            <option value="" disabled>Επιλέξτε Λειτουργικό Τομέα COFOG</option>
-            <option value=""></option>
-            @for (types of cofog2; track types) {
-            <option [value]="types.code">
-              {{ types.name }}
-            </option>
-            }
-          </select>
-        </div>
-        }
-        @if (cofog2_selected) {
-        <div class="flex-fill mb-3">
-          <select class="form-select" id="cofog3" formControlName="cofog3">
-            <option value="" disabled>Επιλέξτε Θεματική Περιοχή COFOG</option>
-            <option value=""></option>
-            @for (types of cofog3; track types) {
-            <option [value]="types.code">
-              {{ types.name }}
-            </option>
-            }
-          </select>
-        </div>
-        }
-      </div>
-      <div formArrayName="fekDate">
-        <div *ngFor="let remit of remitFoundations.controls; let i=index" [formGroupName]="i"
-          class="d-flex gap-3 align-items-center">
-          <div class="flex-fill mb-3">
-            <label for="fekDateFrom">Ημερομηνία Αρμοδιότητας: <strong>από</strong></label>
-            <input type="date" class="form-control" formControlName="from" id="fekDateFrom" />
-          </div>
-          <div class="flex-fill mb-3">
-            <label for="fekDateUntil"><strong>έως</strong></label>
-            <input type="date" class="form-control" formControlName="until" id="fekDateUntil" />
-          </div>
-
-          <mat-icon role="button" class="cursor-pointer" (click)=removeDate(i)>
-            delete
-          </mat-icon>
-          <mat-icon role="button" class="cursor-pointer" (click)=addDate()>
-            add
-          </mat-icon>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="d-flex align-items-center gap-2 mb-3">
-    <button type="button" class="btn btn-primary" type="submit">
-      Υποβολή
-    </button>
-    <button type="button" class="btn btn-danger" (click)="resetForm()">
-      Επαναφορά
-    </button>
-    @if (loading) {
-    <span class="d-flex align-items-center gap-2">
-      Αναμονή αποτελεσμάτων...
-      <span class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </span>
-    </span>
-    }
-  </div>
-</form> -->
 
 <!-- @if(rowData) {
   <h5>Αποτελέσματα αναζήτησης</h5> -->

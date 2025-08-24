@@ -9,6 +9,10 @@ import { IEquipment } from '../interfaces/equipment/equipment';
 import { IFacilityConfig } from '../interfaces/facility/facilityConfig';
 import { IEmployee } from '../interfaces/employee/employee';
 
+// For Excel Export
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
 const APIPREFIX_EMPLOYEE = `${environment.apiUrl}/employee`;
@@ -34,17 +38,22 @@ export class ResourcesService {
     return this.http.get<IFacility[]>(url, { observe: 'response' });
   }
 
-  newFacility(data: IFacility): Observable<HttpResponse<{ message: string }>> {
-    return this.http.post<{ message: string }>(APIPREFIX_FACILITY , data, { observe: 'response' });
+  getFacilitiesByListOfOrganizationCodes(codes: string[]): Observable<HttpResponse<IFacility[]>> {
+    const url = `${APIPREFIX_FACILITY}/organizations`;
+    return this.http.get<IFacility[]>(url, { params: { codes: codes.join(',') }, observe: 'response' });
   }
 
-  deleteFacilityById(id:string): Observable<HttpResponse<IFacility>> {
+  newFacility(data: IFacility): Observable<HttpResponse<{ message: string }>> {
+    return this.http.post<{ message: string }>(APIPREFIX_FACILITY, data, { observe: 'response' });
+  }
+
+  deleteFacilityById(id: string): Observable<HttpResponse<IFacility>> {
     const url = `${APIPREFIX_FACILITY}/${id}`;
     return this.http.delete<IFacility>(url, { observe: 'response' });
   }
 
-  updateFacilty(data:IFacility, facilityId:string): Observable<HttpResponse<{ message: string }>> {
-    return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}` , data, { observe: 'response' });
+  updateFacilty(data: IFacility, facilityId: string): Observable<HttpResponse<{ message: string }>> {
+    return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}`, data, { observe: 'response' });
   }
 
   getFacilityCategories(): Observable<IFacilityConfig[]> {
@@ -65,12 +74,12 @@ export class ResourcesService {
   // FACILITY SPACE
   addSpace(data: ISpace): Observable<HttpResponse<{ message: string }>> {
     const facilityId = data.facilityId
-    return this.http.post<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space` , data, { observe: 'response' });
+    return this.http.post<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space`, data, { observe: 'response' });
   }
 
   modifySpace(data: ISpace): Observable<HttpResponse<{ message: string }>> {
     const facilityId = data.facilityId
-    return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space` , data, { observe: 'response' });
+    return this.http.put<{ message: string }>(`${APIPREFIX_FACILITY}/${facilityId}/space`, data, { observe: 'response' });
   }
 
   getSpacesByFacilityId(id: string): Observable<HttpResponse<ISpace[]>> {
@@ -83,7 +92,7 @@ export class ResourcesService {
     return this.http.get<IFacilitySpace[]>(url, { observe: 'response' });
   }
 
-  deleteSpaceById(id:string): Observable<HttpResponse<ISpace>> {
+  deleteSpaceById(id: string): Observable<HttpResponse<ISpace>> {
     const url = `${APIPREFIX_FACILITY}/space/${id}`;
     return this.http.delete<ISpace>(url, { observe: 'response' });
   }
@@ -104,20 +113,20 @@ export class ResourcesService {
     return this.http.put<{ message: string }>(`${url}`, data, { observe: 'response' });
   }
 
-  getEquipmentsByOrganizationCode(code:string): Observable<HttpResponse<IEquipment[]>> {
+  getEquipmentsByOrganizationCode(code: string): Observable<HttpResponse<IEquipment[]>> {
     const url = `${APIPREFIX_EQUIPMENT}/organization/${code}`;
     return this.http.get<IEquipment[]>(url, { observe: 'response' });
   }
 
   addEquipment(data: IEquipment[]): Observable<HttpResponse<{ message: string }>> {
-    return this.http.post<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
+    return this.http.post<{ message: string }>(`${APIPREFIX_EQUIPMENT}`, data, { observe: 'response' });
   }
 
   modifyEquipment(data: IEquipment): Observable<HttpResponse<{ message: string }>> {
-    return this.http.put<{ message: string }>(`${APIPREFIX_EQUIPMENT}` , data, { observe: 'response' });
+    return this.http.put<{ message: string }>(`${APIPREFIX_EQUIPMENT}`, data, { observe: 'response' });
   }
 
-  deleteEquipmentById(id:string): Observable<HttpResponse<IEquipment>> {
+  deleteEquipmentById(id: string): Observable<HttpResponse<IEquipment>> {
     const url = `${APIPREFIX_EQUIPMENT}/${id}`;
     return this.http.delete<IEquipment>(url, { observe: 'response' });
   }
@@ -138,13 +147,42 @@ export class ResourcesService {
   }
 
   newEmployee(data: IEmployee): Observable<HttpResponse<{ message: string }>> {
-    return this.http.post<{ message: string }>(APIPREFIX_EMPLOYEE , data, { observe: 'response' });
+    return this.http.post<{ message: string }>(APIPREFIX_EMPLOYEE, data, { observe: 'response' });
   }
 
   // General Requests
-  deleteFile(fileId:string): Observable<HttpResponse<{ message: string }>> {
+  deleteFile(fileId: string): Observable<HttpResponse<{ message: string }>> {
     const url = `${APIPREFIX_FACILITY}/file/${fileId}`;
     return this.http.delete<{ message: string }>(url, { observe: 'response' });
   }
+
+  // Excel Export
+  onExportToExcelMatrix1(jsonData: any[]): void {
+    const data: any[] = [];
+
+    // Add organization units legal provisions data
+    jsonData.forEach(node => {
+      data.push({
+        'ΦΟΡΕΑΣ': node.organization,
+        'ΑΚΙΝΗΤΟ': node.kaek+"_"+node.addressOfFacility.street+"_"+node.addressOfFacility.number+"_"+node.addressOfFacility.postcode+"_"+node.addressOfFacility.municipality,
+        'ΔΙΑΚΡΙΤΗ ΟΝΟΜΑΣΙΑ': node.distinctiveNameOfFacility,
+        'ΧΡΗΣΗ ΑΚΙΝΗΤΟΥ': node.useOfFacility,
+        'ΣΥΝΟΛΙΚΟΣ ΣΤΕΓΑΣΜΕΝΟΣ ΧΩΡΟΣ (τ.μ)': node.coveredPremisesArea,
+        'ΑΡΙΘΜΟΣ ΟΡΟΦΩΝ/ΕΠΙΠΕΔΩΝ': node.floorsOrLevels
+      });
+    });
+
+    // Create a new worksheet and workbook
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Ακίνητα');
+
+    // Save the file
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'Facility.xlsx');
+  }
 }
+
+
 

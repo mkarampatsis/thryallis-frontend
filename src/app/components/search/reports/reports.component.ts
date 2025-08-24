@@ -11,7 +11,6 @@ import { Subscription, take } from 'rxjs';
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
 import { OrganizationTreeReportComponent } from 'src/app/shared/components/organization-tree-report/organization-tree-report.component';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-reports',

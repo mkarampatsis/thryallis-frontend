@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SearchGridComponent } from '../search-grid/search-grid.component';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,11 +9,15 @@ import { SearchService } from 'src/app/shared/services/search.service';
 import { ISearchGridOutput } from 'src/app/shared/interfaces/search/search.interface';
 import { NgFor } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { IFacilityConfig } from 'src/app/shared/interfaces/facility/facilityConfig';
+import { IEquipmentConfig } from 'src/app/shared/interfaces/equipment/equipmentConfig';
 
 @Component({
   selector: 'app-search-form',
   standalone: true,
   imports: [
+    CommonModule,
     NgbNavModule,
     ReactiveFormsModule,
     SearchGridComponent,
@@ -25,7 +30,9 @@ import { MatIcon } from '@angular/material/icon';
 export class SearchFormComponent {
   active = 1;
   constService = inject(ConstService);
+  constFacilityService = inject(ConstFacilityService);
   searchService = inject(SearchService);
+  resourcesService = inject(ResourcesService);
 
   organizationLevels = this.constService.ORGANIZATION_LEVELS;
   organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
@@ -35,17 +42,46 @@ export class SearchFormComponent {
   showMoreOrganizationFields = false;
   showMoreOrganizationUnitFields = false;
 
+  // For Facility
+  useOfFacility: string[];
+  auxiliarySpace: boolean = false;
+  types: string[] = [];
+
+  // For Space
+  subtypesList: string[][] = [];
+  spacesList: string[][] = [];
+  
+  AUXILIARY_SPACES = this.constFacilityService.AUXILIARY_SPACES;
+  SPACE_USE = this.constFacilityService.SPACE_USE;
+  spaceUse: IFacilityConfig[];
+
+  // For Equipment
+  resourceSubcategory: string[] = [];
+  kind: string[] = [];
+  type: string[] = [];
+  equipmentConfig: IEquipmentConfig[] = [];
+
   rowData: ISearchGridOutput[] | null;
 
   form!: FormGroup;
 
   ngOnInit(): void {
     this.initializeForm();
+    this.resourcesService.getFacilityCategories()
+      .subscribe(result => {
+        this.useOfFacility = result.map(item => item.type);
+      })
+    this.resourcesService.getEquipmentCategories()
+      .subscribe(result => {
+        this.equipmentConfig = result;
+        this.resourceSubcategory = this.getResourceSubcategory()
+      })
   }
 
   initializeForm() {
     this.form = new FormGroup({
       facilities: new FormGroup({
+        organization: new FormControl(''),
         kaek: new FormControl(''),
         distinctiveNameOfFacility: new FormControl(''),
         useOfFacility: new FormArray([]),
@@ -70,21 +106,24 @@ export class SearchFormComponent {
         private: new FormControl(true)
       }),
       spaces: new FormGroup({
+        organization: new FormControl(''),
         spaceName: new FormControl(''),
         spaceUse: new FormArray([
           new FormGroup({
-            type: new FormControl({ value: '', disabled: true }),
+            type: new FormControl(''),
             subtype: new FormControl(''),
             space: new FormControl(''),
+            auxiliarySpace: new FormControl(false)
           }),
         ]),
         spaceArea: new FormGroup({
           from: new FormControl('', [Validators.pattern(/^\d+(\.\d+)?$/)]),
           until: new FormControl('', [Validators.pattern(/^\d+(\.\d+)?$/)]),
         }),
-        auxiliarySpace: new FormControl(false)
+        // auxiliarySpace: new FormControl(false)
       }),
       equipments: new FormGroup({
+        organization: new FormControl(''),
         resourceSubcategory: new FormControl(''),
         kind: new FormControl(''),
         type: new FormControl(''),
@@ -96,16 +135,8 @@ export class SearchFormComponent {
           from: new FormControl(''),
           until: new FormControl(''),
         }),
-        itemDescription: new FormArray([
-          new FormGroup({
-            value: new FormControl(''),
-            description: new FormControl(''),
-            info: new FormControl('')
-          })
-        ]),
+        itemDescription: new FormArray([]),
         status: new FormControl(''),
-        organization: new FormControl(''),
-        organizationCode: new FormControl(''),
       })
     });
   }
@@ -135,9 +166,10 @@ export class SearchFormComponent {
   addSpaceUse() {
     this.spaceUseArray.push(
       new FormGroup({
-        type: new FormControl({ value: '', disabled: true }),
+        type: new FormControl('',),
         subtype: new FormControl(''),
         space: new FormControl(''),
+        auxiliarySpace: new FormControl(false), // Add this too
       })
     );
   }
@@ -146,18 +178,116 @@ export class SearchFormComponent {
     this.spaceUseArray.removeAt(index);
   }
 
-  addItemDescription() {
-    this.itemDescriptionArray.push(
-      new FormGroup({
-        value: new FormControl('', Validators.required),
-        description: new FormControl('', Validators.required),
-        info: new FormControl('', Validators.required)
-      })
-    );
-  }
-
   removeItemDescription(index: number) {
     this.itemDescriptionArray.removeAt(index);
+  }
+
+  // For Space
+  onAuxiliarySpaceChange(status:boolean){
+    return this.auxiliarySpace = status? true: false;
+  }
+
+  onTypeChange(index: number): void {
+    const control = this.spaceUseArray.at(index);
+    control.patchValue({ subtype: '', space: '' });
+
+    this.spacesList[index] = [];
+    this.subtypesList[index] = [];
+
+    const selectedType = control.get('type')?.value;
+    const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
+
+    if (!selectedItem) return;
+
+    const isDirectSpaces = selectedItem.spaces.every(s => typeof s === 'string');
+
+    if (isDirectSpaces) {
+      this.spacesList[index] = selectedItem.spaces as string[];
+    } else {
+      this.subtypesList[index] = (selectedItem.spaces as any[]).map(sub => sub.type);
+    }
+  }
+
+  onSubtypeChange(index: number): void {
+    const control = this.spaceUseArray.at(index);
+    control.patchValue({ space: '' });
+
+    this.spacesList[index] = [];
+
+    const selectedType = control.get('type')?.value;
+    const selectedSubtype = control.get('subtype')?.value;
+
+    const selectedItem = this.SPACE_USE.find(d => d.type === selectedType);
+
+    if (!selectedItem || !Array.isArray(selectedItem.spaces)) return;
+
+    const subtypeItem = (selectedItem.spaces as any[]).find(sub => sub.type === selectedSubtype);
+    if (subtypeItem) {
+      this.spacesList[index] = subtypeItem.spaces;
+    }
+  }
+
+  // For Equipment
+  getResourceSubcategory() {
+    return this.equipmentConfig.map(data => data.resourceSubcategory); 
+  }
+
+  onResourcesubcategoryChange(event: Event) {
+    const resourcesubcategory = (event.target as HTMLSelectElement).value.split(':')[1].trim();
+    this.kind = this.getKinds(resourcesubcategory);
+    this.form.patchValue({ 'equipments.kind': '', 'equipments.type': '' });
+    this.type = [];
+
+    const itemDescriptionArray = this.form.get('equipments.itemDescription') as FormArray;
+    itemDescriptionArray.clear(); // Remove existing items
+  }
+  
+  onKindChange(event: Event) {
+    const kind = (event.target as HTMLSelectElement).value.split(':')[1].trim();
+    this.type = this.getTypes(this.form.value.equipments.resourceSubcategory, kind);
+    this.form.patchValue({ 'equipments.type': '' });
+
+    const itemDescriptionArray = this.form.get('equipments.itemDescription') as FormArray;
+    itemDescriptionArray.clear(); // Remove existing items
+  }
+
+  onTypeEquipmentChange(event: Event) {
+    const type = (event.target as HTMLSelectElement).value.split(':')[1].trim();
+    const descriptions = this.getItemDescriptions(this.form.value.equipments.resourceSubcategory, this.form.value.equipments.kind, type);
+
+    const itemDescriptionArray = this.form.get('equipments.itemDescription') as FormArray;
+    itemDescriptionArray.clear(); // Remove existing items
+
+    descriptions.forEach(desc => {
+      const [descriptionText] = desc.split('=');
+      itemDescriptionArray.push(
+        new FormGroup({
+          description: new FormControl(descriptionText),
+          value: new FormControl(''),
+        })
+      );
+    });
+  }
+
+  getKinds(resourceSubcategory: string) {
+    const resourcecategoryDoc = this.equipmentConfig
+      .find(data => data.resourceSubcategory===resourceSubcategory)
+    return resourcecategoryDoc.kind.map(data => data.name);
+  }
+
+  getTypes(resourceSubcategory: string, kindName: string) {
+    const resourceSubcategoryDoc = this.equipmentConfig
+      .find( data => data.resourceSubcategory === resourceSubcategory)
+    const kindDoc = resourceSubcategoryDoc.kind.find(data => data.name === kindName) 
+    return kindDoc.type.map(data => data.name);
+  }
+  
+  getItemDescriptions(resourceSubcategory: string, kindName: string, type: string) {
+    const resourceSubcategoryDoc = this.equipmentConfig
+      .find( data => data.resourceSubcategory === resourceSubcategory.trim());
+    const kindDoc = resourceSubcategoryDoc.kind.find(data => data.name === kindName);
+    const typeDoc = kindDoc.type.find(data => data.name === type)
+    return typeDoc.itemDescription
   }
 
   resetForm() {
