@@ -1,43 +1,35 @@
 <h4 class="govgr-heading-md">Τυποποιημένες αναφορές</h4>
 
 <div class="mt-4">
-    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αναφορά πόρων Φορέα</h1>
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αναφορά πόρων Φορέα</h1>
 
-    <ul>
-      @for (unit of selectedDataMatrix1; track unit ){
-      <li><strong>Φορέας: </strong>{{ unit.preferredLabel }}</li>
-      }
-    </ul>
-    
-    <div class="d-flex justify-content-between small">
+  <ul>
+    @for (unit of selectedDataMatrix1; track unit ){
+    <li><strong>Φορέας: </strong>{{ unit.preferredLabel }}</li>
+    }
+  </ul>
+
+  <div class="d-flex justify-content-between small">
     <div>
-      <span>Eπιλέξτε φορείς που επιθυμείτε</span>
+      <span>Eπιλέξτε τον Φορέα που επιθυμείτε</span>
     </div>
     <div>
       <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix1()">Καθάρισμα επιλογών</button>
     </div>
   </div>
 
-  <ag-grid-angular 
-    [domLayout]="'autoHeight'" 
-    [rowData]="foreis" 
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs_Matrix1" 
-    [pagination]="true" 
-    [paginationPageSize]="10"
-    [loadingOverlayComponent]="loadingOverlayComponent" 
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    rowSelection="multiple" 
-    (rowSelected)="onRowSelected_Matrix1($event)" 
-    (gridReady)="onGridReady_Matrix1($event)"
+  <ag-grid-angular [domLayout]="'autoHeight'" [rowData]="foreis" [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs_Matrix1" [pagination]="true" [paginationPageSize]="10"
+    [loadingOverlayComponent]="loadingOverlayComponent" [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    rowSelection="multiple" (rowSelected)="onRowSelected_Matrix1($event)" (gridReady)="onGridReady_Matrix1($event)"
     class="ag-theme-balham">
   </ag-grid-angular>
 
   @if(showTable1){
   <div class="mt-4">
-    <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
+    <h1 class="govgr-heading-sm">Αναφορά για τα ακίνητα του φορέα</h1>
 
-    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">Εξαγωγή
+    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
       στοιχείων σε Excel</button>
 
     <table class="table table-striped">
@@ -52,14 +44,99 @@
         </tr>
       </thead>
       <tbody>
-        @for (forea of matrixData1; track forea ){
+        @for (facility of matrixData1["facilities"]; track facility ){
         <tr>
-          <td>{{ forea.organization }}</td>
-          <td>{{ forea.kaek }}_{{forea.addressOfFacility.street}}_{{forea.addressOfFacility.number}}_{{forea.addressOfFacility.postcode}}_{{forea.addressOfFacility.municipality}}</td>
-          <td>{{ forea.distinctiveNameOfFacility }}</td>
-          <td>{{ forea.useOfFacility }}</td>
-          <td>{{ forea.coveredPremisesArea }}</td>
-          <td>{{ forea.floorsOrLevels }}</td>
+          <td>{{ facility.organization }}</td>
+          <td>{{ facility.kaek }}, {{facility.addressOfFacility.street}}, {{facility.addressOfFacility.number}},
+            {{facility.addressOfFacility.postcode}}, {{facility.addressOfFacility.municipality}}</td>
+          <td>{{ facility.distinctiveNameOfFacility }}</td>
+          <td>{{ facility.useOfFacility }}</td>
+          <td>{{ facility.coveredPremisesArea }}</td>
+          <td>{{ facility.floorsOrLevels }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4">
+    <h1 class="govgr-heading-sm">Αναφορά για χώρους του φορέα</h1>
+
+    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
+      στοιχείων σε Excel</button>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ΦΟΡΕΑΣ</th>
+          <th>ΑΚΙΝΗΤΟ</th>
+          <th>ΧΩΡΟΣ</th>
+          <th>ΧΡΗΣΗ ΧΩΡΟΥ</th>
+          <th>ΕΜΒΑΔΟΝ</th>
+          <th>ΕΙΣΟΔΟΙ</th>
+          <th>ΠΑΡΑΘΥΡΑ</th>
+          <th>ΟΡΟΦΟΣ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (facility of matrixData1["facilities"]; track facility._id) {
+        @for (space of facility.spaces; track space._id) {
+        <tr>
+          <td>{{ facility.organization }}</td>
+          <td>
+            {{ facility.kaek }},
+            {{ facility.addressOfFacility.street }}
+            {{ facility.addressOfFacility.number }},
+            {{ facility.addressOfFacility.postcode }},
+            {{ facility.addressOfFacility.municipality }}
+          </td>
+          <td>{{ space.spaceName }}</td>
+          <td>
+            {{ space.spaceUse.type }},
+            {{ space.spaceUse.subtype }},
+            {{ space.spaceUse.space }}
+          </td>
+          <td>
+            {{ space.spaceArea }}
+            ({{ space.spaceWidth }} x {{ space.spaceLength }})
+          </td>
+          <td>{{ space.entrances }}</td>
+          <td>{{ space.windows }}</td>
+          <td>{{ space.floorPlans.level }} ({{ space.floorPlans.num }})</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4">
+    <h1 class="govgr-heading-sm">Αναφορά για τον εξοπλισμό του φορέα</h1>
+
+    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
+      στοιχείων σε Excel</button>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ΦΟΡΕΑΣ</th>
+          <th>ΚΩΔΙΚΟΣ</th>
+          <th>ΤΥΠΟΣ</th>
+          <th>ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ</th>
+          <th>ΗΜΕΡ. ΑΝΑΚΤΗΣΗΣ</th>
+          <th>ΚΑΤΑΣΤΑΣΗ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (equipment of matrixData1["equipments"]; track equipment ){
+        <tr>
+          <td>{{ equipment.organization }}</td>
+          <td>{{ equipment._id["$oid"] }}</td>
+          <td>{{ equipment.resourceCategory }}, {{equipment.resourceSubcategory}}, {{equipment.kind}},
+            {{equipment.type}}</td>
+          <td>{{ getDescriptionValueString(equipment.itemDescription) }}</td>
+          <td>{{ equipment.acquisitionDate.$date | date:'dd-MM-yyyy' }}</td>
+          <td>{{ equipment.status }}</td>
         </tr>
         }
       </tbody>

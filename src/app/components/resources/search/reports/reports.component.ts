@@ -39,6 +39,8 @@ export class ReportsComponent {
 
   gridApiOrganization: GridApi<IOrganizationList>;
 
+  selectedRowLimit = 1;
+
   selectedDataMatrix1 = [];
   matrixData1 = [];
   showTable1 = false;
@@ -65,17 +67,33 @@ export class ReportsComponent {
   onRowSelected_Matrix1(event: any) {
     const selectedNodes = event.api.getSelectedNodes();
 
+    // Disable further selections if the limit is reached
+    if (selectedNodes.length >= this.selectedRowLimit) {
+      event.api.forEachNode((node) => {
+        if (!node.isSelected()) {
+          node.selectable = false; // Disable checkbox for unselected rows
+        }
+      });
+    } else {
+      // Enable selection for all rows if under the limit
+      event.api.forEachNode((node) => {
+        node.selectable = true; // Re-enable checkbox
+      });
+    }
+
     // Log selected rows to the console
     this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
     const codes = selectedNodes.map(node => node.data.code);
-    this.resourceService.getFacilitiesByListOfOrganizationCodes(codes)
-      .subscribe(response => {
-        const body = response.body;
-        const status = response.status;
-        if (status === 200) {
-          this.matrixData1 = body;
-        }
-      })
+    if (codes.length>0) {
+      this.resourceService.getReportForOrganization_1(codes)
+        .subscribe(response => {
+          const body = response.body;
+          const status = response.status;
+          if (status === 200) {
+            this.matrixData1 = body;
+          }
+        })
+    }
     
     if (this.selectedDataMatrix1.length > 0) {
       this.showTable1 = true;
@@ -91,7 +109,12 @@ export class ReportsComponent {
     }
   }
 
-  onBtnExportMatrix1() {
-    this.resourceService.onExportToExcelMatrix1(this.matrixData1);
+  getDescriptionValueString(itemDescription: any[]): string {
+    if (!itemDescription || itemDescription.length === 0) return '';
+    return itemDescription.map(item => `${item.description}=${item.value}`).join(', ');
   }
+
+  onBtnExportReport1() {
+    this.resourceService.onExportToExcelMatrix1(this.matrixData1);
+  } 
 }

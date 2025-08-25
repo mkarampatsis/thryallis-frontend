@@ -156,6 +156,11 @@ export class ResourcesService {
     return this.http.delete<{ message: string }>(url, { observe: 'response' });
   }
 
+  getReportForOrganization_1(codes: string[]): Observable<HttpResponse<[]>> {
+    const url = `${APIPREFIX_FACILITY}/report1`;
+    return this.http.get<[]>(url, { params: { codes: codes.join(',') }, observe: 'response' });
+  }
+
   // Excel Export
   onExportToExcelMatrix1(jsonData: any[]): void {
     const data: any[] = [];
