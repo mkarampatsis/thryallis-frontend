@@ -1,0 +1,93 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Λεπτομέρειες Ακινήτου</span>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="mb-3 mt-3 p-2">
+    <div class="container mt-3" *ngIf="data?.facility">
+      <!-- Facility Info -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4>{{ data.facility.distinctiveNameOfFacility }}</h4>
+          <small class="text-muted">{{ data.facility.organization }}</small>
+        </div>
+        <div class="card-body">
+          <p><strong>Χρήση Ακινήτου:</strong> {{ data.facility.useOfFacility }}</p>
+          <p><strong>Κωδικός Ακινήτου Εθνικού Κτηματολογίου:</strong> {{ data.facility.kaek }}</p>
+          <p><strong>ΚΑΕΚ του Γηπέδου ως ανεξάρτητη χωρική υποδομή:</strong> {{ data.facility.belongsTo }}</p>
+          <p><strong>Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων:</strong> {{ data.facility.floorsOrLevels }}</p>
+          <p><strong>Στοιχεία διεύθυνσης ακινήτου:</strong>
+            {{ data.facility.addressOfFacility.street }} {{ data.facility.addressOfFacility.number }},
+            {{ data.facility.addressOfFacility.area }}, {{ data.facility.addressOfFacility.municipality }},
+            {{ data.facility.addressOfFacility.geographicRegion }} - {{ data.facility.addressOfFacility.country }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Spaces Accordion -->
+      <div class="accordion" id="spacesAccordion">
+        <div class="accordion-item" *ngFor="let space of data.spaces; let i = index">
+          <h2 class="accordion-header" id="heading{{i}}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
+              {{ space.spaceName }} ({{ space.spaceUse.space }})
+            </button>
+          </h2>
+          <div [id]="'collapse' + i" class="accordion-collapse collapse" [attr.aria-labelledby]="'heading' + i"
+            data-bs-parent="#spacesAccordion">
+            <div class="accordion-body">
+              <p><strong>Eμβαδόν του χώρου σε τετραγωνικά μέτρα:</strong> {{ space.spaceArea }} m²</p>
+              <p><strong>Το πλάτος του χώρου σε μέτρα:</strong> {{ space.spaceLength }}m × {{ space.spaceWidth }}m</p>
+              <p><strong>Aριθμός των εισόδων του χώρου:</strong> {{ space.entrances }} | <strong>Windows:</strong> {{ space.windows }}</p>
+              <p><strong>Μονάδες που ανήκει:</strong></p>
+              <ul>
+                <li *ngFor="let unit of space.organizationalUnit">
+                  {{ unit.organizationalUnit }} ({{ unit.organizationalUnitCode }})
+                </li>
+              </ul>
+
+              <!-- Equipments -->
+              <div *ngIf="space.equipments.length > 0">
+                <h6>Εξοπλισμός ακινήτου</h6>
+                <table class="table table-sm table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Κατηγορία</th>
+                      <th>Είδος</th>
+                      <th>Τύπος</th>
+                      <th>Κατάσταση</th>
+                      <th>Ποσότητα</th>
+                      <th>Κωδικοί</th>
+                      <th>Χαρακτηριστικά</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let eq of space.equipments">
+                      <td>{{ eq.resourceSubcategory }}</td>
+                      <td>{{ eq.kind }}</td>
+                      <td>{{ eq.type }}</td>
+                      <td>{{ eq.status }}</td>
+                      <td>{{ eq.itemQuantity[0]?.quantity }}</td>
+                      <td>{{ eq.itemQuantity[0]?.codes }}</td>
+                      <td>{{ getItemDescriptionString(eq) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="space.equipments.length === 0">
+                <span class="text-muted">Δεν έχει εξοπλισμό</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+  <button ngbAutofocus type="button" class="btn btn-primary" (click)="modalRef.close()">
+    Επιστροφή
+  </button>
+</div>

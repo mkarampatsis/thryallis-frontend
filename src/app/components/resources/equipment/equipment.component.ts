@@ -463,7 +463,7 @@ export class EquipmentComponent implements OnInit {
     // }
     // console.log(invalid)
 
-    const equiments = [];
+    const equipmentsSubmited = [];
 
     for (let item of this.form.controls.itemQuantity.value) {
       
@@ -493,12 +493,12 @@ export class EquipmentComponent implements OnInit {
           depreciationDate: '',
           status: this.form.controls.status.value
         };
-        equiments.push(data)
+        equipmentsSubmited.push(data)
       }           
     }
     
     if (this.updateEquipment) {
-      let updateEquipment = equiments[0]
+      let updateEquipment = equipmentsSubmited[0]
       updateEquipment["_id"] = this.updateEquipment["_id"]["$oid"];
       this.resourcesService.modifyEquipment(updateEquipment)
         .subscribe(response => {
@@ -511,7 +511,7 @@ export class EquipmentComponent implements OnInit {
           }
         })
     } else {
-      this.resourcesService.addEquipment(equiments)
+      this.resourcesService.addEquipment(equipmentsSubmited)
         .subscribe(response => {
           const body = response.body;          
           const status = response.status;        

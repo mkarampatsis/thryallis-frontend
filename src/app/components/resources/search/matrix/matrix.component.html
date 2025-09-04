@@ -1,5 +1,7 @@
 <h4 class="govgr-heading-md">Συγκριτικά στοιχεία για Ακίνητα, Χώρους, Εξοπλισμό</h4>
 
+
+<!-- Matrix 1 -->
 <div class="mt-4">
   <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Συνοπτική σύγκριση μεταξύ δύο ή περισσότερων ακινήτων
     ενός φορέα</h1>
@@ -15,7 +17,7 @@
       <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
     </div>
     <div>
-      <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix1()">Καθάρισμα επιλογών</button>
+      <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix(1)">Καθάρισμα επιλογών</button>
     </div>
   </div>
 
@@ -23,7 +25,7 @@
     [domLayout]="'autoHeight'" 
     [rowData]="foreis" 
     [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs_Matrix1" 
+    [columnDefs]="colDefs_Organizations" 
     [pagination]="true" 
     [paginationPageSize]="10"
     [loadingOverlayComponent]="loadingOverlayComponent" 
@@ -50,6 +52,7 @@
           <th>ΧΡΗΣΗ ΑΚΙΝΗΤΟΥ</th>
           <th>ΣΥΝΟΛΙΚΟΣ ΣΤΕΓΑΣΜΕΝΟΣ ΧΩΡΟΣ (τ.μ)</th>
           <th>ΑΡΙΘΜΟΣ ΟΡΟΦΩΝ/ΕΠΙΠΕΔΩΝ</th>
+          <th>ΕΝΕΡΓΕΙΕΣ</th>
         </tr>
       </thead>
       <tbody>
@@ -61,6 +64,10 @@
           <td>{{ forea.useOfFacility }}</td>
           <td>{{ forea.coveredPremisesArea }}</td>
           <td>{{ forea.floorsOrLevels }}</td>
+          <td> 
+            <i class="bi bi-info-circle" role="button" (click)="showDetailsMatrix1(forea._id.$oid)"
+              ngbTooltip="Στοιχεία Ακινήτου"></i>
+          </td>
         </tr>
         }
       </tbody>
@@ -71,4 +78,176 @@
 
 <div class="text-success mt-4">
   <hr>
+</div>
+
+<!-- Matrix 2 -->
+
+<div class="mt-4">
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
+
+  <ul>
+    @for (unit of selectedDataMatrix2; track unit ){
+    <li><strong>Φορέας: </strong>{{ unit.preferredLabel }}</li>
+    }
+  </ul>
+
+  <div class="d-flex justify-content-between small">
+    <div>
+      <span>Eπιλέξτε φορείς που επιθυμείτε να συγκρίνετε</span>
+    </div>
+    <div>
+      <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix(2)">Καθάρισμα επιλογών</button>
+    </div>
+  </div>
+
+  <ag-grid-angular 
+    [domLayout]="'autoHeight'" 
+    [rowData]="foreis" 
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs_Organizations" 
+    [pagination]="true" 
+    [paginationPageSize]="10"
+    [loadingOverlayComponent]="loadingOverlayComponent" 
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    rowSelection="multiple" 
+    (rowSelected)="onRowSelected_Matrix2($event)" 
+    (gridReady)="onGridReady_Matrix2($event)"
+    class="ag-theme-balham">
+  </ag-grid-angular>
+
+  @if(showTable2){
+  <div class="mt-4">
+    <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
+
+    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix2()" [disabled]="!showTable2">Εξαγωγή
+      στοιχείων σε Excel</button>
+
+    <div class="container mt-4" *ngIf="matrixData2">
+      <div *ngFor="let org of (matrixData2 | keyvalue)" class="mb-5">
+        <h3 class="mb-3">{{ org.key }}</h3>
+
+        <!-- Facilities -->
+        <h5>Ακίνητα</h5>
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr>
+              <th>Σύνολο Ακινήτων</th>
+              <th>Συνολικά εμβαδόν ακινήτων</th>
+              <th>Εμβαδόν ανά ακίνητο</th>
+              <th>Χρήση Ακινήτου</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ org.value.facilities.total }}</td>
+              <td>{{ org.value.facilities.totalCoveredArea }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let ca of (org.value.facilities.coveredAreas | keyvalue)">
+                    {{ ca.key }}: {{ ca.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let f of (org.value.facilities.byUse | keyvalue)">
+                    {{ f.key }}: {{ f.value }}
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Spaces -->
+        <h5>Spaces</h5>
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr>
+              <th>Σύνολο Χώρων</th>
+              <th>Χρήση χώρου</th>
+              <th>Υποτύπος χώρου</th>
+              <th>Χώρος</th>
+              <th>Βοηθητικός Χώρος</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ org.value.spaces.total }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let s of (org.value.spaces.byType | keyvalue)">
+                    {{ s.key }}: {{ s.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let s of (org.value.spaces.bySubtype | keyvalue)">
+                    {{ s.key }}: {{ s.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let s of (org.value.spaces.bySpace | keyvalue)">
+                    {{ s.key }}: {{ s.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>{{ org.value.spaces.byAuxiliary }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Equipments -->
+        <h5>Εξοπλισμός</h5>
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr>
+              <th>Σύνολο εξοπλισμού</th>
+              <th>Κατηγορία</th>
+              <th>Υποκατηγορία</th>
+              <th>Είδος</th>
+              <th>Τύπος</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ org.value.equipments.total }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let e of (org.value.equipments.byCategory | keyvalue)">
+                    {{ e.key }}: {{ e.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let e of (org.value.equipments.bySubcategory | keyvalue)">
+                    {{ e.key }}: {{ e.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let e of (org.value.equipments.byKind | keyvalue)">
+                    {{ e.key }}: {{ e.value }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let e of (org.value.equipments.byType | keyvalue)">
+                    {{ e.key }}: {{ e.value }}
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  }
 </div>

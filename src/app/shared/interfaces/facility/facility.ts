@@ -49,3 +49,57 @@ export interface ISpace {
     num: string;
   }
 }
+
+export interface FacilityData {
+  facility: {
+    distinctiveNameOfFacility: string;
+    organization: string;
+    kaek: string;
+    belongsTo: string;
+    floorsOrLevels: number;
+    useOfFacility: string
+    addressOfFacility: {
+      street: string;
+      number: string;
+      postcode: string;
+      area: string;
+      municipality: string;
+      geographicRegion: string;
+      country: string;
+    };
+  };
+  spaces: Array<{
+    spaceName: string;
+    spaceUse: { type: string; space: string; };
+    spaceArea: string;
+    spaceLength: string;
+    spaceWidth: string;
+    entrances: string;
+    windows: string;
+    organizationalUnit: Array<{ organizationalUnit: string; organizationalUnitCode: string; }>;
+    equipments: Array<any>;
+  }>;
+}
+
+export interface FacilitySummary {
+  facilities: {
+    total: number;
+    byUse: { [useOfFacility: string]: number };
+    coveredAreas: { [kaek: string]: number };
+    totalCoveredArea: number;
+  };
+  spaces: {
+    total: number;
+    byAuxiliary: number;
+    byType: { [type: string]: number }; 
+    bySubtype: { [subtype: string]: number }; 
+    bySpace: { [space: string]: number };
+  };
+  equipments: {
+    total: number;
+    byKind: { [kind: string]: number };
+    byCategory: { [category: string]: number };
+    bySubcategory: { [subcategory: string]: number };
+    byType: { [type: string]: number };
+  };
+}
