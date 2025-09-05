@@ -205,12 +205,14 @@ export class ResourcesService {
     for (const [org, orgData] of Object.entries(jsonData)) {
       if (org === "_TOTALS_") continue; // skip totals for now, handle later
 
+      const facilityNames = orgData.facilities.names.join(", ");
+      
       // Facilities
       data.push({
         Organization: org,
         Section: "Ακίνητα",
         Metric: "Σύνολο ακινήτων",
-        Value: orgData.facilities.total,
+        Value: facilityNames || orgData.facilities.total,
       });
       data.push({
         Organization: org,
@@ -368,7 +370,8 @@ export class ResourcesService {
             total: 0,
             byUse: {},
             coveredAreas: [],
-            totalCoveredArea: 0
+            totalCoveredArea: 0,
+            names: []
           },
           spaces: { 
             total: 0, 
@@ -394,6 +397,17 @@ export class ResourcesService {
 
       const use = facility.useOfFacility;
       result[org].facilities.byUse[use] = (result[org].facilities.byUse[use] || 0) + 1;
+
+      // Build facility name string
+      const kaek = facility.kaek || "";
+      const useStr = Array.isArray(facility.useOfFacility) ? facility.useOfFacility.join("-") : (facility.useOfFacility || "");
+      const addr = facility.addressOfFacility || {};
+      const addrStr = [addr.street, addr.number, addr.postcode, addr.area]
+        .filter(Boolean)
+        .join("_");
+
+      const facilityName = [kaek, useStr, addrStr].filter(Boolean).join("_");
+      result[org].facilities.names.push(facilityName);
 
       facility.spaces.forEach((space: any) => {
         result[org].spaces.total += 1;

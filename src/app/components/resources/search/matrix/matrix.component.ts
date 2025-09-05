@@ -50,10 +50,12 @@ export class MatrixComponent {
   selectedDataMatrix1 = [];
   matrixData1 = [];
   showTable1 = false;
+  loadingMatrix1 = false;
 
   selectedDataMatrix2 = [];
   matrixData2 : { [organization: string]: IFacilitySummary } = {};
   showTable2 = false;
+  loadingMatrix2 = false;
 
   selectedRowLimit = 2;
   
@@ -62,18 +64,18 @@ export class MatrixComponent {
     this.gridMatrix1 = params.api;
     this.gridMatrix1.showLoadingOverlay();
     this.store
-      .select(this.organizations$)
-      .pipe(take(1))
-      .subscribe((data) => {
-        this.foreis = data.map((org) => {
-          return {
-            ...org,
-            organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
-            subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
-          };
-        });
-        this.gridMatrix1.hideOverlay();
+    .select(this.organizations$)
+    .pipe(take(1))
+    .subscribe((data) => {
+      this.foreis = data.map((org) => {
+        return {
+          ...org,
+          organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
+          subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
+        };
       });
+      this.gridMatrix1.hideOverlay();
+    });
   }
 
   onRowSelected_Matrix1(event: any) {
@@ -82,20 +84,19 @@ export class MatrixComponent {
     // Log selected rows to the console
     this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
     const codes = selectedNodes.map(node => node.data.code);
+    this.showTable1 = false;
+    this.loadingMatrix1 = true;
+
     this.resourceService.getFacilitiesByListOfOrganizationCodes(codes)
-      .subscribe(response => {
-        const body = response.body;
-        const status = response.status;
-        if (status === 200) {
-          this.matrixData1 = body;
-        }
-      })
-    
-    if (this.selectedDataMatrix1.length > 0) {
-      this.showTable1 = true;
-    } else {
-      this.showTable1 = false
-    }
+    .subscribe(response => {
+      const body = response.body;
+      const status = response.status;
+      if (status === 200) {
+        this.matrixData1 = body;
+        this.showTable1 = false
+        this.loadingMatrix1 = false;
+      }
+    })
   }
 
   showDetailsMatrix1(code: string){
@@ -111,18 +112,18 @@ export class MatrixComponent {
     this.gridMatrix2 = params.api;
     this.gridMatrix2.showLoadingOverlay();
     this.store
-      .select(this.organizations$)
-      .pipe(take(1))
-      .subscribe((data) => {
-        this.foreis = data.map((org) => {
-          return {
-            ...org,
-            organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
-            subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
-          };
-        });
-        this.gridMatrix2.hideOverlay();
+    .select(this.organizations$)
+    .pipe(take(1))
+    .subscribe((data) => {
+      this.foreis = data.map((org) => {
+        return {
+          ...org,
+          organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
+          subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
+        };
       });
+      this.gridMatrix2.hideOverlay();
+    });
   }
 
   onRowSelected_Matrix2(event: any) {
@@ -145,21 +146,20 @@ export class MatrixComponent {
     // Log selected rows to the console
     this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
     const codes = selectedNodes.map(node => node.data.code);
-    this.resourceService.getFacilityDetailsByOrganizations(codes)
-      .subscribe(response => {
-        const body = response.body;
-        const status = response.status;
-        if (status === 200) {
-          console.log(body);
-          this.matrixData2 = this.resourceService.aggregateData(body);
-        }
-      })
+    this.showTable2 = false
+    this.loadingMatrix2 = true;
     
-    if (this.selectedDataMatrix2.length > 0) {
-      this.showTable2 = true;
-    } else {
-      this.showTable2 = false
-    }
+    this.resourceService.getFacilityDetailsByOrganizations(codes)
+    .subscribe(response => {
+      const body = response.body;
+      const status = response.status;
+      if (status === 200) {
+        console.log(body);
+        this.matrixData2 = this.resourceService.aggregateData(body);
+        this.showTable2 = true;
+        this.loadingMatrix2 = false;
+      }
+    })
   }
 
   onBtnExportMatrix2() {

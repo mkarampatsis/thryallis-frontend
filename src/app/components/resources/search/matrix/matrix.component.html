@@ -35,6 +35,17 @@
     class="ag-theme-balham">
   </ag-grid-angular>
 
+  @if (loadingMatrix1) {
+    <div class="mt-4">
+      <span class="d-flex align-items-center gap-2">
+        Αναμονή αποτελεσμάτων...
+        <span class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </span>
+    </div>
+  } 
+
   @if(showTable1){
   <div class="mt-4">
     <h1 class="govgr-heading-sm">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
@@ -114,7 +125,19 @@
     class="ag-theme-balham">
   </ag-grid-angular>
 
-  @if(showTable2){
+
+@if (loadingMatrix2) {
+  <div class="mt-4">
+    <span class="d-flex align-items-center gap-2">
+      Αναμονή αποτελεσμάτων...
+      <span class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </span>
+    </span>
+  </div>
+}  
+
+@if(showTable2){
   <div class="mt-4">
     <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
 
@@ -138,7 +161,11 @@
           </thead>
           <tbody>
             <tr>
-              <td>{{ org.value.facilities.total }}</td>
+              <td>
+                <ul>
+                    <li *ngFor="let name of org.value.facilities.names">{{ name }}</li>
+                </ul>
+              </td>
               <td>{{ org.value.facilities.totalCoveredArea }}</td>
               <td>
                 <ul>

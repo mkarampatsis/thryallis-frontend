@@ -83,6 +83,7 @@ export interface IFacilityData {
 
 export interface IFacilitySummary {
   facilities: {
+    names: string[];
     total: number;
     byUse: { [useOfFacility: string]: number };
     coveredAreas: { [kaek: string]: number };

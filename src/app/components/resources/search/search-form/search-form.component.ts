@@ -300,8 +300,8 @@ export class SearchFormComponent {
 
   submitForm() {
     if (this.form.valid) {
-      const data = this.transformData(this.form.getRawValue());
       console.log('Form Data1:', this.form.getRawValue()); // getRawValue includes disabled fields
+      const data = this.transformData(this.form.getRawValue());
       console.log('Form Data2:',data)
     } else {
       console.log('Form is invalid');
@@ -342,12 +342,7 @@ export class SearchFormComponent {
       }
 
       if (f.coveredPremisesArea) {
-        if (f.coveredPremisesArea.from) {
-          pushCond("facilities", { field: "coveredPremisesArea", query: { gte: f.coveredPremisesArea.from } });
-        }
-        if (f.coveredPremisesArea.until) {
-          pushCond("facilities", { field: "coveredPremisesArea", query: { lte: f.coveredPremisesArea.until } });
-        }
+        pushCond("facilities", { field: "coveredPremisesArea", query: { gte: f.coveredPremisesArea.from, lte: f.coveredPremisesArea.until } });
       }
 
       // ✅ Join addressOfFacility fields
@@ -398,12 +393,7 @@ export class SearchFormComponent {
       }
 
       if (s.spaceArea) {
-        if (s.spaceArea.from) {
-          pushCond("spaces", { field: "spaceArea", query: { gte: s.spaceArea.from } });
-        }
-        if (s.spaceArea.until) {
-          pushCond("spaces", { field: "spaceArea", query: { lte: s.spaceArea.until } });
-        }
+        pushCond("spaces", { field: "spaceArea", query: { gte: s.spaceArea.from, lte: s.spaceArea.until} });
       }
     }
 
@@ -430,21 +420,23 @@ export class SearchFormComponent {
       }
 
       if (e.acquisitionDate) {
-        if (e.acquisitionDate.from) {
-          pushCond("equipments", { field: "acquisitionDate", query: { gte: new Date(e.acquisitionDate.from).toISOString() } });
-        }
-        if (e.acquisitionDate.until) {
-          pushCond("equipments", { field: "acquisitionDate", query: { lte: new Date(e.acquisitionDate.until).toISOString() } });
-        }
+        pushCond("equipments", { 
+          field: "acquisitionDate", 
+            query: { 
+              gte: new Date(e.acquisitionDate.from).toISOString(),
+              lte: new Date(e.acquisitionDate.until).toISOString()
+            } 
+          })
       }
 
       if (e.depreciationDate) {
-        if (e.depreciationDate.from) {
-          pushCond("equipments", { field: "depreciationDate", query: { gte: new Date(e.depreciationDate.from).toISOString() } });
-        }
-        if (e.depreciationDate.until) {
-          pushCond("equipments", { field: "depreciationDate", query: { lte: new Date(e.depreciationDate.until).toISOString() } });
-        }
+        pushCond("equipments", { 
+          field: "depreciationDate", 
+          query: { 
+            gte: e.depreciationDate.from ? new Date(e.depreciationDate.from).toISOString() : "",
+            lte: e.depreciationDate.unti ? new Date(e.depreciationDate.until).toISOString() : ""
+          } 
+        });
       }
     }
 
