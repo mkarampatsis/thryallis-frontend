@@ -50,7 +50,7 @@ export interface ISpace {
   }
 }
 
-export interface FacilityData {
+export interface IFacilityData {
   facility: {
     distinctiveNameOfFacility: string;
     organization: string;
@@ -81,7 +81,7 @@ export interface FacilityData {
   }>;
 }
 
-export interface FacilitySummary {
+export interface IFacilitySummary {
   facilities: {
     total: number;
     byUse: { [useOfFacility: string]: number };

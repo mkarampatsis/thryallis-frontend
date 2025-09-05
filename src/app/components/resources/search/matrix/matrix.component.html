@@ -3,8 +3,7 @@
 
 <!-- Matrix 1 -->
 <div class="mt-4">
-  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Συνοπτική σύγκριση μεταξύ δύο ή περισσότερων ακινήτων
-    ενός φορέα</h1>
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Συνοπτική σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
 
   <ul>
     @for (unit of selectedDataMatrix1; track unit ){
@@ -38,7 +37,7 @@
 
   @if(showTable1){
   <div class="mt-4">
-    <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
+    <h1 class="govgr-heading-sm">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
 
     <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">Εξαγωγή
       στοιχείων σε Excel</button>

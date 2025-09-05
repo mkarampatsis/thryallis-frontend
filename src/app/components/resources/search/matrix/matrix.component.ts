@@ -12,7 +12,7 @@ import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { take } from 'rxjs';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { FacilitySummary } from 'src/app/shared/interfaces/facility/facility';
+import { IFacilitySummary } from 'src/app/shared/interfaces/facility/facility';
 
 @Component({
   selector: 'app-matrix',
@@ -33,7 +33,7 @@ export class MatrixComponent {
   organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
 
   objectKeys = Object.keys;
-  summary: { [organization: string]: FacilitySummary } = {};
+  // summary: { [organization: string]: IFacilitySummary } = {};
 
   foreis: IOrganizationList[] = [];
 
@@ -52,7 +52,7 @@ export class MatrixComponent {
   showTable1 = false;
 
   selectedDataMatrix2 = [];
-  matrixData2 : { [organization: string]: FacilitySummary } = {};
+  matrixData2 : { [organization: string]: IFacilitySummary } = {};
   showTable2 = false;
 
   selectedRowLimit = 2;
@@ -163,7 +163,7 @@ export class MatrixComponent {
   }
 
   onBtnExportMatrix2() {
-    this.resourceService.onExportToExcelMatrix1(this.matrixData1);
+    this.resourceService.onExportToExcelMatrix2(this.matrixData2);
   }
 
   clearSelectionMatrix(matrix: number) {

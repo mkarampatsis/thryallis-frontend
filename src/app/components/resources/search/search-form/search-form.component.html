@@ -7,11 +7,24 @@
     <div class="card mb-3">
       <div class="card-header">Στοιχεία ακινήτου</div>
       <div class="card-body" formGroupName="facilities">
-        
+
         <div class="row mb-3">
           <div class="col">
             <label class="form-label">Φορέας ακίνητου:</label>
             <input type="text" class="form-control" formControlName="organization">
+          </div>
+          <div class="row row-cols-lg-auto">
+            <span>Αναζήτηση στοιχείων φορέα ως:</span>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="organizationSearch"
+                id="facilitySearch1" value="words">
+              <label class="form-check-label" for="facilitySearch1">ξεχωριστές λέξεις</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="organizationSearch"
+                id="facilitySearch2" value="phrase">
+              <label class="form-check-label" for="facilitySearch2">ολόκληρη φράση</label>
+            </div>
           </div>
         </div>
 
@@ -28,30 +41,22 @@
             <input type="text" class="form-control" formControlName="distinctiveNameOfFacility">
           </div>
         </div>
-        
+
 
         <!-- useOfFacility FormArray -->
         <div formArrayName="useOfFacility" class="mb-3">
           <label class="form-label">Χρήση Ακινήτου:</label>
           <div *ngFor="let use of useOfFacilityArray.controls; let i=index" class="input-group mb-2">
-            <select 
-              class="form-select" 
-              aria-label="Default select example" 
-              [formControlName]="i"
-            >
+            <select class="form-select" aria-label="Default select example" [formControlName]="i">
               <option value="" disabled selected>
                 Επιλέξτε Τύπο Χρήσης
               </option>
               @for (item of useOfFacility; track item) {
-                <option [ngValue]="item">{{ item }}</option>
+              <option [ngValue]="item">{{ item }}</option>
               }
             </select>
-            <mat-icon
-              role="button"
-              class="cursor-pointer mx-2"
-              (click) = removeUseOfFacility(i)  
-            >
-              delete 
+            <mat-icon role="button" class="cursor-pointer mx-2" (click)=removeUseOfFacility(i)>
+              delete
             </mat-icon>
           </div>
           <button type="button" class="btn btn-primary mx-2" (click)="addUseOfFacility()">Προσθήκη</button>
@@ -109,18 +114,24 @@
         <!-- Floors or Levels -->
         <div formGroupName="floorsOrLevels" class="row mb-3">
           <div class="col">
-            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων από:</label>
+            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων,
+              ημιορόφων από:</label>
             <input type="text" class="form-control" formControlName="from"
               [class.is-invalid]="form.get('facilities.floorsOrLevels.from')?.invalid && form.get('facilities.floorsOrLevels.from')?.touched">
-            <div *ngIf="form.get('facilities.floorsOrLevels.from')?.hasError('pattern') && form.get('facilities.floorsOrLevels.from')?.touched" class="invalid-feedback">
+            <div
+              *ngIf="form.get('facilities.floorsOrLevels.from')?.hasError('pattern') && form.get('facilities.floorsOrLevels.from')?.touched"
+              class="invalid-feedback">
               Μόνο αριθμοί επιτρέπονται (π.χ 5)
             </div>
           </div>
           <div class="col">
-            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων, ημιορόφων έως:</label>
+            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων,
+              ημιορόφων έως:</label>
             <input type="text" class="form-control" formControlName="until"
               [class.is-invalid]="form.get('facilities.floorsOrLevels.until')?.invalid && form.get('facilities.floorsOrLevels.until')?.touched">
-            <div *ngIf="form.get('facilities.floorsOrLevels.until')?.hasError('pattern') && form.get('facilities.floorsOrLevels.until')?.touched" class="invalid-feedback">
+            <div
+              *ngIf="form.get('facilities.floorsOrLevels.until')?.hasError('pattern') && form.get('facilities.floorsOrLevels.until')?.touched"
+              class="invalid-feedback">
               Μόνο αριθμοί επιτρέπονται (π.χ 5)
             </div>
           </div>
@@ -132,7 +143,7 @@
           <div class="row row-cols-lg-auto g-3 align-items-center">
             <div class="form-check">
               <input class="form-check-input" type="radio" formControlName="uniqueUseOfFacility"
-                id="UniqueUserOfFacility1"  [value]="true">
+                id="UniqueUserOfFacility1" [value]="true">
               <label class="form-check-label" for="UniqueUserOfFacility1">ΝΑΙ</label>,
             </div>
             <div class="form-check">
@@ -147,33 +158,44 @@
           <span>Ιδιόκτητο/Ενοικιαζόμενο:</span>
           <div class="row row-cols-lg-auto g-3 align-items-center">
             <div class="form-check">
-              <input class="form-check-input" type="radio" formControlName="private"
-                id="private1"  [value]="true">
+              <input class="form-check-input" type="radio" formControlName="private" id="private1" [value]="true">
               <label class="form-check-label" for="private1">Ιδιόκτητο</label>,
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" formControlName="private"
-                id="private2" [value]="false">
+              <input class="form-check-input" type="radio" formControlName="private" id="private2" [value]="false">
               <label class="form-check-label" for="private2">Ενοικιαζόμενο</label>
             </div>
           </div>
         </div>
       </div>
-    </div> 
-    
+    </div>
+
 
     <!-- SPACES -->
     <div class="card mb-3">
       <div class="card-header">Χώροι ακινήτου</div>
       <div class="card-body" formGroupName="spaces">
-        
+
         <div class="row mb-3">
           <div class="col">
             <label class="form-label">Φορέας χώρου:</label>
             <input type="text" class="form-control" formControlName="organization">
           </div>
+          <div class="row row-cols-lg-auto">
+            <span>Αναζήτηση στοιχείων φορέα ως:</span>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="organizationSearch"
+                id="spaceSearch1" value="words">
+              <label class="form-check-label" for="spaceSearch1">ξεχωριστές λέξεις</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="organizationSearch"
+                id="spaceSearch2" value="phrase">
+              <label class="form-check-label" for="spaceSearch2">ολόκληρη φράση</label>
+            </div>
+          </div>
         </div>
-        
+
         <div class="row mb-3">
           <div class="col-sm-12">
             <label class="form-label">Διακριτή ονομασία/αριθμός του επιμέρους χώρου του ακινήτου:</label>
@@ -186,53 +208,49 @@
           <label class="form-label">Τρόπος χρήσης χώρου</label>
           <div *ngFor="let space of spaceUseArray.controls; let i=index" [formGroupName]="i" class="row mb-2">
             <div class="col-sm-3">
-              <select 
-                class="form-select" 
-                aria-label="Default select example" 
-                formControlName="type"
-                (change)="onTypeChange(i)"
-              >
+              <select class="form-select" aria-label="Default select example" formControlName="type"
+                (change)="onTypeChange(i)">
                 <option value="" disabled selected>
                   Επιλέξτε Τύπο Χρήσης
                 </option>
                 @for (item of useOfFacility; track item) {
-                  <option [ngValue]="item">{{ item }}</option>
+                <option [ngValue]="item">{{ item }}</option>
                 }
               </select>
             </div>
-            <div *ngIf="!space.get('auxiliarySpace')?.value && subtypesList[i]?.length > 0 && !auxiliarySpace" class="col-sm-3">
+            <div *ngIf="!space.get('auxiliarySpace')?.value && subtypesList[i]?.length > 0 && !auxiliarySpace"
+              class="col-sm-3">
               <select class="form-select" id="subtype" formControlName="subtype" (change)="onSubtypeChange(i)">
                 <option value="">Επιλογή Υποτύπου</option>
                 <option *ngFor="let st of subtypesList[i]" [value]="st">{{ st }}</option>
               </select>
             </div>
 
-            <div *ngIf="!space.get('auxiliarySpace')?.value && spacesList[i]?.length > 0 && !auxiliarySpace" class="col-sm-3">
+            <div *ngIf="!space.get('auxiliarySpace')?.value && spacesList[i]?.length > 0 && !auxiliarySpace"
+              class="col-sm-3">
               <select class="form-select" formControlName="space">
                 <option value="">Επιλογή Χώρου</option>
                 <option *ngFor="let s of spacesList[i]" [value]="s">{{ s }}</option>
               </select>
             </div>
-          
+
             <div *ngIf="space.get('auxiliarySpace')?.value" class="col-sm-3">
               <select class="form-select" formControlName="space">
                 <option value="">Βοηθητικός Χώρος</option>
                 <option *ngFor="let s of AUXILIARY_SPACES" [value]="s">{{ s }}</option>
-              </select> 
+              </select>
             </div>
 
             <div class="col-sm-3">
               <label class="form-label">Βοηθητικός χώρος</label>
               <div class="row row-cols-lg-auto g-3 align-items-center">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio"
-                    formControlName="auxiliarySpace"
+                  <input class="form-check-input" type="radio" formControlName="auxiliarySpace"
                     id="auxiliarySpaceYes-{{i}}" [value]="true">
                   <label class="form-check-label" for="auxiliarySpaceYes-{{i}}">ΝΑΙ</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio"
-                    formControlName="auxiliarySpace"
+                  <input class="form-check-input" type="radio" formControlName="auxiliarySpace"
                     id="auxiliarySpaceNo-{{i}}" [value]="false">
                   <label class="form-check-label" for="auxiliarySpaceNo-{{i}}">ΟΧΙ</label>
                 </div>
@@ -240,12 +258,8 @@
             </div>
 
             <div class="col-auto">
-              <mat-icon
-                role="button"
-                class="cursor-pointer mx-2"
-                (click) = removeSpaceUse(i)  
-              >
-                delete 
+              <mat-icon role="button" class="cursor-pointer mx-2" (click)=removeSpaceUse(i)>
+                delete
               </mat-icon>
             </div>
           </div>
@@ -258,7 +272,9 @@
             <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα από:</label>
             <input type="text" class="form-control" formControlName="from"
               [class.is-invalid]="form.get('spaces.spaceArea.from')?.invalid && form.get('spaces.spaceArea.from')?.touched">
-            <div *ngIf="form.get('spaces.spaceArea.from')?.hasError('pattern') && form.get('spaces.spaceArea.from')?.touched" class="invalid-feedback">
+            <div
+              *ngIf="form.get('spaces.spaceArea.from')?.hasError('pattern') && form.get('spaces.spaceArea.from')?.touched"
+              class="invalid-feedback">
               Must be a valid number (e.g. 10 or 10.5).
             </div>
           </div>
@@ -266,7 +282,9 @@
             <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα έως:</label>
             <input type="text" class="form-control" formControlName="until"
               [class.is-invalid]="form.get('spaces.spaceArea.until')?.invalid && form.get('spaces.spaceArea.until')?.touched">
-            <div *ngIf="form.get('spaces.spaceArea.until')?.hasError('pattern') && form.get('spaces.spaceArea.until')?.touched" class="invalid-feedback">
+            <div
+              *ngIf="form.get('spaces.spaceArea.until')?.hasError('pattern') && form.get('spaces.spaceArea.until')?.touched"
+              class="invalid-feedback">
               Must be a valid number (e.g. 10 or 10.5).
             </div>
           </div>
@@ -285,10 +303,23 @@
             <label class="form-label">Φορέας εξοπλισμού:</label>
             <input type="text" class="form-control" formControlName="organization">
           </div>
+          <div class="row row-cols-lg-auto">
+            <span>Αναζήτηση στοιχείων φορέα ως:</span>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="organizationSearch"
+                id="equipmentSearch1" value="words">
+              <label class="form-check-label" for="equipmentSearch1">ξεχωριστές λέξεις</label>,
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="organizationSearch"
+                id="equipmentSearch2" value="phrase">
+              <label class="form-check-label" for="equipmentSearch2">ολόκληρη φράση</label>
+            </div>
+          </div>
         </div>
 
         <div class="row mb-3">
-        
+
           <div class="col-sm-4">
             <select class="form-select" aria-label="Default select example" formControlName="resourceSubcategory"
               (change)="onResourcesubcategoryChange($event)">
@@ -296,73 +327,75 @@
                 Επιλέξτε υποκατηγορία
               </option>
               @for (item of resourceSubcategory; track item) {
-                <option [ngValue]="item">{{ item }}</option>
+              <option [ngValue]="item">{{ item }}</option>
               }
             </select>
           </div>
 
           @if (kind.length > 0) {
-            <div class="col-sm-4">
-              <select class="form-select" aria-label="Default select example" formControlName="kind"
-                (change)="onKindChange($event)">
-                <option value="" disabled selected>
-                  Επιλέξτε είδος
-                </option>
-                @for (item of kind; track item) {
-                  <option [ngValue]="item">{{ item }}</option>
-                }
-              </select>
-            </div>
+          <div class="col-sm-4">
+            <select class="form-select" aria-label="Default select example" formControlName="kind"
+              (change)="onKindChange($event)">
+              <option value="" disabled selected>
+                Επιλέξτε είδος
+              </option>
+              @for (item of kind; track item) {
+              <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </div>
           }
 
           @if (type.length > 0) {
-            <div class="col-sm-4">
-              <select class="form-select" aria-label="Default select example" formControlName="type"
-                (change)="onTypeEquipmentChange($event)">
-                <option value="" disabled selected>
-                  Επιλέξτε τύπος
-                </option>
-                @for (item of type; track item) {
-                  <option [ngValue]="item">{{ item }}</option>
-                }
-              </select>
-            </div>
-          }        
+          <div class="col-sm-4">
+            <select class="form-select" aria-label="Default select example" formControlName="type"
+              (change)="onTypeEquipmentChange($event)">
+              <option value="" disabled selected>
+                Επιλέξτε τύπος
+              </option>
+              @for (item of type; track item) {
+              <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </div>
+          }
         </div>
 
         <!-- Item Description FormArray -->
         @if (itemDescriptionArray.length > 0) {
-          <div formArrayName="itemDescription">
-            <label class="form-label">Χαρακτηριστικά εξοπλισμού</label>
-            <div *ngFor="let item of itemDescriptionArray.controls; let i=index" [formGroupName]="i" class="row mb-2">
-              
-              <div class="col">
-                <input type="text" class="form-control" formControlName="description" placeholder="Description"
-                  [class.is-invalid]="item.get('description')?.invalid && item.get('description')?.touched">
-                <div *ngIf="item.get('description')?.hasError('required') && item.get('description')?.touched" class="invalid-feedback">
-                  Description is required.
-                </div>
-              </div>
+        <div formArrayName="itemDescription">
+          <label class="form-label">Χαρακτηριστικά εξοπλισμού</label>
+          <div *ngFor="let item of itemDescriptionArray.controls; let i=index" [formGroupName]="i" class="row mb-2">
 
-              <div class="col">
-                <input type="text" class="form-control" formControlName="value" placeholder="Value"
-                  [class.is-invalid]="item.get('value')?.invalid && item.get('value')?.touched">
-                <div *ngIf="item.get('value')?.hasError('required') && item.get('value')?.touched" class="invalid-feedback">
-                  Value is required.
-                </div>
-              </div>
-              
-              <div class="col-auto">
-                <!-- <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button> -->
-                <mat-icon role="button" class="cursor-pointer" (click)=removeItemDescription(i)>
-                  delete
-                </mat-icon>
+            <div class="col">
+              <input type="text" class="form-control" formControlName="description" placeholder="Description"
+                [class.is-invalid]="item.get('description')?.invalid && item.get('description')?.touched">
+              <div *ngIf="item.get('description')?.hasError('required') && item.get('description')?.touched"
+                class="invalid-feedback">
+                Description is required.
               </div>
             </div>
+
+            <div class="col">
+              <input type="text" class="form-control" formControlName="value" placeholder="Value"
+                [class.is-invalid]="item.get('value')?.invalid && item.get('value')?.touched">
+              <div *ngIf="item.get('value')?.hasError('required') && item.get('value')?.touched"
+                class="invalid-feedback">
+                Value is required.
+              </div>
+            </div>
+
+            <div class="col-auto">
+              <!-- <button type="button" class="btn btn-danger" (click)="removeItemDescription(i)">Remove</button> -->
+              <mat-icon role="button" class="cursor-pointer" (click)=removeItemDescription(i)>
+                delete
+              </mat-icon>
+            </div>
           </div>
+        </div>
         }
 
-      
+
         <div formGroupName="acquisitionDate" class="d-flex gap-3 align-items-center">
           <div class="flex-fill mb-3">
             <label for="foundationDateFrom">Ημερομηνία απόκτησης: <strong>από</strong></label>
@@ -391,15 +424,15 @@
 
     <!-- Buttons -->
     <div class="d-flex justify-content-end">
-      <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">Reset</button>
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
+      <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">Καθάρισμα</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Υποβολή</button>
     </div>
   </form>
 </div>
 
 <!-- @if(rowData) {
   <h5>Αποτελέσματα αναζήτησης</h5> -->
-  <!-- <app-search-grid [data]="rowData"></app-search-grid> -->
+<!-- <app-search-grid [data]="rowData"></app-search-grid> -->
 <!-- } -->
 
 
@@ -410,10 +443,10 @@
                             id="range"
                             formControlName="range">
                             <option value="" disabled>Επιλέξτε όρια</option> -->
-                            <!-- <option value="eq">=</option> -->
-                            <!-- <option value="gt" >&gt;</option> -->
-                            <!-- <option value="gte" >από</option> -->
-                            <!-- <option value="lt" >&lt;</option> -->
-                            <!-- <option value="lte" >έως</option> -->
-                        <!-- </select> -->
-                    <!-- </div> -->
+<!-- <option value="eq">=</option> -->
+<!-- <option value="gt" >&gt;</option> -->
+<!-- <option value="gte" >από</option> -->
+<!-- <option value="lt" >&lt;</option> -->
+<!-- <option value="lte" >έως</option> -->
+<!-- </select> -->
+<!-- </div> -->

@@ -284,6 +284,7 @@ export class FacilityComponent {
 
   newFacility(data: IOrganizationList) {
     this.initializeForm();
+    this.addFloorPlan();
     this.organization = data.preferredLabel
     this.organizationCode = data.code
     this.form.controls.organization.setValue(this.organization);

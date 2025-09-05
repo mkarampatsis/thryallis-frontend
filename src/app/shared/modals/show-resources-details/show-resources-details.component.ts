@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ResourcesService } from '../../services/resources.service';
-import { FacilityData } from '../../interfaces/facility/facility';
+import { IFacilityData } from '../../interfaces/facility/facility';
 
 
 @Component({
@@ -17,7 +17,7 @@ export class ShowResourcesDetailsComponent implements OnInit {
   
   code: string;
   modalRef: any;
-  data!: FacilityData; 
+  data!: IFacilityData; 
 
   ngOnInit(){
     this.resourceService.getFacilityDetailsById(this.code)

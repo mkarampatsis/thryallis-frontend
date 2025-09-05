@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { forkJoin, Observable } from 'rxjs';
-import { FacilityData, IFacility, ISpace } from '../interfaces/facility/facility';
+import { IFacilityData, IFacility, IFacilitySummary, ISpace } from '../interfaces/facility/facility';
 import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 import { IFacilitySpace } from '../interfaces/facility/facility-space';
 import { IEquipment } from '../interfaces/equipment/equipment';
@@ -166,9 +166,9 @@ export class ResourcesService {
     return this.http.get<[]>(url, { params: { codes: codes.join(',') }, observe: 'response' });
   }
 
-  getFacilityDetailsById(id: string): Observable<HttpResponse<FacilityData>> {
+  getFacilityDetailsById(id: string): Observable<HttpResponse<IFacilityData>> {
     const url = `${APIPREFIX_FACILITY}/${id}/details`;
-    return this.http.get<FacilityData>(url, { observe: 'response' });
+    return this.http.get<IFacilityData>(url, { observe: 'response' });
   }
 
   // Excel Export
@@ -196,6 +196,164 @@ export class ResourcesService {
     const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, 'Facility.xlsx');
+  }
+
+  onExportToExcelMatrix2(jsonData: { [organization: string]: IFacilitySummary }): void {
+    const data: any[] = [];
+
+    // Flatten summary into rows
+    for (const [org, orgData] of Object.entries(jsonData)) {
+      if (org === "_TOTALS_") continue; // skip totals for now, handle later
+
+      // Facilities
+      data.push({
+        Organization: org,
+        Section: "Ακίνητα",
+        Metric: "Σύνολο ακινήτων",
+        Value: orgData.facilities.total,
+      });
+      data.push({
+        Organization: org,
+        Section: "Ακίνητα",
+        Metric: "Συνολικό εμβαδόν ακινήτων",
+        Value: orgData.facilities.totalCoveredArea,
+      });
+      for (const [use, count] of Object.entries(orgData.facilities.byUse)) {
+        data.push({
+          Organization: org,
+          Section: "Ακίνητα",
+          Metric: `Χρήση ακινήτου: ${use}`,
+          Value: count,
+        });
+      }
+
+      // Spaces
+      data.push({
+        Organization: org,
+        Section: "Χώροι ακινήτου",
+        Metric: "Συνολικοί χώροι ακινήτου",
+        Value: orgData.spaces.total,
+      });
+      for (const [type, count] of Object.entries(orgData.spaces.byType)) {
+        data.push({
+          Organization: org,
+          Section: "Χώροι ακινήτου",
+          Metric: `Χρήση χώρου: ${type}`,
+          Value: count,
+        });
+      }
+      for (const [subtype, count] of Object.entries(orgData.spaces.bySubtype)) {
+        data.push({
+          Organization: org,
+          Section: "Χώροι ακινήτου",
+          Metric: `Υποτύπος χώρου: ${subtype}`,
+          Value: count,
+        });
+      }
+      for (const [space, count] of Object.entries(orgData.spaces.bySpace)) {
+        data.push({
+          Organization: org,
+          Section: "Χώροι ακινήτου",
+          Metric: `Χώρος: ${space}`,
+          Value: count,
+        });
+      }
+      data.push({
+        Organization: org,
+        Section: "Χώροι ακινήτου",
+        Metric: "Βοηθητικοί χώροι",
+        Value: orgData.spaces.byAuxiliary,
+      });
+
+      // Equipments
+      data.push({
+        Organization: org,
+        Section: "Εξοπλισμός",
+        Metric: "Σύνολο εξοπλισμού",
+        Value: orgData.equipments.total,
+      });
+      
+      for (const [cat, count] of Object.entries(orgData.equipments.byCategory)) {
+        data.push({
+          Organization: org,
+          Section: "Εξοπλισμός",
+          Metric: `Κατηγορία: ${cat}`,
+          Value: count,
+        });
+      }
+      for (const [sub, count] of Object.entries(orgData.equipments.bySubcategory)) {
+        data.push({
+          Organization: org,
+          Section: "Εξοπλισμός",
+          Metric: `Υποκατηγορία: ${sub}`,
+          Value: count,
+        });
+      }
+      for (const [kind, count] of Object.entries(orgData.equipments.byKind)) {
+        data.push({
+          Organization: org,
+          Section: "Εξοπλισμός",
+          Metric: `Είδος: ${kind}`,
+          Value: count,
+        });
+      }
+      for (const [type, count] of Object.entries(orgData.equipments.byType)) {
+        data.push({
+          Organization: org,
+          Section: "Εξοπλισμός",
+          Metric: `Τύπος: ${type}`,
+          Value: count,
+        });
+      }
+    }
+
+    // Add Grand Totals (_TOTALS_)
+    const totals = jsonData["_TOTALS_"];
+    if (totals) {
+      data.push({ Organization: "TOTALS", Section: "Ακίνητα", Metric: "Σύνολο ακινήτων", Value: totals.facilities.total });
+      data.push({ Organization: "TOTALS", Section: "Ακίνητα", Metric: "Συνολικό εμβαδόν ακινήτων", Value: totals.facilities.totalCoveredArea });
+      for (const [use, count] of Object.entries(totals.facilities.byUse)) {
+        data.push({ Organization: "TOTALS", Section: "Ακίνητα", Metric: `Χρήση ακινήτου: ${use}`, Value: count });
+      }
+
+      data.push({ Organization: "TOTALS", Section: "Χώροι ακινήτου", Metric: "Συνολικοί χώροι ακινήτου", Value: totals.spaces.total });
+      for (const [type, count] of Object.entries(totals.spaces.byType)) {
+        data.push({ Organization: "TOTALS", Section: "Χώροι ακινήτου", Metric: `Χρήση χώρου: ${type}`, Value: count });
+      }
+      for (const [subtype, count] of Object.entries(totals.spaces.bySubtype)) {
+        data.push({ Organization: "TOTALS", Section: "Χώροι ακινήτου", Metric: `Υποτύπος χώρου: ${subtype}`, Value: count });
+      }
+      for (const [space, count] of Object.entries(totals.spaces.bySpace)) {
+        data.push({ Organization: "TOTALS", Section: "Χώροι ακινήτου", Metric: `Χώρος: ${space}`, Value: count });
+      }
+      data.push({ Organization: "TOTALS", Section: "Χώροι ακινήτου", Metric: "Βοηθητικοί χώροι", Value: totals.spaces.byAuxiliary });
+
+      data.push({ Organization: "TOTALS", Section: "Εξοπλισμός", Metric: "Σύνολο εξοπλισμού", Value: totals.equipments.total });
+      for (const [kind, count] of Object.entries(totals.equipments.byKind)) {
+        data.push({ Organization: "TOTALS", Section: "Εξοπλισμός", Metric: `Είδος: ${kind}`, Value: count });
+      }
+      for (const [cat, count] of Object.entries(totals.equipments.byCategory)) {
+        data.push({ Organization: "TOTALS", Section: "Εξοπλισμός", Metric: `Κατηγορία: ${cat}`, Value: count });
+      }
+      for (const [sub, count] of Object.entries(totals.equipments.bySubcategory)) {
+        data.push({ Organization: "TOTALS", Section: "Εξοπλισμός", Metric: `Υποκατηγορία: ${sub}`, Value: count });
+      }
+      for (const [type, count] of Object.entries(totals.equipments.byType)) {
+        data.push({ Organization: "TOTALS", Section: "Εξοπλισμός", Metric: `Τύπος: ${type}`, Value: count });
+      }
+    }
+
+    // Convert to worksheet
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+    // Create workbook
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Στοιχεία Ακινήτων Φορέων');
+
+    // Save to file
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'facility-details.xlsx');
   }
 
   aggregateData(docs: any[]) {

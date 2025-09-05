@@ -82,6 +82,7 @@ export class SearchFormComponent {
     this.form = new FormGroup({
       facilities: new FormGroup({
         organization: new FormControl(''),
+        organizationSearch: new FormControl('phrase'),
         kaek: new FormControl(''),
         distinctiveNameOfFacility: new FormControl(''),
         useOfFacility: new FormArray([]),
@@ -107,6 +108,7 @@ export class SearchFormComponent {
       }),
       spaces: new FormGroup({
         organization: new FormControl(''),
+        organizationSearch: new FormControl('phrase'),
         spaceName: new FormControl(''),
         spaceUse: new FormArray([
           new FormGroup({
@@ -124,6 +126,7 @@ export class SearchFormComponent {
       }),
       equipments: new FormGroup({
         organization: new FormControl(''),
+        organizationSearch: new FormControl('phrase'),
         resourceSubcategory: new FormControl(''),
         kind: new FormControl(''),
         type: new FormControl(''),
@@ -297,171 +300,155 @@ export class SearchFormComponent {
 
   submitForm() {
     if (this.form.valid) {
-      console.log('Form Data:', this.form.getRawValue()); // getRawValue includes disabled fields
+      const data = this.transformData(this.form.getRawValue());
+      console.log('Form Data1:', this.form.getRawValue()); // getRawValue includes disabled fields
+      console.log('Form Data2:',data)
     } else {
       console.log('Form is invalid');
     }
   }
  
-  // transformData(input: any): any {
-  //   const transformed = {};
+  transformData(input: any) {
+    const result: any = {
+      facilities: { must: [] },
+      spaces: { must: [] },
+      equipments: { must: [] }
+    };
 
-  //   // Transform each section if it has non-empty values
-  //   const organizations = this.transformSection(input.organizations, "organizations");
-  //   if (organizations) transformed['organizations'] = organizations;
+    const pushCond = (section: string, cond: any) => {
+      if (cond) result[section].must.push(cond);
+    };
 
-  //   const organizationalUnits = this.transformSection(input.organizational_units, "organizational_units");
-  //   if (organizationalUnits) transformed['organizational_units'] = organizationalUnits;
+    // === FACILITIES ===
+    if (input.facilities) {
+      const f = input.facilities;
 
-  //   const remits = this.transformSection(input.remits, "remits");
-  //   if (remits) transformed['remits'] = remits;
+      if (f.organization) {
+        pushCond("facilities", {
+          field: "organization",
+          type: f.organizationSearch || "phrase",
+          query: f.organization.trim()
+        });
+      }
 
-  //   const cleanData = this.cleanData(transformed)
+      if (f.kaek) {
+        pushCond("facilities", { field: "kaek", type: "phrase", query: f.kaek });
+      }
 
-  //   return cleanData;
-  // }
+      if (Array.isArray(f.useOfFacility)) {
+        f.useOfFacility.forEach((use: string) => {
+          pushCond("facilities", { field: "useOfFacility", type: "phrase", query: use });
+        });
+      }
 
-  // transformSection(section: any, sectionName: string) {
-  //   const mustArray = [];
-  //   for (const key in section) {
-  //     if (section.hasOwnProperty(key)) {
-  //       const value = section[key];
+      if (f.coveredPremisesArea) {
+        if (f.coveredPremisesArea.from) {
+          pushCond("facilities", { field: "coveredPremisesArea", query: { gte: f.coveredPremisesArea.from } });
+        }
+        if (f.coveredPremisesArea.until) {
+          pushCond("facilities", { field: "coveredPremisesArea", query: { lte: f.coveredPremisesArea.until } });
+        }
+      }
 
-  //       // Check if value is an object with date and range fields (i.e., date field)
-  //       // if (typeof value === 'object' && value.date && value.range) {
-  //       //     mustArray.push({
-  //       //         field: key,
-  //       //         // type: "date",
-  //       //         query: { [value.range]: new Date(value.date).toISOString() }
-  //       //     });
-  //       // }
-  //       // Check if value is an object with date and from fields (i.e., date field)
-  //       if (typeof value === 'object' && value.from) {
-  //         mustArray.push({
-  //           field: key,
-  //           // type: "date",
-  //           query: { "gte": new Date(value.from).toISOString() }
-  //         });
-  //       }
-  //       // Check if value is an object with date and until fields (i.e., date field)
-  //       if (typeof value === 'object' && value.until) {
-  //         mustArray.push({
-  //           field: key,
-  //           // type: "date",
-  //           query: { "lte": new Date(value.until).toISOString() }
-  //         });
-  //       }
-  //       // If it's a nested object with specific fields, like foundationFek or mainAddress
-  //       else if (typeof value === 'object' && !Array.isArray(value)) {
-  //         for (const nestedKey in value) {
-  //           if (value[nestedKey]) {  // Check if the nested field has a value
-  //             mustArray.push({
-  //               field: `${key}.${nestedKey}`,
-  //               type: "words",
-  //               query: value[nestedKey]
-  //             });
-  //           }
-  //         }
-  //       }
-  //       // If it's an array (for remitFoundation in remits), iterate over each element
-  //       else if (Array.isArray(value)) {
-  //         value.forEach((item) => {
-  //           // if (item.date && item.range) {
-  //           //     mustArray.push({
-  //           //         field: `${key}`,
-  //           //         // type: "date",
-  //           //         query: { [item.range]: new Date(item.date).toISOString() }
-  //           //     });
-  //           // }
-  //           if (item.from || item.until) {
+      // ✅ Join addressOfFacility fields
+      if (f.addressOfFacility) {
+        const addrParts = [
+          f.addressOfFacility.street,
+          f.addressOfFacility.number,
+          f.addressOfFacility.postcode,
+          f.addressOfFacility.area,
+          f.addressOfFacility.municipality,
+          f.addressOfFacility.geographicRegion,
+          f.addressOfFacility.country
+        ].filter(Boolean);
+        if (addrParts.length) {
+          pushCond("facilities", {
+            field: "addressOfFacility",
+            type: "phrase",
+            query: addrParts.join(", ")
+          });
+        }
+      }
 
-  //             if ("from" in item) {
-  //               mustArray.push({
-  //                 field: `${key}`,
-  //                 // type: "date",
-  //                 query: { "gte": new Date(item.from).toISOString() }
-  //               });
-  //             }
+      // booleans (uniqueUseOfFacility, private)
+      ["uniqueUseOfFacility", "private"].forEach((field) => {
+        if (f[field] !== undefined) {
+          pushCond("facilities", { field, type: "phrase", query: f[field] });
+        }
+      });
+    }
 
-  //             if ("until" in item) {
-  //               mustArray.push({
-  //                 field: `${key}`,
-  //                 // type: "date",
-  //                 query: { "lte": new Date(item.until).toISOString() }
-  //               });
-  //             }
-  //           }
-  //         });
-  //       }
-  //       // Handle regular fields with non-empty values
-  //       else if (value) {
-  //         if ((key === "statusActive" || key === "statusInactive") && sectionName === "organizations") {
-  //           mustArray.push({
-  //             field: "status",
-  //             type: 'words',
-  //             query: key === "statusActive" ? "Active" : "Inactive"
-  //           });
-  //         } else if (((key === "statusActive" || key === "statusInactive") && sectionName === "remits")) {
-  //           mustArray.push({
-  //             field: "status",
-  //             type: 'words',
-  //             query: key === "statusActive" ? "ΕΝΕΡΓΗ" : "ΑΝΕΝΕΡΓΗ"
-  //           });
-  //         } else {
+    // === SPACES ===
+    if (input.spaces) {
+      const s = input.spaces;
 
-  //           // mustArray.push({
-  //           //   field: key,
-  //           //   type: key === "preferredLabel" || key === "remitText" ? section[`${key}Search`] : 'words',
-  //           //   query: key === "cofog1" || key === "cofog2" || key === "cofog3" ? this.getCofogName(key) : value
-  //           // });
-  //         }
-  //       }
-  //     }
-  //   }
+      if (s.organization) {
+        pushCond("spaces", { field: "organization", type: s.organizationSearch || "phrase", query: s.organization });
+      }
 
-  //   return mustArray.length ? { must: mustArray } : null;
-  // }
+      if (s.spaceName) {
+        pushCond("spaces", { field: "spaceName", type: "phrase", query: s.spaceName });
+      }
 
-  // cleanData(obj: any) {
-  //   // Check and remove preferredLabelSearch and remitTextSearch
-  //   obj['organizations']['must'] = obj['organizations']['must'].filter(item => item.field !== "preferredLabelSearch");
-  //   obj['organizational_units']['must'] = obj['organizational_units']['must'].filter(item => item.field !== "preferredLabelSearch");
-  //   obj['remits']['must'] = obj['remits']['must'].filter(item => item.field !== "remitTextSearch");
+      if (Array.isArray(s.spaceUse) && s.spaceUse.length) {
+        const joined = s.spaceUse
+          .map((su: any) => [su.type, su.subtype, su.space, su.auxiliarySpace].filter((x) => x !== "").join(","))
+          .join("$");
+        pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
+      }
 
-  //   // Check and remove organizational_units if must array is empty
-  //   if (obj.organizational_units?.must.length === 0) {
-  //     delete obj.organizational_units;
-  //   }
+      if (s.spaceArea) {
+        if (s.spaceArea.from) {
+          pushCond("spaces", { field: "spaceArea", query: { gte: s.spaceArea.from } });
+        }
+        if (s.spaceArea.until) {
+          pushCond("spaces", { field: "spaceArea", query: { lte: s.spaceArea.until } });
+        }
+      }
+    }
 
-  //   const specificDocument = {
-  //     field: "status",
-  //     type: "words",
-  //     query: "ΕΝΕΡΓΗ"
-  //   };
+    // === EQUIPMENTS ===
+    if (input.equipments) {
+      const e = input.equipments;
 
-  //   // Check and remove remits if must array only contains the specific document
-  //   if (obj.remits?.must.length === 1 && JSON.stringify(obj.remits.must[0]) === JSON.stringify(specificDocument)) {
-  //     delete obj.remits;
-  //   }
+      if (e.organization) {
+        pushCond("equipments", { field: "organization", type: e.organizationSearch || "phrase", query: e.organization });
+      }
 
-  //   return obj
-  // }
+      ["resourceSubcategory", "kind", "type", "status"].forEach((field) => {
+        if (e[field]) {
+          pushCond("equipments", { field, type: "phrase", query: e[field] });
+        }
+      });
 
-  // moreFields(part: string) {
-  //   if (part === 'organization')
-  //     this.showMoreOrganizationFields = true;
-  //   else
-  //     this.showMoreOrganizationUnitFields = true
+      // ✅ Join itemDescription
+      if (Array.isArray(e.itemDescription) && e.itemDescription.length) {
+        const joined = e.itemDescription
+          .map((item: any) => `${item.description}=${item.value}`)
+          .join("$");
+        pushCond("equipments", { field: "itemDescription", type: "phrase", query: joined });
+      }
 
-  // }
+      if (e.acquisitionDate) {
+        if (e.acquisitionDate.from) {
+          pushCond("equipments", { field: "acquisitionDate", query: { gte: new Date(e.acquisitionDate.from).toISOString() } });
+        }
+        if (e.acquisitionDate.until) {
+          pushCond("equipments", { field: "acquisitionDate", query: { lte: new Date(e.acquisitionDate.until).toISOString() } });
+        }
+      }
 
-  // lessFields(part: string) {
-  //   if (part === 'organization')
-  //     this.showMoreOrganizationFields = false;
-  //   else
-  //     this.showMoreOrganizationUnitFields = false
+      if (e.depreciationDate) {
+        if (e.depreciationDate.from) {
+          pushCond("equipments", { field: "depreciationDate", query: { gte: new Date(e.depreciationDate.from).toISOString() } });
+        }
+        if (e.depreciationDate.until) {
+          pushCond("equipments", { field: "depreciationDate", query: { lte: new Date(e.depreciationDate.until).toISOString() } });
+        }
+      }
+    }
 
-  // }
-
+    return result;
+  }
   
 }
