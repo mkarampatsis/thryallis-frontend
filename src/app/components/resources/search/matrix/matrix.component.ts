@@ -46,6 +46,7 @@ export class MatrixComponent {
 
   gridMatrix1: GridApi<IOrganizationList>;
   gridMatrix2: GridApi<IOrganizationList>;
+  gridMatrix3: GridApi<IOrganizationList>;
 
   selectedDataMatrix1 = [];
   matrixData1 = [];
@@ -56,6 +57,11 @@ export class MatrixComponent {
   matrixData2 : { [organization: string]: IFacilitySummary } = {};
   showTable2 = false;
   loadingMatrix2 = false;
+
+  selectedDataMatrix3 = [];
+  matrixData3 : { [organization: string]: IFacilitySummary } = {};
+  showTable3 = false;
+  loadingMatrix3 = false;
 
   selectedRowLimit = 2;
   
@@ -164,6 +170,65 @@ export class MatrixComponent {
 
   onBtnExportMatrix2() {
     this.resourceService.onExportToExcelMatrix2(this.matrixData2);
+  }
+
+  // Matrix 3 
+  onGridReady_Matrix3(params: GridReadyEvent<IOrganizationList>): void {
+    this.gridMatrix3 = params.api;
+    this.gridMatrix3.showLoadingOverlay();
+    this.store
+    .select(this.organizations$)
+    .pipe(take(1))
+    .subscribe((data) => {
+      this.foreis = data.map((org) => {
+        return {
+          ...org,
+          organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
+          subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
+        };
+      });
+      this.gridMatrix3.hideOverlay();
+    });
+  }
+
+  onRowSelected_Matrix3(event: any) {
+    const selectedNodes = event.api.getSelectedNodes();
+
+    // Disable further selections if the limit is reached
+    if (selectedNodes.length >= this.selectedRowLimit) {
+      event.api.forEachNode((node) => {
+        if (!node.isSelected()) {
+          node.selectable = false; // Disable checkbox for unselected rows
+        }
+      });
+    } else {
+      // Enable selection for all rows if under the limit
+      event.api.forEachNode((node) => {
+        node.selectable = true; // Re-enable checkbox
+      });
+    }
+
+    // Log selected rows to the console
+    this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
+    const codes = selectedNodes.map(node => node.data.code);
+    this.showTable3 = false
+    this.loadingMatrix3 = true;
+    
+    this.resourceService.getFacilityDetailsByOrganizations(codes)
+    .subscribe(response => {
+      const body = response.body;
+      const status = response.status;
+      if (status === 200) {
+        console.log(body);
+        this.matrixData3 = this.resourceService.aggregateData(body);
+        this.showTable3 = true;
+        this.loadingMatrix3 = false;
+      }
+    })
+  }
+
+  onBtnExportMatrix3() {
+    // this.resourceService.onExportToExcelMatrix3(this.matrixData3);
   }
 
   clearSelectionMatrix(matrix: number) {

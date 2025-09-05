@@ -322,31 +322,36 @@ export class SearchFormComponent {
     // === FACILITIES ===
     if (input.facilities) {
       const f = input.facilities;
-
+      let facilityExist = false;
+      
       if (f.organization) {
         pushCond("facilities", {
           field: "organization",
           type: f.organizationSearch || "phrase",
           query: f.organization.trim()
         });
+        facilityExist = true;
       }
 
       if (f.kaek) {
         pushCond("facilities", { field: "kaek", type: "phrase", query: f.kaek });
+        facilityExist = true;
       }
 
-      if (Array.isArray(f.useOfFacility)) {
+      if (Array.isArray(f.useOfFacility) && f.useOfFacility.length ) {
         f.useOfFacility.forEach((use: string) => {
           pushCond("facilities", { field: "useOfFacility", type: "phrase", query: use });
         });
+        facilityExist = true;
       }
 
-      if (f.coveredPremisesArea) {
+      if (f.coveredPremisesArea.from || f.coveredPremisesArea.until) {
         pushCond("facilities", { field: "coveredPremisesArea", query: { gte: f.coveredPremisesArea.from, lte: f.coveredPremisesArea.until } });
+        facilityExist = true;
       }
 
       // ✅ Join addressOfFacility fields
-      if (f.addressOfFacility) {
+      if (f.addressOfFacility.street || f.addressOfFacility.number || f.addressOfFacility.postcode || f.addressOfFacility.area || f.addressOfFacility.municipality || f.addressOfFacility.geographicRegion) {
         const addrParts = [
           f.addressOfFacility.street,
           f.addressOfFacility.number,
@@ -363,20 +368,23 @@ export class SearchFormComponent {
             query: addrParts.join(", ")
           });
         }
+        facilityExist = true;
       }
 
       // booleans (uniqueUseOfFacility, private)
-      ["uniqueUseOfFacility", "private"].forEach((field) => {
-        if (f[field] !== undefined) {
-          pushCond("facilities", { field, type: "phrase", query: f[field] });
-        }
-      });
+      if (facilityExist) {
+        ["uniqueUseOfFacility", "private"].forEach((field) => {
+          if (f[field] !== undefined) {
+            pushCond("facilities", { field, type: "phrase", query: f[field] });
+          }
+        });
+      }
     }
 
     // === SPACES ===
     if (input.spaces) {
       const s = input.spaces;
-
+      
       if (s.organization) {
         pushCond("spaces", { field: "organization", type: s.organizationSearch || "phrase", query: s.organization });
       }
@@ -386,13 +394,17 @@ export class SearchFormComponent {
       }
 
       if (Array.isArray(s.spaceUse) && s.spaceUse.length) {
-        const joined = s.spaceUse
+        if (s.spaceUse.length==1 && s.spaceUse[0].type=='') {
+          console.log(s.spaceUse.length, s.spaceUse[0].type);
+        } else {
+          const joined = s.spaceUse
           .map((su: any) => [su.type, su.subtype, su.space, su.auxiliarySpace].filter((x) => x !== "").join(","))
           .join("$");
-        pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
+          pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
+        }        
       }
 
-      if (s.spaceArea) {
+      if (s.spaceArea.from || s.spaceArea.until) {
         pushCond("spaces", { field: "spaceArea", query: { gte: s.spaceArea.from, lte: s.spaceArea.until} });
       }
     }
@@ -400,6 +412,7 @@ export class SearchFormComponent {
     // === EQUIPMENTS ===
     if (input.equipments) {
       const e = input.equipments;
+      let equipmentExist = false;
 
       if (e.organization) {
         pushCond("equipments", { field: "organization", type: e.organizationSearch || "phrase", query: e.organization });
@@ -419,17 +432,17 @@ export class SearchFormComponent {
         pushCond("equipments", { field: "itemDescription", type: "phrase", query: joined });
       }
 
-      if (e.acquisitionDate) {
+      if (e.acquisitionDate.from || e.acquisitionDate.until) {
         pushCond("equipments", { 
           field: "acquisitionDate", 
             query: { 
-              gte: new Date(e.acquisitionDate.from).toISOString(),
-              lte: new Date(e.acquisitionDate.until).toISOString()
+              gte: e.acquisitionDate.from ? new Date(e.acquisitionDate.from).toISOString() : "",
+              lte: e.acquisitionDate.until ? new Date(e.acquisitionDate.until).toISOString() : ""
             } 
           })
       }
 
-      if (e.depreciationDate) {
+      if (e.depreciationDate.from || e.depreciationDate.until) {
         pushCond("equipments", { 
           field: "depreciationDate", 
           query: { 
