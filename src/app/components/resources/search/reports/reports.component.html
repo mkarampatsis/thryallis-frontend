@@ -26,8 +26,8 @@
   </ag-grid-angular>
 
   @if(showTable1){
-  <div class="mt-4">
-    <h1 class="govgr-heading-sm">Αναφορά για τα ακίνητα του φορέα</h1>
+  <div class="mt-5">
+    <h1 class="govgr-heading-sm text-center">Αναφορά για τα ακίνητα του φορέα</h1>
 
     <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
       στοιχείων σε Excel</button>
@@ -41,6 +41,7 @@
           <th>ΧΡΗΣΗ ΑΚΙΝΗΤΟΥ</th>
           <th>ΣΥΝΟΛΙΚΟΣ ΣΤΕΓΑΣΜΕΝΟΣ ΧΩΡΟΣ (τ.μ)</th>
           <th>ΑΡΙΘΜΟΣ ΟΡΟΦΩΝ/ΕΠΙΠΕΔΩΝ</th>
+          <th>ΕΝΕΡΓΕΙΕΣ</th>
         </tr>
       </thead>
       <tbody>
@@ -53,14 +54,18 @@
           <td>{{ facility.useOfFacility }}</td>
           <td>{{ facility.coveredPremisesArea }}</td>
           <td>{{ facility.floorsOrLevels }}</td>
+          <td>
+            <i class="bi bi-info-circle" role="button" (click)="showDetailsMatrix1(facility._id.$oid)"
+            ngbTooltip="Στοιχεία Ακινήτου"></i>
+          </td>
         </tr>
         }
       </tbody>
     </table>
   </div>
 
-  <div class="mt-4">
-    <h1 class="govgr-heading-sm">Αναφορά για χώρους του φορέα</h1>
+  <div class="mt-5">
+    <h1 class="govgr-heading-sm text-center">Αναφορά για χώρους του φορέα</h1>
 
     <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
       στοιχείων σε Excel</button>
@@ -68,7 +73,7 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>ΦΟΡΕΑΣ</th>
+          <!-- <th>ΦΟΡΕΑΣ</th> -->
           <th>ΑΚΙΝΗΤΟ</th>
           <th>ΧΩΡΟΣ</th>
           <th>ΧΡΗΣΗ ΧΩΡΟΥ</th>
@@ -80,38 +85,38 @@
       </thead>
       <tbody>
         @for (facility of matrixData1["facilities"]; track facility._id) {
-        @for (space of facility.spaces; track space._id) {
-        <tr>
-          <td>{{ facility.organization }}</td>
-          <td>
-            {{ facility.kaek }},
-            {{ facility.addressOfFacility.street }}
-            {{ facility.addressOfFacility.number }},
-            {{ facility.addressOfFacility.postcode }},
-            {{ facility.addressOfFacility.municipality }}
-          </td>
-          <td>{{ space.spaceName }}</td>
-          <td>
-            {{ space.spaceUse.type }},
-            {{ space.spaceUse.subtype }},
-            {{ space.spaceUse.space }}
-          </td>
-          <td>
-            {{ space.spaceArea }}
-            ({{ space.spaceWidth }} x {{ space.spaceLength }})
-          </td>
-          <td>{{ space.entrances }}</td>
-          <td>{{ space.windows }}</td>
-          <td>{{ space.floorPlans.level }} ({{ space.floorPlans.num }})</td>
-        </tr>
-        }
+          @for (space of facility.spaces; track space._id) {
+            <tr>
+              <!-- <td>{{ facility.organization }}</td> -->
+              <td>
+                {{ facility.kaek }},
+                {{ facility.addressOfFacility.street }}
+                {{ facility.addressOfFacility.number }},
+                {{ facility.addressOfFacility.postcode }},
+                {{ facility.addressOfFacility.municipality }}
+              </td>
+              <td>{{ space.spaceName }}</td>
+              <td>
+                {{ space.spaceUse.type }},
+                {{ space.spaceUse.subtype }},
+                {{ space.spaceUse.space }}
+              </td>
+              <td>
+                {{ space.spaceArea }}
+                ({{ space.spaceWidth }} x {{ space.spaceLength }})
+              </td>
+              <td>{{ space.entrances }}</td>
+              <td>{{ space.windows }}</td>
+              <td>{{ space.floorPlans.level }} ({{ space.floorPlans.num }})</td>
+            </tr>
+          }
         }
       </tbody>
     </table>
   </div>
 
-  <div class="mt-4">
-    <h1 class="govgr-heading-sm">Αναφορά για τον εξοπλισμό του φορέα</h1>
+  <div class="mt-5">
+    <h1 class="govgr-heading-sm text-center">Αναφορά για τον εξοπλισμό του φορέα</h1>
 
     <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
       στοιχείων σε Excel</button>
@@ -119,8 +124,8 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>ΦΟΡΕΑΣ</th>
-          <th>ΚΩΔΙΚΟΣ</th>
+          <!-- <th>ΦΟΡΕΑΣ</th> -->
+          <th>ΚΩΔ. ΕΞΟΠΛΙΣΜΟΥ</th>
           <th>ΤΥΠΟΣ</th>
           <th>ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ</th>
           <th>ΗΜΕΡ. ΑΝΑΚΤΗΣΗΣ</th>
@@ -130,7 +135,7 @@
       <tbody>
         @for (equipment of matrixData1["equipments"]; track equipment ){
         <tr>
-          <td>{{ equipment.organization }}</td>
+          <!-- <td>{{ equipment.organization }}</td> -->
           <td>{{ equipment._id["$oid"] }}</td>
           <td>{{ equipment.resourceCategory }}, {{equipment.resourceSubcategory}}, {{equipment.kind}},
             {{equipment.type}}</td>

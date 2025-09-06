@@ -9,18 +9,21 @@ import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community'
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component'
 import { ConstService } from 'src/app/shared/services/const.service';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { take } from 'rxjs';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, AgGridAngular],
+  imports: [CommonModule, AgGridAngular, NgbTooltipModule],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css'
 })
 export class ReportsComponent {
   constService = inject(ConstService);
   resourceService = inject(ResourcesService);
+  modalService = inject(ModalService);
 
   store = inject(Store<AppState>);
   organizations$ = selectOrganizations$;
@@ -91,6 +94,7 @@ export class ReportsComponent {
           const status = response.status;
           if (status === 200) {
             this.matrixData1 = body;
+            console.log(this.matrixData1)
           }
         })
     }
@@ -116,5 +120,9 @@ export class ReportsComponent {
 
   onBtnExportReport1() {
     this.resourceService.onExportToExcelMatrix1(this.matrixData1);
-  } 
+  }
+  
+  showDetailsMatrix1(code: string){
+    this.modalService.showResourcesDetails(code);
+  }
 }

@@ -48,19 +48,18 @@
 
   @if(showTable1){
   <div class="mt-4">
-    <h1 class="govgr-heading-sm">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
-
+    <h1 class="govgr-heading-sm text-center">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
     
     <div class="d-flex justify-content-between small">
-    <div>
-      <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">
-        Εξαγωγή στοιχείων σε Excel
-      </button>
+      <div>
+        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">
+          Εξαγωγή στοιχείων σε Excel
+        </button>
+      </div>
+      <div>
+        <span>Eπιλέξτε δύο ακίνητα φορείς που επιθυμείτε να συγκρίνετε</span>
+      </div>
     </div>
-    <div>
-      <span>Eπιλέξτε δύο ακίνητα φορείς που επιθυμείτε να συγκρίνετε</span>
-    </div>
-  </div>
     
 
     <table class="table table-striped">
@@ -112,9 +111,8 @@
 </div>
 
 <!-- Matrix 2 -->
-
 <div class="mt-4">
-  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center text-center">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
 
   <ul>
     @for (unit of selectedDataMatrix2; track unit ){
@@ -146,162 +144,13 @@
     class="ag-theme-balham">
   </ag-grid-angular>
 
-
-@if (loadingMatrix2) {
-  <div class="mt-4">
-    <span class="d-flex align-items-center gap-2">
-      Αναμονή αποτελεσμάτων...
-      <span class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </span>
-    </span>
-  </div>
-}  
-
-@if(showTable2){
-  <div class="mt-4">
-    <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων φορέων</h1>
-
-    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix2()" [disabled]="!showTable2">Εξαγωγή
-      στοιχείων σε Excel</button>
-
-    <div class="container mt-4" *ngIf="matrixData2">
-      <div *ngFor="let org of (matrixData2 | keyvalue)" class="mb-5">
-        <h3 class="mb-3">{{ org.key }}</h3>
-
-        <!-- Facilities -->
-        <h5>Ακίνητα</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Σύνολο Ακινήτων</th>
-              <th>Συνολικά εμβαδόν ακινήτων</th>
-              <th>Εμβαδόν ανά ακίνητο</th>
-              <th>Χρήση Ακινήτου</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <ul>
-                    <li *ngFor="let name of org.value.facilities.names">{{ name }}</li>
-                </ul>
-              </td>
-              <td>{{ org.value.facilities.totalCoveredArea }}</td>
-              <td>
-                <ul>
-                  <li *ngFor="let ca of (org.value.facilities.coveredAreas | keyvalue)">
-                    {{ ca.key }}: {{ ca.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let f of (org.value.facilities.byUse | keyvalue)">
-                    {{ f.key }}: {{ f.value }}
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Spaces -->
-        <h5>Spaces</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Σύνολο Χώρων</th>
-              <th>Χρήση χώρου</th>
-              <th>Υποτύπος χώρου</th>
-              <th>Χώρος</th>
-              <th>Βοηθητικός Χώρος</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ org.value.spaces.total }}</td>
-              <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.byType | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.bySubtype | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.bySpace | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>{{ org.value.spaces.byAuxiliary }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Equipments -->
-        <h5>Εξοπλισμός</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Σύνολο εξοπλισμού</th>
-              <th>Κατηγορία</th>
-              <th>Υποκατηγορία</th>
-              <th>Είδος</th>
-              <th>Τύπος</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ org.value.equipments.total }}</td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.byCategory | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.bySubcategory | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.byKind | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.byType | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  @if(showTable2){
+    <app-facilities-compare [organizationsToCompare]="selectedDataMatrix2"></app-facilities-compare>
   }
 </div>
 
 
 <!-- Matrix 3 -->
-
 <div class="mt-4">
   <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αριθμητική σύγκριση πόρων μεταξύ (2) Μονάδων</h1>
 
@@ -335,155 +184,7 @@
     class="ag-theme-balham">
   </ag-grid-angular>
 
-
-@if (loadingMatrix3) {
-  <div class="mt-4">
-    <span class="d-flex align-items-center gap-2">
-      Αναμονή αποτελεσμάτων...
-      <span class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </span>
-    </span>
-  </div>
-}  
-
-@if(showTable3){
-  <div class="mt-4">
-    <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων μονάδων</h1>
-
-    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3()" [disabled]="!showTable3">Εξαγωγή
-      στοιχείων σε Excel</button>
-
-    <div class="container mt-4" *ngIf="matrixData3">
-      <div *ngFor="let org of (matrixData3 | keyvalue)" class="mb-5">
-        <h3 class="mb-3">{{ org.key }}</h3>
-
-        <!-- Facilities -->
-        <h5>Ακίνητα</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Σύνολο Ακινήτων</th>
-              <th>Συνολικά εμβαδόν ακινήτων</th>
-              <th>Εμβαδόν ανά ακίνητο</th>
-              <th>Χρήση Ακινήτου</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <ul>
-                    <li *ngFor="let name of org.value.facilities.names">{{ name }}</li>
-                </ul>
-              </td>
-              <td>{{ org.value.facilities.totalCoveredArea }}</td>
-              <td>
-                <ul>
-                  <li *ngFor="let ca of (org.value.facilities.coveredAreas | keyvalue)">
-                    {{ ca.key }}: {{ ca.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let f of (org.value.facilities.byUse | keyvalue)">
-                    {{ f.key }}: {{ f.value }}
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Spaces -->
-        <h5>Spaces</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Σύνολο Χώρων</th>
-              <th>Χρήση χώρου</th>
-              <th>Υποτύπος χώρου</th>
-              <th>Χώρος</th>
-              <th>Βοηθητικός Χώρος</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ org.value.spaces.total }}</td>
-              <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.byType | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.bySubtype | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.bySpace | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>{{ org.value.spaces.byAuxiliary }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Equipments -->
-        <h5>Εξοπλισμός</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="table-light">
-            <tr>
-              <th>Σύνολο εξοπλισμού</th>
-              <th>Κατηγορία</th>
-              <th>Υποκατηγορία</th>
-              <th>Είδος</th>
-              <th>Τύπος</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ org.value.equipments.total }}</td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.byCategory | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.bySubcategory | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.byKind | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li *ngFor="let e of (org.value.equipments.byType | keyvalue)">
-                    {{ e.key }}: {{ e.value }}
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  @if(showTable3){
+    <app-facilities-compare [organizationalUnitsToCompare]="selectedDataMatrix3"></app-facilities-compare>
   }
 </div>

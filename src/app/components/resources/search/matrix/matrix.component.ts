@@ -13,7 +13,7 @@ import { ConstService } from 'src/app/shared/services/const.service';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { IFacility, IFacilitySummary } from 'src/app/shared/interfaces/facility/facility';
+import { IFacility } from 'src/app/shared/interfaces/facility/facility';
 import { Subscription, take } from 'rxjs';
 import { FacilitiesCompareComponent } from '../facilities-compare/facilities-compare.component';
 
@@ -43,7 +43,7 @@ export class MatrixComponent {
   objectKeys = Object.keys;
 
   foreis: IOrganizationList[] = [];
-  monades: IOrganizationUnitList[] = [];
+  monades: IOrganizationUnitList[] = [];IOrganizationUnitList
 
   selectedFacilitiesToCompare: IFacility[] = [];
 
@@ -62,19 +62,14 @@ export class MatrixComponent {
   selectedDataMatrix1 = [];
   matrixData1 = [];
   showTable1 = false;
-  showCompare = false;
   loadingMatrix1 = false;
-  
+  showCompare = false;
 
   selectedDataMatrix2 = [];
-  matrixData2 : { [organization: string]: IFacilitySummary } = {};
   showTable2 = false;
-  loadingMatrix2 = false;
 
   selectedDataMatrix3 = [];
-  matrixData3 : { [organization: string]: IFacilitySummary } = {};
   showTable3 = false;
-  loadingMatrix3 = false;
 
   selectedRowLimit = 2;
 
@@ -167,29 +162,9 @@ export class MatrixComponent {
         node.selectable = true; // Re-enable checkbox
       });
     }
-
     // Log selected rows to the console
     this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
-    const codes = selectedNodes.map(node => node.data.code);
-    this.showTable2 = false
-    this.loadingMatrix2 = this.selectedDataMatrix2.length ? true: false;
-    
-    if (this.selectedDataMatrix2.length) {
-      this.resourceService.getFacilityDetailsByOrganizations(codes)
-      .subscribe(response => {
-        const body = response.body;
-        const status = response.status;
-        if (status === 200) {
-          this.matrixData2 = this.resourceService.aggregateData(body);
-          this.showTable2 = true;
-          this.loadingMatrix2 = false;
-        }
-      })
-    }
-  }
-
-  onBtnExportMatrix2() {
-    // this.resourceService.onExportToExcelMatrix2(this.matrixData2);
+    this.showTable2 = this.selectedDataMatrix2.length==2 ? true : false;
   }
 
   // Matrix 3 
@@ -230,26 +205,7 @@ export class MatrixComponent {
 
     // Log selected rows to the console
     this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
-    const codes = selectedNodes.map(node => node.data.code);
-    this.showTable3 = false
-    this.loadingMatrix3 = this.selectedDataMatrix3.length ? true: false;
-    
-    if (this.selectedDataMatrix3.length) {
-      this.resourceService.getFacilityDetailsByOrganizationalUnits(codes)
-      .subscribe(response => {
-        const body = response.body;
-        const status = response.status;
-        if (status === 200) {
-          this.matrixData3 = this.resourceService.aggregateData(body);
-          this.showTable3 = true;
-          this.loadingMatrix3 = false;
-        }
-      })
-    }
-  }
-
-  onBtnExportMatrix3() {
-    // this.resourceService.onExportToExcelMatrix2(this.matrixData3);
+    this.showTable3 = this.selectedDataMatrix3.length == 2 ? true : false;
   }
 
   // For Matrix4 of comparing two facilities
