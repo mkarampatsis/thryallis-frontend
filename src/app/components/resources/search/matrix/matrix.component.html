@@ -50,8 +50,18 @@
   <div class="mt-4">
     <h1 class="govgr-heading-sm">Αριθμητική σύγκριση πόρων μεταξύ (2) Φορέων</h1>
 
-    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">Εξαγωγή
-      στοιχείων σε Excel</button>
+    
+    <div class="d-flex justify-content-between small">
+    <div>
+      <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix1()" [disabled]="!showTable1">
+        Εξαγωγή στοιχείων σε Excel
+      </button>
+    </div>
+    <div>
+      <span>Eπιλέξτε δύο ακίνητα φορείς που επιθυμείτε να συγκρίνετε</span>
+    </div>
+  </div>
+    
 
     <table class="table table-striped">
       <thead>
@@ -66,17 +76,24 @@
         </tr>
       </thead>
       <tbody>
-        @for (forea of matrixData1; track forea ){
+        @for (facility of matrixData1; track facility ){
         <tr>
-          <td>{{ forea.organization }}</td>
-          <td>{{ forea.kaek }}_{{forea.addressOfFacility.street}}_{{forea.addressOfFacility.number}}_{{forea.addressOfFacility.postcode}}_{{forea.addressOfFacility.municipality}}</td>
-          <td>{{ forea.distinctiveNameOfFacility }}</td>
-          <td>{{ forea.useOfFacility }}</td>
-          <td>{{ forea.coveredPremisesArea }}</td>
-          <td>{{ forea.floorsOrLevels }}</td>
+          <td>{{ facility.organization }}</td>
+          <td>{{ facility.kaek }}_{{facility.addressOfFacility.street}}_{{facility.addressOfFacility.number}}_{{facility.addressOfFacility.postcode}}_{{facility.addressOfFacility.municipality}}</td>
+          <td>{{ facility.distinctiveNameOfFacility }}</td>
+          <td>{{ facility.useOfFacility }}</td>
+          <td>{{ facility.coveredPremisesArea }}</td>
+          <td>{{ facility.floorsOrLevels }}</td>
           <td> 
-            <i class="bi bi-info-circle" role="button" (click)="showDetailsMatrix1(forea._id.$oid)"
+            <i class="bi bi-info-circle" role="button" (click)="showDetailsMatrix1(facility._id.$oid)"
               ngbTooltip="Στοιχεία Ακινήτου"></i>
+            <input 
+              type="checkbox" 
+              [checked]="isSelected(facility)" 
+              (change)="onCheckboxChange(facility, $event)" 
+              ngbTooltip="Σύγκριση ακινήτων"
+              class="form-check-input mx-1"
+            />
           </td>
         </tr>
         }
@@ -85,6 +102,10 @@
   </div>
   }
 </div>
+
+@if (showCompare){
+  <app-facilities-compare [facilitiesToCompare]="selectedFacilitiesToCompare"></app-facilities-compare>
+}
 
 <div class="text-success mt-4">
   <hr>
@@ -301,16 +322,16 @@
 
   <ag-grid-angular 
     [domLayout]="'autoHeight'" 
-    [rowData]="foreis" 
+    [rowData]="monades" 
     [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs_Organizations" 
+    [columnDefs]="colDefs_OrganizatioalUnits" 
     [pagination]="true" 
     [paginationPageSize]="10"
     [loadingOverlayComponent]="loadingOverlayComponent" 
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
     rowSelection="multiple" 
-    (rowSelected)="onRowSelected_Matrix2($event)" 
-    (gridReady)="onGridReady_Matrix2($event)"
+    (rowSelected)="onRowSelected_Matrix3($event)" 
+    (gridReady)="onGridReady_Matrix3($event)"
     class="ag-theme-balham">
   </ag-grid-angular>
 
@@ -330,7 +351,7 @@
   <div class="mt-4">
     <h1 class="govgr-heading-sm">Σύγκριση μεταξύ δύο ή περισσότερων ακινήτων μονάδων</h1>
 
-    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix2()" [disabled]="!showTable3">Εξαγωγή
+    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3()" [disabled]="!showTable3">Εξαγωγή
       στοιχείων σε Excel</button>
 
     <div class="container mt-4" *ngIf="matrixData3">

@@ -166,6 +166,16 @@ export class ResourcesService {
     return this.http.get<[]>(url, { params: { codes: codes.join(',') }, observe: 'response' });
   }
 
+  getFacilityDetailsByOrganizationalUnits(codes: string[]): Observable<HttpResponse<[]>> {
+    const url = `${APIPREFIX_FACILITY}/organizationalUnits/details`;
+    return this.http.get<[]>(url, { params: { codes: codes.join(',') }, observe: 'response' });
+  }
+
+  getFacilityDetailsByFacilitiesID(codes: string[]): Observable<HttpResponse<[]>> {
+    const url = `${APIPREFIX_FACILITY}/facilities/details`;
+    return this.http.get<[]>(url, { params: { codes: codes.join(',') }, observe: 'response' });
+  }
+
   getFacilityDetailsById(id: string): Observable<HttpResponse<IFacilityData>> {
     const url = `${APIPREFIX_FACILITY}/${id}/details`;
     return this.http.get<IFacilityData>(url, { observe: 'response' });
@@ -198,7 +208,7 @@ export class ResourcesService {
     saveAs(blob, 'Facility.xlsx');
   }
 
-  onExportToExcelMatrix2(jsonData: { [organization: string]: IFacilitySummary }): void {
+  onExportToExcel(jsonData: { [organization: string]: IFacilitySummary }): void {
     const data: any[] = [];
 
     // Flatten summary into rows

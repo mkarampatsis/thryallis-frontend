@@ -6,6 +6,7 @@ export interface IFloorPlans {
 }
 
 export interface IFacility {
+  _id?: string;
   organization: string;
   organizationCode: string;
   kaek: string;
