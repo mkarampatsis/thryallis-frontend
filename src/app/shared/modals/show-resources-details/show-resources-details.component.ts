@@ -26,7 +26,6 @@ export class ShowResourcesDetailsComponent implements OnInit {
       const status = response.status;        
       if (status === 200) {
         this.data = body;
-        console.log(body);
       }
     })
   }

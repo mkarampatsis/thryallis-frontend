@@ -94,7 +94,6 @@ export class ReportsComponent {
           const status = response.status;
           if (status === 200) {
             this.matrixData1 = body;
-            console.log(this.matrixData1)
           }
         })
     }
