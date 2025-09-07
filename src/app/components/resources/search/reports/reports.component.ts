@@ -94,6 +94,7 @@ export class ReportsComponent {
           const status = response.status;
           if (status === 200) {
             this.matrixData1 = body;
+            console.log(this.matrixData1);
           }
         })
     }
@@ -118,7 +119,7 @@ export class ReportsComponent {
   }
 
   onBtnExportReport1() {
-    this.resourceService.onExportToExcelMatrix1(this.matrixData1);
+    this.resourceService.exportToExcelReport1(this.matrixData1);
   }
   
   showDetailsMatrix1(code: string){

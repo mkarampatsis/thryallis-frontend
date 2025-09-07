@@ -368,6 +368,90 @@ export class ResourcesService {
     saveAs(blob, 'facility-details.xlsx');
   }
 
+  exportToExcelReport1(jsonData: any[]) {
+    // 1. Facilities with spaces flattened
+    const facilities: any[] = [];
+    
+    jsonData["facilities"].forEach(f => {
+      if (f.spaces && f.spaces.length > 0) {
+        f.spaces.forEach(space => {
+          facilities.push({
+            "Φορέας": f.organization,
+            "Κωδ. Φορέα": f.organizationCode,
+            "KAEK": f.kaek,
+            "Διακριτή Ονομασία": f.distinctiveNameOfFacility,
+            "Τύπος Χρήσης": f.useOfFacility,
+            "Εμβαδόν σε τ.μ": f.coveredPremisesArea,
+            "Όροφοι": f.floorsOrLevels,
+            "Διεύθυνση": `${f.addressOfFacility.street} ${f.addressOfFacility.number}, ${f.addressOfFacility.postcode} ${f.addressOfFacility.area}, ${f.addressOfFacility.municipality}`,
+            "Χώρα": f.addressOfFacility.country,
+            // --- Space info ---
+            "Ονομασία Χώρου": space.spaceName,
+            "Τύπος Χώρου": space.spaceUse?.type || '',
+            "Υποκατηγορία Χώρου": space.spaceUse?.subtype || '',
+            "Χώρος": space.spaceUse?.space || '',
+            "Εμβαδόν Χώρου": space.spaceArea,
+            "Είσοδοι": space.entrances,
+            "Παράθυρα": space.windows,
+            "Όροφος/Επίπεδο": `${space.floorPlans?.level} ${space.floorPlans?.num || ''}`,
+          });
+        });
+      } else {
+        // Facility without spaces
+        facilities.push({
+          "Φορέας": f.organization,
+          "Κωδ. Φορέα": f.organizationCode,
+          "KAEK": f.kaek,
+          "Διακριτή Ονομασία": f.distinctiveNameOfFacility,
+          "Τύπος Χρήσης": f.useOfFacility,
+          "Εμβαδόν σε τ.μ": f.coveredPremisesArea,
+          "Όροφοι": f.floorsOrLevels,
+          "Διεύθυνση": `${f.addressOfFacility.street} ${f.addressOfFacility.number}, ${f.addressOfFacility.postcode} ${f.addressOfFacility.area}, ${f.addressOfFacility.municipality}`,
+          "Χώρα": f.addressOfFacility.country,
+          "Ονομασία Χώρου": '',
+          "Τύπος Χώρου": '',
+          "Υποκατηγορία Χώρου": '',
+          "Χώρος": '',
+          "Εμβαδόν Χώρου": '',
+          "Είσοδοι": '',
+          "Παράθυρα": '',
+          "Όροφος/Επίπεδο": '',
+        });
+      }
+    });
+
+    // 2. Equipment data stays as before
+    const equipments = jsonData["equipments"].map(eq => ({
+      "Κωδ. Εξοπλισμού": eq._id.$oid,
+      "Φορέας": eq.organization,
+      "Κωδ. Φορέα": eq.organizationCode,
+      "Κωδ. Ακινήτου Φιλοξενίας": eq.hostingFacility.$oid,
+      "Κωδ. Ακινήτων": eq.spaceWithinFacility.$oid,
+      "Κατηγορία": eq.resourceCategory,
+      "Υποκατηγορία": eq.resourceSubcategory,
+      "Είδος": eq.kind,
+      "Τύπος": eq.type,
+      "Κατάσταση": eq.status,
+      "Ημερ. Προμήθειας": new Date(eq.acquisitionDate.$date).toLocaleDateString(),
+      "Χαρακτηριστικά": eq.itemDescription.map(d => `${d.description}: ${d.value}`).join(', '),
+      "Ποσότητα": eq.itemQuantity.reduce((sum, q) => sum + q.quantity, 0)
+    }));
+
+    // 3. Create sheets
+    const wsFacilities: XLSX.WorkSheet = XLSX.utils.json_to_sheet(facilities);
+    const wsEquipments: XLSX.WorkSheet = XLSX.utils.json_to_sheet(equipments);
+
+    // 4. Create workbook
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, wsFacilities, 'Ακίνητα και Χώροι');
+    XLSX.utils.book_append_sheet(wb, wsEquipments, 'Εξοπλισμός');
+
+    // 5. Export
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'facilities_and_equipments.xlsx');
+  }
+
   aggregateData(docs: any[]) {
     const result: any = {};
 
