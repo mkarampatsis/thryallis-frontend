@@ -12,10 +12,13 @@ import { IEmployee } from '../interfaces/employee/employee';
 // For Excel Export
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { ISearch } from '../interfaces/search/search.interface';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
 const APIPREFIX_EMPLOYEE = `${environment.apiUrl}/employee`;
+
+const APIPREFIX_RESOURCES = `${environment.elasticUrl}/search/resources`;
 
 @Injectable({
   providedIn: 'root'
@@ -180,6 +183,11 @@ export class ResourcesService {
     const url = `${APIPREFIX_FACILITY}/${id}/details`;
     return this.http.get<IFacilityData>(url, { observe: 'response' });
   }
+
+  // Elastic Request
+  postSearch(data: any): Observable<HttpResponse<any>> {
+    return this.http.post<ISearch>(APIPREFIX_RESOURCES, data, { observe: 'response' });
+  };
 
   // Excel Export
   onExportToExcelMatrix1(jsonData: any[]): void {

@@ -299,10 +299,11 @@ export class SearchFormComponent {
   }
 
   submitForm() {
+    this.rowData = [];
     if (this.form.valid) {
       console.log('Form Data1:', this.form.getRawValue()); // getRawValue includes disabled fields
-      const data = this.transformData(this.form.getRawValue());
-      console.log('Form Data2:',data)
+      this.rowData = this.transformData(this.form.getRawValue());
+      console.log('Form Data2:',this.rowData)
     } else {
       console.log('Form is invalid');
     }
