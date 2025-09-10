@@ -295,15 +295,16 @@ export class SearchFormComponent {
 
   resetForm() {
     this.form.reset();
-    this.initializeForm(); // reinitialize default structure
+    this.rowData = [];
+    this.initializeForm(); 
   }
 
   submitForm() {
     this.rowData = [];
     if (this.form.valid) {
-      console.log('Form Data1:', this.form.getRawValue()); // getRawValue includes disabled fields
+      // console.log('Form Data1:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
-      console.log('Form Data2:',this.rowData)
+      // console.log('Form Data2:',this.rowData)
     } else {
       console.log('Form is invalid');
     }
@@ -340,9 +341,12 @@ export class SearchFormComponent {
       }
 
       if (Array.isArray(f.useOfFacility) && f.useOfFacility.length ) {
+        let useOfFacility = []
         f.useOfFacility.forEach((use: string) => {
-          pushCond("facilities", { field: "useOfFacility", type: "phrase", query: use });
+          useOfFacility.push(use);
+          // pushCond("facilities", { field: "useOfFacility", type: "phrase", query: use });
         });
+        pushCond("facilities", { field: "useOfFacility", type: "phrase", query: useOfFacility });
         facilityExist = true;
       }
 

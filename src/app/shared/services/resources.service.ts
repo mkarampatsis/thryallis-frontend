@@ -13,6 +13,7 @@ import { IEmployee } from '../interfaces/employee/employee';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { ISearch } from '../interfaces/search/search.interface';
+import { IElasticResources } from '../interfaces/search/search-resources.interface';
 
 const APIPREFIX_FACILITY = `${environment.apiUrl}/facility`;
 const APIPREFIX_EQUIPMENT = `${environment.apiUrl}/equipment`;
@@ -458,6 +459,33 @@ export class ResourcesService {
     const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, 'facilities_and_equipments.xlsx');
+  }
+
+  onExportToExcelSearch(data: IElasticResources) {
+    // Convert each array into worksheet
+    const facilitiesSheet = XLSX.utils.json_to_sheet(data.facilities);
+    const spacesSheet = XLSX.utils.json_to_sheet(data.spaces);
+    const equipmentSheet = XLSX.utils.json_to_sheet(data.equipment);
+
+    // Create workbook and append sheets
+    const workbook: XLSX.WorkBook = {
+      Sheets: {
+        Facilities: facilitiesSheet,
+        Spaces: spacesSheet,
+        Equipment: equipmentSheet,
+      },
+      SheetNames: ["Facilities", "Spaces", "Equipment"],
+    };
+
+    // Write file
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    // Save file
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "exported_data.xlsx");
   }
 
   aggregateData(docs: any[]) {

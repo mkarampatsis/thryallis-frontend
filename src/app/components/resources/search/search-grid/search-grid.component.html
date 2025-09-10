@@ -15,50 +15,56 @@
         }
     </div>
 
-    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Ακινήτων</h1>
-    <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="facilityData"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Facilities"
-        [pagination]="true"
-        [paginationPageSize]="20"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        (gridReady)="onGridReadyFacilities($event)"
-        (cellClicked)="onCellFacilityClicked($event)"
-        class="ag-theme-balham">
-    </ag-grid-angular>
+    @if (elasticData.facilities.length){
+      <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Ακινήτων</h1>
+      <ag-grid-angular
+          [domLayout]="'autoHeight'"
+          [rowData]="elasticData.facilities"
+          [defaultColDef]="defaultColDef"
+          [columnDefs]="colDefs_Facilities"
+          [pagination]="true"
+          [paginationPageSize]="20"
+          [loadingOverlayComponent]="loadingOverlayComponent"
+          [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+          (gridReady)="onGridReadyFacilities($event)"
+          (cellClicked)="onCellFacilityClicked($event)"
+          class="ag-theme-balham">
+      </ag-grid-angular>
+    }
 
-    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Χώρων Ακινήτων</h1>
-    <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="spaceData"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Spaces"
-        [pagination]="true"
-        [paginationPageSize]="20"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        (gridReady)="onGridReadySpaces($event)"
-        (cellClicked)="onCellSpaceClicked($event)"
-        class="ag-theme-balham">
-    </ag-grid-angular>
+    @if (elasticData.spaces.length) {
+      <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Χώρων Ακινήτων</h1>
+      <ag-grid-angular
+          [domLayout]="'autoHeight'"
+          [rowData]="elasticData.spaces"
+          [defaultColDef]="defaultColDef"
+          [columnDefs]="colDefs_Spaces"
+          [pagination]="true"
+          [paginationPageSize]="20"
+          [loadingOverlayComponent]="loadingOverlayComponent"
+          [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+          (gridReady)="onGridReadySpaces($event)"
+          (cellClicked)="onCellSpaceClicked($event)"
+          class="ag-theme-balham">
+      </ag-grid-angular>
+    }
 
-    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Πόρων</h1>
-    <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="equipmentData"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Equipments"
-        [pagination]="true"
-        [paginationPageSize]="20"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        (gridReady)="onGridReadyEquipments($event)"
-        (cellClicked)="onCellEquipmentClicked($event)"
-        class="ag-theme-balham">
-    </ag-grid-angular>
+    @if (elasticData.equipment.length) {
+      <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Πόρων</h1>
+      <ag-grid-angular
+          [domLayout]="'autoHeight'"
+          [rowData]="elasticData.equipment"
+          [defaultColDef]="defaultColDef"
+          [columnDefs]="colDefs_Equipments"
+          [pagination]="true"
+          [paginationPageSize]="20"
+          [loadingOverlayComponent]="loadingOverlayComponent"
+          [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+          (gridReady)="onGridReadyEquipments($event)"
+          (cellClicked)="onCellEquipmentClicked($event)"
+          class="ag-theme-balham">
+      </ag-grid-angular>
+    }
 </div>
 
 

@@ -5,10 +5,13 @@ import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { ISearchGridOutput } from 'src/app/shared/interfaces/search/search.interface';
+import { IElasticResources, IEquipmentElastic, ISpaceElastic } from 'src/app/shared/interfaces/search/search-resources.interface';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
-import { map, forkJoin, take } from 'rxjs';
+import { take } from 'rxjs';
+
+
 
 @Component({
   selector: 'app-search-grid',
@@ -20,14 +23,16 @@ import { map, forkJoin, take } from 'rxjs';
 export class SearchGridComponent implements OnChanges {
   @Input() data: ISearchGridOutput[] | null;
 
-  facilityData: any[];
-  spaceData: any[];
-  equipmentData: any[];
-  
   constService = inject(ConstService);
   modalService = inject(ModalService);
   legalProvisionService = inject(LegalProvisionService);
   resourceService = inject(ResourcesService)
+
+  elasticData: IElasticResources = {
+    facilities: [],
+    spaces: [],
+    equipment: []
+  };
 
   loading = false;
 
@@ -35,26 +40,17 @@ export class SearchGridComponent implements OnChanges {
 
   colDefs_Facilities: ColDef[] = [
     { field: 'kaek', headerName: 'ΚΑΕΚ', flex: 1 },
-    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 2 },
-    { field: 'UseOfFacility', headerName: 'Τρόπος Χρήσης', flex: 2 },
-    // { 
-    //   field: 'Address',
-    //   cellRenderer: (params) => {
-    //     let item = '';
-    //     const data = params.value;
-    //     item = data.street + ',' + data.number + ',' + data.postcode + ',' + data.area + ',' + data.municipality;
-    //     return item;
-    //   }, 
-    //   flex: 1, 
-    // },
-    { field: 'CoveredPremisesArea', headerName: 'Εμβαδόν', flex: 1 }
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 1 },
+    { field: 'useOfFacility', headerName: 'Τρόπος Χρήσης', flex: 1 },
+    { field: 'addressOfFacility', headerName: 'Διεύθυνση', flex: 1 },
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 1 },
   ];
 
   colDefs_Spaces: ColDef[] = [
     { field: 'spaceName', headerName: 'Χώρος', flex: 1 },
     { field: 'spaceUse', headerName: 'Χρήση', flex: 2 },
-    { field: 'spaceArea', headerName: 'Εμβαδόν', flex: 1 },
-    { field: 'facility', headerName: 'Ακίνητο', flex: 1 }
+    { field: 'spaceArea', headerName: 'Εμβαδόν', flex: .5 },
+    { field: 'addressOfFacility', headerName: 'Ακίνητο', flex: 2 }
   ];
 
   colDefs_Equipments: ColDef[] = [
@@ -63,15 +59,27 @@ export class SearchGridComponent implements OnChanges {
     { 
       field: 'itemDescription', 
       headerName: 'Χαρακτηριστικά', 
-      valueGetter: (params) => {
-        if (!params.data.itemDescription) return '';
-        return params.data.itemDescription.map(s => s.description + '=' + s.value).join(', ');
-      },
-      flex: 1,
+      flex: 2,
       filter: true,
     },
-    { field: 'spaceWithinFacility', headerName: 'Ακίνητο', flex: 1 },
-    { field: 'organizations', headerName: 'Φορέας', flex: 1 }
+    { 
+      field: 'spaces', 
+      headerName: 'Χώρος',
+      valueGetter: (params) => {
+        if (!params.data.spaces) return '';
+        return params.data.spaces.map(s => s.spaceName).join(', ');
+      }, 
+      flex: 1 
+    },
+    { 
+      field: 'spaceWithinFacility', 
+      headerName: 'Ακίνητο',
+      valueGetter: (params) => {
+        if (!params.data.spaces) return '';
+        return params.data.spaces.map(s => s.addressOfFacility).join(', ');
+      },  
+      flex: 2 
+    },
   ];
 
   autoSizeStrategy = this.constService.autoSizeStrategy;
@@ -91,18 +99,19 @@ export class SearchGridComponent implements OnChanges {
 
   fetchData() {
     this.loading = true;
+    console.log(this.data);
     this.resourceService
-      .postSearch(this.data)
-      .pipe(take(1))
-      .subscribe(response => {
-        if (response.status === 200) {
-          this.facilityData = response.body["facilities"]; 
-          this.spaceData = response.body["spaces"]; 
-          this.equipmentData = response.body["equipment"]; 
-          console.log(response.body); 
-        }
-        this.loading = false;
-      });
+    .postSearch(this.data)
+    .pipe(take(1))
+    .subscribe(response => {
+      if (response.status === 200) {
+        this.elasticData = response.body
+        this.elasticData.spaces = this.enrichedSpaces(this.elasticData);
+        this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
+        console.log(this.elasticData); 
+      }
+      this.loading = false;
+    });
   }
 
   onGridReadyFacilities(params: GridReadyEvent): void {
@@ -112,9 +121,9 @@ export class SearchGridComponent implements OnChanges {
   }
 
   onCellFacilityClicked(event: CellClickedEvent): void  {
-    console.log(event)
-    
-    // this.organizationCode = event.data['organizationCode']
+    const code = event.data['object_id'];
+    this.modalService.showResourcesDetails(code);
+
     // if (event.colDef.field=="preferredLabel") {
   }
 
@@ -125,9 +134,9 @@ export class SearchGridComponent implements OnChanges {
   }
 
   onCellSpaceClicked(event: CellClickedEvent): void  {
-    console.log(event)
-    
-    // this.organizationCode = event.data['organizationCode']
+    const code = event.data['facilityId'];
+    this.modalService.showResourcesDetails(code);
+
     // if (event.colDef.field=="preferredLabel") {
   }
 
@@ -138,82 +147,46 @@ export class SearchGridComponent implements OnChanges {
   }
 
   onCellEquipmentClicked(event: CellClickedEvent): void  {
-    console.log(event)
-    
-    // this.organizationCode = event.data['organizationCode']
+    const code = event.data['spaces'][0]['facilityId'];
+    this.modalService.showResourcesDetails(code);
     // if (event.colDef.field=="preferredLabel") {
   }
 
-  onBtnExportCSV() {
-    this.loading = true;
-    // console.log(this.data)
-    if (this.data[0].remitObjectId === "") {
-      this.gridApiFacilities.exportDataAsCsv();
-      this.loading = false;
-    } else {
-      const observables = this.data.map(doc =>
-        this.legalProvisionService
-          .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
-          .pipe(
-            map(legalProvisionData => {
-              // Create a shallow copy of the object to make it mutable
-              const mutableDoc = { ...doc };
-              mutableDoc["legalProvisionDetails"] = legalProvisionData;
-              return mutableDoc;
-            })
-          )
-      );
-
-      // Use forkJoin to handle all the requests simultaneously
-      forkJoin(observables).subscribe(
-        updatedArray => {
-          // Update the original data array if needed
-          this.data.length = 0; // Clear original array
-          this.data.push(...updatedArray); // Push updated objects back
-          //   console.log('Updated data array:', this.data);
-          // this.searchService.onExportCSV(this.data);
-          this.loading = false;
-        },
-        error => {
-          console.error('Error fetching legal provisions:', error);
-        }
-      );
-    }
-  }
-
   onBtnExportExcel() {
-    this.loading = true;
-    if (this.data[0].remitObjectId === "") {
-      // this.searchService.onExportToExcel(this.data)
-      this.loading = false;
-    } else {
-      const observables = this.data.map(doc =>
-        this.legalProvisionService
-          .getLegalProvisionsByRegulatedRemit(doc.remitObjectId)
-          .pipe(
-            map(legalProvisionData => {
-              // Create a shallow copy of the object to make it mutable
-              const mutableDoc = { ...doc };
-              mutableDoc["legalProvisionDetails"] = legalProvisionData;
-              return mutableDoc;
-            })
-          )
-      );
-
-      // Use forkJoin to handle all the requests simultaneously
-      forkJoin(observables).subscribe(
-        updatedArray => {
-          // Update the original data array if needed
-          this.data.length = 0; // Clear original array
-          this.data.push(...updatedArray); // Push updated objects back
-          //   console.log('Updated data array:', this.data);
-          // this.searchService.onExportToExcel(this.data);
-          this.loading = false;
-        },
-        error => {
-          console.error('Error fetching legal provisions:', error);
-        }
-      );
-    }
+    this.resourceService.onExportToExcelSearch(this.elasticData);
   }
+
+  enrichedSpaces(data: IElasticResources): ISpaceElastic[]{ 
+    return data.spaces.map(space => {
+      const facility = data.facilities.find(f => f.object_id === space.facilityId);
+      if (facility) {
+        return {
+          ...space,
+          addressOfFacility: facility.addressOfFacility,
+          distinctiveNameOfFacility: facility.distinctiveNameOfFacility,
+          kaek: facility.kaek
+        };
+      }
+      return space;
+    });
+  }
+
+  enrichedEquipments(data: IElasticResources): IEquipmentElastic[]{ 
+    return data.equipment.map(eq => {
+      const relatedSpaces = eq.spaceWithinFacility
+        .map(spaceId => data.spaces.find(sp => sp.object_id === spaceId))
+        .filter(Boolean); 
+
+      return {
+        ...eq,
+        spaces: relatedSpaces.map(sp => ({
+          spaceName: sp!.spaceName,
+          addressOfFacility: sp!.addressOfFacility,
+          facilityId: sp!.facilityId
+        }))
+      }
+    });
+  }
+
+
 }
