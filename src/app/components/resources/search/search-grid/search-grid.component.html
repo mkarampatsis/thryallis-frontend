@@ -1,7 +1,7 @@
 <div class="govgr-body mt-3">
 
     <div class="d-flex align-items-center gap-2 mb-3">
-        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportCSV()">Εξαγωγή σε CSV</button>
+        <!-- <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportCSV()">Εξαγωγή σε CSV</button> -->
         <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
         @if (loading) {
             <span class="d-flex align-items-center gap-2">
@@ -15,17 +15,48 @@
         }
     </div>
 
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Ακινήτων</h1>
     <ag-grid-angular
         [domLayout]="'autoHeight'"
-        [rowData]="searchData"
+        [rowData]="facilityData"
         [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs"
+        [columnDefs]="colDefs_Facilities"
         [pagination]="true"
-        [paginationPageSize]="50"
+        [paginationPageSize]="20"
         [loadingOverlayComponent]="loadingOverlayComponent"
         [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        (gridReady)="onGridReady($event)"
-        (cellClicked)="onCellClicked($event)"
+        (gridReady)="onGridReadyFacilities($event)"
+        (cellClicked)="onCellFacilityClicked($event)"
+        class="ag-theme-balham">
+    </ag-grid-angular>
+
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Χώρων Ακινήτων</h1>
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="spaceData"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs_Spaces"
+        [pagination]="true"
+        [paginationPageSize]="20"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReadySpaces($event)"
+        (cellClicked)="onCellSpaceClicked($event)"
+        class="ag-theme-balham">
+    </ag-grid-angular>
+
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Πόρων</h1>
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="equipmentData"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs_Equipments"
+        [pagination]="true"
+        [paginationPageSize]="20"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReadyEquipments($event)"
+        (cellClicked)="onCellEquipmentClicked($event)"
         class="ag-theme-balham">
     </ag-grid-angular>
 </div>

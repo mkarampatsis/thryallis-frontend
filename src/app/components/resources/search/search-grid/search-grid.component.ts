@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { CellClickedEvent, ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
@@ -20,7 +20,10 @@ import { map, forkJoin, take } from 'rxjs';
 export class SearchGridComponent implements OnChanges {
   @Input() data: ISearchGridOutput[] | null;
 
-  searchData: any[];
+  facilityData: any[];
+  spaceData: any[];
+  equipmentData: any[];
+  
   constService = inject(ConstService);
   modalService = inject(ModalService);
   legalProvisionService = inject(LegalProvisionService);
@@ -30,37 +33,45 @@ export class SearchGridComponent implements OnChanges {
 
   defaultColDef = this.constService.defaultColDef;
 
-  colDefs: ColDef[] = [
-    { field: 'organizationCode', headerName: 'Κωδ. Φορέα', flex: 1, hide: true },
-    {
-      field: 'organizationPreferredLabel',
-      headerName: 'Φορέας',
-      valueFormatter: params => params.value.toUpperCase(),
-      flex: 2
-    },
-    { field: 'organizationObjectId', flex: 1, hide: true },
-    { field: 'organizationScore', headerName: 'Βαθ. Φορέα', flex: 1 },
+  colDefs_Facilities: ColDef[] = [
+    { field: 'kaek', headerName: 'ΚΑΕΚ', flex: 1 },
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 2 },
+    { field: 'UseOfFacility', headerName: 'Τρόπος Χρήσης', flex: 2 },
+    // { 
+    //   field: 'Address',
+    //   cellRenderer: (params) => {
+    //     let item = '';
+    //     const data = params.value;
+    //     item = data.street + ',' + data.number + ',' + data.postcode + ',' + data.area + ',' + data.municipality;
+    //     return item;
+    //   }, 
+    //   flex: 1, 
+    // },
+    { field: 'CoveredPremisesArea', headerName: 'Εμβαδόν', flex: 1 }
+  ];
 
-    { field: 'organizationalUnitCode', headerName: 'Κωδ. Μονάδας', flex: 1, hide: true },
-    {
-      field: 'organizationalUnitPreferredLabel',
-      headerName: 'Μονάδα',
-      valueFormatter: params => params.value.toUpperCase(),
-      flex: 2
-    },
-    { field: 'organizationalUnitObjectId', flex: 1, hide: true },
+  colDefs_Spaces: ColDef[] = [
+    { field: 'spaceName', headerName: 'Χώρος', flex: 1 },
+    { field: 'spaceUse', headerName: 'Χρήση', flex: 2 },
+    { field: 'spaceArea', headerName: 'Εμβαδόν', flex: 1 },
+    { field: 'facility', headerName: 'Ακίνητο', flex: 1 }
+  ];
 
-    {
-      field: 'remitText',
-      headerName: 'Αρμοδιότητα',
-      flex: 4,
-      cellRenderer: HtmlCellRenderer,
-      autoHeight: true,
-      cellStyle: { 'white-space': 'normal' }
+  colDefs_Equipments: ColDef[] = [
+    { field: 'kind', headerName: 'Είδος', flex: 1 },
+    { field: 'type', headerName: 'Τύπος', flex: 1 },
+    { 
+      field: 'itemDescription', 
+      headerName: 'Χαρακτηριστικά', 
+      valueGetter: (params) => {
+        if (!params.data.itemDescription) return '';
+        return params.data.itemDescription.map(s => s.description + '=' + s.value).join(', ');
+      },
+      flex: 1,
+      filter: true,
     },
-    { field: 'remitObjectId', flex: 1, hide: true },
-
-    { field: 'organizationalUnitScore', headerName: 'Βαθ. Μοναδ./Αρμοδ.', flex: 1, sort: 'desc' }
+    { field: 'spaceWithinFacility', headerName: 'Ακίνητο', flex: 1 },
+    { field: 'organizations', headerName: 'Φορέας', flex: 1 }
   ];
 
   autoSizeStrategy = this.constService.autoSizeStrategy;
@@ -68,11 +79,12 @@ export class SearchGridComponent implements OnChanges {
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αποτελεσμάτων...' };
 
-  gridApi: GridApi;
+  gridApiFacilities: GridApi;
+  gridApiSpaces: GridApi;
+  gridApiEquipments: GridApi;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data) {
-      console.log("Data changed:", this.data);
       this.fetchData();
     }
   }
@@ -84,42 +96,59 @@ export class SearchGridComponent implements OnChanges {
       .pipe(take(1))
       .subscribe(response => {
         if (response.status === 200) {
-          this.searchData = response.body;
-          console.log(this.searchData); 
+          this.facilityData = response.body["facilities"]; 
+          this.spaceData = response.body["spaces"]; 
+          this.equipmentData = response.body["equipment"]; 
+          console.log(response.body); 
         }
         this.loading = false;
       });
   }
 
-  onGridReady(params: GridReadyEvent): void {
-    this.gridApi = params.api;
-    this.gridApi.showLoadingOverlay();
-    this.gridApi.hideOverlay();
+  onGridReadyFacilities(params: GridReadyEvent): void {
+    this.gridApiFacilities = params.api;
+    this.gridApiFacilities.showLoadingOverlay();
+    this.gridApiFacilities.hideOverlay();
   }
 
-  onCellClicked(event: any): void {
-    if (event.colDef.field != "organizationScore" && event.colDef.field != "organizationalUnitScore") {
-      if (event.colDef.field === 'organizationPreferredLabel') {
-        this.modalService.showOrganizationDetails(event.data.organizationCode);
-      }
-      else if (event.data.organizationalUnitObjectId && event.colDef.field === 'organizationalUnitPreferredLabel') {
-        this.modalService.showOrganizationUnitDetails(event.data.organizationalUnitCode)
-      } else {
-        if (event.data.remitObjectId) {
-          this.modalService.showRemitDetails({
-            organizationCode: event.data.organizationalUnitCode,
-            remitId: event.data.remitObjectId
-          })
-        }
-      }
-    }
+  onCellFacilityClicked(event: CellClickedEvent): void  {
+    console.log(event)
+    
+    // this.organizationCode = event.data['organizationCode']
+    // if (event.colDef.field=="preferredLabel") {
+  }
+
+  onGridReadySpaces(params: GridReadyEvent): void {
+    this.gridApiSpaces = params.api;
+    this.gridApiSpaces.showLoadingOverlay();
+    this.gridApiSpaces.hideOverlay();
+  }
+
+  onCellSpaceClicked(event: CellClickedEvent): void  {
+    console.log(event)
+    
+    // this.organizationCode = event.data['organizationCode']
+    // if (event.colDef.field=="preferredLabel") {
+  }
+
+  onGridReadyEquipments(params: GridReadyEvent): void {
+    this.gridApiEquipments = params.api;
+    this.gridApiEquipments.showLoadingOverlay();
+    this.gridApiEquipments.hideOverlay();
+  }
+
+  onCellEquipmentClicked(event: CellClickedEvent): void  {
+    console.log(event)
+    
+    // this.organizationCode = event.data['organizationCode']
+    // if (event.colDef.field=="preferredLabel") {
   }
 
   onBtnExportCSV() {
     this.loading = true;
     // console.log(this.data)
     if (this.data[0].remitObjectId === "") {
-      this.gridApi.exportDataAsCsv();
+      this.gridApiFacilities.exportDataAsCsv();
       this.loading = false;
     } else {
       const observables = this.data.map(doc =>
@@ -186,58 +215,5 @@ export class SearchGridComponent implements OnChanges {
         }
       );
     }
-  }
-}
-
-@Component({
-  selector: 'app-html-cell-renderer',
-  standalone: true,
-  imports: [NgIf],
-  template: `
-        <div :class="emphasis" 
-            [innerHTML]="shortText"
-            *ngIf="!showFullText"></div>
-        <div :class="emphasis"
-            [innerHTML]="params.value"
-            *ngIf="showFullText"></div>
-        <button
-            class="btn btn-info btn-sm mb-2"
-            *ngIf="isLongText"
-            (click)="toggleText()">
-            {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
-        </button>
-    `,
-  styles: 'em { color: red }'
-})
-export class HtmlCellRenderer implements ICellRendererAngularComp {
-  params: any;
-  showFullText = false;
-  shortText = '';
-  isLongText = false;
-
-  agInit(params: any): void {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
-    }
-  }
-
-  refresh(params: any): boolean {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
-    }
-    this.showFullText = false; // Reset the text display state
-    return true;
-  }
-
-  toggleText(): void {
-    this.showFullText = !this.showFullText;
   }
 }

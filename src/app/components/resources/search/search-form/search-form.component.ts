@@ -401,7 +401,8 @@ export class SearchFormComponent {
           const joined = s.spaceUse
           .map((su: any) => [su.type, su.subtype, su.space, su.auxiliarySpace].filter((x) => x !== "").join(","))
           .join("$");
-          pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
+          // pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
+          pushCond("spaces", { field: "spaceUse", type: "phrase", query: s.spaceUse });
         }        
       }
 
