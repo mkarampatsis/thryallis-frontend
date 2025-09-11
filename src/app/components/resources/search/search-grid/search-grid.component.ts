@@ -39,6 +39,7 @@ export class SearchGridComponent implements OnChanges {
   defaultColDef = this.constService.defaultColDef;
 
   colDefs_Facilities: ColDef[] = [
+    { field: 'organization', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'kaek', headerName: 'ΚΑΕΚ', flex: 1 },
     { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 1 },
     { field: 'useOfFacility', headerName: 'Τρόπος Χρήσης', flex: 1 },
@@ -47,6 +48,7 @@ export class SearchGridComponent implements OnChanges {
   ];
 
   colDefs_Spaces: ColDef[] = [
+    { field: 'organization', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'spaceName', headerName: 'Χώρος', flex: 1 },
     { field: 'spaceUse', headerName: 'Χρήση', flex: 2 },
     { field: 'spaceArea', headerName: 'Εμβαδόν', flex: .5 },
@@ -54,6 +56,7 @@ export class SearchGridComponent implements OnChanges {
   ];
 
   colDefs_Equipments: ColDef[] = [
+    { field: 'organization', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'kind', headerName: 'Είδος', flex: 1 },
     { field: 'type', headerName: 'Τύπος', flex: 1 },
     { 
@@ -99,7 +102,7 @@ export class SearchGridComponent implements OnChanges {
 
   fetchData() {
     this.loading = true;
-    console.log(this.data);
+    // console.log(this.data);
     this.resourceService
     .postSearch(this.data)
     .pipe(take(1))
@@ -134,9 +137,8 @@ export class SearchGridComponent implements OnChanges {
   }
 
   onCellSpaceClicked(event: CellClickedEvent): void  {
-    const code = event.data['facilityId'];
-    this.modalService.showResourcesDetails(code);
-
+    const code = event.data['object_id'];
+    this.modalService.showResourcesSpaceDetails(code);
     // if (event.colDef.field=="preferredLabel") {
   }
 
@@ -147,8 +149,9 @@ export class SearchGridComponent implements OnChanges {
   }
 
   onCellEquipmentClicked(event: CellClickedEvent): void  {
-    const code = event.data['spaces'][0]['facilityId'];
-    this.modalService.showResourcesDetails(code);
+    console.log(event.data)
+    const code = event.data['object_id'];
+    this.modalService.showResourcesEquipemntDetails(code);
     // if (event.colDef.field=="preferredLabel") {
   }
 

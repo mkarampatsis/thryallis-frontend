@@ -1,3 +1,5 @@
+import { IEquipment } from "../equipment/equipment";
+
 export interface IFloorPlans {
   level: string;
   num: string;
@@ -69,17 +71,19 @@ export interface IFacilityData {
       country: string;
     };
   };
-  spaces: Array<{
-    spaceName: string;
-    spaceUse: { type: string; space: string; };
-    spaceArea: string;
-    spaceLength: string;
-    spaceWidth: string;
-    entrances: string;
-    windows: string;
-    organizationalUnit: Array<{ organizationalUnit: string; organizationalUnitCode: string; }>;
-    equipments: Array<any>;
-  }>;
+  spaces: Array<ISpaceData>;
+}
+
+export interface ISpaceData {
+  spaceName: string;
+  spaceUse: { type: string; space: string; };
+  spaceArea: string;
+  spaceLength: string;
+  spaceWidth: string;
+  entrances: string;
+  windows: string;
+  organizationalUnit: Array<{ organizationalUnit: string; organizationalUnitCode: string; }>;
+  equipments: Array<IEquipment>;
 }
 
 export interface IFacilitySummary {

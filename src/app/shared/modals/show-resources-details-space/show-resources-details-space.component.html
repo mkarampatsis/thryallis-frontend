@@ -1,0 +1,80 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Λεπτομέρειες Χώρου</span>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()">
+  </button>
+</div>
+
+@if (loading) {
+  <div class="modal-body">
+    <div class="mb-3 mt-3 p-2">
+      <span class="d-flex align-items-center gap-2">
+          Αναμονή αποτελεσμάτων...
+          <span
+              class="spinner-border text-primary"
+              role="status">
+              <span class="visually-hidden">Loading...</span>
+          </span>
+      </span>
+    </div>
+  </div>
+} @else {
+  <div class="modal-body">
+    <div class="mb-3 mt-3 p-2">
+      <div class="container mt-3" *ngIf="data?.spaceName">
+        <!-- Facility Info -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h4>{{ data.spaceName }}</h4>
+            <!-- <small class="text-muted">{{ data.facility.organization }}</small> -->
+          </div>
+          <div class="card-body">
+            <p><strong>Χρήση Χώρου:</strong> {{ data.spaceUse.type }}</p>
+            <p><strong>Είδος Χώρου:</strong> {{ data.spaceUse.space }}</p>
+            <p><strong>Eμβαδόν του χώρου σε τετραγωνικά μέτρα:</strong> {{ data.spaceArea }} m²</p>
+            <p><strong>Το πλάτος του χώρου σε μέτρα:</strong> {{ data.spaceLength }}m × {{ data.spaceWidth }}m</p>
+            <p><strong>Aριθμός των εισόδων του χώρου:</strong> {{ data.entrances }} | <strong>Παράθυρα:</strong> {{ data.windows }}</p>
+            <p><strong>Μονάδες που ανήκει:</strong></p>
+            <ul>
+              <li *ngFor="let unit of data.organizationalUnit">
+                {{ unit.organizationalUnit }} ({{ unit.organizationalUnitCode }})
+              </li>
+            </ul>
+            <!-- Equipments -->
+            <div *ngIf="data.equipments.length > 0">
+              <h6>Εξοπλισμός ακινήτου</h6>
+              <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Κατηγορία</th>
+                    <th>Είδος</th>
+                    <th>Τύπος</th>
+                    <th>Κατάσταση</th>
+                    <th>Ποσότητα</th>
+                    <th>Κωδικοί</th>
+                    <th>Χαρακτηριστικά</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let eq of data.equipments">
+                    <td>{{ eq.resourceSubcategory }}</td>
+                    <td>{{ eq.kind }}</td>
+                    <td>{{ eq.type }}</td>
+                    <td>{{ eq.status }}</td>
+                    <td>{{ eq.itemQuantity[0]?.quantity }}</td>
+                    <td>{{ eq.itemQuantity[0]?.codes }}</td>
+                    <td>{{ getItemDescriptionString(eq) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+<div class="d-flex justify-content-end m-3">
+  <button ngbAutofocus type="button" class="btn btn-primary" (click)="modalRef.close()">
+    Επιστροφή
+  </button>
+</div>

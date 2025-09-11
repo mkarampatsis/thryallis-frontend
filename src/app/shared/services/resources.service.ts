@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { forkJoin, Observable } from 'rxjs';
-import { IFacilityData, IFacility, IFacilitySummary, ISpace } from '../interfaces/facility/facility';
+import { IFacilityData, IFacility, IFacilitySummary, ISpace, ISpaceData } from '../interfaces/facility/facility';
 import { IEquipmentConfig } from '../interfaces/equipment/equipmentConfig';
 import { IFacilitySpace } from '../interfaces/facility/facility-space';
 import { IEquipment } from '../interfaces/equipment/equipment';
@@ -183,6 +183,16 @@ export class ResourcesService {
   getFacilityDetailsById(id: string): Observable<HttpResponse<IFacilityData>> {
     const url = `${APIPREFIX_FACILITY}/${id}/details`;
     return this.http.get<IFacilityData>(url, { observe: 'response' });
+  }
+
+  getSpaceDetailsById(id: string): Observable<HttpResponse<ISpaceData>> {
+    const url = `${APIPREFIX_FACILITY}/space/${id}/details`;
+    return this.http.get<ISpaceData>(url, { observe: 'response' });
+  }
+
+  getEquipmentDetailsById(id: string): Observable<HttpResponse<IEquipment>> {
+    const url = `${APIPREFIX_EQUIPMENT}/${id}/details`;
+    return this.http.get<IEquipment>(url, { observe: 'response' });
   }
 
   // Elastic Request

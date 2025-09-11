@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Λεπτομέρειες Πόρου</span>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()">
+  </button>
+</div>
+
+@if (loading) {
+  <div class="modal-body">
+    <div class="mb-3 mt-3 p-2">
+      <span class="d-flex align-items-center gap-2">
+          Αναμονή αποτελεσμάτων...
+          <span
+              class="spinner-border text-primary"
+              role="status">
+              <span class="visually-hidden">Loading...</span>
+          </span>
+      </span>
+    </div>
+  </div>
+} @else {
+  <div class="modal-body">
+    <div class="mb-3 mt-3 p-2">
+      <div class="container mt-3" *ngIf="data?.resourceCategory">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h4>{{ data.resourceCategory }} - {{ data.resourceSubcategory }}</h4>
+          </div>
+          <div class="card-body">
+            <h6>Εξοπλισμός ακινήτου</h6>
+            <table class="table table-sm table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Κατηγορία</th>
+                  <th>Είδος</th>
+                  <th>Τύπος</th>
+                  <th>Κατάσταση</th>
+                  <th>Ποσότητα</th>
+                  <th>Κωδικοί</th>
+                  <th>Χαρακτηριστικά</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ data.resourceSubcategory }}</td>
+                  <td>{{ data.kind }}</td>
+                  <td>{{ data.type }}</td>
+                  <td>{{ data.status }}</td>
+                  <td>{{ data.itemQuantity[0]?.quantity }}</td>
+                  <td>{{ data.itemQuantity[0]?.codes }}</td>
+                  <td>{{ getItemDescriptionString(data) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+<div class="d-flex justify-content-end m-3">
+  <button ngbAutofocus type="button" class="btn btn-primary" (click)="modalRef.close()">
+    Επιστροφή
+  </button>
+</div>

@@ -36,6 +36,8 @@ import { OrganizationUnitsByOrganizationCodeComponent } from '../modals/organiza
 import { FaciltySpaceComponent } from '../modals/facilty-space/facilty-space.component';
 import { ShowResourcesDetailsComponent } from '../modals/show-resources-details/show-resources-details.component';
 import { IFacility, ISpace } from '../interfaces/facility/facility';
+import { ShowResourcesDetailsSpaceComponent } from '../modals/show-resources-details-space/show-resources-details-space.component';
+import { ShowResourcesDetailsEquipmentComponent } from '../modals/show-resources-details-equipment/show-resources-details-equipment.component';
 
 @Injectable({
     providedIn: 'root',
@@ -322,12 +324,30 @@ export class ModalService {
   // Resources modals
   showResourcesDetails(code: string) {
     const modalRef = this.modalService.open(ShowResourcesDetailsComponent, {
-        size: 'xl',
-        centered: true,
+      size: 'xl',
+      centered: true,
     });
     modalRef.componentInstance.code = code;
     modalRef.componentInstance.modalRef = modalRef;
     // return modalRef.dismissed.pipe(take(1)) as Observable<IOrganizationUnit>;
+  }
+
+  showResourcesSpaceDetails(code: string) {
+    const modalRef = this.modalService.open(ShowResourcesDetailsSpaceComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.code = code;
+    modalRef.componentInstance.modalRef = modalRef;
+  }
+
+  showResourcesEquipemntDetails(code: string) {
+    const modalRef = this.modalService.open(ShowResourcesDetailsEquipmentComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.code = code;
+    modalRef.componentInstance.modalRef = modalRef;
   }
 
 }
