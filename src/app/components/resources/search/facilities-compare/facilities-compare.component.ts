@@ -25,7 +25,6 @@ export class FacilitiesCompareComponent {
   objectKeys = Object.keys;
   
   ngOnInit(){
-
     if (this.organizationsToCompare.length) {
       
       const codes = this.organizationsToCompare.map(node => node.code);
@@ -37,7 +36,7 @@ export class FacilitiesCompareComponent {
         const status = response.status;
         if (status === 200) {
           this.summary = this.resourceService.aggregateData(body);
-          this.loading = false
+          this.loading = false;
         }
       });
     } else if (this.organizationalUnitsToCompare.length){
@@ -51,7 +50,7 @@ export class FacilitiesCompareComponent {
         const status = response.status;
         if (status === 200) {
           this.summary = this.resourceService.aggregateData(body);
-          this.loading = false
+          this.loading = false;
         }
       })
     } else if (this.facilitiesToCompare.length) {
@@ -64,11 +63,17 @@ export class FacilitiesCompareComponent {
         const body = response.body;
         const status = response.status;
         if (status === 200) {
+          // console.log(">>>",body)
           this.summary = this.resourceService.aggregateData(body);
+          // console.log(this.summary);
           this.loading = false;
         }
       });
     }
+  }
+
+  getKey(object) {
+    return Object.keys(object);
   }
 
   onExportToExcel() {

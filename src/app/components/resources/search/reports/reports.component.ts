@@ -12,11 +12,13 @@ import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { take } from 'rxjs';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, NgbTooltipModule],
+  imports: [CommonModule, AgGridAngular, NgbTooltipModule, NgbAccordionModule],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css'
 })
@@ -122,7 +124,15 @@ export class ReportsComponent {
     this.resourceService.exportToExcelReport1(this.matrixData1);
   }
   
-  showDetailsMatrix1(code: string){
+  showDetailsFacility(code: string){
     this.modalService.showResourcesDetails(code);
+  }
+
+  showDetailsSpace(code: string){
+    this.modalService.showResourcesSpaceDetails(code);
+  }
+
+  showDetailsEquipment(code: string){
+   this.modalService.showResourcesEquipemntDetails(code);
   }
 }

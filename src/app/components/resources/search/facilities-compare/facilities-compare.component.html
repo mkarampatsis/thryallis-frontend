@@ -20,28 +20,32 @@
         <h3 class="mb-3">{{ org.key }}</h3>
 
         <!-- Facilities -->
-        <h5>Ακίνητα</h5>
+        <h5>{{org.value.facilities.total > 1 ? "Ακίνητα" : "Ακίνητο"}}</h5>
         <table class="table table-bordered table-sm">
           <thead class="table-light">
             <tr>
-              <th>Σύνολο Ακινήτων</th>
-              <th>Συνολικά εμβαδόν ακινήτων</th>
-              <th>Εμβαδόν ανά ακίνητο</th>
+              <th>
+                {{org.value.facilities.total > 1 ? "Σύνολο Ακινήτων" : ""}} 
+                <span *ngIf="org.value.facilities.total > 1">({{org.value.facilities.total}})</span>
+              </th>
+              <th>Συνολικό Εμβαδόν {{org.value.facilities.total > 1 ? "Ακινήτων" : ""}}</th>
+              <th *ngIf="org.value.facilities.total > 1">Εμβαδόν ανά Ακίνητο</th>
               <th>Χρήση Ακινήτου</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>
-                <ul>
+                <ul class="fw-bold">
                   <li *ngFor="let name of org.value.facilities.names">{{ name }}</li>
                 </ul>
               </td>
               <td>{{ org.value.facilities.totalCoveredArea }}</td>
-              <td>
+              <td *ngIf="org.value.facilities.total > 1">
                 <ul>
                   <li *ngFor="let ca of (org.value.facilities.coveredAreas | keyvalue)">
-                    {{ ca.key }}: {{ ca.value }}
+                    <!-- {{ toInt(ca.key) + 1 }}: {{ ca.value }} -->
+                      {{ ca.value }}
                   </li>
                 </ul>
               </td>
@@ -57,15 +61,15 @@
         </table>
 
         <!-- Spaces -->
-        <h5>Spaces</h5>
+        <h5>Χώροι</h5>
         <table class="table table-bordered table-sm">
           <thead class="table-light">
             <tr>
               <th>Σύνολο Χώρων</th>
-              <th>Χρήση χώρου</th>
-              <th>Υποτύπος χώρου</th>
-              <th>Χώρος</th>
-              <th>Βοηθητικός Χώρος</th>
+              <th>Χρήση Ακινήτου</th>
+              <th>Υποτύπος Ακινήτου</th>
+              <th>Κύριοι Χώροι</th>
+              <th>Βοηθητικοί Χώροι</th>
             </tr>
           </thead>
           <tbody>
@@ -79,11 +83,15 @@
                 </ul>
               </td>
               <td>
-                <ul>
-                  <li *ngFor="let s of (org.value.spaces.bySubtype | keyvalue)">
-                    {{ s.key }}: {{ s.value }}
-                  </li>
-                </ul>
+                @if (getKey(org.value.spaces.bySubtype)[0] !== "Unknown" ){
+                  <ul>
+                    <li *ngFor="let s of (org.value.spaces.bySubtype | keyvalue)">
+                      @if(s.key!="Unknown") {
+                        {{ s.key }}: {{ s.value }}
+                      }
+                    </li>
+                  </ul>
+                }
               </td>
               <td>
                 <ul>
@@ -92,7 +100,13 @@
                   </li>
                 </ul>
               </td>
-              <td>{{ org.value.spaces.byAuxiliary }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let s of (org.value.spaces.byAuxiliary | keyvalue)">
+                    {{ s.key }}: {{ s.value }}
+                  </li>
+                </ul>
+              </td>
             </tr>
           </tbody>
         </table>

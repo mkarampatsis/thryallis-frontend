@@ -239,6 +239,8 @@ export class MatrixComponent {
       if (this.gridMatrix1) {
         this.gridMatrix1.deselectAll(); // Clear all selected rows
         this.gridMatrix1.setFilterModel(null);
+        this.selectedFacilitiesToCompare = [];
+        this.showCompare = false;
       }
     } else if (matrix=2) {
       if (this.gridMatrix2) {

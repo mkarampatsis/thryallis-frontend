@@ -517,8 +517,8 @@ export class ResourcesService {
             total: 0, 
             byType: {}, 
             bySubtype: {}, 
-            bySpace: {}, 
-            byAuxiliary: 0 
+            bySpace: {},       // non-auxiliary
+            byAuxiliary: {}    // auxiliary only
           },
           equipments: {
             total: 0,
@@ -549,6 +549,7 @@ export class ResourcesService {
       const facilityName = [kaek, useStr, addrStr].filter(Boolean).join("_");
       result[org].facilities.names.push(facilityName);
 
+      // ----- Spaces -----
       facility.spaces.forEach((space: any) => {
         result[org].spaces.total += 1;
 
@@ -562,17 +563,17 @@ export class ResourcesService {
         result[org].spaces.bySubtype[useSubtype] =
           (result[org].spaces.bySubtype[useSubtype] || 0) + 1;
 
-        // Count by Space
+        // Count by Space or byAuxiliary
         const useSpace = space.spaceUse?.space || "Unknown";
-        result[org].spaces.bySpace[useSpace] =
-          (result[org].spaces.bySpace[useSpace] || 0) + 1;
-
-        // Count Auxiliary
         if (space.auxiliarySpace) {
-          result[org].spaces.byAuxiliary += 1;
+          result[org].spaces.byAuxiliary[useSpace] =
+            (result[org].spaces.byAuxiliary[useSpace] || 0) + 1;
+        } else {
+          result[org].spaces.bySpace[useSpace] =
+            (result[org].spaces.bySpace[useSpace] || 0) + 1;
         }
 
-        // Equipments
+        // ----- Equipments -----
         space.equipments.forEach((eq: any) => {
           result[org].equipments.total += 1;
 
