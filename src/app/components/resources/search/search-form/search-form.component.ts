@@ -48,6 +48,7 @@ export class SearchFormComponent {
   types: string[] = [];
 
   // For Space
+  useOfFacilityForSpace: string[];
   subtypesList: string[][] = [];
   spacesList: string[][] = [];
   
@@ -70,6 +71,7 @@ export class SearchFormComponent {
     this.resourcesService.getFacilityCategories()
       .subscribe(result => {
         this.useOfFacility = result.map(item => item.type);
+        this.useOfFacilityForSpace = result.map(item => item.type);
       })
     this.resourcesService.getEquipmentCategories()
       .subscribe(result => {
@@ -164,6 +166,12 @@ export class SearchFormComponent {
 
   removeUseOfFacility(index: number) {
     this.useOfFacilityArray.removeAt(index);
+    this.updateUseOfFacilityData();
+  }
+
+  updateUseOfFacilityData() {
+    console.log(">>",this.useOfFacilityArray.value);
+    this.useOfFacilityForSpace = this.useOfFacilityArray.value;
   }
 
   addSpaceUse() {
@@ -293,6 +301,7 @@ export class SearchFormComponent {
     return typeDoc.itemDescription
   }
 
+  
   resetForm() {
     this.form.reset();
     this.rowData = [];
