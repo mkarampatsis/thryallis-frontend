@@ -110,7 +110,7 @@ export class SearchGridComponent implements OnChanges {
         this.elasticData = response.body
         this.elasticData.spaces = this.enrichedSpaces(this.elasticData);
         this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
-        console.log(this.elasticData); 
+        // console.log(this.elasticData); 
       }
       this.loading = false;
     });

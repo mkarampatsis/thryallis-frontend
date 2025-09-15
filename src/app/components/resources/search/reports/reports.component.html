@@ -1,6 +1,6 @@
 <h4 class="govgr-heading-md">Τυποποιημένες αναφορές</h4>
 
-<div class="mt-4">
+<div class="mt-4 mb-4">
   <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αναφορά πόρων Φορέα</h1>
 
   <ul>
@@ -18,15 +18,23 @@
     </div>
   </div>
 
-  <ag-grid-angular [domLayout]="'autoHeight'" [rowData]="foreis" [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs_Matrix1" [pagination]="true" [paginationPageSize]="10"
-    [loadingOverlayComponent]="loadingOverlayComponent" [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    rowSelection="multiple" (rowSelected)="onRowSelected_Matrix1($event)" (gridReady)="onGridReady_Matrix1($event)"
+  <ag-grid-angular 
+    [domLayout]="'autoHeight'" 
+    [rowData]="foreis" 
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs_Matrix1" 
+    [pagination]="true" 
+    [paginationPageSize]="10"
+    [loadingOverlayComponent]="loadingOverlayComponent" 
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    rowSelection="multiple" 
+    (rowSelected)="onRowSelected_Matrix1($event)" 
+    (gridReady)="onGridReady_Matrix1($event)"
     class="ag-theme-balham">
   </ag-grid-angular>
 
   @if(showTable1){
-  <div class="mt-5 mb-5">
+  <div class="mt-5">
     <button class="btn btn-primary btn-sm mb-3" (click)="onBtnExportReport1()" [disabled]="!showTable1">Εξαγωγή
       στοιχείων σε Excel</button>
 
