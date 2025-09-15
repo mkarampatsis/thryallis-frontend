@@ -44,7 +44,6 @@ export class SearchGridComponent implements OnChanges {
     { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 1 },
     { field: 'useOfFacility', headerName: 'Τρόπος Χρήσης', flex: 1 },
     { field: 'addressOfFacility', headerName: 'Διεύθυνση', flex: 1 },
-    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή Ονομασία', flex: 1 },
   ];
 
   colDefs_Spaces: ColDef[] = [

@@ -311,9 +311,9 @@ export class SearchFormComponent {
   submitForm() {
     this.rowData = [];
     if (this.form.valid) {
-      // console.log('Form Data1:', this.form.getRawValue()); 
+      console.log('Form Data1:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
-      // console.log('Form Data2:',this.rowData)
+      console.log('Form Data2:',this.rowData)
     } else {
       console.log('Form is invalid');
     }

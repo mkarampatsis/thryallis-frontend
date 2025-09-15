@@ -3,7 +3,7 @@
 
 <!-- Matrix 1 -->
 <div class="mt-4">
-  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Συνοπτική σύγκριση μεταξύ δύο ή περισσότερων ακινήτων ενός φορέα</h1>
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Συνοπτική σύγκριση μεταξύ δύο ή περισσότερων ακινήτων φορέων</h1>
 
   <ul>
     @for (unit of selectedDataMatrix1; track unit ){
@@ -91,7 +91,7 @@
               [checked]="isSelected(facility)" 
               (change)="onCheckboxChange(facility, $event)" 
               ngbTooltip="Σύγκριση ακινήτων"
-              class="form-check-input mx-1"
+              class="form-check-input mx-1 border border-2 border-dark-subtle"
             />
           </td>
         </tr>
@@ -151,7 +151,7 @@
 
 
 <!-- Matrix 3 -->
-<div class="mt-4">
+<div class="mt-4 mb-4">
   <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Αριθμητική σύγκριση πόρων μεταξύ (2) Μονάδων</h1>
 
   <ul>
@@ -173,7 +173,7 @@
     [domLayout]="'autoHeight'" 
     [rowData]="monades" 
     [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs_OrganizatioalUnits" 
+    [columnDefs]="colDefs_OrganizationalUnits" 
     [pagination]="true" 
     [paginationPageSize]="10"
     [loadingOverlayComponent]="loadingOverlayComponent" 

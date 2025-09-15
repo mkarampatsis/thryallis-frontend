@@ -65,7 +65,7 @@
         <!-- Covered Premises Area -->
         <div formGroupName="coveredPremisesArea" class="row mb-3">
           <div class="col">
-            <label class="form-label">Συνολικός στεγασμένος χώρος του ακινήτου σε τ.μ <strong>από:</strong></label>
+            <label class="form-label">Συνολικός στεγασμένος χώρος του ακινήτου σε τ.μ, <strong>από:</strong></label>
             <input type="text" class="form-control" formControlName="from">
           </div>
           <div class="col">
@@ -115,7 +115,7 @@
         <div formGroupName="floorsOrLevels" class="row mb-3">
           <div class="col">
             <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων,
-              ημιορόφων από:</label>
+              ημιορόφων, <strong>από:</strong></label>
             <input type="text" class="form-control" formControlName="from"
               [class.is-invalid]="form.get('facilities.floorsOrLevels.from')?.invalid && form.get('facilities.floorsOrLevels.from')?.touched">
             <div
@@ -125,8 +125,7 @@
             </div>
           </div>
           <div class="col">
-            <label class="form-label">Αριθμός ορόφων/επιπέδων του ακινήτου συμπεριλαμβανομένων ισογείου, υπογείων,
-              ημιορόφων έως:</label>
+            <label class="form-label"><strong>έως:</strong></label>
             <input type="text" class="form-control" formControlName="until"
               [class.is-invalid]="form.get('facilities.floorsOrLevels.until')?.invalid && form.get('facilities.floorsOrLevels.until')?.touched">
             <div
@@ -269,7 +268,7 @@
         <!-- Space Area -->
         <div formGroupName="spaceArea" class="row mt-3">
           <div class="col">
-            <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα από:</label>
+            <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα, <strong>από:</strong></label>
             <input type="text" class="form-control" formControlName="from"
               [class.is-invalid]="form.get('spaces.spaceArea.from')?.invalid && form.get('spaces.spaceArea.from')?.touched">
             <div
@@ -279,7 +278,7 @@
             </div>
           </div>
           <div class="col">
-            <label class="form-label">Εμβαδόν του χώρου σε τετραγωνικά μέτρα έως:</label>
+            <label class="form-label"><strong>έως:</strong></label>
             <input type="text" class="form-control" formControlName="until"
               [class.is-invalid]="form.get('spaces.spaceArea.until')?.invalid && form.get('spaces.spaceArea.until')?.touched">
             <div
@@ -398,11 +397,11 @@
 
         <div formGroupName="acquisitionDate" class="d-flex gap-3 align-items-center">
           <div class="flex-fill mb-3">
-            <label for="foundationDateFrom">Ημερομηνία απόκτησης: <strong>από</strong></label>
+            <label for="foundationDateFrom">Ημερομηνία απόκτησης, <strong>από:</strong></label>
             <input type="date" class="form-control" formControlName="from" id="acquisitionDateFrom" />
           </div>
           <div class="flex-fill mb-3">
-            <label for="foundationDateUntil"><strong>έως</strong></label>
+            <label for="foundationDateUntil"><strong>έως:</strong></label>
             <input type="date" class="form-control" formControlName="until" id="acquisitionDateUntil" />
           </div>
         </div>

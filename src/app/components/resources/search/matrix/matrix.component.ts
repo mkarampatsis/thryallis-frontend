@@ -49,7 +49,14 @@ export class MatrixComponent {
 
   defaultColDef = this.constService.defaultColDef;
   colDefs_Organizations: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES;
-  colDefs_OrganizatioalUnits: ColDef[] = this.constService.ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES
+  colDefs_OrganizationalUnits: ColDef[] = [
+    { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
+    { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
+    { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
+    { field: 'organization', headerName: 'Φορέας', flex: 1 },
+    { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
+    { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
+  ];
   autoSizeStrategy = this.constService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
