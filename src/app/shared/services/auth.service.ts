@@ -47,6 +47,7 @@ export class AuthService {
                 this.synchronization.set(true);
               } else {
                 this.route.queryParams.subscribe(params => {
+                  console.log(">>>", params);
                   const authCode = params['code'];
                   console.log(">>>>", authCode);
                   if (authCode) {
