@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 
 const APIPREFIX = `${environment.apiUrl}/auth`;
 const APILOGOUT = `${environment.logoutUrl}`;
+const GSISCLIENTID = `${environment.gsisClientId}`;
+const REDIRECTURI = `${environment.redirectUri}`;
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +26,9 @@ export class Oauth2Service {
     // const clientId = 'T4KA2K27387';
     // const redirectUri = encodeURIComponent('https://ypes.ddns.net/login');
     // const authUrl = `https://test.gsis.gr/oauth2servergov/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=read`;
-    const clientId = 'LSZSWH27387';
-    const redirectUri = encodeURIComponent('https://thryallis.ypes.gov.gr/login');
-    const authUrl = `https://oauth2.gsis.gr/oauth2servergov/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=read`;
+    
+    const redirectUri = encodeURIComponent(REDIRECTURI);
+    const authUrl = `https://oauth2.gsis.gr/oauth2servergov/oauth/authorize?response_type=code&client_id=${GSISCLIENTID}&redirect_uri=${redirectUri}&scope=read`;
     window.location.href = authUrl;
   }
 
@@ -41,7 +43,7 @@ export class Oauth2Service {
   }
 
   gsisLogout() {
-    window.location.href = APILOGOUT;
+    window.location.href = `${APILOGOUT}/${GSISCLIENTID}/?url=${REDIRECTURI}`;
 
     this.user.set(null);
     localStorage.removeItem('accessToken');
