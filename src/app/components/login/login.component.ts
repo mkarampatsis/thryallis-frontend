@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
   }
 
   logout() {
-    // this.authService.logout();
+    this.oauthService.gsisLogout();
     // this.router.navigate([`https://test.gsis.gr/oauth2server/logout/${{CLIENT_ID}}/?url=https://localhost:4200/`]);
   }
 }

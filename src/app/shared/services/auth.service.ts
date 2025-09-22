@@ -108,6 +108,7 @@ export class AuthService {
     signOut() {
         this.socialAuthService.signOut();
         this.http.post(`${APIPREFIX}/logout`, this.userInfo()).pipe(take(1)).subscribe();
+
         this.user.set(null);
         localStorage.removeItem('accessToken');
         this.router.navigate(['/login']);

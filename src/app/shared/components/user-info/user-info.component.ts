@@ -5,6 +5,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserService } from '../../services/user.service';
 import { NgIf } from '@angular/common';
+import { Oauth2Service } from '../../services/oauth2.service';
 
 @Component({
     selector: 'app-user-info',
@@ -17,11 +18,13 @@ export class UserInfoComponent {
     authService = inject(AuthService);
     userService = inject(UserService);
     user = this.authService.user;
+    oauthService = inject(Oauth2Service);
 
     imgSrcError = false;
 
     logout() {
-        this.authService.signOut();
+        this.oauthService.gsisLogout();
+        this.authService.signOut();        
     }
 
     hasHelpDeskRole() {
