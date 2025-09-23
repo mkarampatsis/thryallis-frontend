@@ -48,8 +48,7 @@ export class AuthService {
               } else {
                 this.route.queryParams.subscribe(params => {
                   console.log(">>>", params);
-                  // const authCode = params['code'];
-                  const authCode = 'fe1b7f4d-ac3e-459c-b155-f9f39f3816c7'
+                  const authCode = params['code'];
                   console.log(">>>>", authCode);
                   if (authCode) {
                     this.oauthService.getGsisUser(authCode)

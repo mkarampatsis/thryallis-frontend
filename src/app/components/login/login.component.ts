@@ -42,7 +42,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.oauth2Service.gsisLogin();
+    // this.oauth2Service.gsisLogin();
+    this.oauth2Service.getGsisUser("c5dbe360-3cb3-45c0-9150-db882f6f375c")
+    .subscribe(data => {
+      console.log(data)
+      // this.router.navigate(['landing']);
+      // this.user = data['user']
+    })
   }
 
   horizontalGSIS() {
