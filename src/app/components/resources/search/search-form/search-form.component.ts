@@ -353,9 +353,9 @@ export class SearchFormComponent {
         let useOfFacility = []
         f.useOfFacility.forEach((use: string) => {
           useOfFacility.push(use);
-          // pushCond("facilities", { field: "useOfFacility", type: "phrase", query: use });
+          pushCond("facilities", { field: "useOfFacility", type: "phrase", query: use });
         });
-        pushCond("facilities", { field: "useOfFacility", type: "phrase", query: useOfFacility });
+        // pushCond("facilities", { field: "useOfFacility", type: "phrase", query: useOfFacility });
         facilityExist = true;
       }
 
@@ -414,8 +414,8 @@ export class SearchFormComponent {
           const joined = s.spaceUse
           .map((su: any) => [su.type, su.subtype, su.space, su.auxiliarySpace].filter((x) => x !== "").join(","))
           .join("$");
-          // pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
-          pushCond("spaces", { field: "spaceUse", type: "phrase", query: s.spaceUse });
+          pushCond("spaces", { field: "spaceUse", type: "phrase", query: joined });
+          // pushCond("spaces", { field: "spaceUse", type: "phrase", query: s.spaceUse });
         }        
       }
 
