@@ -53,7 +53,8 @@ export class AuthService {
                   if (authCode) {
                     this.oauthService.getGsisUser(authCode)
                     .subscribe(data => {
-                        this.router.navigate(['landing']);
+                        console.log("gsisUser>>", data)
+                        //this.router.navigate(['landing']);
                         // this.user = data['user']
                     })
                   }
