@@ -29,7 +29,7 @@ export class Oauth2Service {
     
     const redirectUri = encodeURIComponent(REDIRECTURI);
     const authUrl = `https://oauth2.gsis.gr/oauth2servergov/oauth/authorize?response_type=code&client_id=${GSISCLIENTID}&redirect_uri=${redirectUri}&scope=read`;
-    console.log(authUrl);
+    console.log(">>>>>",authUrl);
     window.location.href = authUrl;
   }
 
