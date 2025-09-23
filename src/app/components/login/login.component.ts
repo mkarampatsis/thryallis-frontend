@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   store = inject(Store<AppState>);
-  oauthService = inject(Oauth2Service);
+  oauth2Service = inject(Oauth2Service);
   route = inject(ActivatedRoute)
 
   organizationsLoading$ = this.store.select((state) => state.organizations.loading);
@@ -42,18 +42,18 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.oauthService.gsisLogin();
+    this.oauth2Service.gsisLogin();
   }
 
   horizontalGSIS() {
-    this.oauthService.getGsisHorizontal()
+    this.oauth2Service.getGsisHorizontal()
       .subscribe(data => {
         console.log(data);
       })
   }
 
   logout() {
-    this.oauthService.gsisLogout();
+    this.oauth2Service.gsisLogout();
     // this.router.navigate([`https://test.gsis.gr/oauth2server/logout/${{CLIENT_ID}}/?url=https://localhost:4200/`]);
   }
 }
