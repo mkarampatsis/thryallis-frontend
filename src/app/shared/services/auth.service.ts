@@ -47,9 +47,9 @@ export class AuthService {
                 this.synchronization.set(true);
               } else {
                 this.route.queryParams.subscribe(params => {
-                  console.log(">>>", params);
+                  console.log("auth1>>>", params);
                   const authCode = params['code'];
-                  console.log(">>>>", authCode);
+                  console.log("auth2>>>>", authCode);
                   if (authCode) {
                     this.oauthService.getGsisUser(authCode)
                     .subscribe(data => {
