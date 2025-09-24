@@ -59,7 +59,7 @@ export class AuthService {
                     })
                   }
                 }); 
-                this.router.navigate(['landing']);         
+                // this.router.navigate(['landing']);         
               }
             },
             { allowSignalWrites: true }
