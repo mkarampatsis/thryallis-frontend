@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IAuthResponse, IUser } from '../interfaces/auth';
@@ -23,9 +23,9 @@ export class Oauth2Service {
     window.location.href = authUrl;
   }
 
-  getGsisUser(code: string): Observable<IAuthResponse> {
+  getGsisUser(code: string): Observable<HttpResponse<IAuthResponse>> {
     const url = `${APIPREFIX}/gsisUser/${code}`;
-    return this.http.get<IAuthResponse>(url);
+    return this.http.get<IAuthResponse>(url, { observe: 'response' });
   }
 
    gsisLogout() {

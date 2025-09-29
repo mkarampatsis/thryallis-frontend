@@ -43,3 +43,7 @@
     }
   </ul>
 </div>
+
+<div *ngIf="!user() && !loading" class="govgr-body">
+  <h1 class="govgr-heading-md">Δεν είστε πιστοποιημένος χρήστη</h1>
+</div>

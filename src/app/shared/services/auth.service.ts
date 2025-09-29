@@ -51,17 +51,22 @@ export class AuthService {
             if (authCode) {
               this.loading.set(true);
               this.oauth2Service.getGsisUser(authCode)
-                .subscribe({
-                  next:(res: IAuthResponse) => {
-                    console.log(res);
-                    this.user.set(res.user);
-                    localStorage.setItem('accessToken', res.accessToken);
+                .subscribe(response => {
+                  console.log(response);
+                  const body: IAuthResponse = response.body;
+                  const status = response.status;
+                  if (status === 201) {
+                    console.log(body);
+                    this.user.set(body.user);
+                    localStorage.setItem('accessToken', body.accessToken);
                     this.loading.set(false);
                     // this.router.navigate(['dashboard']);
-                  },
-                  error: (err) => {
-                    console.log(err);
-                  },
+                  } else if (status === 204){
+                    
+                    this.user.set(null)
+                    this.loading.set(false);
+                  }
+                    
                 })
             }
           });
