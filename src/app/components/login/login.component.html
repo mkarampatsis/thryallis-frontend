@@ -9,7 +9,7 @@
 
 </p>
 
-<div class="govgr-body">
+<div *ngIf="!user()" class="govgr-body">
   <h1 class="govgr-heading-md">Αυθεντικοποίηση χρηστών με Κωδικούς Δημόσιας Διοίκησης</h1>
   <p class="d-flex gap-3">
     <button class="btn btn-primary" (click)="login()">
@@ -32,15 +32,14 @@
   <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
 
   <p>
-    Πίνακας με τα λεκτικά των θέσεων που κατέχει ο υπάλληλος οργανωμένα ιεραρχικά με βάση την οργανική μονάδα του υπαλλήλου.
-    {{ user().empOrgUnitTexts }}
+    Πίνακας με τα λεκτικά των θέσεων που κατέχει ο υπάλληλος οργανωμένα ιεραρχικά με βάση την οργανική μονάδα του υπαλλήλου:
+    <strong> {{ user().empOrgUnitTexts }}</strong>
   </p>
   
-  <h2>Προσβάσεις υπαλλήλου:</h2>
+  <h1 class="govgr-heading-sm">Προσβάσεις υπαλλήλου:</h1>
   <ul>
     @for (role of user().roles; track role){
       <li>Ρόλος: {{role.role}}, Φορείς: {{role.foreas}}</li>
     }
   </ul>
-  {{ user().empOrgUnitTexts }}
 </div>
