@@ -19,20 +19,28 @@
 </div>
 
 @if (loading()) {
-  <span class="d-flex align-items-center gap-2">
-    Αναμονή σύνδεσης...
+  <span class="d-flex align-items-center gap-2 mb-5">
+    Αναμονή αυθεντικοποίησης...
     <span class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </span>
   </span>
 }
 
-<div *ngIf="user()">
+<div *ngIf="user()" class="mb-5">
 
-  <h1 class="govgr-heading-sm">Dashboard - user has logged in</h1>
+  <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
 
   <p>
-    >>{{ user() | json }}
+    Πίνακας με τα λεκτικά των θέσεων που κατέχει ο υπάλληλος οργανωμένα ιεραρχικά με βάση την οργανική μονάδα του υπαλλήλου.
+    {{ user().empOrgUnitTexts }}
   </p>
-
+  
+  <h2>Προσβάσεις υπαλλήλου:</h2>
+  <ul>
+    @for (role of user().roles; track role){
+      <li>Ρόλος: {{role.role}}, Φορείς: {{role.foreas}}</li>
+    }
+  </ul>
+  {{ user().empOrgUnitTexts }}
 </div>
