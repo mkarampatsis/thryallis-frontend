@@ -3,9 +3,8 @@ import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 import { CLIENT_PWD, CLIENT_ID } from '../config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IGsisUser } from '../interfaces/auth/gsisUser.interface';
 import { environment } from 'src/environments/environment';
-import { IUser } from '../interfaces/auth';
+import { IAuthResponse, IUser } from '../interfaces/auth';
 import { Router } from '@angular/router';
 
 const APIPREFIX = `${environment.apiUrl}/auth`;
@@ -32,9 +31,9 @@ export class Oauth2Service {
     window.location.href = authUrl;
   }
 
-  getGsisUser(code: string): Observable<IGsisUser> {
+  getGsisUser(code: string): Observable<IAuthResponse> {
     const url = `${APIPREFIX}/gsisUser/${code}`;
-    return this.http.get<IGsisUser>(url);
+    return this.http.get<IAuthResponse>(url);
   }
 
   getGsisHorizontal(): Observable<any> {

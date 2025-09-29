@@ -14,4 +14,9 @@ export interface IUser {
     name: string;
     photoUrl: string;
     roles: IUserRole[];
+    //Fields from Gsis User 
+    taxid?: string
+    gsisUserid?: string
+    empOrgUnitTexts?: string
+    employeeId?: string
 }

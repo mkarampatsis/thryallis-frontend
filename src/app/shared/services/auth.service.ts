@@ -22,7 +22,7 @@ export class AuthService {
   http = inject(HttpClient);
   router = inject(Router);
   route = inject(ActivatedRoute)
-  oauthService = inject(Oauth2Service);
+  oauth2Service = inject(Oauth2Service);
 
   user = signal(<IUser | null>null);
   synchronization = signal<boolean>(false);
@@ -49,11 +49,16 @@ export class AuthService {
           this.route.queryParams.subscribe(params => {
             const authCode = params['code'];
             if (authCode) {
-              this.oauthService.getGsisUser(authCode)
-                .subscribe(data => {
-                  console.log("gsisUser>>", data)
-                  this.user = data['user']
-                  //this.router.navigate(['landing']);
+              this.oauth2Service.getGsisUser(authCode)
+                .subscribe({
+                  next:(res: IAuthResponse) => {
+                    this.user.set(res.user);
+                    localStorage.setItem('accessToken', res.accessToken);
+                    // this.router.navigate(['dashboard']);
+                  },
+                  error: (err) => {
+                    console.log(err);
+                  },
                 })
             }
           });

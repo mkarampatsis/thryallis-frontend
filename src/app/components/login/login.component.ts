@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,10 @@ import { ActivatedRoute } from '@angular/router';
 export class LoginComponent {
   store = inject(Store<AppState>);
   oauth2Service = inject(Oauth2Service);
+  authService = inject(AuthService);
   route = inject(ActivatedRoute)
+  
+  user = this.authService.user;
 
   // organizationsLoading$ = this.store.select((state) => state.organizations.loading);
   // organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
@@ -24,8 +28,6 @@ export class LoginComponent {
 
   // loading$ = this.organizationsLoading$ || this.organizationalUnitsLoading$;
   loading = false;
-
-  user: any = '';
 
   login() {
     this.oauth2Service.gsisLogin();
