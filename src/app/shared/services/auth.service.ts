@@ -53,8 +53,7 @@ export class AuthService {
               this.oauth2Service.getGsisUser(authCode)
                 .subscribe({
                   next:(res: IAuthResponse) => {
-                    console.log(">>>>>");
-                    console.log(res);
+                    // console.log(res);
                     this.user.set(res.user);
                     localStorage.setItem('accessToken', res.accessToken);
                     this.loading.set(false);
@@ -116,8 +115,6 @@ export class AuthService {
   signOut() {
     this.socialAuthService.signOut();
     this.http.post(`${APIPREFIX}/logout`, this.userInfo()).pipe(take(1)).subscribe();
-
-    this.removeUser();
   }
 
   canEdit(code: string) {

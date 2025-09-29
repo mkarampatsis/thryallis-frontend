@@ -24,7 +24,7 @@ export class UserInfoComponent {
 
   logout() {
     // this.oauthService.gsisLogout();
-    // this.authService.signOut();
+    this.authService.signOut();
     this.authService.removeUser();
   }
 
