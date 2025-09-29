@@ -52,6 +52,7 @@ export class AuthService {
               this.oauth2Service.getGsisUser(authCode)
                 .subscribe({
                   next:(res: IAuthResponse) => {
+                    console.log(res);
                     this.user.set(res.user);
                     localStorage.setItem('accessToken', res.accessToken);
                     // this.router.navigate(['dashboard']);
