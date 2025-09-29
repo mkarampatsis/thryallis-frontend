@@ -36,7 +36,7 @@
     <strong> {{ user().empOrgUnitTexts }}</strong>
   </p>
   
-  <h1 class="govgr-heading-sm">Προσβάσεις υπαλλήλου:</h1>
+  <p><strong>Προσβάσεις υπαλλήλου:</strong></p>
   <ul>
     @for (role of user().roles; track role){
       <li>Ρόλος: {{role.role}}, Φορείς: {{role.foreas}}</li>
