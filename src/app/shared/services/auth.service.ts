@@ -49,6 +49,7 @@ export class AuthService {
           this.route.queryParams.subscribe(params => {
             const authCode = params['code'];
             if (authCode) {
+              this.loading.set(true);
               this.oauth2Service.getGsisUser(authCode)
                 .subscribe({
                   next:(res: IAuthResponse) => {
@@ -56,6 +57,7 @@ export class AuthService {
                     console.log(res);
                     this.user.set(res.user);
                     localStorage.setItem('accessToken', res.accessToken);
+                    this.loading.set(false);
                     // this.router.navigate(['dashboard']);
                   },
                   error: (err) => {
@@ -115,9 +117,7 @@ export class AuthService {
     this.socialAuthService.signOut();
     this.http.post(`${APIPREFIX}/logout`, this.userInfo()).pipe(take(1)).subscribe();
 
-    this.user.set(null);
-    localStorage.removeItem('accessToken');
-    this.router.navigate(['/login']);
+    this.removeUser();
   }
 
   canEdit(code: string) {
@@ -138,5 +138,11 @@ export class AuthService {
       user_id: email,
       email,
     };
+  }
+
+  removeUser(){
+    this.user.set(null);
+    localStorage.removeItem('accessToken');
+    this.router.navigate(['/login']);
   }
 }

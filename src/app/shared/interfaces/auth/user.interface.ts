@@ -1,22 +1,22 @@
 export interface IUserRole {
-    role: string;
-    active: boolean;
-    foreas: string[];
-    monades: string[];
+  role: string;
+  active: boolean;
+  foreas: string[];
+  monades: string[];
 }
 
 export interface IUser {
-    googleId: string;
-    provider: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    name: string;
-    photoUrl: string;
-    roles: IUserRole[];
-    //Fields from Gsis User 
-    taxid?: string
-    gsisUserid?: string
-    empOrgUnitTexts?: string
-    employeeId?: string
+  googleId: string;
+  provider: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  name: string;
+  photoUrl: string;
+  roles: IUserRole[];
+  //Fields from Gsis User 
+  taxid?: string
+  gsisUserid?: string
+  empOrgUnitTexts?: string
+  employeeId?: string
 }
