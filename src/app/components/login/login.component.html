@@ -1,39 +1,44 @@
 <h1 class="govgr-heading-md">Έλεγχος πρόσβασης</h1>
 
 <p class="govgr-body d-flex flex-column gap-3">
-    Κατά τη διάρκεια της δοκιμαστικής περιόδου ανάπτυξης η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους
-    χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.
+  Κατά τη διάρκεια της δοκιμαστικής περιόδου ανάπτυξης η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους
+  χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.
 
-    <asl-google-signin-button
-        type="standard"
-        size="large">
-    </asl-google-signin-button>
-    
+  <asl-google-signin-button type="standard" size="large">
+  </asl-google-signin-button>
+
 </p>
 
 <div class="govgr-body">
-    <h1 class="govgr-heading-md">Υπηρεσία αυθεντικοποίησης Χρηστών Δημόσιας Διοίκησης</h1>
-    <p class="d-flex gap-3">
-        <button 
-            class="btn btn-primary"
-            (click)="login()">
-            Είσοδος με ΚΕΔ
-        </button>
-        <button 
+  <h1 class="govgr-heading-md">Υπηρεσία αυθεντικοποίησης Χρηστών Δημόσιας Διοίκησης</h1>
+  <p class="d-flex gap-3">
+    <button class="btn btn-primary" (click)="login()">
+      Είσοδος με ΚΕΔ
+    </button>
+    <!-- <button 
             class="btn btn-primary"
             (click)="horizontalGSIS()">
             Οριζόντια πληροφοριακά συστήματα
-        </button>
-        <!-- <button (click)="logout()">Logout</button> -->
-    </p>
+        </button> -->
+    <!-- <button (click)="logout()">Logout</button> -->
+  </p>
 </div>
-  
+
+@if (loading) {
+  <span class="d-flex align-items-center gap-2">
+    Αναμονή σύνδεσης...
+    <span class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </span>
+  </span>
+}
+<!-- 
 <div *ngIf="user">
-    <h1 class="govgr-heading-sm">Dashboard - user has logged in</h1>
+  <h1 class="govgr-heading-sm">Dashboard - user has logged in</h1>
 
-    <p>
-        {{ user | json }}
-    </p>
+  <p>
+    {{ user | json }}
+  </p>
 
-    <button (click)="logout()">Logout</button>
-</div>
+  <button (click)="logout()">Logout</button>
+</div> -->

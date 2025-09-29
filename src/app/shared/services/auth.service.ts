@@ -8,130 +8,128 @@ import { take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
 
 const APIPREFIX = `${environment.apiUrl}/log`;
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class AuthService {
-    socialAuthService = inject(SocialAuthService);
-    store = inject(Store<AppState>);
-    http = inject(HttpClient);
-    router = inject(Router);
-    route = inject(ActivatedRoute)
-    oauthService = inject(Oauth2Service);
+  socialAuthService = inject(SocialAuthService);
+  store = inject(Store<AppState>);
+  http = inject(HttpClient);
+  router = inject(Router);
+  route = inject(ActivatedRoute)
+  oauthService = inject(Oauth2Service);
 
-    user = signal(<IUser | null>null);
-    synchronization = signal<boolean>(false);
-    loading = signal<boolean>(false);
+  user = signal(<IUser | null>null);
+  synchronization = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
-    organizationsLoading$ = this.store.select((state) => state.organizations.loading);
-    organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
-    remitsLoading$ = this.store.select((state) => state.remits.loading);
+  organizationsLoading$ = this.store.select((state) => state.organizations.loading);
+  organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
+  remitsLoading$ = this.store.select((state) => state.remits.loading);
 
-    organization = toSignal(this.organizationsLoading$,{ initialValue: false })
-    organizationalUnits = toSignal(this.organizationalUnitsLoading$,{ initialValue: false })
-    remits = toSignal(this.remitsLoading$,{ initialValue: false })
+  organization = toSignal(this.organizationsLoading$, { initialValue: false })
+  organizationalUnits = toSignal(this.organizationalUnitsLoading$, { initialValue: false })
+  remits = toSignal(this.remitsLoading$, { initialValue: false })
 
-    loading$ = computed(() => 
-        this.organization() || this.organizationalUnits() || this.remits()
+  loading$ = computed(() =>
+    this.organization() || this.organizationalUnits() || this.remits()
+  );
+
+  constructor() {
+    effect(
+      () => {
+        if (!this.loading$()) {
+          this.synchronization.set(true);
+        } else {
+          this.route.queryParams.subscribe(params => {
+            const authCode = params['code'];
+            if (authCode) {
+              this.oauthService.getGsisUser(authCode)
+                .subscribe(data => {
+                  console.log("gsisUser>>", data)
+                  this.user = data['user']
+                  //this.router.navigate(['landing']);
+                })
+            }
+          });
+          // this.router.navigate(['landing']);         
+        }
+      },
+      { allowSignalWrites: true }
     );
-
-    constructor() {
-        effect(
-            () => {
-              if (!this.loading$()) {
-                this.synchronization.set(true);
-              } else {
-                this.route.queryParams.subscribe(params => {
-                  console.log("auth1>>>", params);
-                  const authCode = params['code'];
-                  console.log("auth2>>>>", authCode);
-                  if (authCode) {
-                    this.oauthService.getGsisUser(authCode)
-                    .subscribe(data => {
-                        console.log("gsisUser>>", data)
-                        //this.router.navigate(['landing']);
-                        // this.user = data['user']
-                    })
-                  }
-                }); 
-                // this.router.navigate(['landing']);         
-              }
-            },
-            { allowSignalWrites: true }
-        );
-        this.socialAuthService.authState.subscribe({
-            next: (user) => {
-                // console.log('GOOGLE AUTH STATE', user);
-                if (user) {
-                    const { idToken } = user;
-                    this.http
-                        .post<IAuthResponse>(`${environment.apiUrl}/auth/google-auth`, {
-                            idToken,
-                        })
-                        .subscribe({
-                            next: (res: IAuthResponse) => {
-                                this.user.set(res.user);
-                                localStorage.setItem('accessToken', res.accessToken);
-                                // this.router.navigate(['dashboard']);
-                            },
-                            error: (err) => {
-                                console.log(err);
-                            },
-                        });
-                }
-            },
-            error: (err) => {
-                console.log('GOOGLE AUTH ERROR', err);
-            },
-        });
-    }
-
-    checkDataLoading() {
-        const organizationsLoading$ = this.store.select((state) => state.organizations.loading);
-        const organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
-        const remitsLoading$ = this.store.select((state) => state.remits.loading);
-
-        const organization = toSignal(organizationsLoading$,{ initialValue: false })
-        const organizationalUnits = toSignal(organizationalUnitsLoading$,{ initialValue: false })
-        const remits = toSignal(remitsLoading$,{ initialValue: false })
-
-        // const loading$ = computed(() => 
-        //     organization() || organizationalUnits() || remits()
-        // );
-        this.loading.set(organization() || organizationalUnits() || remits())
-    }
-
-    signOut() {
-        this.socialAuthService.signOut();
-        this.http.post(`${APIPREFIX}/logout`, this.userInfo()).pipe(take(1)).subscribe();
-
-        this.user.set(null);
-        localStorage.removeItem('accessToken');
-        this.router.navigate(['/login']);
-    }
-
-    canEdit(code: string) {
-        // Flatten the users roles array with respect to foreis and monades
-        const roles = this.user()
-            .roles.filter((type) => {
-                return type.role === 'EDITOR' || type.role === 'ADMIN' || type.role === 'ROOT';
+    this.socialAuthService.authState.subscribe({
+      next: (user) => {
+        // console.log('GOOGLE AUTH STATE', user);
+        if (user) {
+          const { idToken } = user;
+          this.http
+            .post<IAuthResponse>(`${environment.apiUrl}/auth/google-auth`, {
+              idToken,
             })
-            .filter((role) => {
-                return role.foreas.includes(code) || role.monades.includes(code);
+            .subscribe({
+              next: (res: IAuthResponse) => {
+                this.user.set(res.user);
+                localStorage.setItem('accessToken', res.accessToken);
+                // this.router.navigate(['dashboard']);
+              },
+              error: (err) => {
+                console.log(err);
+              },
             });
-        return roles.length > 0;
-    }
+        }
+      },
+      error: (err) => {
+        console.log('GOOGLE AUTH ERROR', err);
+      },
+    });
+  }
 
-    userInfo() {
-        const email = this.user().email;
-        return {
-            user_id: email,
-            email,
-        };
-    }
+  checkDataLoading() {
+    const organizationsLoading$ = this.store.select((state) => state.organizations.loading);
+    const organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
+    const remitsLoading$ = this.store.select((state) => state.remits.loading);
+
+    const organization = toSignal(organizationsLoading$, { initialValue: false })
+    const organizationalUnits = toSignal(organizationalUnitsLoading$, { initialValue: false })
+    const remits = toSignal(remitsLoading$, { initialValue: false })
+
+    // const loading$ = computed(() => 
+    //     organization() || organizationalUnits() || remits()
+    // );
+    this.loading.set(organization() || organizationalUnits() || remits())
+  }
+
+  signOut() {
+    this.socialAuthService.signOut();
+    this.http.post(`${APIPREFIX}/logout`, this.userInfo()).pipe(take(1)).subscribe();
+
+    this.user.set(null);
+    localStorage.removeItem('accessToken');
+    this.router.navigate(['/login']);
+  }
+
+  canEdit(code: string) {
+    // Flatten the users roles array with respect to foreis and monades
+    const roles = this.user()
+      .roles.filter((type) => {
+        return type.role === 'EDITOR' || type.role === 'ADMIN' || type.role === 'ROOT';
+      })
+      .filter((role) => {
+        return role.foreas.includes(code) || role.monades.includes(code);
+      });
+    return roles.length > 0;
+  }
+
+  userInfo() {
+    const email = this.user().email;
+    return {
+      user_id: email,
+      email,
+    };
+  }
 }
