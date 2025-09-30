@@ -62,7 +62,7 @@ export class AuthService {
                     this.loading.set(false);
                     // this.router.navigate(['dashboard']);
                   } else if (status === 204){
-                    
+                    console.log(body)  
                     this.user.set(null)
                     this.loading.set(false);
                   }
