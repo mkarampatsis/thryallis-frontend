@@ -52,17 +52,14 @@ export class AuthService {
               this.loading.set(true);
               this.oauth2Service.getGsisUser(authCode)
                 .subscribe(response => {
-                  console.log(response);
                   const body: IAuthResponse = response.body;
                   const status = response.status;
                   if (status === 200) {
-                    console.log(body);
                     this.user.set(body.user);
                     localStorage.setItem('accessToken', body.accessToken);
                     this.loading.set(false);
                     // this.router.navigate(['dashboard']);
                   } else if (status === 204){
-                    console.log(body)  
                     this.user.set(null)
                     this.loading.set(false);
                   }
