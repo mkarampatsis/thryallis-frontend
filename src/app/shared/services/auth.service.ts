@@ -55,7 +55,7 @@ export class AuthService {
                   console.log(response);
                   const body: IAuthResponse = response.body;
                   const status = response.status;
-                  if (status === 201) {
+                  if (status === 200) {
                     console.log(body);
                     this.user.set(body.user);
                     localStorage.setItem('accessToken', body.accessToken);
