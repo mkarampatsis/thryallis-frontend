@@ -10,45 +10,45 @@
   <h5 class="govgr-heading-md d-flex align-items-center gap-2">
     Φορείς
     @if (!organizations) {
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     }
   </h5>
 
   @if (organizations.length > 0) {
-  <div class="d-flex flex-column flex-lg-row gap-2">
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <th scope="col">Κωδικός</th>
-          <th scope="col">Ονομασία</th>
-          <th scope="col">Ενέργειες</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (organization of organizations; track organization) {
-        <tr class="align-middle">
-          <td>{{ organization.code }}</td>
-          <td>{{ organization.preferredLabel }}</td>
-          <td class="d-flex gap-2 fs-5">
-            <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
-              ngbTooltip="Στοιχεία Φορέα"></i>
-            <i class="bi bi-building" role="button" (click)="showEquipments(organization.code)"
-              ngbTooltip="Εμφάνιση Εξοπλισμού"></i>  
-            <i class="bi bi-pencil-square" role="button" (click)="newEquipment(organization)"
-              ngbTooltip="Νέος Εξοπλισμός"></i> 
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-  } @else {
-    <div class="alert alert-info w-25 mb-4 text-center fw-semibold" role="alert">
-      Δεν έχετε πρόσβαση σε φορείς.
+    <div class="d-flex flex-column flex-lg-row gap-2">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Κωδικός</th>
+            <th scope="col">Ονομασία</th>
+            <th scope="col">Ενέργειες</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (organization of organizations; track organization) {
+            <tr class="align-middle">
+              <td>{{ organization.code }}</td>
+              <td>{{ organization.preferredLabel }}</td>
+              <td class="d-flex gap-2 fs-5">
+                <i class="bi bi-info-circle" role="button" (click)="showOrganizationDetails(organization.code)"
+                  ngbTooltip="Στοιχεία Φορέα"></i>
+                <i class="bi bi-building" role="button" (click)="showEquipments(organization.code)"
+                  ngbTooltip="Εμφάνιση Εξοπλισμού"></i>
+                <i class="bi bi-pencil-square" role="button" (click)="newEquipment(organization)"
+                  ngbTooltip="Νέος Εξοπλισμός"></i>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-  }
+  } @else {
+      <div class="alert alert-info w-25 mb-4 text-center fw-semibold" role="alert">
+        Δεν έχετε πρόσβαση σε φορείς.
+      </div>
+    }
 }
 
 @if (showGridEquipment){
@@ -62,12 +62,12 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (cellClicked)="onCellEquipmentClicked($event)"
-      (gridReady)="onGridEquipmentReady($event)" 
-      class="ag-theme-balham">
+      (cellClicked)="onCellEquipmentClicked($event)" 
+      (gridReady)="onGridEquipmentReady($event)" class="ag-theme-balham">
     </ag-grid-angular>
   </div>
 }
+
 <div class="mt-5 mb-5">
   @if(showForm) {
   <form [formGroup]="form">
@@ -89,7 +89,7 @@
     <fieldset class="form-group border p-3 mb-3">
       <legend class="w-auto">Στοιχεία εξοπλισμού:</legend>
       <div class="row mb-3">
-        
+
         <div class="col-sm-4">
           <select class="form-select" aria-label="Default select example" formControlName="resourceSubcategory"
             (change)="onResourcesubcategoryChange($event)">
@@ -97,55 +97,55 @@
               Επιλέξτε υποκατηγορία
             </option>
             @for (item of resourceSubcategory; track item) {
-              <option [ngValue]="item">{{ item }}</option>
+            <option [ngValue]="item">{{ item }}</option>
             }
           </select>
         </div>
 
         @if (kind.length > 0) {
-          <div class="col-sm-4">
-            <select class="form-select" aria-label="Default select example" formControlName="kind"
-              (change)="onKindChange($event)">
-              <option value="" disabled selected>
-                Επιλέξτε είδος
-              </option>
-              @for (item of kind; track item) {
-                <option [ngValue]="item">{{ item }}</option>
-              }
-            </select>
-          </div>
+        <div class="col-sm-4">
+          <select class="form-select" aria-label="Default select example" formControlName="kind"
+            (change)="onKindChange($event)">
+            <option value="" disabled selected>
+              Επιλέξτε είδος
+            </option>
+            @for (item of kind; track item) {
+            <option [ngValue]="item">{{ item }}</option>
+            }
+          </select>
+        </div>
         }
 
         @if (type.length > 0) {
-          <div class="col-sm-4">
-            <select class="form-select" aria-label="Default select example" formControlName="type"
-              (change)="onTypeChange($event)">
-              <option value="" disabled selected>
-                Επιλέξτε τύπος
-              </option>
-              @for (item of type; track item) {
-                <option [ngValue]="item">{{ item }}</option>
-              }
-            </select>
-          </div>
-        }        
+        <div class="col-sm-4">
+          <select class="form-select" aria-label="Default select example" formControlName="type"
+            (change)="onTypeChange($event)">
+            <option value="" disabled selected>
+              Επιλέξτε τύπος
+            </option>
+            @for (item of type; track item) {
+            <option [ngValue]="item">{{ item }}</option>
+            }
+          </select>
+        </div>
+        }
       </div>
 
       @if (itemDescription.length > 0) {
-        <div class="mb-3" formArrayName="itemDescription">
-          <div *ngFor="let v of itemDescriptionFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
-            <div class="col-sm-4">
-              <label class="form-label">{{ v.get('description').value }} ({{ v.get('info').value }})</label>
-            </div>
-            <div class="col-sm-4">
-              @if (v.get('description').value == "Άλλο (προσδιορίστε)"){
-                <textarea formControlName="value" cols="10" rows="10" class="form-control"></textarea>
-              } @else {
-              <input class="form-control" type="text" placeholder="Πληκτρολογήστε τιμή" formControlName="value">
+      <div class="mb-3" formArrayName="itemDescription">
+        <div *ngFor="let v of itemDescriptionFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
+          <div class="col-sm-4">
+            <label class="form-label">{{ v.get('description').value }} ({{ v.get('info').value }})</label>
+          </div>
+          <div class="col-sm-4">
+            @if (v.get('description').value == "Άλλο (προσδιορίστε)"){
+            <textarea formControlName="value" cols="10" rows="10" class="form-control"></textarea>
+            } @else {
+            <input class="form-control" type="text" placeholder="Πληκτρολογήστε τιμή" formControlName="value">
             }
-            </div>
           </div>
         </div>
+      </div>
       }
 
       <div class="row mb-3">
@@ -172,72 +172,56 @@
       <legend class="w-auto">Στοιχεία Χώρων:</legend>
       <div class="d-flex justify-content-between small">
         <div>
-            <span>Eπιλέξτε τους χώρους που επιθυμείτε για το νέο εξοπλισμό</span>
+          <span>Eπιλέξτε τους χώρους που επιθυμείτε για το νέο εξοπλισμό</span>
         </div>
         <div *ngIf="selectedSpaces.length > 0">
           <button class="btn btn-danger btn-sm mb-1" (click)="clearSelections()">Καθάρισμα επιλογών</button>
         </div>
       </div>
-      <ag-grid-angular 
-        [domLayout]="'autoHeight'" 
-        [rowData]="spaces" 
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="spaceColDefs" 
-        [pagination]="true" 
-        [paginationPageSize]="20"
-        [loadingOverlayComponent]="loadingOverlayComponent" 
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        rowSelection="multiple"
-        (rowSelected)="onRowSelected($event)" 
-        (gridReady)="onGridReady($event)" 
-        (firstDataRendered)="onFirstDataRendered($event)"
-        class="ag-theme-balham">
+      <ag-grid-angular [domLayout]="'autoHeight'" [rowData]="spaces" [defaultColDef]="defaultColDef"
+        [columnDefs]="spaceColDefs" [pagination]="true" [paginationPageSize]="20"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams" rowSelection="multiple"
+        (rowSelected)="onRowSelected($event)" (gridReady)="onGridReady($event)"
+        (firstDataRendered)="onFirstDataRendered($event)" class="ag-theme-balham">
       </ag-grid-angular>
 
       <div class="mb-3 mt-3">
         @if(showGrid) {
-          <div class="mb-3" formArrayName="itemQuantity">
-            <div *ngFor="let v of itemQuantityFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
-              <div class="col-sm-3">
-                <label for="">Ακίνητο:</label>
-                <input type="text" class="form-control" formControlName="distinctiveNameOfFacility" readonly>
-              </div>
+        <div class="mb-3" formArrayName="itemQuantity">
+          <div *ngFor="let v of itemQuantityFormArray.controls let i = index" [formGroupName]="i" class="row mb-3">
+            <div class="col-sm-3">
+              <label for="">Ακίνητο:</label>
+              <input type="text" class="form-control" formControlName="distinctiveNameOfFacility" readonly>
+            </div>
 
-              <div class="col-sm-3">
-                <label for="">Χώρος:</label>
-                <input type="text" class="form-control" formControlName="spaceName" readonly>
-              </div>
+            <div class="col-sm-3">
+              <label for="">Χώρος:</label>
+              <input type="text" class="form-control" formControlName="spaceName" readonly>
+            </div>
 
-               <div class="col-sm-3">
-                <label for="">Ποσότητα:</label>
-                <input type="number" min="0" class="form-control" formControlName="quantity" [readonly]="updateEquipment">
-              </div>
+            <div class="col-sm-3">
+              <label for="">Ποσότητα:</label>
+              <input type="number" min="0" class="form-control" formControlName="quantity" [readonly]="updateEquipment">
+            </div>
 
-              <div class="col-sm-3">
-                <label for="">Κωδικοί εξοπλισμού:</label>
-                <textarea class="form-control" formControlName="codes"></textarea>
-                <div class="form-text">Διαχωριστικό με το σύμβολο "$" (Παράδειγμα κωδικός$κωδικός$..)</div>
-              </div>
+            <div class="col-sm-3">
+              <label for="">Κωδικοί εξοπλισμού:</label>
+              <textarea class="form-control" formControlName="codes"></textarea>
+              <div class="form-text">Διαχωριστικό με το σύμβολο "$" (Παράδειγμα κωδικός$κωδικός$..)</div>
             </div>
           </div>
+        </div>
         }
       </div>
     </fieldset>
 
     <div class="d-flex gap-2">
-      <button
-        type="button" 
-        class="btn btn-primary"
-        [disabled]="form.invalid"
-        (click)="submitForm()"
-      >
+      <button type="button" class="btn btn-primary" [disabled]="form.invalid" (click)="submitForm()">
         Υποβολή
       </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="resetForm()">
-          Καθάρισμα
+      <button type="button" class="btn btn-danger" (click)="resetForm()">
+        Καθάρισμα
       </button>
     </div>
   </form>

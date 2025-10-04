@@ -295,11 +295,13 @@ export class FacilityComponent {
   }
 
   showFacilitiesGrids(data: IOrganizationList) {
+    console.log(data);
     this.organizationCode = data.code
     this.showGrid = true;
   }
 
   showOrganizationDetails(code: string): void {
+    console.log(code);
     this.modalService.showOrganizationDetails(code);
   }
 

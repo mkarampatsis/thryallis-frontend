@@ -31,6 +31,7 @@ import { IEquipment } from 'src/app/shared/interfaces/equipment/equipment';
     NgbTooltipModule,
     AgGridAngular,
     AgGridNoRowsOverlayComponent,
+    GridLoadingOverlayComponent
   ],
   templateUrl: './equipment.component.html',
   styleUrl: './equipment.component.css'
@@ -137,22 +138,46 @@ export class EquipmentComponent implements OnInit {
   }    
   
   showEquipments(code: string){
+    this.equipments = []
+
+    setTimeout(() => {
+      if (this.gridApiEquipment) {
+        this.gridApiEquipment.showLoadingOverlay();
+      }
+    });
+
     this.resourcesService.getEquipmentsByOrganizationCode(code)
-    .subscribe(response => {
-      const body = response.body["data"];          
-      const status = response.status;        
-      if (status === 200) {
-        this.equipments = body;
-      } 
-    })
-    this.showGridEquipment = true;
+    .subscribe({
+      next: (response) => {
+        const body = response.body['data'];
+        const status = response.status;
+
+        if (status === 200) {
+          this.equipments = body;
+          this.showGridEquipment = true;
+        }
+
+        if (this.gridApiEquipment) {
+          if (this.equipments.length > 0) {
+            this.gridApiEquipment.hideOverlay();
+          } else {
+            this.gridApiEquipment.showNoRowsOverlay();
+          }
+        }
+      },
+      error: () => {
+        if (this.gridApiEquipment) {
+          this.gridApiEquipment.showNoRowsOverlay();
+        }
+      },
+    });
   }
 
   onGridReady(params: GridReadyEvent<ISpace>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
-    if (this.spaces.length > 0)
-      this.gridApi.hideOverlay();
+    // if (this.spaces.length > 0)
+    //   this.gridApi.hideOverlay();
   }
 
 
@@ -176,9 +201,12 @@ export class EquipmentComponent implements OnInit {
 
   onGridEquipmentReady(params: GridReadyEvent<IEquipment>): void {
     this.gridApiEquipment = params.api;
-    this.gridApiEquipment.showLoadingOverlay();
-     if (this.equipments.length > 0)
+    // this.gridApiEquipment.showLoadingOverlay();
+    if (this.equipments.length > 0) {
       this.gridApiEquipment.hideOverlay();
+    } else {
+      this.gridApiEquipment.showNoRowsOverlay();
+    }
   }
 
   onCellEquipmentClicked(event: CellClickedEvent): void {
