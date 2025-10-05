@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng build && rsync -avz -e 'ssh -i /home/marka/.ssh/id_rsa_ch' --delete dist/ministry-frontend/browser/* ypes-frontend@ypes:ypes-frontend"
+    "deploy": "ng build && rsync -avz --delete dist/ministry-frontend/browser/* oper@thryallis-frontend.duckdns.org:ypes-frontend"
   },
   "private": true,
   "dependencies": {
