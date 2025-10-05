@@ -124,15 +124,19 @@ export class FacilityComponent {
   ngOnInit() {
     this.organizations = this.userService.getMyFacilites()
     this.resourcesService.getFacilityCategories()
-      .subscribe(result => {
-        this.useOfFacility = result.map(item => item.type);
-      })
+    .subscribe(result => {
+      this.useOfFacility = result.map(item => item.type);
+    })
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
-    this.getFacilitiesByOrganizationCode();
+    if (this.facilities.length > 0) {
+      this.gridApi.hideOverlay();
+    } else {
+      this.gridApi.showNoRowsOverlay();
+    }
   }
 
   onGridReadySpace(params: GridReadyEvent<ISpace[]>): void {
@@ -140,6 +144,9 @@ export class FacilityComponent {
     this.gridApiSpace.showLoadingOverlay();
     if (this.spaces.length > 0)
       this.gridApiSpace.hideOverlay();
+    else {
+      this.gridApiSpace.showNoRowsOverlay()
+    }
   }
 
   onCellClicked(event: CellClickedEvent): void {
@@ -170,7 +177,7 @@ export class FacilityComponent {
 
   showSpaces(facility: IFacility) {
     this.getSpacesFacilityId(facility["_id"]["$oid"])
-  }
+   }
 
   editFacility(facility: IFacility) {
 
@@ -295,13 +302,13 @@ export class FacilityComponent {
   }
 
   showFacilitiesGrids(data: IOrganizationList) {
-    console.log(data);
     this.organizationCode = data.code
-    this.showGrid = true;
+    this.spaces = [];
+    this.showGridSpace = false;
+    this.getFacilitiesByOrganizationCode();
   }
 
   showOrganizationDetails(code: string): void {
-    console.log(code);
     this.modalService.showOrganizationDetails(code);
   }
 
@@ -541,30 +548,75 @@ export class FacilityComponent {
   }
 
   getFacilitiesByOrganizationCode() {
+ 
+    this.facilities = [];
+
+    setTimeout(() => {
+      if (this.gridApi) {
+        this.gridApi.showLoadingOverlay();
+      }
+    });
+
     this.resourcesService.getFacilitiesByOrganizationCode(this.organizationCode)
-      .subscribe(result => {
-        const body = result.body;
-        const status = result.status;
+    .subscribe({
+      next: (response) => {
+        const body = response.body;
+        const status = response.status;
+
         if (status === 200) {
-          this.facilities = body
+          this.facilities = body;
+          this.showGrid = true;
         }
-      })
+
+        if (this.gridApi) {
+          if (this.facilities.length > 0) {
+            this.gridApi.hideOverlay();
+          } else {
+            this.gridApi.showNoRowsOverlay();
+          }
+        }
+      },
+      error: () => {
+        if (this.gridApi) {
+          this.gridApi.showNoRowsOverlay();
+        }
+      },
+    });
   }
 
   getSpacesFacilityId(id: string) {
+
+    this.spaces = [];
+
+    setTimeout(() => {
+      if (this.gridApiSpace) {
+        this.gridApiSpace.showLoadingOverlay();
+      }
+    });
+
     this.resourcesService.getSpacesByFacilityId(id)
-      .subscribe(result => {
-        const body = result.body;
-        const status = result.status;
+    .subscribe({
+      next: (response) => {
+        const body = response.body;
+        const status = response.status;
         if (status === 200) {
-          this.spaces = body
+          this.spaces = body;
+          this.showGridSpace = true;
+        }
+
+        if (this.gridApiSpace) {
           if (this.spaces.length > 0) {
-            this.showGridSpace = true;
-          }
-          else {
-            this.showGridSpace = false;
+            this.gridApiSpace.hideOverlay();
+          } else {
+            this.gridApiSpace.showNoRowsOverlay();
           }
         }
-      })
+      },
+      error: () => {
+        if (this.gridApiSpace) {
+          this.gridApiSpace.showNoRowsOverlay();
+        }
+      },
+    });
   }
 }

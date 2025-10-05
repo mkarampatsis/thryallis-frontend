@@ -49,7 +49,7 @@ export class EquipmentComponent implements OnInit {
   spaces: IFacilitySpace[] | null = [];
   selectedSpaces: IFacilitySpace[] = [];
   selectedSpaceIds: string = '';
-  equipments: IEquipment[] | null =[];
+  equipments: IEquipment[] | null = [];
 
   organization: string = '';
   organizationCode: string = '';
@@ -202,6 +202,7 @@ export class EquipmentComponent implements OnInit {
   onGridEquipmentReady(params: GridReadyEvent<IEquipment>): void {
     this.gridApiEquipment = params.api;
     // this.gridApiEquipment.showLoadingOverlay();
+    console.log("equipments",this.equipments);
     if (this.equipments.length > 0) {
       this.gridApiEquipment.hideOverlay();
     } else {

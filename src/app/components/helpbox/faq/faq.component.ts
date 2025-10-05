@@ -107,7 +107,6 @@ export class FaqComponent implements OnInit {
 
   onRowClicked(event: any): void {
     this.modalService.showFaqAnswer(event.data);
-    console.log(event);
   }
 }
 
