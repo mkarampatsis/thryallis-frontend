@@ -1,21 +1,19 @@
 <h1 class="govgr-heading-md">Έλεγχος πρόσβασης</h1>
 
-<p class="govgr-body d-flex flex-column gap-3">
-  Στην εκπαιδευτική πλατφορμα η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους
-  χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.
-
-  <asl-google-signin-button type="standard" size="large">
-  </asl-google-signin-button>
-
-</p>
+<div *ngIf="!user()" class="govgr-body">
+  
+</div>
 
 <div *ngIf="!user()" class="govgr-body">
-  <h1 class="govgr-heading-md">Αυθεντικοποίηση χρηστών με Κωδικούς Δημόσιας Διοίκησης</h1>
-  <p class="d-flex gap-3">
+  @if(enableGoogleAuth == "true") {
+    <p>Στην εκπαιδευτική πλατφορμα η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους  χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.</p>
+    <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+  } @else {
+    <p>Αυθεντικοποίησης υπαλλήλων Φορέων με την χρήση Κωδικών Δημόσιας Διοίκησης</p>
     <button class="btn btn-primary" (click)="login()">
-      Είσοδος με ΚΕΔ
+      Είσοδος με Κωδικούς Δημόσιας Διοίκησης
     </button>
-   </p>
+  }
 </div>
 
 @if (loading()) {

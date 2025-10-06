@@ -6,6 +6,9 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserService } from '../../services/user.service';
 import { NgIf } from '@angular/common';
 import { Oauth2Service } from '../../services/oauth2.service';
+import { environment } from 'src/environments/environment';
+
+const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
 
 @Component({
   selector: 'app-user-info',
@@ -20,11 +23,15 @@ export class UserInfoComponent {
   user = this.authService.user;
   oauthService = inject(Oauth2Service);
 
+  enableGoogleAuth = ENABLE_GOOGLE_AUTH;
   imgSrcError = false;
 
   logout() {
-    // this.oauthService.gsisLogout();
-    // this.authService.signOut();
+    if (this.enableGoogleAuth == "true"){
+      this.authService.signOut();
+    } else {
+      this.oauthService.gsisLogout();
+    }
     this.authService.removeUser();
   }
 

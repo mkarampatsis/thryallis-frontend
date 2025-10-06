@@ -58,7 +58,7 @@ export class AuthService {
                     this.user.set(body.user);
                     localStorage.setItem('accessToken', body.accessToken);
                     this.loading.set(false);
-                    // this.router.navigate(['dashboard']);
+                    this.router.navigate(['landing']);
                   } else if (status === 204){
                     this.user.set(null)
                     this.loading.set(false);
@@ -85,7 +85,7 @@ export class AuthService {
               next: (res: IAuthResponse) => {
                 this.user.set(res.user);
                 localStorage.setItem('accessToken', res.accessToken);
-                // this.router.navigate(['dashboard']);
+                this.router.navigate(['landing']);
               },
               error: (err) => {
                 console.log(err);

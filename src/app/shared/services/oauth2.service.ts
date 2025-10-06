@@ -29,6 +29,6 @@ export class Oauth2Service {
   }
 
    gsisLogout() {
-    // window.location.href = `${APILOGOUT}/${GSISCLIENTID}/?url=${REDIRECTURI}`;
+    window.location.href = `${APILOGOUT}/${GSISCLIENTID}/?url=${REDIRECTURI}`;
   }
 }
