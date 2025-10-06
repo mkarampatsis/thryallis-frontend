@@ -63,7 +63,6 @@ export class AuthService {
                     this.user.set(null)
                     this.loading.set(false);
                   }
-                    
                 })
             }
           });
