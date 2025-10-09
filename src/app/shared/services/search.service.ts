@@ -353,6 +353,7 @@ export class SearchService {
         });
       }
     });
+    console.log(result);
     return result;
   }
 
