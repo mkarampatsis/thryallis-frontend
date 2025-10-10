@@ -36,7 +36,6 @@ export class UserService {
   }
 
   hasHelpDeskRole() {
-    console.log("HELPDESK",this.user().roles);
     return this.user().roles.some((role) => role.role === 'HELPDESK');
   }
 
@@ -45,7 +44,6 @@ export class UserService {
   }
 
   hasAdminRole() {
-    console.log("Admin",this.user().roles);
     return this.user().roles.some((role) => role.role === 'ADMIN');
   }
 
