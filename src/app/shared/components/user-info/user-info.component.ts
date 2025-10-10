@@ -33,10 +33,12 @@ export class UserInfoComponent {
   }
 
   hasEditorRole() {
+    console.log(this.userService.hasEditorRole())
     return this.userService.hasEditorRole();
   }
 
   hasAdminRole() {
+    console.log(this.userService.hasAdminRole())
     return this.userService.hasAdminRole();
   }
 }
