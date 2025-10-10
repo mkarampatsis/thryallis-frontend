@@ -1,14 +1,12 @@
-<p class="govgr-body d-flex flex-column gap-3">
+<div class="govgr-body d-flex flex-column gap-3">
     @if ((organizationsLoading$ | async) || (organizationalUnitsLoading$ | async) || (remitsLoading$ | async)) {
-        <span class="d-flex align-items-center gap-2">
-            Αναμονή ολοκλήρωσης συγχρονισμών ...
-            <span
-                class="spinner-border text-primary"
-                role="status">
-                <span class="visually-hidden">Loading...</span>
-            </span>
+    <span class="d-flex align-items-center gap-2">
+        Αναμονή ολοκλήρωσης συγχρονισμών ...
+        <span class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </span>
-        <!-- @if (organizationsLoading$ | async) {
+    </span>
+    <!-- @if (organizationsLoading$ | async) {
             <span class="d-flex align-items-center gap-2">
                 Συγχρονισμός Φορέων...
                 <span
@@ -41,10 +39,24 @@
             </span>
         } -->
     } @else {
-        <p class="mt-4"><strong>O συγχρονισμός των δεδομένων ολοκληρώθηκε</strong></p>
+    <p class="mt-4"><strong>O συγχρονισμός των δεδομένων ολοκληρώθηκε</strong></p>
     }
 
-    <img
-      src="/assets/img/landing-ypes_2.png"
-      alt="psped logo" />
-</p>
+    <!-- <div *ngIf="user()" class="mb-5">
+      <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
+
+        <p>
+            Πίνακας με τα λεκτικά των θέσεων που κατέχει ο υπάλληλος οργανωμένα ιεραρχικά με βάση την οργανική μονάδα του υπαλλήλου:
+            <strong> {{ user().empOrgUnitTexts }}</strong>
+        </p>
+        
+        <p class="mt-2"><strong>Προσβάσεις υπαλλήλου:</strong></p>
+        <ul>
+            @for (role of user().roles; track role){
+            <li>Ρόλος: {{role.role}}, Φορείς: {{role.foreas}}</li>
+            }
+        </ul>
+    </div> -->
+
+    <img src="/assets/img/landing-ypes_2.png" alt="psped logo" />
+</div>

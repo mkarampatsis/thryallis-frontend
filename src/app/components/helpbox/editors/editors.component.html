@@ -6,7 +6,12 @@
           <span class="fw-semibold">Στοιχεία Χρήστη</span>
         </div>
         <div class="mb-3 mt-3 p-2">
-            <p>{{user().firstName}} {{user().lastName}} ({{user().email.split("@")[0]}})</p>
+            <p>
+              {{user().firstName}} {{user().lastName}} 
+              @if(user().email){
+                ({{user().email.split('@')[0]}})
+              }
+            </p>
             <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
         </div>
         

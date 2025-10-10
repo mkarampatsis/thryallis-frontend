@@ -15,6 +15,8 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 export class LandingComponent {
   store = inject(Store<AppState>);
   authService = inject(AuthService)
+
+  user = this.authService.user;
   
   organizationsLoading$ = this.store.select((state) => state.organizations.loading);
   organizationalUnitsLoading$ = this.store.select((state) => state.organizationalUnits.loading);
