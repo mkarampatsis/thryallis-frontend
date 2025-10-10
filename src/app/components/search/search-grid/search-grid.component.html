@@ -1,32 +1,32 @@
 <div class="govgr-body mt-3">
 
+  @if (data.length > 0){
     <div class="d-flex align-items-center gap-2 mb-3">
-        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportCSV()">Εξαγωγή σε CSV</button>
-        <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
-        @if (loading) {
-            <span class="d-flex align-items-center gap-2">
-                Αναμονή αποτελεσμάτων...
-                <span
-                    class="spinner-border text-primary"
-                    role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </span>
-            </span>
-        }
+      <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportCSV()">Εξαγωγή σε CSV</button>
+      <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
+      @if (loading) {
+      <span class="d-flex align-items-center gap-2">
+        Αναμονή αποτελεσμάτων...
+        <span class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </span>
+      }
     </div>
 
-    <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="data"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs"
-        [pagination]="true"
-        [paginationPageSize]="50"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        (gridReady)="onGridReady($event)"
-        (cellClicked)="onCellClicked($event)"
-        class="ag-theme-balham">
+    <ag-grid-angular 
+      [domLayout]="'autoHeight'" 
+      [rowData]="data" 
+      [defaultColDef]="defaultColDef" 
+      [columnDefs]="colDefs"
+      [pagination]="true" 
+      [paginationPageSize]="50" 
+      [loadingOverlayComponent]="loadingOverlayComponent"
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams" 
+      (gridReady)="onGridReady($event)"
+      (cellClicked)="onCellClicked($event)" class="ag-theme-balham">
     </ag-grid-angular>
+  } @else {
+    <p>Δεν εμφανίζονται αποτελέσματα καθώς τα ζητούμενα στοιχεία είναι πηγαία στοιχεία της ΑΠΟΓΡΑΦΗΣ τα οποία δεν έχουν συμπληρωθεί από τους χρήστες της εφαρμογής της απογραφής</p>
+  }
 </div>
-

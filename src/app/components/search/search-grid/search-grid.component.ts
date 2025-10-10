@@ -38,8 +38,7 @@ export class SearchGridComponent {
       flex: 2
     },
     { field: 'organizationObjectId', flex: 1, hide: true },
-    { field: 'organizationScore', headerName: 'Βαθ. Φορέα', flex: 1 },
-
+    // { field: 'organizationScore', headerName: 'Βαθ. Φορέα', flex: 1 },
     { field: 'organizationalUnitCode', headerName: 'Κωδ. Μονάδας', flex: 1, hide: true },
     {
       field: 'organizationalUnitPreferredLabel',
@@ -48,7 +47,6 @@ export class SearchGridComponent {
       flex: 2
     },
     { field: 'organizationalUnitObjectId', flex: 1, hide: true },
-
     {
       field: 'remitText',
       headerName: 'Αρμοδιότητα',
@@ -58,8 +56,7 @@ export class SearchGridComponent {
       cellStyle: { 'white-space': 'normal' }
     },
     { field: 'remitObjectId', flex: 1, hide: true },
-
-    { field: 'organizationalUnitScore', headerName: 'Βαθ. Μοναδ./Αρμοδ.', flex: 1, sort: 'desc' }
+    // { field: 'organizationalUnitScore', headerName: 'Βαθ. Μοναδ./Αρμοδ.', flex: 1, sort: 'desc' }
   ];
 
   autoSizeStrategy = this.constService.autoSizeStrategy;

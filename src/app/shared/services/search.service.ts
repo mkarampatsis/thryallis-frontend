@@ -285,16 +285,15 @@ export class SearchService {
 
   createGridData(data: ISearchGridInput): ISearchGridOutput[] {
     const result: ISearchGridOutput[] = [];
-    console.log(">>>",data);
+
     data.organizations.forEach(org => {
-      console.log(org);
       const orgCode = org.code;
       const orgScore = org.score;
       const orgObjectId = org.object_id;
       const orgPreferredLabel = org.preferredLabel;
 
-      if (!org["organizational_units"]) {
-        // If organizational_units is empty
+      // If organizational_units is empty
+      if (org["organizational_units"].length==0 ) {
         result.push({
           organizationCode: orgCode,
           organizationScore: orgScore,
@@ -316,8 +315,8 @@ export class SearchService {
           const unitObjectId = unit.object_id;
           const unitPreferredLabel = unit.preferredLabel;
 
-          if (!unit["remits"]) {
-            // If remits is empty
+          // If remits is empty
+          if (unit["remits"].length == 0) {
             result.push({
               organizationCode: orgCode,
               organizationScore: orgScore,
@@ -347,13 +346,11 @@ export class SearchService {
                 remitObjectId: remit.object_id,
                 remitScore: remit.score
               });
-
             });
           }
         });
       }
     });
-    console.log(result);
     return result;
   }
 
