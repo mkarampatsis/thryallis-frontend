@@ -11,6 +11,7 @@ import { IOrganizationList } from 'src/app/shared/interfaces/organization/organi
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectOrganizationByCode$ } from 'src/app/shared/state/organizations.state';
+import { RouterLink } from '@angular/router';
 
 const APIPREFIX_USER = `${environment.apiUrl}/user`;
 
@@ -36,19 +37,19 @@ export class UserService {
   }
 
   hasHelpDeskRole() {
-    return this.user().roles.some((role) => role.role === 'HELPDESK');
+    return this.user().roles.some((role) => role.role === 'HELPDESK' && role.active);
   }
 
   hasEditorRole() {
-    return this.user().roles.some((role) => role.role === 'EDITOR');
+    return this.user().roles.some((role) => role.role === 'EDITOR' && role.active);
   }
 
   hasAdminRole() {
-    return this.user().roles.some((role) => role.role === 'ADMIN');
+    return this.user().roles.some((role) => role.role === 'ADMIN' && role.active);
   }
 
   getMyFacilites() {
-    const foreis = this.user().roles.find(r => r.role === 'FACILITY_EDITOR')?.foreas ?? [];
+    const foreis = this.user().roles.find(role => role.role === 'FACILITY_EDITOR' && role.active)?.foreas ?? [];
     
     let organizations: IOrganizationList[] = [];
 
@@ -66,7 +67,7 @@ export class UserService {
 
   hasFacilityAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN');
+      return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN' && role.active );
     }
 
     return false;
@@ -74,7 +75,7 @@ export class UserService {
 
   hasFacilityEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR');
+      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.active);
     }
 
     return false;
@@ -82,14 +83,14 @@ export class UserService {
 
   hasFacilityEditorRoleInOrganization(code:string) {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code));
+      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code) && role.active);
     }
 
     return false;
   }
 
   getMyEquipments() {
-    const foreis = this.user().roles.find(r => r.role === 'EQUIPMENT_EDITOR')?.foreas ?? [];
+    const foreis = this.user().roles.find(role => role.role === 'EQUIPMENT_EDITOR' && role.active)?.foreas ?? [];
     
     let organizations: IOrganizationList[] = [];
 
@@ -107,7 +108,7 @@ export class UserService {
 
   hasEquipmentAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN');
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN' && role.active );
     }
 
     return false;
@@ -115,7 +116,7 @@ export class UserService {
   
   hasEquipmentEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR');
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.active);
     }
 
     return false;
@@ -123,7 +124,7 @@ export class UserService {
 
   hasEquipmentEditorRoleInOrganization(code:string) {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.foreas.includes(code));
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.foreas.includes(code) && role.active);
     }
 
     return false;
@@ -131,7 +132,7 @@ export class UserService {
 
   hasUserResourcesAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_ADMIN');
+      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_ADMIN' && role.active);
     }
 
     return false;
@@ -139,7 +140,7 @@ export class UserService {
   
   hasUserResourcesEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR');
+      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.active);
     }
 
     return false;
@@ -147,14 +148,14 @@ export class UserService {
 
   hasUserResourcesEditorRoleInOrganization(code:string) {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.foreas.includes(code));
+      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.foreas.includes(code) && role.active);
     }
 
     return false;
   }
 
   getMyUserResources() {
-    const foreis = this.user().roles.find(r => r.role === 'USER_RESOURCES_EDITOR')?.foreas ?? [];
+    const foreis = this.user().roles.find(role => role.role === 'USER_RESOURCES_EDITOR' && role.active)?.foreas ?? [];
     
     let organizations: IOrganizationList[] = [];
 
