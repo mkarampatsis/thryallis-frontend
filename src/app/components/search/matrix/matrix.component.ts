@@ -75,15 +75,18 @@ export class MatrixComponent {
 
   selectedDataMatrix1 = []
   matrixData1 = [];
-  showTable1 = false
+  showTable1 = false;
+  showError1 = false;
 
   selectedDataMatrix2 = [];
   matrixData2 = [];
   showTable2 = false;
+  showError2 = false;
 
   selectedDataMatrix3 = [];
   matrixData3 = [];
   showTable3 = false;
+  showError3 = false;
   filteredRows = [];
 
   ngOnDestroy(): void {
@@ -126,19 +129,22 @@ export class MatrixComponent {
 
   onRowSelected_Matrix1(event: any) {
     const selectedNodes = event.api.getSelectedNodes();
+    this.showTable1 = false;
+    this.showError1 = false;
 
     // Log selected rows to the console
     this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
     this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
       .subscribe(data => {
         this.matrixData1 = data;
+        if (this.matrixData1.length > 0) {
+          this.showTable1 = true;
+          this.showError1 = false;
+        } else {
+          this.showTable1 = false
+          this.showError1 = true
+        }
       })
-
-    if (this.selectedDataMatrix1.length > 0) {
-      this.showTable1 = true;
-    } else {
-      this.showTable1 = false
-    }
   }
 
   showMatrixData1(code: string, unitType: string) {
@@ -184,20 +190,19 @@ export class MatrixComponent {
 
   onRowSelected_Matrix2(event: any) {
     const selectedNodes = event.api.getSelectedNodes();
+    this.showTable2 = false;
+    this.showError2 = false;
 
     // Log selected rows to the console
     this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
     this.matrixData2 = this.searchService.transformMatrixData_2(this.selectedDataMatrix2)
 
-    // this.searchService.transformMatrixData_2(this.selectedDataMatrix2)
-    //     .subscribe(data =>{
-    //         this.matrixData2 = data;
-    //     })
-
-    if (this.selectedDataMatrix2.length > 0) {
-      this.showTable2 = true
+    if (this.matrixData2.length > 0) {
+      this.showTable2 = true;
+      this.showError2 = false;
     } else {
-      this.showTable2 = false
+      this.showTable2 = false;
+      this.showError3 = true;
     }
 
   }
@@ -248,6 +253,8 @@ export class MatrixComponent {
 
   onRowSelected_Matrix3(event: any) {
     const selectedNodes = event.api.getSelectedNodes();
+    this.showTable3 = false;
+    this.showError3 = false;
 
     // Disable further selections if the limit is reached
     if (selectedNodes.length >= this.selectedRowLimit) {
@@ -265,14 +272,17 @@ export class MatrixComponent {
 
     // Log selected rows to the console
     this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
+    console.log("selected",this.selectedDataMatrix3);
 
     this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3, this.filteredRows)
     if (this.matrixData3.length > 0) {
-      this.showTable3 = true
+      console.log(this.matrixData3);
+      this.showTable3 = true;
+      this.showError3 = false;
     } else {
-      this.showTable3 = false
+      this.showTable3 = false;
+      this.showError3 = true;
     }
-
   }
 
   onFilterChanged(event: any) {

@@ -70,6 +70,13 @@
         </table>
     </div>
     }
+
+    @if(showError1){   
+      <div class="mt-4">
+          <h1 class="govgr-heading-sm">Σύγκριση δύο Φορέων ως προς τον αριθμό Μονάδων ανά ιεραρχικό επίπεδο</h1>
+           <p>Δεν υπάρχουν δεδομένα από τα πηγαία στοιχεία της ΑΠΟΓΡΑΦΗΣ</p>
+      </div>
+    }
 </div>
 
 <div class="text-success mt-4">
@@ -145,6 +152,13 @@
         </table>
     </div>
     }
+
+    @if(showError2){   
+      <div class="mt-4">
+          <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
+           <p>Δεν υπάρχουν δεδομένα από τα πηγαία στοιχεία της ΑΠΟΓΡΑΦΗΣ</p>
+      </div>
+    }
 </div>
 
 <div class="text-success mt-4">
@@ -152,106 +166,113 @@
 </div>
   
 <div class="mt-4">
-    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση των αρμοδιοτήτων δύο Μονάδων</h1>
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση των αρμοδιοτήτων δύο Μονάδων</h1>
 
-    <ul>
-        @for (row of selectedDataMatrix3; track row ){
-            <li><strong>Φορέας: </strong>{{row.organizationLabel}}, <strong>Μονάδα: </strong>{{row.organizationUnitLabel}}</li>
-        }
-    </ul>
+  <ul>
+    @for (row of selectedDataMatrix3; track row ){
+      <li><strong>Φορέας: </strong>{{row.organizationLabel}}, <strong>Μονάδα: </strong>{{row.organizationUnitLabel}}</li>
+    }
+  </ul>
 
-    <div class="d-flex justify-content-between small">
-        <div>
-            <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε <strong>(μέχρι δύο επιλογές)</strong></span>
-        </div>
-        <div>
-            <a (click)="clearSelectionMatrix3()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
-        </div>
+  <div class="d-flex justify-content-between small">
+    <div>
+      <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε <strong>(μέχρι δύο επιλογές)</strong></span>
     </div>
+    <div>
+      <a (click)="clearSelectionMatrix3()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+    </div>
+  </div>
 
-    <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="remits"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Matrix3"
-        [pagination]="true"
-        [paginationPageSize]="10"
-        [loadingOverlayComponent]="loadingOverlayComponentRemit"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParamsRemit"
-        rowSelection="multiple"
-        (rowSelected)="onRowSelected_Matrix3($event)"
-        (gridReady)="onGridReady_Matrix3($event)"
-        (filterChanged)="onFilterChanged($event)"
-        class="ag-theme-balham"></ag-grid-angular>
+  <ag-grid-angular
+    [domLayout]="'autoHeight'"
+    [rowData]="remits"
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs_Matrix3"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [loadingOverlayComponent]="loadingOverlayComponentRemit"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParamsRemit"
+    rowSelection="multiple"
+    (rowSelected)="onRowSelected_Matrix3($event)"
+    (gridReady)="onGridReady_Matrix3($event)"
+    (filterChanged)="onFilterChanged($event)"
+    class="ag-theme-balham">
+  </ag-grid-angular>
 
     @if(showTable3){   
-    <div class="mt-4">
+      <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση όλων των αρμοδιοτήτων δύο Μονάδων και με κριτήριο αναζήτησης</h1>
         
         <div class="d-flex align-items-center gap-2 mb-3">
-            <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3CSV()" [disabled]="!showTable3">Εξαγωγή σε CSV</button>
-            <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3Excel()" [disabled]="!showTable3">Εξαγωγή σε Excel</button>
-            @if (loading) {
-                <span class="d-flex align-items-center gap-2">
-                    Αναμονή αποτελεσμάτων...
-                    <span
-                        class="spinner-border text-primary"
-                        role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </span>
-                </span>
+          <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3CSV()" [disabled]="!showTable3">Εξαγωγή σε CSV</button>
+          <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportMatrix3Excel()" [disabled]="!showTable3">Εξαγωγή σε Excel</button>
+          @if (loading) {
+            <span class="d-flex align-items-center gap-2">
+              Αναμονή αποτελεσμάτων...
+              <span
+                class="spinner-border text-primary"
+                role="status">
+                <span class="visually-hidden">Loading...</span>
+              </span>
+            </span>
             }
         </div>
 
         <div class="d-flex gap-3">
-            @if (selectedDataMatrix3.length>=1){
-                <div class="flex-fill">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <strong>{{selectedDataMatrix3[0]["organizationLabel"]}}</strong><br>
-                                    <em>{{selectedDataMatrix3[0]["organizationUnitLabel"]}}</em>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                             @for (row of matrixData3; track row ){
-                                @if (row.organizationalUnitCode === selectedDataMatrix3[0]["organizationalUnitCode"]){
-                                    <tr>
-                                        <td><div [innerHTML]="row.remitText"></div></td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            @if (selectedDataMatrix3.length>=2){
-                <div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <strong>{{selectedDataMatrix3[1]["organizationLabel"]}}</strong><br>
-                                    <em>{{selectedDataMatrix3[1]["organizationUnitLabel"]}}</em>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (row of matrixData3; track row ){
-                                @if (row.organizationalUnitCode === selectedDataMatrix3[1]["organizationalUnitCode"]){
-                                    <tr>
-                                        <td><div [innerHTML]="row.remitText"></div></td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
+          @if (selectedDataMatrix3.length>=1){
+            <div class="flex-fill">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                      <strong>{{selectedDataMatrix3[0]["organizationLabel"]}}</strong><br>
+                      <em>{{selectedDataMatrix3[0]["organizationUnitLabel"]}}</em>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of matrixData3; track row ){
+                    @if (row.organizationalUnitCode === selectedDataMatrix3[0]["organizationalUnitCode"]){
+                      <tr>
+                        <td><div [innerHTML]="row.remitText"></div></td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+          @if (selectedDataMatrix3.length>=2){
+            <div>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                      <strong>{{selectedDataMatrix3[1]["organizationLabel"]}}</strong><br>
+                      <em>{{selectedDataMatrix3[1]["organizationUnitLabel"]}}</em>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of matrixData3; track row ){
+                    @if (row.organizationalUnitCode === selectedDataMatrix3[1]["organizationalUnitCode"]){
+                      <tr>
+                        <td><div [innerHTML]="row.remitText"></div></td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
         </div>
-        
-    </div>
+      </div>
+    }
+
+    @if(showError3){   
+      <div class="mt-4">
+          <h1 class="govgr-heading-sm">Σύγκριση όλων των αρμοδιοτήτων δύο Μονάδων και με κριτήριο αναζήτησης</h1>
+          <p>Δεν εμφανίζονται αποτελέσματα καθώς τα ζητούμενα στοιχεία είναι πηγαία στοιχεία της ΑΠΟΓΡΑΦΗΣ τα οποία δεν έχουν συμπληρωθεί από τους χρήστες της εφαρμογής της απογραφής</p>
+      </div>
     }
 </div>

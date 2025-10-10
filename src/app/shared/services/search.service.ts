@@ -259,7 +259,7 @@ export class SearchService {
   transformMatrixData_3(rowsSelected: any, filteredRows: any) {
     let selectedRemits = []
 
-    // console.log(rowsSelected, filteredRows)
+    console.log(rowsSelected, filteredRows)
 
     if (filteredRows.length === 0) {
       for (let data of rowsSelected) {
