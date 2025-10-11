@@ -11,86 +11,95 @@ import { RemitService } from 'src/app/shared/services/remit.service';
 import { AppState } from 'src/app/shared/state/app.state';
 import { selectRemits$, selectRemitsLoading$ } from 'src/app/shared/state/remits.state';
 import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/state/organizational-units.state';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 export interface IRemitExtended extends IRemit {
-    organizationLabel: string;
-    organizationUnitLabel: string;
+  organizationLabel: string;
+  organizationUnitLabel: string;
 }
 
 @Component({
-    selector: 'app-armodiothtes',
-    standalone: true,
-    imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent],
-    templateUrl: './armodiothtes.component.html',
-    styleUrl: './armodiothtes.component.css',
+  selector: 'app-armodiothtes',
+  standalone: true,
+  imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent],
+  templateUrl: './armodiothtes.component.html',
+  styleUrl: './armodiothtes.component.css',
 })
 export class ArmodiothtesComponent implements OnDestroy {
-    constService = inject(ConstService);
-    remitsService = inject(RemitService);
-    remits: IRemitExtended[] = [];
+  constService = inject(ConstService);
+  remitsService = inject(RemitService);
+  modalService = inject(ModalService);
+  remits: IRemitExtended[] = [];
 
-    store = inject(Store<AppState>);
-    remits$ = selectRemits$;
-    remitsLoading$ = selectRemitsLoading$;
-    selectOrganizationCodeByOrganizationalUnitCode$ = selectOrganizationCodeByOrganizationalUnitCode$;
+  store = inject(Store<AppState>);
+  remits$ = selectRemits$;
+  remitsLoading$ = selectRemitsLoading$;
+  selectOrganizationCodeByOrganizationalUnitCode$ = selectOrganizationCodeByOrganizationalUnitCode$;
 
-    organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
-    organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
+  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+  organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
 
-    defaultColDef = this.constService.defaultColDef;
-    colDefs: ColDef[] = [
-        { field: 'organizationLabel', headerName: 'Φορέας', flex: 1 },
-        { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1 },
-        { field: 'remitType', headerName: 'Τύπος', flex: 1 },
-        {
-            field: 'remitText',
-            headerName: 'Κείμενο',
-            flex: 6,
-            cellRenderer: HtmlCellRenderer,
-            autoHeight: true,
-            cellStyle: { 'white-space': 'normal' },
-        },
-    ];
+  defaultColDef = this.constService.defaultColDef;
+  colDefs: ColDef[] = [
+    { field: 'organizationLabel', headerName: 'Φορέας', flex: 1 },
+    { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1 },
+    { field: 'remitType', headerName: 'Τύπος', flex: 1 },
+    {
+      field: 'remitText',
+      headerName: 'Κείμενο',
+      flex: 6,
+      cellRenderer: HtmlCellRenderer,
+      autoHeight: true,
+      cellStyle: { 'white-space': 'normal' },
+    },
+  ];
 
-    autoSizeStrategy = this.constService.autoSizeStrategy;
+  autoSizeStrategy = this.constService.autoSizeStrategy;
 
-    loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
-    gridApi: GridApi<IRemitExtended>;
+  gridApi: GridApi<IRemitExtended>;
 
-    subscriptions: Subscription[] = [];
+  subscriptions: Subscription[] = [];
 
-    ngOnDestroy(): void {
-        this.subscriptions.forEach((sub) => sub.unsubscribe());
-    }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
 
-    onGridReady(params: GridReadyEvent<IRemitExtended>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.subscriptions.push(
-            this.store.select(this.remits$).subscribe((data) => {
-                this.remits = data.map((remit) => {
-                    const orgUnitCode = remit.organizationalUnitCode;
-                    const orgCode =
-                        this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
-                    return {
-                        ...remit,
-                        organizationLabel: this.organizationCodesMap.get(orgCode),
-                        organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
-                    };
-                });
-                this.gridApi.hideOverlay();
-            }),
-        );
-    }
+  onGridReady(params: GridReadyEvent<IRemitExtended>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.subscriptions.push(
+      this.store.select(this.remits$).subscribe((data) => {
+        this.remits = data.map((remit) => {
+          const orgUnitCode = remit.organizationalUnitCode;
+          const orgCode =
+            this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
+          return {
+            ...remit,
+            organizationLabel: this.organizationCodesMap.get(orgCode),
+            organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
+          };
+        });
+        this.gridApi.hideOverlay();
+      }),
+    );
+  }
+
+  onRowDoubleClicked(event: any): void {
+    this.modalService.showRemitDetails({
+      organizationCode: event.data.organizationalUnitCode,
+      remitId: event.data["_id"]["$oid"]
+    })
+  }
 }
 
 @Component({
-    selector: 'app-html-cell-renderer',
-    standalone: true,
-    imports: [NgIf],
-    template: `
+  selector: 'app-html-cell-renderer',
+  standalone: true,
+  imports: [NgIf],
+  template: `
         <div
             [innerHTML]="shortText"
             *ngIf="!showFullText"></div>
@@ -106,34 +115,34 @@ export class ArmodiothtesComponent implements OnDestroy {
     `,
 })
 export class HtmlCellRenderer implements ICellRendererAngularComp {
-    params: any;
-    showFullText = false;
-    shortText = '';
-    isLongText = false;
+  params: any;
+  showFullText = false;
+  shortText = '';
+  isLongText = false;
 
-    agInit(params: any): void {
-        this.params = params;
-        if (this.params.value.length > 500) {
-            this.shortText = this.params.value.substr(0, 500);
-            this.isLongText = true;
-        } else {
-            this.shortText = this.params.value;
-        }
+  agInit(params: any): void {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
     }
+  }
 
-    refresh(params: any): boolean {
-        this.params = params;
-        if (this.params.value.length > 500) {
-            this.shortText = this.params.value.substr(0, 500);
-            this.isLongText = true;
-        } else {
-            this.shortText = this.params.value;
-        }
-        this.showFullText = false; // Reset the text display state
-        return true;
+  refresh(params: any): boolean {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
     }
+    this.showFullText = false; // Reset the text display state
+    return true;
+  }
 
-    toggleText(): void {
-        this.showFullText = !this.showFullText;
-    }
+  toggleText(): void {
+    this.showFullText = !this.showFullText;
+  }
 }

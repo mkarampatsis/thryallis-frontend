@@ -26,6 +26,11 @@ export class RemitService {
     return this.http.get<IRemit[]>(APIPREFIX);
   }
 
+  getRemitById(code: string): Observable<IRemit> {
+    const url = `${APIPREFIX}/by_id/${code}`;
+    return this.http.get<IRemit>(url);
+  }
+
   getRemitsByCode(code: string): Observable<IRemit[]> {
     const url = `${APIPREFIX}/by_code/${code}`;
     return this.http.get<IRemit[]>(url);

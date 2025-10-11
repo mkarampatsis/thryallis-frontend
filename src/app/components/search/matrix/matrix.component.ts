@@ -273,10 +273,11 @@ export class MatrixComponent {
     // Log selected rows to the console
     this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
     console.log("selected",this.selectedDataMatrix3);
-
+    console.log("filteredRows",this.filteredRows);
+    
     this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3, this.filteredRows)
     if (this.matrixData3.length > 0) {
-      console.log(this.matrixData3);
+      console.log("matrixData3",this.matrixData3);
       this.showTable3 = true;
       this.showError3 = false;
     } else {

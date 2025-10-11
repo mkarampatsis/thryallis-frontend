@@ -10,6 +10,7 @@
         [paginationPageSize]="10"
         [loadingOverlayComponent]="loadingOverlayComponent"
         [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (rowDoubleClicked)="onRowDoubleClicked($event)"
         (gridReady)="onGridReady($event)"
         class="ag-theme-balham"></ag-grid-angular>
 </div>

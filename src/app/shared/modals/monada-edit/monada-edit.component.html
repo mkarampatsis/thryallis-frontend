@@ -1,83 +1,62 @@
 <div class="d-flex justify-content-between m-3">
-    <span class="h5">Επεξεργασία Μονάδας</span>
-    <button
-        type="button"
-        class="btn-close"
-        (click)="dismiss()"></button>
+  <span class="h5">Επεξεργασία Μονάδας</span>
+  <button type="button" class="btn-close" (click)="dismiss()"></button>
 </div>
 <div class="modal-body">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between">
-            <span class="fw-semibold">{{ organizationalUnit?.preferredLabel }}</span>
-            <span class="text-muted small">Κωδικός απογραφής: {{ organizationalUnit?.code }}</span>
-        </div>
-        <div class="card-body">
-            <div class="mb-3">
-                <label
-                    for="provisionText"
-                    class="form-label">
-                    Κείμενο Πρόβλεψης:
-                    @if (showInfoText) {
-                        <div class="mt-2" [innerHTML]="sanitizeHtml(showInfoText)"></div>
-                    }
-                </label>
-                <div class="NgxEditor__Wrapper">
-                    <ngx-editor-menu
-                        [editor]="editor"
-                        [toolbar]="toolbar"></ngx-editor-menu>
-                    <ngx-editor
-                        [editor]="editor"
-                        id="provisionText"
-                        [ngModel]="provisionText"
-                        (ngModelChange)="onProvisionTextChange($event)"></ngx-editor>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                @if (!legalProvisions.length) {
-                    <p class="text-info">Δεν υπάρχει προς το παρόν κάποια διάταξη</p>
-                    <button
-                        type="button"
-                        class="btn btn-primary"
-                        (click)="newLegalProvision()">
-                        Προσθήκη Διάταξης
-                    </button>
-                } @else {
-                    <div class="mb-3 d-flex flex-column">
-                        <label class="form-label d-flex justify-content-between align-items-baseline">
-                            <span>
-                                @if (legalProvisions.length === 1) {
-                                    Διάταξη
-                                } @else {
-                                    Διατάξεις
-                                }
-                                Πρόβλεψης:
-                            </span>
-                            <button
-                                class="btn btn-primary btn-sm"
-                                (click)="newLegalProvision()">
-                                Προσθήκη Διάταξης
-                            </button>
-                        </label>
-                        <app-list-legal-provisions
-                            [code]="organizationalUnit?.code"
-                            [provisionType]="'organizationalUnit'"
-                            [actionColumnVisible]="true"
-                            [legalProvisions]="legalProvisions"></app-list-legal-provisions>
-                    </div>
-                }
-            </div>
-        </div>
+  <div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <span class="fw-semibold">{{ organizationalUnit?.preferredLabel }}</span>
+      <span class="text-muted small">Κωδικός απογραφής: {{ organizationalUnit?.code }}</span>
     </div>
+    <div class="card-body">
+      @if(legalProvisions.length){
+        <div class="mb-3">
+          <label for="provisionText" class="form-label">
+            Κείμενο Πρόβλεψης:
+            @if (showInfoText) {
+              <div class="mt-2" [innerHTML]="sanitizeHtml(showInfoText)"></div>
+            }
+          </label>
+          <div class="NgxEditor__Wrapper">
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+            <ngx-editor [editor]="editor" id="provisionText" [ngModel]="provisionText"
+              (ngModelChange)="onProvisionTextChange($event)"></ngx-editor>
+          </div>
+        </div>
+      }
+
+      <div class="mb-3">
+        @if (!legalProvisions.length) {
+          <p class="text-info">Δεν υπάρχει προς το παρόν κάποια διάταξη</p>
+          <button type="button" class="btn btn-primary" (click)="newLegalProvision()">
+            Προσθήκη Διάταξης
+          </button>
+        } @else {
+          <div class="mb-3 d-flex flex-column">
+            <label class="form-label d-flex justify-content-between align-items-baseline">
+              <span>
+                @if (legalProvisions.length === 1) {
+                  Διάταξη
+                } @else {
+                  Διατάξεις
+                }
+                Πρόβλεψης:
+              </span>
+              <button class="btn btn-primary btn-sm" (click)="newLegalProvision()">
+                Προσθήκη Διάταξης
+              </button>
+            </label>
+            <app-list-legal-provisions [code]="organizationalUnit?.code" [provisionType]="'organizationalUnit'"
+              [actionColumnVisible]="true" [legalProvisions]="legalProvisions"></app-list-legal-provisions>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="d-flex justify-content-end m-3">
-    <button
-        ngbAutofocus
-        type="button"
-        class="btn btn-primary"
-        (click)="onSubmit()"
-        [disabled]="!hasChanges()">
-        Υποβολή
-    </button>
+  <button ngbAutofocus type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="!hasChanges()">
+    Υποβολή
+  </button>
 </div>
