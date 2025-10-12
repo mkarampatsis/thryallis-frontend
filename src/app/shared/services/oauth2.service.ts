@@ -4,10 +4,10 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IAuthResponse, IUser } from '../interfaces/auth';
 import { Router } from '@angular/router';
+import { GSISCLIENTID } from '../config';
 
 const APIPREFIX = `${environment.apiUrl}/auth`;
 const APILOGOUT = `${environment.logoutUrl}`;
-const GSISCLIENTID = `${environment.gsisClientId}`;
 const REDIRECTURI = `${environment.redirectUri}`;
 
 @Injectable({

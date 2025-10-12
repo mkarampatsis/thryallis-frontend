@@ -18,8 +18,18 @@ import { getOrganizationsEffect, organizationReducer } from './shared/state/orga
 import { getOrganizationalUnitsEffect, organizationalUnitsReducer } from './shared/state/organizational-units.state';
 import { loadRemitsEffect, remitsReducer } from './shared/state/remits.state';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
+import { environment } from '../environments/environment';
 
 registerLocaleData(localeEl, 'el-GR');
+
+const socialProviders = [];
+
+if (environment.enableGoogleAuth) {
+  socialProviders.push({
+    id: GoogleLoginProvider.PROVIDER_ID,
+    provider: new GoogleLoginProvider(GoogleClientId),
+  });
+}
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -29,12 +39,7 @@ export const appConfig: ApplicationConfig = {
             provide: 'SocialAuthServiceConfig',
             useValue: {
                 autoLogin: false,
-                providers: [
-                    {
-                        id: GoogleLoginProvider.PROVIDER_ID,
-                        provider: new GoogleLoginProvider(GoogleClientId),
-                    },
-                ],
+                providers: socialProviders,
                 onError: (err: any) => {
                     console.log(err);
                 },
