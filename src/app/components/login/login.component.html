@@ -5,7 +5,7 @@
 </div>
 
 <div *ngIf="!user()" class="govgr-body">
-  @if(enableGoogleAuth == "true") {
+  @if(enableGoogleAuth) {
     <p>Στην εκπαιδευτική πλατφορμα η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους  χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.</p>
     <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
   } @else {

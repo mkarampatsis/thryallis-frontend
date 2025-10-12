@@ -272,8 +272,8 @@ export class MatrixComponent {
 
     // Log selected rows to the console
     this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
-    console.log("selected",this.selectedDataMatrix3);
-    console.log("filteredRows",this.filteredRows);
+    // console.log("selected",this.selectedDataMatrix3);
+    // console.log("filteredRows",this.filteredRows);
     
     this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3, this.filteredRows)
     if (this.matrixData3.length > 0) {
@@ -290,7 +290,10 @@ export class MatrixComponent {
     this.filteredRows = [];
     // let filteredRowCount = 0
     this.gridApiRemit.forEachNodeAfterFilter((data) => {
-      this.filteredRows.push(data.data);
+      console.log(data.data);
+      // Sxolio apo Marko giati epistrefei lathos apotelesmata
+      // this.filteredRows.push(data.data);
+      
       //  filteredRowCount++;
     });
     //  console.log(filteredRowCount);

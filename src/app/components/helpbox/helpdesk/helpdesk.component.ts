@@ -8,6 +8,10 @@ import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { UserService } from 'src/app/shared/services/user.service';
 
+import { environment } from 'src/environments/environment';
+
+const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
+
 @Component({
   selector: 'app-helpdesk',
   standalone: true,
@@ -20,6 +24,8 @@ export class HelpdeskComponent {
     constService = inject(ConstService);
     helpboxService = inject(HelpboxService);
     userService = inject(UserService);
+
+    enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
 
     helpbox: IHelpbox[] = [];
 
@@ -34,8 +40,6 @@ export class HelpdeskComponent {
           value.data.firstName + ' ' + value.data.lastName + ' (' + value.data.email.split("@")[0] + ')', 
         flex:1 
       },
-      // { field: 'firstName', headerName: 'Χρήστης', flex:1 },
-      // { field: 'lastName', headerName: 'Επίθετο', flex:1 },
       {
         field: 'organizations',
         headerName: 'Φορείς',
@@ -136,9 +140,17 @@ export class HelpdeskComponent {
       this.helpboxService.getAllHelpbox()
       .subscribe((helpbox) => {
         if (this.userService.hasEditorRole()) {
-          this.helpbox = helpbox.filter(item => item.email===this.userService.user().email);
+          if (this.enableGoogleAuth){
+            this.helpbox = helpbox.filter(item => item.email===this.userService.user().email);
+          } else {
+            this.helpbox = helpbox.filter(item => item.taxid===this.userService.user().taxid);
+          }
         } else {
-          this.helpbox = helpbox;
+          if (this.enableGoogleAuth){
+            this.helpbox = helpbox.filter(item => item.enableGoogleAuth == true);
+          } else {
+            this.helpbox = helpbox.filter(item => item.enableGoogleAuth== false);
+          }
         }
         // console.log(">>>",this.helpbox)
         this.gridApi.hideOverlay();

@@ -1,9 +1,25 @@
-<h1 class="govgr-heading-sm">Διαχείριση Προσβάσεων Χρηστών</h1>
+<h1 class="govgr-heading-sm">Διαχείριση Προσβάσεων Χρηστών από Google</h1>
 
 <div class="govgr-body">
     <ag-grid-angular
         [domLayout]="'autoHeight'"
-        [rowData]="users"
+        [rowData]="googleUsers"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="50"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        (rowDoubleClicked)="onRowDoubleClicked($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+</div>
+
+<h1 class="govgr-heading-sm">Διαχείριση Προσβάσεων Χρηστών από ΚΕΔ</h1>
+<div class="govgr-body">
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="gsisUsers"
         [defaultColDef]="defaultColDef"
         [columnDefs]="colDefs"
         [pagination]="true"

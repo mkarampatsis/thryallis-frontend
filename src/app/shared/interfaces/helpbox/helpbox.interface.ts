@@ -33,6 +33,7 @@ export interface IHelpbox {
     lastName?: string;
   }
   finalized?: boolean | null;
+  enableGoogleAuth?: boolean | null;
 }
 
 export interface IFile_Upload {

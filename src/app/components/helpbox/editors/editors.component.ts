@@ -9,6 +9,9 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
+import { environment } from 'src/environments/environment';
+
+const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
 
 @Component({
   selector: 'app-editors',
@@ -25,6 +28,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
   constService = inject(ConstService);
   uploadService = inject(FileUploadService);
   helpboxService = inject(HelpboxService);
+
+  enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
 
   user = this.authService.user;
   organizationPreferedLabel: string[] = [];
@@ -48,6 +53,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     email: new FormControl(''),
+    taxid: new FormControl(''),
     firstName: new FormControl(''),
     lastName: new FormControl(''),
     organizations: new FormControl([]),
@@ -65,7 +71,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
       () => {
         if (this.addNewQuestion()) {
           this.newQuestionId = this.addNewQuestion()["id"];
-          this.form.controls.email.patchValue(this.user().email);
+          this.form.controls.email.patchValue(this.user().email ? this.user().email: "");
+          this.form.controls.email.patchValue(this.user().taxid ? this.user().taxid: "");
           this.form.controls.firstName.patchValue(this.user().firstName);
           this.form.controls.lastName.patchValue(this.user().lastName);
           this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)
@@ -94,8 +101,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.form.patchValue({
-      email: this.user().email,
-      // taxid: this.user().taxid,
+      email: this.user().email ? this.user().email: "",
+      taxid: this.user().taxid ? this.user().taxid: "",
       firstName: this.user().firstName,
       lastName: this.user().lastName,
       organizations: [],
@@ -132,8 +139,11 @@ export class EditorsComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    console.log(this.form.controls.taxid? "yes":"no");
+    console.log(this.form.controls.taxid.value);
     const helpQuestion = {
-      email: this.form.controls.email.value,
+      email: this.form.controls.email? this.form.controls.email.value:"",
+      taxid: this.form.controls.taxid? this.form.controls.taxid.value:"",
       lastName: this.form.controls.lastName.value,
       firstName: this.form.controls.firstName.value,
       organizations: this.form.controls.organizations.value,
@@ -144,9 +154,11 @@ export class EditorsComponent implements OnInit, OnDestroy {
         // questionFile: this.uploadObjectID
         questionFile: this.uploadObjectIDs
       },
+      enableGoogleAuth: this.enableGoogleAuth
     } as unknown as IHelpbox;
 
     // const value = this.form.controls.questionSelect.value.split('_');
+    console.log("helpQuestion>>>", helpQuestion);
 
     // if (value[0]==="new"){ 
     if (!this.newQuestion) {

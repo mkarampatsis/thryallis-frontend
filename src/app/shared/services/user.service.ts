@@ -26,9 +26,9 @@ export class UserService {
   store = inject(Store<AppState>);
   organization$ = selectOrganizationByCode$
 
-  getAllUsers(): Observable<IUser[]> {
+  getAllUsers(): Observable<{gsisUsers:IUser[], googleUsers:IUser[]}> {
     const url = `${APIPREFIX_USER}/all`;
-    return this.http.get<IUser[]>(url);
+    return this.http.get<{gsisUsers:IUser[], googleUsers:IUser[]}>(url);
   }
 
   getMyOrganizations(): Observable<{ organizations: string[]; organizational_units: string[] }> {
@@ -50,7 +50,7 @@ export class UserService {
 
   getMyFacilites() {
     const foreis = this.user().roles.find(role => role.role === 'FACILITY_EDITOR' && role.active)?.foreas ?? [];
-    
+
     let organizations: IOrganizationList[] = [];
 
     for (let forea of foreis) {
@@ -67,7 +67,7 @@ export class UserService {
 
   hasFacilityAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN' && role.active );
+      return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN' && role.active);
     }
 
     return false;
@@ -81,7 +81,7 @@ export class UserService {
     return false;
   }
 
-  hasFacilityEditorRoleInOrganization(code:string) {
+  hasFacilityEditorRoleInOrganization(code: string) {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code) && role.active);
     }
@@ -91,7 +91,7 @@ export class UserService {
 
   getMyEquipments() {
     const foreis = this.user().roles.find(role => role.role === 'EQUIPMENT_EDITOR' && role.active)?.foreas ?? [];
-    
+
     let organizations: IOrganizationList[] = [];
 
     for (let forea of foreis) {
@@ -102,31 +102,27 @@ export class UserService {
           organizations = organizations.concat(...org);
         });
     }
-
     return organizations;
   }
 
   hasEquipmentAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN' && role.active );
+      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN' && role.active);
     }
-
     return false;
   }
-  
+
   hasEquipmentEditorRole() {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.active);
     }
-
     return false;
   }
 
-  hasEquipmentEditorRoleInOrganization(code:string) {
+  hasEquipmentEditorRoleInOrganization(code: string) {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.foreas.includes(code) && role.active);
     }
-
     return false;
   }
 
@@ -134,29 +130,26 @@ export class UserService {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'USER_RESOURCES_ADMIN' && role.active);
     }
-
     return false;
   }
-  
+
   hasUserResourcesEditorRole() {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.active);
     }
-
     return false;
   }
 
-  hasUserResourcesEditorRoleInOrganization(code:string) {
+  hasUserResourcesEditorRoleInOrganization(code: string) {
     if (this.user()) {
       return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.foreas.includes(code) && role.active);
     }
-
     return false;
   }
 
   getMyUserResources() {
     const foreis = this.user().roles.find(role => role.role === 'USER_RESOURCES_EDITOR' && role.active)?.foreas ?? [];
-    
+
     let organizations: IOrganizationList[] = [];
 
     for (let forea of foreis) {
@@ -167,7 +160,6 @@ export class UserService {
           organizations = organizations.concat(...org);
         });
     }
-
     return organizations;
   }
 

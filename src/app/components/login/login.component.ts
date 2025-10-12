@@ -24,7 +24,7 @@ export class LoginComponent {
   authService = inject(AuthService);
   route = inject(ActivatedRoute)
   
-  enableGoogleAuth = ENABLE_GOOGLE_AUTH;
+  enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
   user = this.authService.user;
   loading = this.authService.loading;
   

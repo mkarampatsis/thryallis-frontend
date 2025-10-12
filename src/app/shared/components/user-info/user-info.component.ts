@@ -23,11 +23,11 @@ export class UserInfoComponent {
   user = this.authService.user;
   oauthService = inject(Oauth2Service);
 
-  enableGoogleAuth = ENABLE_GOOGLE_AUTH;
+  enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
   imgSrcError = false;
 
   logout() {
-    if (this.enableGoogleAuth == "true"){
+    if (this.enableGoogleAuth){
       this.authService.signOut();
     } else {
       this.oauthService.gsisLogout();

@@ -20,7 +20,8 @@ export class UserAdminComponent implements OnInit {
     constService = inject(ConstService);
     modalService = inject(ModalService);
 
-    users: IUser[] = [];
+    googleUsers: IUser[] = [];
+    gsisUsers: IUser[] = [];
     defaultColDef = this.constService.defaultColDef;
     colDefs = this.constService.USERS_COL_DEFS;
 
@@ -37,7 +38,8 @@ export class UserAdminComponent implements OnInit {
         this.gridApi = params.api;
         this.gridApi.showLoadingOverlay();
         this.userService.getAllUsers().subscribe((users) => {
-            this.users = users;
+            this.googleUsers = users.googleUsers;
+            this.gsisUsers = users.gsisUsers;
             this.gridApi.hideOverlay();
         });
     }
