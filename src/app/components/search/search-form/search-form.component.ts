@@ -76,7 +76,7 @@ export class SearchFormComponent {
       preferredLabelSearch: new FormControl(''),
       unitType: new FormControl('', Validators.required),
       purpose: new FormControl('', Validators.required),
-      supervisorUnitCode: new FormControl('', Validators.required),
+      supervisorUnit: new FormControl('', Validators.required),
       // mainAddress: new FormGroup({
       //     postCode: new FormControl('', Validators.required)
       // })
@@ -196,7 +196,7 @@ export class SearchFormComponent {
       preferredLabelSearch: "words",
       unitType: "",
       purpose: "",
-      supervisorUnitCode: "",
+      supervisorUnit: "",
       // mainAddress:{
       //     postCode:""
       // },
