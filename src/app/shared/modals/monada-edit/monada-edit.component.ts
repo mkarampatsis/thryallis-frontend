@@ -115,12 +115,12 @@ export class MonadaEditComponent implements OnInit, OnDestroy {
       legalProvisions: newLegalProvisions,
     } as IMonada;
 
-    // this.monadesService
-    //   .updateMonada(organizationalUnit)
-    //   .pipe(take(1))
-    //   .subscribe((response) => {
-    //     this.modalRef.dismiss();
-    //   });
+    this.monadesService
+      .updateMonada(organizationalUnit)
+      .pipe(take(1))
+      .subscribe((response) => {
+        this.modalRef.dismiss();
+      });
   }
 
   newLegalProvision(): void {
