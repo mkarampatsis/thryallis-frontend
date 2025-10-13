@@ -46,6 +46,7 @@ export class HelpdeskComponent {
         cellRenderer: (params) => {
           const organizationPreferedLabel = [];
           params.value.forEach((data) => {
+              console.log("data>>",data)
               organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data));
           });
           return organizationPreferedLabel.join(', ');
@@ -66,7 +67,7 @@ export class HelpdeskComponent {
         field: 'toWhom', 
         headerName: 'Χειριστής Helpdesk',
         cellRenderer: function (params) {
-          let user = params.value.firstName + ' ' + params.value.lastName + ' (' + params.value.email.split("@")[0] +')';
+          let user = params.value.firstName + ' ' + params.value.lastName;
           return user;
         }, 
         flex:1

@@ -5,7 +5,6 @@ export const environment = {
   apiUrl: 'https://thryallis-backend.duckdns.org',
   elasticUrl: ' https://ypessearch.ddns.net',
   logoutUrl: 'https://oauth2.gsis.gr/oauth2servergov/logout',
-  gsisClientId: 'LSZSWH27387',
   redirectUri: 'https://thryallis.ypes.gov.gr/login',
   enableGoogleAuth: true
 };
