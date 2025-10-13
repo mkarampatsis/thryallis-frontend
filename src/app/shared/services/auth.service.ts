@@ -125,6 +125,7 @@ export class AuthService {
         return type.role === 'EDITOR' || type.role === 'ADMIN' || type.role === 'ROOT';
       })
       .filter((role) => {
+        console.log(role);
         return role.foreas.includes(code) || role.monades.includes(code);
       });
     return roles.length > 0;
