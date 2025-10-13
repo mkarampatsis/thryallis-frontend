@@ -122,7 +122,9 @@ export class AuthService {
     // Flatten the users roles array with respect to foreis and monades
     const roles = this.user()
       .roles.filter((type) => {
-        return type.role === 'EDITOR' || type.role === 'ADMIN' || type.role === 'ROOT';
+        // Change Admin and Root do not hace foreas or Monada
+        // return type.role === 'EDITOR' || type.role === 'ADMIN' || type.role === 'ROOT';
+        return type.role === 'EDITOR';
       })
       .filter((role) => {
         console.log(role);
