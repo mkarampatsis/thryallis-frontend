@@ -12,7 +12,7 @@
   <span class="d-flex justify-content-between fs-5 fw-bolder mb-3">Στοιχεία Χρήστη</span>
   <div class="mb-3 mt-3 p-2">
     @if (question) {
-      <p>{{question.firstName}} {{question.lastName}} ({{question.email.split("@")[0]}})</p>
+      <p>{{question.firstName}} {{question.lastName}}</p>
       <p><strong>Φορείς:</strong> {{organizationPreferedLabel.join()}}</p>
     }
   </div>
@@ -46,7 +46,7 @@
                           </div>
                           <div>
                             <strong>Χειριστής Helpdesk:</strong> 
-                            {{q.fromWhom ? q.fromWhom.firstName + ' ' + q.fromWhom.lastName + ' (' + q.fromWhom.email.split('@')[0] + ')': question.toWhom.firstName + ' ' +  question.toWhom.lastName + ' (' + question.toWhom.email.split('@')[0] + ')' }}
+                            {{q.fromWhom.firstName}} {{q.fromWhom.lastName}}
                           </div>
                           @if(q.answerFile){
                               <div>
