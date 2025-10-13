@@ -1,6 +1,6 @@
 <h1 class="govgr-heading-sm">Φορείς του Ελληνικού Δημοσίου</h1>
 
-<span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω σε μια γραμμή</span>
+<span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω στο κελί</span>
 <ag-grid-angular
     [domLayout]="'autoHeight'"
     [rowData]="foreis"
@@ -10,6 +10,6 @@
     [paginationPageSize]="20"
     [loadingOverlayComponent]="loadingOverlayComponent"
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (rowDoubleClicked)="onRowDoubleClicked($event)"
+    (cellDoubleClicked)="onCellClicked($event)"
     (gridReady)="onGridReady($event)"
     class="ag-theme-balham"></ag-grid-angular>

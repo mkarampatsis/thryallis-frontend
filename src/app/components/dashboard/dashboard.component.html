@@ -1,5 +1,12 @@
 <h4 class="govgr-heading-md">Οι προσβάσεις σας</h4>
 
+  <div *ngIf="user()" class="mb-5">
+    <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
+      
+    <p class="mt-2"><strong>Προσβάσεις:</strong>{{roles}}</p>
+    
+  </div>
+
 <p class="govgr-body">
   Στους παρακάτω πίνακες εμφανίζονται οι φορείς και οι μονάδες που έχετε πρόσβαση και οι επιτρεπτές ενέργειες.
 </p>

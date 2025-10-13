@@ -80,6 +80,7 @@ export class ArmodiothtesComponent implements OnDestroy {
             ...remit,
             organizationLabel: this.organizationCodesMap.get(orgCode),
             organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
+            organizationCode: orgCode
           };
         });
         this.gridApi.hideOverlay();
@@ -87,12 +88,22 @@ export class ArmodiothtesComponent implements OnDestroy {
     );
   }
 
-  onRowDoubleClicked(event: any): void {
-    this.modalService.showRemitDetails({
-      organizationCode: event.data.organizationalUnitCode,
-      remitId: event.data["_id"]["$oid"]
-    })
-  }
+  // onRowDoubleClicked(event: any): void {
+  //   this.modalService.showRemitDetails({
+  //     organizationCode: event.data.organizationalUnitCode,
+  //     remitId: event.data["_id"]["$oid"]
+  //   })
+  // }
+
+   onCellClicked(event: any): void {
+    if (event.colDef.field == "organizationLabel") {
+      this.modalService.showOrganizationDetails(event.data.organizationCode);
+    } else if (event.colDef.field == "organizationUnitLabel") {
+      this.modalService.showOrganizationUnitDetails(event.data.organizationalUnitCode);
+    } else if (event.colDef.field == "remitText") {
+      this.modalService.showRemitDetails({organizationCode: event.data.organizationalUnitCode,remitId: event.data["_id"]["$oid"]})
+    } 
+   }
 }
 
 @Component({

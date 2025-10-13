@@ -26,7 +26,7 @@ export class ShowResourcesDetailsSpaceComponent implements OnInit {
       const body = response.body;          
       const status = response.status;        
       if (status === 200) {
-        console.log(body);
+        // console.log(body);
         this.data = body;
         this.loading = false
       }

@@ -47,9 +47,13 @@ export class SearchGridComponent implements OnChanges {
   ];
 
   colDefs_Spaces: ColDef[] = [
-    { field: 'organization', headerName: 'Φορέας Χρήσης', flex: 1 },
+    { field: 'distinctiveNameOfFacility', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'spaceName', headerName: 'Χώρος', flex: 1 },
-    { field: 'spaceUse', headerName: 'Χρήση', flex: 2 },
+    { 
+      field: 'spaceUse.type', 
+      headerName: 'Χρήση',
+      flex: 2 
+    },
     { field: 'spaceArea', headerName: 'Εμβαδόν', flex: .5 },
     { field: 'addressOfFacility', headerName: 'Ακίνητο', flex: 2 }
   ];
@@ -109,6 +113,7 @@ export class SearchGridComponent implements OnChanges {
       if (response.status === 200) {
         this.elasticData = response.body
         this.elasticData.spaces = this.enrichedSpaces(this.elasticData);
+        console.log(this.elasticData.spaces)
         this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
         // console.log(this.elasticData); 
       }

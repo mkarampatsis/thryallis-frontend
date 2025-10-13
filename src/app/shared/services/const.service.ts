@@ -347,7 +347,7 @@ export class ConstService {
       .getCofog()
       .pipe(take(1))
       .subscribe((data) => {
-        this.COFOG = data;
+        this.COFOG = data.data;
       });
 
     this.organizationService

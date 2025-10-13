@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-between m-3">
   <span class="h5">
     @if (remit === null) {
-      Εισαγωγή Νέας
+    Εισαγωγή Νέας
     } @else {
-      Επεξεργασία
+    Επεξεργασία
     }
     Αρμοδιότητας
   </span>
@@ -30,24 +30,25 @@
     </div>
     <div class="card-body">
       <form [formGroup]="form">
-         @if (legalProvisions.length) {
-          <div class="mb-3">
-            <label for="remitText" class="form-label">
-              Κείμενο αρμοδιότητας:
-              @if (showInfoText) {
-                <div class="mt-2" [innerHTML]="sanitizeHtml(showInfoText)"></div>
-              }
-            </label>
-            <div class="NgxEditor__Wrapper">
-              <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
-              <ngx-editor [editor]="editor" formControlName="remitText"></ngx-editor>
-            </div>
-            @if (form.controls.remitText.touched && form.controls.remitText.invalid) {
-              <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+        @if (legalProvisions.length) {
+        <div class="mb-3">
+          <label for="remitText" class="form-label">
+            Κείμενο αρμοδιότητας:
+            @if (showInfoText) {
+            <div class="mt-2" [innerHTML]="sanitizeHtml(showInfoText)"></div>
             }
+          </label>
+          <div class="NgxEditor__Wrapper">
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+            <ngx-editor [editor]="editor" formControlName="remitText"></ngx-editor>
           </div>
-        } 
+          @if (form.controls.remitText.touched && form.controls.remitText.invalid) {
+          <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+          }
+        </div>
+        }
 
+        @if (legalProvisions.length) {
         <div class="mb-3 d-flex gap-3">
           <div class="w-50">
             <label for="remitType" class="form-label">
@@ -60,11 +61,11 @@
                 Επιλέξτε Τύπο Αρμοδιότητας
               </option>
               @for (remitType of remitTypes; track $index) {
-                <option [ngValue]="remitType">{{ remitType }}</option>
+              <option [ngValue]="remitType">{{ remitType }}</option>
               }
             </select>
             @if (form.controls.remitType.touched && form.controls.remitType.invalid) {
-              <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+            <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
             }
           </div>
           <div class="w-50">
@@ -78,56 +79,56 @@
                 Επιλέξτε Λειτουργική Περιοχή COFOG
               </option>
               @for (cofog of cofog1; track $index) {
-                <option [ngValue]="cofog.code">{{ cofog.name }}</option>
+              <option [ngValue]="cofog.code">{{ cofog.code }}. {{ cofog.name }}</option>
               }
             </select>
             @if (form.controls.cofog1.touched && form.controls.cofog1.invalid) {
-              <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+            <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
             }
           </div>
         </div>
-
+        }
         @if (cofog1_selected) {
-          <div class="mb-3 d-flex gap-3">
-            <div class="w-50">
-              <label for="cofog2" class="form-label">
-                Λειτουργικός Τομέας COFOG:
-              </label>
-              <select class="form-select"
-                [class.is-invalid]="form.controls.cofog2.touched && form.controls.cofog2.invalid"
-                aria-label="Default select example" id="cofog2" formControlName="cofog2">
-                <option value="" disabled selected>
-                  Επιλέξτε Λειτουργικό Τομέα COFOG
-                </option>
-                @for (cofog of cofog2; track $index) {
-                  <option [ngValue]="cofog.code">{{ cofog.name }}</option>
-                }
-              </select>
-              @if (form.controls.cofog2.touched && form.controls.cofog2.invalid) {
-                <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+        <div class="mb-3 d-flex gap-3">
+          <div class="w-50">
+            <label for="cofog2" class="form-label">
+              Λειτουργικός Τομέας COFOG:
+            </label>
+            <select class="form-select"
+              [class.is-invalid]="form.controls.cofog2.touched && form.controls.cofog2.invalid"
+              aria-label="Default select example" id="cofog2" formControlName="cofog2">
+              <option value="" disabled selected>
+                Επιλέξτε Λειτουργικό Τομέα COFOG
+              </option>
+              @for (cofog of cofog2; track $index) {
+              <option [ngValue]="cofog.code">{{ cofog.code }}. {{ cofog.name }}</option>
               }
-            </div>
-            @if (cofog2_selected) {
-              <div class="w-50">
-                <label for="cofog3" class="form-label">
-                  Θεματική Περιοχή COFOG:
-                </label>
-                <select class="form-select"
-                  [class.is-invalid]="form.controls.cofog3.touched && form.controls.cofog3.invalid"
-                  aria-label="Default select example" id="cofog3" formControlName="cofog3">
-                  <option value="" disabled selected>
-                    Επιλέξτε Θεματική Περιοχή COFOG
-                  </option>
-                  @for (cofog of cofog3; track $index) {
-                    <option [ngValue]="cofog.code">{{ cofog.name }}</option>
-                  }
-                </select>
-                @if (form.controls.cofog3.touched && form.controls.cofog3.invalid) {
-                  <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
-                }
-              </div>
+            </select>
+            @if (form.controls.cofog2.touched && form.controls.cofog2.invalid) {
+            <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
             }
           </div>
+          @if (cofog2_selected) {
+          <div class="w-50">
+            <label for="cofog3" class="form-label">
+              Θεματική Περιοχή COFOG:
+            </label>
+            <select class="form-select"
+              [class.is-invalid]="form.controls.cofog3.touched && form.controls.cofog3.invalid"
+              aria-label="Default select example" id="cofog3" formControlName="cofog3">
+              <option value="" disabled selected>
+                Επιλέξτε Θεματική Περιοχή COFOG
+              </option>
+              @for (cofog of cofog3; track $index) {
+              <option [ngValue]="cofog.code">{{ cofog.code }}. {{ cofog.name }}</option>
+              }
+            </select>
+            @if (form.controls.cofog3.touched && form.controls.cofog3.invalid) {
+            <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+            }
+          </div>
+          }
+        </div>
         }
 
         <!-- @if (!legalProvisions.length) {
@@ -157,57 +158,59 @@
 
         <div class="mb-3">
           @if (legalProvisions.length === 0) {
-            <button type="button" class="btn btn-primary mb-3" [disabled]="!canAddLegalProvision"
-              (click)="newLegalProvision()">
-              Προσθήκη Διάταξης
-            </button>
+          <!-- <button type="button" class="btn btn-primary mb-3" [disabled]="!canAddLegalProvision" -->
+          <button type="button" class="btn btn-primary mb-3"
+            (click)="newLegalProvision()">
+            Προσθήκη Διάταξης
+          </button>
           }
           @if (remit && remit.status) {
-            <div class="mb-3">
-              <button (click)="initializeRemitTextfromLegalProvisions()" type="button" class="btn btn-info btn-sm me-2">
-                Αρχικοποίηση κειμένου
-              </button>
-              @if (remit.status === "ΕΝΕΡΓΗ") {
-                <button (click)="changeRemitStatus('ΑΝΕΝΕΡΓΗ')" type="button" class="btn btn-danger btn-sm">
-                  Απενεργοποίηση Αρμοδιότητας
-                </button>
-              } @else {
-                <button (click)="changeRemitStatus('ΕΝΕΡΓΗ')" type="button" class="btn btn-success btn-sm">
-                  Ενεργοποίηση Αρμοδιότητας
-                </button>
-              }
-            </div>
+          <div class="mb-3">
+            <button (click)="initializeRemitTextfromLegalProvisions()" type="button" class="btn btn-info btn-sm me-2">
+              Αρχικοποίηση κειμένου
+            </button>
+            @if (remit.status === "ΕΝΕΡΓΗ") {
+            <button (click)="changeRemitStatus('ΑΝΕΝΕΡΓΗ')" type="button" class="btn btn-danger btn-sm">
+              Απενεργοποίηση Αρμοδιότητας
+            </button>
+            } @else {
+            <button (click)="changeRemitStatus('ΕΝΕΡΓΗ')" type="button" class="btn btn-success btn-sm">
+              Ενεργοποίηση Αρμοδιότητας
+            </button>
+            }
+          </div>
           }
           @if (!canAddLegalProvision) {
-            <ngb-alert [dismissible]="false" [type]="'info'">
-              Επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG για να προσθέσετε διατάξεις
-            </ngb-alert>
+          <ngb-alert [dismissible]="false" [type]="'info'">
+            <!-- Επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG για να προσθέσετε διατάξεις -->
+            Εισάγετε αρχικά διάταξη και στη συνέχεια επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG
+          </ngb-alert>
           }
           @if (!legalProvisions.length) {
-            <ngb-alert [dismissible]="false" [type]="'info'">
-              Δεν υπάρχει προς το παρόν κάποια διάταξη
-            </ngb-alert>
+          <ngb-alert [dismissible]="false" [type]="'info'">
+            Δεν υπάρχει προς το παρόν κάποια διάταξη
+          </ngb-alert>
           } @else {
-            <div class="mb-3 d-flex flex-column">
-              <label class="form-label d-flex justify-content-between">
-                <span>
-                  @if (legalProvisions.length === 1) {
-                    Διάταξη
-                  } @else {
-                    Διατάξεις
-                  }
-                  Πρόβλεψης Αρμοδιότητας:
-                </span>
+          <div class="mb-3 d-flex flex-column">
+            <label class="form-label d-flex justify-content-between">
+              <span>
+                @if (legalProvisions.length === 1) {
+                Διάταξη
+                } @else {
+                Διατάξεις
+                }
+                Πρόβλεψης Αρμοδιότητας:
+              </span>
 
-                <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
-                  (click)="newLegalProvision()">
-                  Προσθήκη Διάταξης
-                </button>
-              </label>
-              <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]="organizationalUnit.code"
-                [remitID]="remit?._id" [provisionType]="'remit'" [actionColumnVisible]="remit !== null">
-              </app-list-legal-provisions>
-            </div>
+              <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
+                (click)="newLegalProvision()">
+                Προσθήκη Διάταξης
+              </button>
+            </label>
+            <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]="organizationalUnit.code"
+              [remitID]="remit?._id" [provisionType]="'remit'" [actionColumnVisible]="remit !== null">
+            </app-list-legal-provisions>
+          </div>
           }
         </div>
 

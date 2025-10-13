@@ -12,52 +12,62 @@ import { AppState } from 'src/app/shared/state/app.state';
 import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
 
 @Component({
-    selector: 'app-foreis',
-    standalone: true,
-    imports: [AgGridAngular, GridLoadingOverlayComponent],
-    templateUrl: './foreis.component.html',
-    styleUrl: './foreis.component.css',
+  selector: 'app-foreis',
+  standalone: true,
+  imports: [AgGridAngular, GridLoadingOverlayComponent],
+  templateUrl: './foreis.component.html',
+  styleUrl: './foreis.component.css',
 })
 export class ForeisComponent {
-    constService = inject(ConstService);
-    organizationService = inject(OrganizationService);
-    modalService = inject(ModalService);
-    foreis: IOrganizationList[] = [];
+  constService = inject(ConstService);
+  organizationService = inject(OrganizationService);
+  modalService = inject(ModalService);
+  foreis: IOrganizationList[] = [];
 
-    store = inject(Store<AppState>);
-    organizations$ = selectOrganizations$;
+  store = inject(Store<AppState>);
+  organizations$ = selectOrganizations$;
 
-    organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
-    organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
+  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+  organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
 
-    defaultColDef = this.constService.defaultColDef;
-    colDefs: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS;
-    autoSizeStrategy = this.constService.autoSizeStrategy;
+  defaultColDef = this.constService.defaultColDef;
+  colDefs: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS;
+  autoSizeStrategy = this.constService.autoSizeStrategy;
 
-    loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
 
-    gridApi: GridApi<IOrganizationList>;
+  gridApi: GridApi<IOrganizationList>;
 
-    onGridReady(params: GridReadyEvent<IOrganizationList>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.store
-            .select(selectOrganizations$)
-            .pipe(take(1))
-            .subscribe((data) => {
-                this.foreis = data.map((org) => {
-                    return {
-                        ...org,
-                        organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
-                        subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
-                    };
-                });
-                this.gridApi.hideOverlay();
-            });
-    }
+  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.store
+      .select(selectOrganizations$)
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.foreis = data.map((org) => {
+          return {
+            ...org,
+            organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
+            subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
+            subOrganizationOfCode: org.subOrganizationOf
+          };
+        });
+        this.gridApi.hideOverlay();
+      });
+  }
 
-    onRowDoubleClicked(event: any): void {
-        this.modalService.showOrganizationDetails(event.data.code);
-    }
+  // onRowDoubleClicked(event: any): void {
+  //   this.modalService.showOrganizationDetails(event.data.code);
+  // }
+
+  onCellClicked(event: any): void {
+
+    if (event.colDef.field == "preferredLabel") {
+      this.modalService.showOrganizationDetails(event.data.code);
+    } else if (event.colDef.field == "subOrganizationOf") {
+      this.modalService.showOrganizationDetails(event.data.subOrganizationOfCode);
+    } 
+  }
 }

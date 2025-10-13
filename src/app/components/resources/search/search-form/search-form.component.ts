@@ -84,7 +84,7 @@ export class SearchFormComponent {
     this.form = new FormGroup({
       facilities: new FormGroup({
         organization: new FormControl(''),
-        organizationSearch: new FormControl('phrase'),
+        organizationSearch: new FormControl('words'),
         kaek: new FormControl(''),
         distinctiveNameOfFacility: new FormControl(''),
         useOfFacility: new FormArray([]),
@@ -110,7 +110,7 @@ export class SearchFormComponent {
       }),
       spaces: new FormGroup({
         organization: new FormControl(''),
-        organizationSearch: new FormControl('phrase'),
+        organizationSearch: new FormControl('words'),
         spaceName: new FormControl(''),
         spaceUse: new FormArray([
           new FormGroup({
@@ -128,7 +128,7 @@ export class SearchFormComponent {
       }),
       equipments: new FormGroup({
         organization: new FormControl(''),
-        organizationSearch: new FormControl('phrase'),
+        organizationSearch: new FormControl('words'),
         resourceSubcategory: new FormControl(''),
         kind: new FormControl(''),
         type: new FormControl(''),
@@ -313,7 +313,6 @@ export class SearchFormComponent {
     if (this.form.valid) {
       // console.log('Form Data1:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
-      console.log('Form Data2:',this.rowData)
     } else {
       console.log('Form is invalid');
     }

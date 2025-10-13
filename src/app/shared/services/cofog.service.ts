@@ -6,13 +6,13 @@ import { ICofog } from 'src/app/shared/interfaces/cofog/cofog.interface';
 const APIPREFIX = `${environment.apiUrl}/cofog`;
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class CofogService {
-    http = inject(HttpClient);
+  http = inject(HttpClient);
 
-    getCofog() {
-        const url = `${APIPREFIX}`;
-        return this.http.get<ICofog[]>(url);
-    }
+  getCofog() {
+    const url = `${APIPREFIX}`;
+    return this.http.get<{data:ICofog[]}>(url);
+  }
 }
