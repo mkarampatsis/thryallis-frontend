@@ -46,7 +46,9 @@
                           </div>
                           <div>
                             <strong>Χειριστής Helpdesk:</strong> 
-                            {{q.fromWhom.firstName}} {{q.fromWhom.lastName}}
+                            @if (q.fromWhom){
+                             {{q.fromWhom.firstName}}  {{q.fromWhom.lastName}}
+                            }
                           </div>
                           @if(q.answerFile){
                               <div>
