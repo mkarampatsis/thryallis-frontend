@@ -124,10 +124,9 @@ export class AuthService {
       .roles.filter((type) => {
         // Change Admin and Root do not hace foreas or Monada
         // return type.role === 'EDITOR' || type.role === 'ADMIN' || type.role === 'ROOT';
-        return type.role === 'EDITOR';
+        return type.role === 'EDITOR' && type.active;
       })
       .filter((role) => {
-        console.log(role);
         return role.foreas.includes(code) || role.monades.includes(code);
       });
     return roles.length > 0;
