@@ -8,8 +8,6 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { environment } from 'src/environments/environment';
 
-const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -24,7 +22,7 @@ export class LoginComponent {
   authService = inject(AuthService);
   route = inject(ActivatedRoute)
   
-  enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
+  enableGoogleAuth: boolean = environment.enableGoogleAuth;
   user = this.authService.user;
   loading = this.authService.loading;
   

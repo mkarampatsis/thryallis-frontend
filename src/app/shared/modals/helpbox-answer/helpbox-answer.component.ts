@@ -13,6 +13,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 import { take } from 'rxjs';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-helpbox-answer',
@@ -42,6 +43,8 @@ export class HelpboxAnswerComponent {
   modalRef: any;
   helpboxId: string;
 
+  enableGoogleAuth: boolean = environment.enableGoogleAuth;
+
   question: IHelpbox;
   questionsNotAnswered: IQuestion[];
   organizationPreferedLabel:string[] = [];
@@ -65,7 +68,7 @@ export class HelpboxAnswerComponent {
   });
 
   ngOnInit() : void {
-      this.getHelpBox();
+    this.getHelpBox();
   }
 
   get questionsFormArray(): FormArray {
@@ -112,7 +115,7 @@ export class HelpboxAnswerComponent {
           answerText: this.answerText,
           answerFile: this.uploadObjectIDs,
           fromWhom: {
-            email: this.userService.user().email,
+            user: this.enableGoogleAuth ? this.userService.user().email : this.userService.user().taxid,
             firstName: this.userService.user().firstName,
             lastName: this.userService.user().lastName
           },
@@ -188,6 +191,7 @@ export class HelpboxAnswerComponent {
     this.helpboxService.getHelpboxById(this.helpboxId)
       .subscribe((data)=>{
         this.question = data;
+
         this.showNewQuestionButton = this.question.finalized ? false : true;
 
         // Dynamically add a FormControl for each question's checkbox

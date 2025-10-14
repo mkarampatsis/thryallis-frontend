@@ -27,7 +27,7 @@
           [loadingOverlayComponent]="loadingOverlayComponent"
           [loadingOverlayComponentParams]="loadingOverlayComponentParams"
           (gridReady)="onGridReadyFacilities($event)"
-          (cellClicked)="onCellFacilityClicked($event)"
+          (cellDoubleClicked)="onCellFacilityClicked($event)"
           class="ag-theme-balham">
       </ag-grid-angular>
     }
@@ -44,7 +44,7 @@
           [loadingOverlayComponent]="loadingOverlayComponent"
           [loadingOverlayComponentParams]="loadingOverlayComponentParams"
           (gridReady)="onGridReadySpaces($event)"
-          (cellClicked)="onCellSpaceClicked($event)"
+          (cellDoubleClicked)="onCellSpaceClicked($event)"
           class="ag-theme-balham">
       </ag-grid-angular>
     }
@@ -61,7 +61,7 @@
           [loadingOverlayComponent]="loadingOverlayComponent"
           [loadingOverlayComponentParams]="loadingOverlayComponentParams"
           (gridReady)="onGridReadyEquipments($event)"
-          (cellClicked)="onCellEquipmentClicked($event)"
+          (cellDoubleClicked)="onCellEquipmentClicked($event)"
           class="ag-theme-balham">
       </ag-grid-angular>
     }

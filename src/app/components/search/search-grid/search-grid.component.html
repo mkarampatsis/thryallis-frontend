@@ -24,7 +24,7 @@
       [loadingOverlayComponent]="loadingOverlayComponent"
       [loadingOverlayComponentParams]="loadingOverlayComponentParams" 
       (gridReady)="onGridReady($event)"
-      (cellClicked)="onCellClicked($event)" class="ag-theme-balham">
+      (cellDoubleClicked)="onCellClicked($event)" class="ag-theme-balham">
     </ag-grid-angular>
   } @else {
     <p>Δεν εμφανίζονται αποτελέσματα είτε:</p>

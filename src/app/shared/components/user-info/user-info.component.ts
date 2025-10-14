@@ -8,8 +8,6 @@ import { NgIf } from '@angular/common';
 import { Oauth2Service } from '../../services/oauth2.service';
 import { environment } from 'src/environments/environment';
 
-const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
-
 @Component({
   selector: 'app-user-info',
   standalone: true,
@@ -23,7 +21,7 @@ export class UserInfoComponent {
   user = this.authService.user;
   oauthService = inject(Oauth2Service);
 
-  enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
+  enableGoogleAuth: boolean = environment.enableGoogleAuth;
   imgSrcError = false;
 
   logout() {

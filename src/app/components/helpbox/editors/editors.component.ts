@@ -11,8 +11,6 @@ import { HelpboxService } from 'src/app/shared/services/helpbox.service';
 import { IHelpbox } from 'src/app/shared/interfaces/helpbox/helpbox.interface';
 import { environment } from 'src/environments/environment';
 
-const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
-
 @Component({
   selector: 'app-editors',
   standalone: true,
@@ -29,7 +27,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
   uploadService = inject(FileUploadService);
   helpboxService = inject(HelpboxService);
 
-  enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
+  enableGoogleAuth: boolean = environment.enableGoogleAuth;
 
   user = this.authService.user;
   organizationPreferedLabel: string[] = [];
@@ -72,7 +70,7 @@ export class EditorsComponent implements OnInit, OnDestroy {
         if (this.addNewQuestion()) {
           this.newQuestionId = this.addNewQuestion()["id"];
           this.form.controls.email.patchValue(this.user().email ? this.user().email: "");
-          this.form.controls.email.patchValue(this.user().taxid ? this.user().taxid: "");
+          this.form.controls.taxid.patchValue(this.user().taxid ? this.user().taxid: "");
           this.form.controls.firstName.patchValue(this.user().firstName);
           this.form.controls.lastName.patchValue(this.user().lastName);
           this.form.controls.questionTitle.patchValue(this.addNewQuestion().questionTitle)

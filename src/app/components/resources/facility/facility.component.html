@@ -68,7 +68,7 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (cellClicked)="onCellClicked($event)" 
+      (cellDoubleClicked)="onCellClicked($event)" 
       (gridReady)="onGridReady($event)" 
       class="ag-theme-balham">
     </ag-grid-angular>
@@ -90,7 +90,7 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (cellClicked)="onCellClickedSpace($event)" 
+      (cellDoubleClicked)="onCellClickedSpace($event)" 
       (gridReady)="onGridReadySpace($event)" 
       class="ag-theme-balham">
     </ag-grid-angular>

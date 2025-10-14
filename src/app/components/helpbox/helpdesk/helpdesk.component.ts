@@ -10,8 +10,6 @@ import { UserService } from 'src/app/shared/services/user.service';
 
 import { environment } from 'src/environments/environment';
 
-const ENABLE_GOOGLE_AUTH = `${environment.enableGoogleAuth}`;
-
 @Component({
   selector: 'app-helpdesk',
   standalone: true,
@@ -25,7 +23,7 @@ export class HelpdeskComponent {
     helpboxService = inject(HelpboxService);
     userService = inject(UserService);
 
-    enableGoogleAuth: boolean = ENABLE_GOOGLE_AUTH == "true" ? true: false;
+    enableGoogleAuth: boolean = environment.enableGoogleAuth;
 
     helpbox: IHelpbox[] = [];
 
