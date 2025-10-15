@@ -140,8 +140,8 @@ export class EditorsComponent implements OnInit, OnDestroy {
     console.log(this.form.controls.taxid? "yes":"no");
     console.log(this.form.controls.taxid.value);
     const helpQuestion = {
-      email: this.form.controls.email? this.form.controls.email.value:"",
-      taxid: this.form.controls.taxid? this.form.controls.taxid.value:"",
+      email: this.form.controls.email? this.form.controls.email.value:"-",
+      taxid: this.form.controls.taxid? this.form.controls.taxid.value:"-",
       lastName: this.form.controls.lastName.value,
       firstName: this.form.controls.firstName.value,
       organizations: this.form.controls.organizations.value,
