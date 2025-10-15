@@ -32,6 +32,39 @@ export class HelpdeskComponent {
       { field: 'key', headerName: 'Κωδικός Ερώτησης', flex:1 },
       { field: 'questionTitle', headerName: 'Τίτλος Συνομιλίας', flex:1 },
       { field: 'questionCategory', headerName: 'Κατηγορία', flex:1 },
+      {
+        headerName: 'Τελευταία Ερώτηση',
+        valueGetter: (params) => {
+          const questions = params.data?.questions || [];
+          if (questions.length === 0) return '';
+
+          // Find latest whenAsked
+          const latest = Math.max(
+            ...questions
+              .filter(q => q.whenAsked?.$date)
+              .map(q => q.whenAsked.$date)
+          );
+
+          return latest ? new Date(latest).toLocaleDateString('el-GR') : '';
+        },
+      },
+      {
+        headerName: 'Τελευταία Απάντηση',
+        valueGetter: (params) => {
+          const questions = params.data?.questions || [];
+          if (questions.length === 0) return '';
+
+          // Find latest whenAnswered where answered === true
+          const answered = questions
+            .filter(q => q.answered && q.whenAnswered?.$date)
+            .map(q => q.whenAnswered.$date);
+
+          if (answered.length === 0) return '';
+
+          const latest = Math.max(...answered);
+          return new Date(latest).toLocaleDateString('el-GR');
+        },
+      },
       { 
         headerName: 'Χρήστης',
         valueGetter: (value) =>
@@ -44,8 +77,7 @@ export class HelpdeskComponent {
         cellRenderer: (params) => {
           const organizationPreferedLabel = [];
           params.value.forEach((data) => {
-              console.log("data>>",data)
-              organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data));
+            organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data));
           });
           return organizationPreferedLabel.join(', ');
         }, 

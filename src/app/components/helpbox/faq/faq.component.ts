@@ -54,7 +54,7 @@ export class FaqComponent implements OnInit {
       headerName: 'Ημερ. ερωτήματος', 
       sortable: true, // sorting works on raw ISO string
       cellRenderer: (params) => {
-        const date = new Date(params.value);
+        const date = new Date(params.value["$date"]);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
@@ -67,7 +67,7 @@ export class FaqComponent implements OnInit {
       headerName: 'Απαντ. ερωτήματος',
       sortable: true, // sorting works on raw ISO string
       cellRenderer: (params) => {
-        const date = new Date(params.value);
+        const date = new Date(params.value["$date"]);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
@@ -88,6 +88,7 @@ export class FaqComponent implements OnInit {
     this.helpboxService.getAllPublishedHelpbox()
       .subscribe((data)=>{
           this.publishedQuestions = data['data'];
+          console.log(this.publishedQuestions);
       })
   }
 

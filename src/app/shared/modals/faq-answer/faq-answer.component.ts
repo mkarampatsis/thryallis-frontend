@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { UserService } from '../../services/user.service';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-faq-answer',
@@ -11,15 +13,26 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class FaqAnswerComponent {
   sanitizer = inject(DomSanitizer);
+  userService = inject(UserService);
+  modalService = inject(ModalService);
   
   modalRef: any;
   data: any;
 
-  sanitizeHtml(html) : SafeHtml {
+  hasHelpDeskRole() {
+    return this.userService.hasHelpDeskRole();
+  }
+
+  modify(){
+    this.modalRef.close();
+    this.modalService.showHelpboxAnswer(this.data._id.$oid);
+  }
+
+  sanitizeHtml(html): SafeHtml {
     if (html) {
-        return this.sanitizer.bypassSecurityTrustHtml(html);
+      return this.sanitizer.bypassSecurityTrustHtml(html);
     } else {
-        return ""
+      return ""
     }
-}
+  }
 }

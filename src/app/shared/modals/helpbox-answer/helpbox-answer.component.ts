@@ -120,17 +120,14 @@ export class HelpboxAnswerComponent {
             lastName: this.userService.user().lastName
           },
         } as IHelpbox;
-        console.log(helpQuestion);
+
         this.helpboxService.answerQuestion(helpQuestion)
           .subscribe(data => {
-            console.log(loops, num, loops===num)
             if (loops === num) {
-              console.log(data)
               this.modalRef.close()
               this.helpboxService.helpboxNeedUpdate.set(true);
             } else {
               loops++;
-              console.log(loops);
             }
           });
           
@@ -154,7 +151,6 @@ export class HelpboxAnswerComponent {
 }
 
   publishQuestion(questionId:string, published:boolean) {
-    console.log(questionId, published);
     this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId, published:!published})
       .subscribe((data) => {
         this.helpboxService.helpboxNeedUpdate.set(true);
@@ -191,7 +187,6 @@ export class HelpboxAnswerComponent {
     this.helpboxService.getHelpboxById(this.helpboxId)
       .subscribe((data)=>{
         this.question = data;
-
         this.showNewQuestionButton = this.question.finalized ? false : true;
 
         // Dynamically add a FormControl for each question's checkbox

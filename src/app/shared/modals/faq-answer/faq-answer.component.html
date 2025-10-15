@@ -16,13 +16,22 @@
           <div class="mt-2"><strong>Απάντηση:</strong>
             <div class="mt-2" [innerHTML]="sanitizeHtml(data.questions.answerText)"></div>
           </div>
-          <div class="mt-2"><strong>Ημερ. ερωτήματος:</strong> {{data.questions.whenAsked | date: "dd-MM-yyyy HH:mm:ss"}}</div>
-          <div class="mt-2"><strong>Απαντ. ερωτήματος:</strong> {{data.questions.whenAnswered | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+          <div class="mt-2"><strong>Ημερ. ερωτήματος:</strong> {{data.questions.whenAsked["$date"] | date: "dd-MM-yyyy HH:mm:ss"}}</div>
+          <div class="mt-2"><strong>Απαντ. ερωτήματος:</strong> {{data.questions.whenAnswered["$date"] | date: "dd-MM-yyyy HH:mm:ss"}}</div>
       }
   </div>
 </div>
 
-<div class="d-flex justify-content-end m-3">
+<div class="d-flex justify-content-between m-3">
+  <button
+      *ngIf="hasHelpDeskRole()"
+      ngbAutofocus
+      type="button"
+      class="btn btn-primary"
+      (click)="modify()">
+      Επεξεργασία
+  </button>
+
   <button
       ngbAutofocus
       type="button"
