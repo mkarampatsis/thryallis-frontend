@@ -56,4 +56,5 @@ export interface IGeneralInfo {
   when?: Date | null;
   // tags?: string[] | null;
   category?: string | null;
+  enableGoogleAuth?: boolean | null;
 }

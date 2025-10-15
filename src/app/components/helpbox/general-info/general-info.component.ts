@@ -17,6 +17,7 @@ import { GridApi, GridReadyEvent, ColDef, CellClickedEvent } from 'ag-grid-commu
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-general-info',
@@ -42,8 +43,10 @@ export class GeneralInfoComponent {
   modalService = inject(ModalService);
   sanitizer = inject(DomSanitizer);
   constService = inject(ConstService);
-
   user = this.authService.user;
+  
+  enableGoogleAuth: boolean = environment.enableGoogleAuth;
+
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
 
@@ -58,6 +61,7 @@ export class GeneralInfoComponent {
 
   form = new FormGroup({
     email: new FormControl(''),
+    taxid: new FormControl,
     firstName: new FormControl(''),
     lastName: new FormControl(''),
     title: new FormControl('', Validators.required),
@@ -177,7 +181,8 @@ export class GeneralInfoComponent {
 
   initializeForm(){
     this.form.patchValue({
-      email: this.user().email,
+      email: this.user().email ? this.user().email: "",
+      taxid: this.user().taxid ? this.user().taxid: "",
       firstName: this.user().firstName,
       lastName: this.user().lastName,
       title: '',
@@ -205,13 +210,15 @@ export class GeneralInfoComponent {
   onSubmit() {
     if(Object.keys(this.generalInfoToUpdate).length === 0){
       const infoText = {
-        email: this.form.controls.email.value,
+        email: this.form.controls.email? this.form.controls.email.value:"",
+        taxid: this.form.controls.taxid? this.form.controls.taxid.value:"",
         lastName: this.form.controls.lastName.value,
         firstName: this.form.controls.firstName.value,
         title: this.form.controls.title.value,
         text: this.text,
         file: this.uploadObjectIDs,
-        category: this.form.controls.category.value        
+        category: this.form.controls.category.value,
+        enableGoogleAuth: this.enableGoogleAuth        
       } as IGeneralInfo;
 
       this.helpboxService.newGeneralInfo(infoText)
@@ -233,7 +240,8 @@ export class GeneralInfoComponent {
       const finalIDs = [...oldObjectIds, ...additionalIds];
 
       const infoText = {
-        email: this.form.controls.email.value,
+        email: this.form.controls.email? this.form.controls.email.value:"-",
+        taxid: this.form.controls.taxid? this.form.controls.taxid.value:"-",
         lastName: this.form.controls.lastName.value,
         firstName: this.form.controls.firstName.value,
         title: this.form.controls.title.value,
