@@ -61,8 +61,20 @@ export class AuthService {
                     this.router.navigate(['landing']);
                   } else if (status === 204){
                     console.log("not logged in")
-                    this.user.set(null)
-                    console.log(">>",this.user())
+                    this.user.set({
+                      googleId: "",
+                      provider: "",
+                      email: "",
+                      firstName: "",
+                      lastName: "",
+                      name: "",
+                      photoUrl: "",
+                      roles: [],
+                      taxid: "",
+                      gsisUserid: "",
+                      empOrgUnitTexts: "",
+                      employeeId: ""
+                    })
                     this.loading.set(false);
                   }
                 })
