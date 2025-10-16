@@ -379,6 +379,10 @@ export class GeneralInfoComponent {
       // this.form.controls.file.patchValue(data.file);
       this.form.controls.category.patchValue(data.category);
       this.generalInfoToUpdate = data;
+    } else {
+      this.modalService.getUserConsent(
+        "Δεν έχετε δικαίωμα πρόσβασης. Επιβεβαιώστε τα δικαιώματα σας από τους διαχειριστές της εφαρμογής."
+      )
     }
   }
 
@@ -397,6 +401,10 @@ export class GeneralInfoComponent {
           this.initializeForm();
           this.getAllGeneralInfo();
         })
+    } else {
+      this.modalService.getUserConsent(
+        "Δεν έχετε δικαίωμα πρόσβασης. Επιβεβαιώστε τα δικαιώματα σας από τους διαχειριστές της εφαρμογής."
+      )
     }
   }
 
