@@ -60,7 +60,9 @@ export class AuthService {
                     this.loading.set(false);
                     this.router.navigate(['landing']);
                   } else if (status === 204){
+                    console.log("not logged in")
                     this.user.set(null)
+                    console.log(">>",this.user())
                     this.loading.set(false);
                   }
                 })
