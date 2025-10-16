@@ -25,6 +25,17 @@ export class LoginComponent {
   enableGoogleAuth: boolean = environment.enableGoogleAuth;
   user = this.authService.user;
   loading = this.authService.loading;
+
+  constructor() {
+    effect(
+      () => {
+        this.route.queryParams.subscribe(params => {
+          const authCode = params['code'];
+          console.log(">>",authCode);
+        });
+      }
+    );
+  }
   
   login() {
     this.oauth2Service.gsisLogin();
@@ -34,3 +45,7 @@ export class LoginComponent {
     this.oauth2Service.gsisLogout();
   }
 }
+function effect(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}
+

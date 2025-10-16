@@ -85,6 +85,7 @@ export class AuthService {
       },
       { allowSignalWrites: true }
     );
+    
     this.socialAuthService.authState.subscribe({
       next: (user) => {
         // console.log('GOOGLE AUTH STATE', user);

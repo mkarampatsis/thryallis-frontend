@@ -42,7 +42,7 @@
   }
 </div>
 
-<div *ngIf="user()" class="mb-5">
+<div *ngIf="user() && user().roles.length>0" class="mb-5">
 
   <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
 
@@ -58,7 +58,7 @@
     }
   </ul>
 </div>
->>{{user()}}
+
 <div *ngIf="user() && user().roles.length==0" class="govgr-body">
   <h1 class="govgr-heading-md">Δεν είστε πιστοποιημένος χρήστη</h1>
 </div>
