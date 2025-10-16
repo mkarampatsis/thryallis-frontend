@@ -6,16 +6,8 @@
 					<div class="navbar-brand">
 						<div class="d-none d-lg-inline-flex d-flex gap-2 align-items-center">
 							<img class="govgr-header__logo" src="/assets/img/ethnosimow.png" alt="gov.gr logo" />
-
-							<!-- <div
-                  class="bg-danger p-1 font-monospace rounded fw-bold d-flex"
-                  style="transform: rotate(-45deg)">
-                  <span class="fs-6">alpha</span>
-              </div> -->
-
 							<div class="d-flex flex-column text-white small fw-bold">
 								<span>Υπουργείο Εσωτερικών</span>
-								<!-- <span>Πολυεπίπεδη Διακυβέρνηση</span> -->
 							</div>
 						</div>
 					</div>
@@ -30,22 +22,16 @@
 							}
 							<div class="d-flex gap-2 d-lg-none align-items-center">
 								<img class="govgr-header__logo" src="/assets/img/ethnosimow.png" alt="gov.gr logo" />
-
-								<!-- <div class="bg-danger p-1 font-monospace rounded fw-bold d-flex text-light"
-									style="transform: rotate(-45deg)">
-									<span class="fs-6">alpha</span>
-								</div> -->
-
 								<div class="d-flex flex-column text-white small fw-bold">
 									<span>Υπουργείο Εσωτερικών</span>
 									<span>Πολυεπίπεδη Διακυβέρνηση</span>
 								</div>
 							</div>
 						</div>
-						@if (synchronization()) {
+						<!-- @if (synchronization()) { -->
 						<div class="collapse navbar-collapse mt-4 mt-lg-0" id="navbarNavAltMarkup">
 							<ul class="navbar-nav dropdown-menu-dark gap-lg-4">
-								@if(user() && hasEditorRole()){
+								@if(user() && hasEditorRole() && synchronization()){
 								<li>
 									<a routerLink="dashboard" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Προσβάσεις
@@ -57,21 +43,27 @@
 										Αναζήτηση
 									</a>
 								</li>
+                @if(!(organizationsLoading$ | async)){
 								<li>
 									<a routerLink="foreis" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Φορείς
 									</a>
 								</li>
+                }
+                @if(!(organizationalUnitsLoading$ | async)){
 								<li>
 									<a routerLink="monades" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Μονάδες
 									</a>
 								</li>
+                }
+                @if(!(remitsLoading$ | async)){
 								<li>
 									<a routerLink="armodiothtes" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Αρμοδιότητες
 									</a>
 								</li>
+                }
 								<li>
 									<a routerLink="nomikes-praxeis" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Νομικές Πράξεις
@@ -134,7 +126,7 @@
 								</li>
 							</ul>
 						</div>
-						}
+						<!-- } -->
 					</div>
 				</div>
 			</nav>

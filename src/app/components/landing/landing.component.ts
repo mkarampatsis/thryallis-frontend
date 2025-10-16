@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, computed, effect } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
