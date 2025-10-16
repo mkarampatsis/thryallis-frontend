@@ -25,17 +25,6 @@ export class LoginComponent {
   enableGoogleAuth: boolean = environment.enableGoogleAuth;
   user = this.authService.user;
   loading = this.authService.loading;
-
-  constructor() {
-    effect(
-      () => {
-        this.route.queryParams.subscribe(params => {
-          const authCode = params['code'];
-          console.log(">>",authCode);
-        });
-      }
-    );
-  }
   
   login() {
     this.oauth2Service.gsisLogin();
