@@ -1,5 +1,14 @@
 <h1 class="govgr-heading-md">Έλεγχος πρόσβασης</h1>
 
+@if (loading()) {
+  <span class="d-flex align-items-center gap-2 mb-5">
+    Αναμονή αυθεντικοποίησης...
+    <span class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </span>
+  </span>
+}
+
 <div *ngIf="!user()" class="govgr-body">
   @if(enableGoogleAuth) {
     <p>Στην εκπαιδευτική πλατφορμα η πρόσβαση στο σύστημα είναι δυνατή μόνο από εξουσιοδοτημένους  χρήστες με τη χρήση του Google account τους. Χρησιμοποιήστε τον παρακάτω σύνδεσμο για να συνδεθείτε.</p>
@@ -33,15 +42,6 @@
   }
 </div>
 
-@if (loading()) {
-  <span class="d-flex align-items-center gap-2 mb-5">
-    Αναμονή αυθεντικοποίησης...
-    <span class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </span>
-  </span>
-}
-
 <div *ngIf="user()" class="mb-5">
 
   <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
@@ -58,7 +58,7 @@
     }
   </ul>
 </div>
-
-<div *ngIf="!user() && !loading()" class="govgr-body">
+>>{{user()}}
+<div *ngIf="user().roles.length==0" class="govgr-body">
   <h1 class="govgr-heading-md">Δεν είστε πιστοποιημένος χρήστη</h1>
 </div>
