@@ -59,6 +59,6 @@
   </ul>
 </div>
 >>{{user()}}
-<div *ngIf="user().roles.length==0" class="govgr-body">
+<div *ngIf="user() && user().roles.length==0" class="govgr-body">
   <h1 class="govgr-heading-md">Δεν είστε πιστοποιημένος χρήστη</h1>
 </div>
