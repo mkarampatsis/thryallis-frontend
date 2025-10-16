@@ -247,7 +247,8 @@ export class GeneralInfoComponent {
         title: this.form.controls.title.value,
         text: this.text,
         file: finalIDs,
-        category: this.form.controls.category.value        
+        category: this.form.controls.category.value,
+        enableGoogleAuth: this.enableGoogleAuth      
       } as IGeneralInfo;
       
       this.helpboxService.updateGeneralInfo(this.generalInfoToUpdate["_id"]["$oid"], infoText)
@@ -323,35 +324,6 @@ export class GeneralInfoComponent {
     }
   }
 
-  // displayFile(fileId:string) {
-  //   this.uploadService
-  //     .getUploadByID(fileId)
-  //     .pipe(take(1))
-  //     .subscribe((data) => {
-  //       if (data.type==="application/pdf") {
-  //         const url = window.URL.createObjectURL(data);
-  //         const link = document.createElement('a');
-  //         link.href = url;
-  //         link.download = 'document.pdf';
-  //         this.modalService.showPdfViewer(link);
-  //       } else {
-  //         // const type = data.type.split('/')[1];
-  //         if (data.type==='image/png'){
-  //           this.helpboxService.downloadFile(data, 'image.png', 'image/png');
-  //         }
-  //         if (data.type=='image/jpeg'){
-  //           this.helpboxService.downloadFile(data, 'photo.jpg', 'image/png');
-  //         }
-  //         if (data.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
-  //           this.helpboxService.downloadFile(data, 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  //         }
-  //         if (data.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-  //           this.helpboxService.downloadFile(data, 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-  //         }
-  //       }
-  //   });
-  // }
-
   onSelectionChange(event:Event){
     const selectection = event.target as HTMLInputElement;
     const value = selectection.value;
@@ -396,11 +368,17 @@ export class GeneralInfoComponent {
 
   deleteGeneralInfo(data:IGeneralInfo) {
     if (this.hasHelpDeskRole()){
-      this.helpboxService.deleteGeneralInfo(data["_id"]["$oid"])
-        .subscribe(data=>{
-          this.initializeForm();
-          this.getAllGeneralInfo();
-        })
+      this.modalService.getUserConsent(
+        "Πρόκειται να διαγράψετε κάποια χρήσιμη πληροφορία. Επιβεβαιώστε ότι θέλετε να συνεχίσετε"
+      ).subscribe((result) => {
+        if(result) {
+          this.helpboxService.deleteGeneralInfo(data["_id"]["$oid"])
+          .subscribe(data=>{
+            this.initializeForm();
+            this.getAllGeneralInfo();
+          })
+        }
+      })
     } else {
       this.modalService.getUserConsent(
         "Δεν έχετε δικαίωμα πρόσβασης. Επιβεβαιώστε τα δικαιώματα σας από τους διαχειριστές της εφαρμογής."

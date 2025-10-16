@@ -88,7 +88,6 @@ export class FaqComponent implements OnInit {
     this.helpboxService.getAllPublishedHelpbox()
       .subscribe((data)=>{
           this.publishedQuestions = data['data'];
-          console.log(this.publishedQuestions);
       })
   }
 
