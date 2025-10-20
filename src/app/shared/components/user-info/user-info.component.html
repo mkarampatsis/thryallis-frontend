@@ -60,7 +60,7 @@
       <i class="bi bi-person-circle text-white fs-1"></i>
     </a>
     <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="userContextMenu">
-      <a ngbDropdownItem routerLink="/login">
+      <a ngbDropdownItem (click)="login()">
         <div class="d-flex align-items-center gap-3">
           <i class="bi bi-box-arrow-in-right"></i>
           Είσοδος

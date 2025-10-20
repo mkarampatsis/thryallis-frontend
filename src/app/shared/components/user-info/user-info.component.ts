@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { NgIf } from '@angular/common';
 import { Oauth2Service } from '../../services/oauth2.service';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-info',
@@ -19,16 +20,25 @@ export class UserInfoComponent {
   authService = inject(AuthService);
   userService = inject(UserService);
   user = this.authService.user;
-  oauthService = inject(Oauth2Service);
+  oauth2Service = inject(Oauth2Service);
+  router = inject(Router);
 
   enableGoogleAuth: boolean = environment.enableGoogleAuth;
   imgSrcError = false;
 
+  login(){
+    if (this.enableGoogleAuth){
+      this.router.navigate(['login']);
+    } else {
+      this.oauth2Service.gsisLogin();
+    }
+  }
+  
   logout() {
     if (this.enableGoogleAuth){
       this.authService.signOut();
     } else {
-      this.oauthService.gsisLogout();
+      this.oauth2Service.gsisLogout();
     }
     this.authService.removeUser();
   }
