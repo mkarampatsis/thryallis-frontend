@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { IUser } from '../../interfaces/auth';
 import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, FirstDataRenderedEvent, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AppState } from '../../state/app.state';
 import { selectOrganizations$ } from '../../state/organizations.state';
 import { ConstService } from '../../services/const.service';
@@ -25,7 +25,7 @@ export class UserAccessesComponent {
     userService = inject(UserService)
     modalRef: any;
     user: IUser;
-
+    userForeis: string[] = [];
     foreis: IOrganizationList[] = [];
 
     store = inject(Store<AppState>);
@@ -46,6 +46,10 @@ export class UserAccessesComponent {
 
     gridApi: GridApi<IOrganizationList>;
 
+    ngOnInit() {
+        this.userForeis = this.user.roles.filter(role => role.role=="EDITOR" && role.active).flatMap(r=>r.foreas);
+    }
+
     onGridReady(params: GridReadyEvent<IOrganizationList>): void {
         this.gridApi = params.api;
         this.gridApi.showLoadingOverlay();
@@ -62,18 +66,18 @@ export class UserAccessesComponent {
                 });
                 this.gridApi.hideOverlay();
                 this.gridApi.setRowData(this.foreis);
-                // this.selectRows();
             });
     }
 
-    // selectRows() {
-    //     console.log('Selecting rows');
-    //     const foreis = this.user.roles.find((data) => data.role === 'EDITOR')?.foreas ?? [];
-    //     this.gridApi.forEachNode((node) => {
-    //         if (foreis.includes(node.data.code)) 
-    //             node.setSelected(true);
-    //     });
-    // }
+    onFirstDataRendered(params: FirstDataRenderedEvent): void {
+        if (!this.gridApi) return;
+
+        this.gridApi.forEachNode((node) => {
+            if (this.userForeis.includes(node.data.code)) {
+                node.setSelected(true);
+            }
+        });
+    }
 
     dismiss() {
         this.modalRef.dismiss();

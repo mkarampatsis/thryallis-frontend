@@ -10,7 +10,7 @@
     <p><strong>Επιλεγμένοι φορείς:</strong></p>
     <ol>
     @for (foreas of selectedData; track foreas) {
-        <li>{{ getPreferredLabel(foreas.code) }}</li>
+        <li>{{ getPreferredLabel(foreas.code) }} ({{foreas.code}})</li>
     }
     </ol>
 
@@ -28,6 +28,7 @@
         rowSelection="multiple"
         [rowMultiSelectWithClick]="true"
         (selectionChanged)="onSelectionChanged($event)"
+        (firstDataRendered)="onFirstDataRendered($event)"
         class="ag-theme-balham"></ag-grid-angular>
 </div>
 

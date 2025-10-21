@@ -1,4 +1,4 @@
-import { Component,inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, CellClassRules } from 'ag-grid-community';
@@ -12,6 +12,7 @@ import { selectRemits$, selectRemitsLoading$ } from 'src/app/shared/state/remits
 import { Subscription, take } from 'rxjs';
 import { IRemit } from 'src/app/shared/interfaces/remit/remit.interface';
 import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/state/organizational-units.state';
+import { HttpParams } from '@angular/common/http';
 
 export interface IRemitExtended extends IRemit {
     organizationCode: string;
@@ -20,25 +21,25 @@ export interface IRemitExtended extends IRemit {
 }
 
 @Component({
-  selector: 'app-log-data',
-  standalone: true,
-  imports: [CommonModule, AgGridAngular],
-  templateUrl: './log-data.component.html',
-  styleUrl: './log-data.component.css'
+    selector: 'app-log-data',
+    standalone: true,
+    imports: [CommonModule, AgGridAngular],
+    templateUrl: './log-data.component.html',
+    styleUrl: './log-data.component.css'
 })
 export class LogDataComponent {
     constService = inject(ConstService);
     modalService = inject(ModalService);
     logDataService = inject(LogDataService);
 
-    loading = false; 
+    loading = false;
 
     allOrganizationChanges = [];
     allOrganizationalUnitChanges = [];
-    allRemitChanges = []; 
+    allRemitChanges = [];
 
     remits: IRemitExtended[] = [];
-    
+
     store = inject(Store<AppState>);
     remits$ = selectRemits$;
     remitsLoading$ = selectRemitsLoading$;
@@ -63,9 +64,9 @@ export class LogDataComponent {
         this.subscriptions.forEach((sub) => sub.unsubscribe());
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.loading = true;
-        this.logDataService.getAllChangesCodesByType().subscribe((data)=>{
+        this.logDataService.getAllChangesCodesByType().subscribe((data) => {
             this.allOrganizationChanges = data;
             this.initializeColDefs()
             this.loading = false;
@@ -73,8 +74,8 @@ export class LogDataComponent {
     }
 
     initializeColDefs() {
-        this.colDefs =  [
-            { field: 'organizationLabel', headerName: 'Φορέας', flex: 1, cellClassRules: this.getCellClassRulesOrganizations()  },
+        this.colDefs = [
+            { field: 'organizationLabel', headerName: 'Φορέας', flex: 1, cellClassRules: this.getCellClassRulesOrganizations() },
             { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1, cellClassRules: this.getCellClassRulesOrganizationalUnits() },
             { field: 'remitType', headerName: 'Τύπος', flex: 1 },
             {
@@ -113,24 +114,23 @@ export class LogDataComponent {
 
     getCellClassRulesOrganizations(): CellClassRules {
         return {
-            "organization-text-success": (params) => this.allOrganizationChanges["data"]["organizations"].includes(params.data.organizationCode)
+            "text-success": (params) => this.allOrganizationChanges["data"]["organizations"].includes(params.data.organizationCode)
         };
     }
 
     getCellClassRulesOrganizationalUnits(): CellClassRules {
         return {
-            "organizationalUnit-text-success": (params) => this.allOrganizationChanges["data"]["organizationalUnits"].includes(params.data.organizationalUnitCode)
+            "text-success": (params) => this.allOrganizationChanges["data"]["organizationalUnits"].includes(params.data.organizationalUnitCode)
         };
     }
 
-    onCellClicked(event: any): void  {
-        // console.log(event.colDef.field, event.data['organizationCode'])
-        if (event.colDef.field=="organizationLabel") {
+    onCellClicked(event: any): void {
+        if (event.colDef.field == "organizationLabel") {
             this.modalService.showChangeDetails(event.data['organizationCode']);
-        } else if (event.colDef.field=="organizationUnitLabel") {
-            this.modalService.showChangeDetails(event.data['organizationUnitCode']);
-        } else {
-            console.log("Nothing to show")
+        } else if (event.colDef.field == "organizationUnitLabel") {
+            this.modalService.showChangeDetails(event.data['organizationalUnitCode']);
+        } else if (event.colDef.field == "remitText") {
+            this.modalService.showRemitDetails({organizationCode: event.data.organizationalUnitCode,remitId: event.data["_id"]["$oid"]})
         }
     }
 

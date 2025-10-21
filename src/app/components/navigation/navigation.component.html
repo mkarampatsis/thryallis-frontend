@@ -1,7 +1,7 @@
 <div class="govgr-top">
 	<div class="govgr-header">
 		<div class="p-2 d-flex align-items-start align-items-lg-center justify-content-between">
-			<nav class="navbar navbar-dark navbar-expand-lg">
+			<nav class="navbar navbar-dark navbar-expand-xl">
 				<div class="container-fluid">
 					<div class="navbar-brand">
 						<div class="d-none d-lg-inline-flex d-flex gap-2 align-items-center">
@@ -13,13 +13,13 @@
 					</div>
 					<div>
 						<div class="d-flex gap-2">
-							@if (user() && hasEditorRole()) {
+							<!-- @if (user() && hasEditorRole()) { -->
 							<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 								data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="true"
 								aria-label="Toggle navigation">
 								<span class="navbar-toggler-icon"></span>
 							</button>
-							}
+							<!-- } -->
 							<div class="d-flex gap-2 d-lg-none align-items-center">
 								<img class="govgr-header__logo" src="/assets/img/ethnosimow.png" alt="gov.gr logo" />
 								<div class="d-flex flex-column text-white small fw-bold">
@@ -31,13 +31,18 @@
 						<!-- @if (synchronization()) { -->
 						<div class="collapse navbar-collapse mt-4 mt-lg-0" id="navbarNavAltMarkup">
 							<ul class="navbar-nav dropdown-menu-dark gap-lg-4">
-								@if(user() && hasEditorRole() && synchronization()){
+								<li>
+									<a routerLink="landingh" routerLinkActive="fw-bold" class="dropdown-item">
+										<mat-icon aria-hidden="false" aria-label="home button" fontIcon="home"></mat-icon>
+									</a>
+								</li>
+								<!-- @if(user() && hasEditorRole() && synchronization()){
 								<li>
 									<a routerLink="dashboard" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Προσβάσεις
 									</a>
 								</li>
-								}
+								} -->
 								<li>
 									<a routerLink="search" routerLinkActive="fw-bold" class="dropdown-item p-1">
 										Αναζήτηση
