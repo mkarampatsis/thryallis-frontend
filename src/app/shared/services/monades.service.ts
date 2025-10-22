@@ -32,10 +32,6 @@ export class MonadesService {
         return this.http.put<IMonada>(url, data);
     }
 
-    /**
-      * Fetch organizational units with pagination, filters, and sorting
-      * Uses in-memory caching to avoid repeated server requests
-      */
     getAllMonadesPagination(
         page: number,
         pageSize: number,

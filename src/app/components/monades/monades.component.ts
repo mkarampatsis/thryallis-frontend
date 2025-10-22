@@ -72,7 +72,6 @@ export class MonadesComponent implements OnDestroy {
 
     this.restoreGridState();
 
-    // ✅ Use correct datasource interface for v31+
     const datasource: IDatasource  = {
       getRows: async (p: IGetRowsParams) => {
 
