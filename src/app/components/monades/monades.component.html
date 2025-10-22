@@ -2,7 +2,7 @@
 
 <span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα της μονάδας με διπλό κλικ πάνω σε μια γραμμή</span>
 
-<ag-grid-angular
+<!-- <ag-grid-angular
     [domLayout]="'autoHeight'"
     [rowData]="monades"
     [defaultColDef]="defaultColDef"
@@ -13,4 +13,24 @@
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
     (cellDoubleClicked)="onCellClicked($event)"
     (gridReady)="onGridReady($event)"
-    class="ag-theme-balham"></ag-grid-angular>
+    class="ag-theme-balham"></ag-grid-angular> -->
+
+<button (click)="resetGridState()" class="btn btn-outline-secondary mb-2">
+    Reset Grid State
+</button>
+
+<ag-grid-angular
+  class="ag-theme-balham"
+  style="height: 80vh"
+  [columnDefs]="colDefs"
+  [defaultColDef]="defaultColDef"
+  [rowModelType]="'infinite'"
+  [pagination]="true"
+  [paginationPageSize]="100"
+  (gridReady)="onGridReady($event)"
+  (filterChanged)="onFilterChanged()"
+  (sortChanged)="onSortChanged()"
+  (columnMoved)="onColumnStateChanged()"
+  (columnVisible)="onColumnStateChanged()"
+  (columnPinned)="onColumnStateChanged()">
+</ag-grid-angular>
