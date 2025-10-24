@@ -8,7 +8,7 @@
     "build-test": "ng build --configuration test",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng build --configuration test && ssh oper@thryallis-frontend.duckdns.org 'rm -rf ~/ypes-frontend/*' && rsync -avz dist/ministry-frontend/browser/ oper@thryallis-frontend.duckdns.org:~/ypes-frontend/"
+    "deploy-test": "ng build --configuration test && ssh oper@thryallis-frontend.duckdns.org 'rm -rf ~/ypes-frontend/*' && rsync -avz dist/ministry-frontend/browser/ oper@thryallis-frontend.duckdns.org:~/ypes-frontend/"
   },
   "private": true,
   "dependencies": {
