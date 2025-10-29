@@ -57,12 +57,10 @@ export class SearchFormComponent {
         from: new FormControl('', Validators.required),
         until: new FormControl('', Validators.required),
       }),
-      terminationDate: new FormGroup({
-        from: new FormControl('', Validators.required),
-        until: new FormControl('', Validators.required),
-        // date: new FormControl('', Validators.required),
-        // range: new FormControl('', Validators.required),
-      }),
+      // terminationDate: new FormGroup({
+      //   from: new FormControl('', Validators.required),
+      //   until: new FormControl('', Validators.required),
+      // }),
       foundationFek: new FormGroup({
         from: new FormControl('', Validators.required),
         until: new FormControl('', Validators.required),
@@ -177,10 +175,10 @@ export class SearchFormComponent {
         from: "",
         until: ""
       },
-      terminationDate: {
-        from: "",
-        until: ""
-      },
+      // terminationDate: {
+      //   from: "",
+      //   until: ""
+      // },
       // mainAddress:{
       //     postCode:""
       // },
