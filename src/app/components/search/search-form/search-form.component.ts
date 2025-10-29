@@ -88,7 +88,7 @@ export class SearchFormComponent {
       cofog3: new FormControl('', Validators.required),
       statusActive: new FormControl(true, Validators.required),
       statusInactive: new FormControl(false, Validators.required),
-      fekDate: new FormArray([
+      fek_date: new FormArray([
         new FormGroup({
           // date: new FormControl('', Validators.required),
           // range: new FormControl('', Validators.required), 
@@ -101,7 +101,7 @@ export class SearchFormComponent {
 
   formSubscriptions: Subscription[] = [];
 
-  remitFoundations = this.form.get('remits.fekDate') as FormArray
+  remitFoundations = this.form.get('remits.fek_date') as FormArray
 
   ngOnInit() {
     this.initializeForm();
@@ -211,7 +211,7 @@ export class SearchFormComponent {
       statusInactive: false,
     });
 
-    const remitFoundationArray = this.form.get('remits.fekDate') as FormArray;
+    const remitFoundationArray = this.form.get('remits.fek_date') as FormArray;
     remitFoundationArray.clear(); // Clears all existing controls
 
     // Add a single empty group (like the one in the initial form definition)
