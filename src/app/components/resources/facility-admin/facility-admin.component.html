@@ -12,7 +12,7 @@
         >
           <div class="card-body">
             <div class="mb-3">
-              <label class="form-label">Κύριος Χώρος</label>
+              <label class="form-label"><strong>Τύπος χρήσης ακινήτου</strong></label>
               <input
                 type="text"
                 class="form-control"
@@ -29,7 +29,7 @@
                 class="mb-3 ps-3 border-start"
               >
                 <div class="mb-2">
-                  <label class="form-label">Υποκατηγορία Χώρου</label>
+                  <label class="form-label"><strong>Υποκατηγορία χρήσης ακινήτου</strong></label>
                   <input
                     type="text"
                     class="form-control"
@@ -40,7 +40,7 @@
                 </div>
 
                 <div formArrayName="spaces">
-                  <label class="form-label">Χρήση Χώρου</label>
+                  <label class="form-label"><strong>Χρήση κυρίων χώρων</strong></label>
                   <div
                     *ngFor="let spaceControl of spaceStrings(i, j).controls; let k = index"
                     class="input-group mb-2"
@@ -61,7 +61,7 @@
                     class="btn btn-sm btn-outline-primary"
                     (click)="addSpaceString(i, j)"
                   >
-                    + Προσθήκη Χρήσης Χώρου
+                    + Προσθήκη χρήσης κυρίων χώρων
                   </button>
                 </div>
               </div>
@@ -71,7 +71,7 @@
                 class="btn btn-outline-secondary btn-sm"
                 (click)="addSpaceGroup(i)"
               >
-                + Προσθήκη Υποκατηγορίας Χώρου
+                + Προσθήκη υποκατηγορίας χρήσης ακινήτου
               </button>
             </div>
           </div>
@@ -84,7 +84,7 @@
           class="btn btn-success"
           (click)="addFacilityType()"
         >
-          + Προσθήκη Κύριου Χώρου
+          + Προσθήκη τύπου χρήσης ακινήτου
         </button>
       </div>
 
