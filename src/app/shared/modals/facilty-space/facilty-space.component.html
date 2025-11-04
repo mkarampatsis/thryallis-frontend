@@ -1,5 +1,9 @@
 <div class="d-flex justify-content-between m-3">
-  <span class="h5">Εισαγωγή χώρων ακινήτου</span>
+  @if(facility){
+    <span class="h5">Εισαγωγή χώρου ακινήτου</span>
+  } @else {
+    <span class="h5">Επεξεργασία χώρου ακινήτου</span>
+  }
   <button type="button" class="btn-close" (click)="modalRef.dismiss()">
   </button>
 </div>
@@ -9,39 +13,6 @@
 
     <p><strong>Διακριτή ονομασία του Ακινήτου: </strong>{{distinctiveNameOfFacility}}</p>
   </div>
-
-  <ul>
-    @for (unit of selectedData; track unit ){
-    <li><strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
-    }
-  </ul>
-
-  <div *ngIf="!auxiliarySpace" class="d-flex justify-content-between small">
-    <div>
-      <span>Eπιλέξτε τις μονάδες που επιθυμείτε να εισάγετε</span>
-    </div>
-    <div>
-      <a (click)="clearSelection()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
-    </div>
-  </div>
-
-  <ag-grid-angular 
-    *ngIf="!auxiliarySpace"
-    [domLayout]="'autoHeight'" 
-    [rowData]="monades" 
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs" 
-    [pagination]="true" 
-    [paginationPageSize]="10"
-    [loadingOverlayComponent]="loadingOverlayComponent" 
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    rowSelection="multiple" 
-    (rowSelected)="onRowSelected($event)" 
-    (gridReady)="onGridReady($event)"
-    
-    class="ag-theme-balham">
-  </ag-grid-angular>
-  <!-- (firstDataRendered)="onFirstDataRendered($event)" -->
 
   <div class="mb-3 mt-3 p-2">
     <form [formGroup]="form">
@@ -104,9 +75,6 @@
         
       </div>
       
-
-      
-
       <div class="row mb-3">
         <div class="col-sm-4">
           <label for="spaceArea" class="form-label">Το εμβαδόν του χώρου σε τετραγωνικά μέτρα</label>
@@ -184,10 +152,41 @@
             formControlName="num">
           }
         </div>
-
+      </div>
+      
+      <ul>
+        @for (unit of selectedData; track unit ){
+        <li><strong>Επιλεγμένη μονάδα: </strong>{{unit.preferredLabel}}</li>
+        }
+      </ul>
+      <div *ngIf="!auxiliarySpace" class="d-flex justify-content-between small">
+        <div>
+          <span>Eπιλέξτε τις μονάδες που επιθυμείτε να εισάγετε</span>
+        </div>
+        <div>
+          <a (click)="clearSelection()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+        </div>
       </div>
 
-      <div class="d-flex gap-2">
+      <ag-grid-angular 
+        *ngIf="!auxiliarySpace"
+        [domLayout]="'autoHeight'" 
+        [rowData]="monades" 
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs" 
+        [pagination]="true" 
+        [paginationPageSize]="10"
+        [loadingOverlayComponent]="loadingOverlayComponent" 
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        rowSelection="multiple" 
+        (rowSelected)="onRowSelected($event)" 
+        (gridReady)="onGridReady($event)"
+        
+        class="ag-theme-balham">
+      </ag-grid-angular>
+      <!-- (firstDataRendered)="onFirstDataRendered($event)" -->
+
+      <div *ngIf="!readOnly" class="d-flex gap-2 mt-3">
         <button type="button" class="btn btn-primary" [disabled]="form.invalid" (click)="submitForm()">
           Υποβολή
         </button>

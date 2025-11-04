@@ -36,6 +36,7 @@ import { take } from 'rxjs';
 })
 export class FacilityComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('kaekFied') kaekFied!: ElementRef<HTMLInputElement>;
 
   constFacilityService = inject(ConstFacilityService);
   constService = inject(ConstService);
@@ -56,6 +57,7 @@ export class FacilityComponent {
   showForm = false;
   showGrid = false;
   showGridSpace = false;
+  readonlyMode = false;
   planFloorsNumField: number = 0;
 
   uploadObjectIDs: string[] = [];
@@ -104,7 +106,7 @@ export class FacilityComponent {
       street: new FormControl('', Validators.required),
       number: new FormControl('', Validators.required),
       postcode: new FormControl('', Validators.required),
-      area: new FormControl('', Validators.required),
+      area: new FormControl(''),
       municipality: new FormControl('', Validators.required),
       geographicRegion: new FormControl('', Validators.required),
       country: new FormControl('ΕΛΛΑΣ', Validators.required),
@@ -150,16 +152,21 @@ export class FacilityComponent {
   }
 
   onCellClicked(event: CellClickedEvent): void {
+    
+    this.showForm = false;
+    this.showGridSpace = false;
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
-
-    if (action === 'info') {
-      this.showSpaces(event.data);
-    } else if (action === 'edit') {
+    
+    if (action === 'info_facility') {
+      this.showFacility(event.data);
+    } else if (action === 'edit_facility') {
       this.editFacility(event.data);
-    } else if (action === 'delete') {
+    } else if (action === 'delete_facility') {
       this.deleteFacility(event.data)
-    } else if (action === 'add') {
+    } else if (action === 'info_spaces') {
+      this.showSpaces(event.data);
+    } else if (action === 'add_space') {
       this.addSpace(event.data)
     }
   }
@@ -172,22 +179,38 @@ export class FacilityComponent {
       this.editSpace(event.data);
     } else if (action === 'deleteSpace') {
       this.deleteSpace(event.data);
+    } else if (action === 'showSpace') {
+      this.showSpace(event.data);
     }
   }
 
-  showSpaces(facility: IFacility) {
-    this.getSpacesFacilityId(facility["_id"]["$oid"])
-   }
+  showFacility(facility: IFacility) {
+    // reuse your editFacility logic to populate the form
+    this.editFacility(facility);
+
+    // disable the entire form after patching
+    setTimeout(() => {
+      this.form.disable();
+    });
+    this.readonlyMode = true; // activate readonly mode
+  }
 
   editFacility(facility: IFacility) {
-
+    this.readonlyMode = false; // editing mode
     this.initializeForm();
+    this.form.enable(); // ensure form is editable
     this.showForm = true;
 
+    setTimeout(() => {
+      this.kaekFied?.nativeElement.focus();
+    });
+    
     this.organization = facility.organization
     this.organizationCode = facility.organizationCode
 
     this.form.patchValue({
+      organization: facility.organization,
+      organizationCode: facility.organizationCode,
       kaek: facility.kaek,
       belongsTo: facility.belongsTo,
       distinctiveNameOfFacility: facility.distinctiveNameOfFacility,
@@ -255,6 +278,10 @@ export class FacilityComponent {
       })
   }
 
+  showSpaces(facility: IFacility) {
+    this.getSpacesFacilityId(facility["_id"]["$oid"])
+  }
+
   addSpace(facility: IFacility) {
     this.modalService.addFaciltySpace(facility)
       .subscribe(result => {
@@ -262,8 +289,18 @@ export class FacilityComponent {
       })
   }
 
+  showSpace(space: ISpace) {
+    console.log(space);
+    const readOnly = true;
+    this.modalService.modifyFaciltySpace(space, readOnly)
+      .subscribe(result => {
+        this.getSpacesFacilityId(space.facilityId["id"])
+      })
+  };
+
   editSpace(space: ISpace) {
-    this.modalService.modifyFaciltySpace(space)
+    const readOnly = false;
+    this.modalService.modifyFaciltySpace(space, readOnly)
       .subscribe(result => {
         this.getSpacesFacilityId(space.facilityId["id"])
       })
@@ -299,6 +336,10 @@ export class FacilityComponent {
     this.getFacilitiesByOrganizationCode()
     this.showForm = true;
     this.showGrid = true;
+
+    setTimeout(() => {
+      this.kaekFied?.nativeElement.focus();
+    });
   }
 
   showFacilitiesGrids(data: IOrganizationList) {
@@ -336,8 +377,9 @@ export class FacilityComponent {
     fileArray.forEach((file, index) => {
       const permitTypes = ["pdf", "docx", "xlsx", "png", "jpeg"];
       const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
+      const checkNameForDots = file.name.toLowerCase().split(".").length==2? true: false
       const checkFileSize = (file.size / 1024) < 13000
-      if (!(checkFileSize && checkFileType))
+      if (!(checkFileSize && checkFileType && checkNameForDots))
         this.checkFileStatus = false
     })
 

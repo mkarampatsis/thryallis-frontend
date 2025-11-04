@@ -311,12 +311,13 @@ export class ModalService {
     return modalRef.dismissed.pipe(take(1)) as Observable<ISpace>;
   }
 
-  modifyFaciltySpace(space: ISpace) {
+  modifyFaciltySpace(space: ISpace, readOnly:boolean) {
     const modalRef = this.modalService.open(FaciltySpaceComponent, {
         size: 'xl',
         centered: true,
     });
     modalRef.componentInstance.space = space;
+    modalRef.componentInstance.readOnly = readOnly;
     modalRef.componentInstance.modalRef = modalRef;
     return modalRef.dismissed.pipe(take(1)) as Observable<ISpace>;
   }

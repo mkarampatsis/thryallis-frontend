@@ -39,6 +39,7 @@ export class FaciltySpaceComponent implements OnInit {
   modalRef: any;
   facility: IFacility;
   space: ISpace;
+  readOnly: boolean
 
   organization: string;
   organizationCode: string;
@@ -316,6 +317,15 @@ export class FaciltySpaceComponent implements OnInit {
         if (this.selectedOrganizationalCodes.includes(node.data.code)) {
           node.setSelected(true);
         }
+      });
+    }
+
+    if (this.readOnly) {
+      setTimeout(() => {
+        this.form.disable();
+        this.gridApi.forEachNode((node) => {
+          node.selectable = false; // Disable checkbox for unselected rows
+        });
       });
     }
   }

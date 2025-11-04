@@ -481,17 +481,35 @@ export class ConstFacilityService {
     { field: 'organization', headerName: 'Φορέας', flex: 1 },
     {
       field: 'actionCell',
-      headerName: 'Ενέργειες',
+      headerName: 'Ενέργειες Ακινήτου',
       cellRenderer: (params) => {
         if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
           return `
-            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Χώροι ακινήτου" role="button"></i>
-            <i class="bi bi-building-add me-2 text-primary fs-6 action-icon" data-action="add" role="button" title="Εισαγωγή χώρου"></i>
-            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit" title="Επεξεργασία ακινήτου" role="button"></i>
-            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete" title="Διαγραφή ακινήτου" role="button"></i>
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info_facility" title="Εμφάνιση ακινήτου" role="button"></i>
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="edit_facility" title="Επεξεργασία ακινήτου" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="delete_facility" title="Διαγραφή ακινήτου" role="button"></i>
           `;
         } else {
-          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info" title="Χώροι ακινήτου" role="button"></i>`
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info_facility" title="Εμφάνιση ακινήτου" role="button"></i>`
+        }
+      },
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      resizable: false,
+      flex: 0.7,
+    },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες Χώρων',
+      cellRenderer: (params) => {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
+          return `
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info_spaces" title="Εμφάνιση χώρων" role="button"></i>
+            <i class="bi bi-building-add me-2 text-primary fs-6 action-icon" data-action="add_space" role="button" title="Εισαγωγή χώρου"></i>
+          `;
+        } else {
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="info_spaces" title="Εμφάνιση χώρων" role="button"></i>`
         }
       },
       filter: false,
@@ -517,10 +535,13 @@ export class ConstFacilityService {
       cellRenderer: (params) => {
         if (this.userService.hasFacilityEditorRoleInOrganization(params.data.facilityId.organizationCode)) {
           return `
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="showSpace" title="Εμφάνιση χώρου" role="button"></i>
             <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editSpace" title="Επεξεργασία χώρου" role="button"></i>
             <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteSpace" title="Διαγραφή χώρου" role="button"></i>
           `;
-        } 
+        } else {
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="showSpace" title="Εμφάνιση χώρου" role="button"></i>`
+        }
       },
       filter: false,
       sortable: false,

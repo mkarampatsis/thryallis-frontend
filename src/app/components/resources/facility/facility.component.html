@@ -149,6 +149,7 @@
             id="kaek" 
             class="form-control" 
             formControlName="kaek"
+            #kaekFied
             [class.is-invalid]="form.controls.kaek.touched && form.controls.kaek.invalid"  
           >
           @if (form.controls.kaek.touched && form.controls.kaek.invalid) {
@@ -469,7 +470,7 @@
         </div>
     </fieldset>
 
-    <div class="d-flex gap-2">
+    <div *ngIf="!readonlyMode" class="d-flex gap-2">
       <button
         type="button" 
         class="btn btn-primary"
