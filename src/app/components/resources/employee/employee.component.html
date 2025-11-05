@@ -64,6 +64,7 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (cellClicked)="onCellClicked($event)" 
       (gridReady)="onGridReady($event)" 
       class="ag-theme-balham">
     </ag-grid-angular>
@@ -83,7 +84,7 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Όνομα</label>
-          <input type="text" class="form-control" formControlName="firstname">
+          <input type="text" class="form-control" formControlName="firstname" #firstnameField>
         </div>
         <div class="col-md-4">
           <label class="form-label">Επώνυμο</label>
@@ -232,6 +233,7 @@
       </div>
 
       <button 
+        *ngIf="!readOnlyMode"
         type="submit" 
         class="btn btn-primary" 
         [disabled]="form.invalid"

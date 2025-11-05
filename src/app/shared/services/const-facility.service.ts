@@ -567,21 +567,11 @@ export class ConstFacilityService {
       filter: true,
       flex: 1 
     },
-    // { 
-    //   field: 'addressOfFacility', 
-    //   headerName: 'Ακίνητο', 
-    //   cellRenderer: (params) => {
-    //     let item = '';
-    //     const data = params.value;
-    //     item = data.street + ',' + data.number + ',' + data.number + ',' + data.postcode + ',' + data.area + ',' + data.municipality;
-    //     return item;
-    //   },
-    //   flex: 1 
-    // },
-    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή ονομασία', flex: 1 },
-    { field: 'spaces.spaceName', headerName: 'Ονομασία Χώρου', flex: 1 },
-    { field: 'spaces.spaceUse.type', headerName: 'Τύπος Χρήσης', flex: 1 },
-    { field: 'spaces.spaceUse.space', headerName: 'Χρήση', flex: 1 },
+    { field: 'spaces.spaceName', headerName: 'Ονομασία χώρου', flex: 1 },
+    { field: 'spaces.spaceUse.space', headerName: 'Χρήση χώρου', flex: 1 },
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή ονομασία ακινήτου', flex: 1 },
+    { field: 'spaces.spaceUse.type', headerName: 'Τύπος χρήσης ακινήτου', flex: 1 },
+   
   ];
 
   EQUIPMENT_COL_DEFS: ColDef[] = [
@@ -624,9 +614,12 @@ export class ConstFacilityService {
       cellRenderer: (params) => {
         if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
           return `
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="showEquipment" title="Εμφάνιση εξοπλισμού" role="button"></i>
             <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editEquipment" title="Επεξεργασία εξοπλισμού" role="button"></i>
             <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteEquipment" title="Διαγραφή εξοπλισμού" role="button"></i>
           `;
+        } else {
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="showEquipment" title="Εμφάνιση εξοπλισμού" role="button"></i>`
         } 
       },
       filter: false, 
@@ -660,6 +653,23 @@ export class ConstFacilityService {
     { field: 'workCategory', headerName: 'Κατηγορία', filter: true, flex: 1 },
     { field: 'workCategory', headerName: 'Κατηγορία', filter: true, flex: 1 },
     { field: 'workSector', headerName: 'Κλάδος – ειδικότητα', filter: true, flex: 1 },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: (params) => {
+        if (this.userService.hasFacilityEditorRoleInOrganization(params.data.organizationCode)) {
+          return `
+            <i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="showEmployee" title="Εμφάνιση προσωπικού" role="button"></i>
+            <i class="bi bi-pencil text-success fs-6 action-icon" data-action="editEmployee" title="Επεξεργασία προσωπικού" role="button"></i>
+            <i class="bi bi-file-x text-danger fs-6 action-icon" data-action="deleteEmployee" title="Διαγραφή προσωπικού" role="button"></i>
+          `;
+        } else {
+          return `<i class="bi bi-info-circle me-2 text-primary fs-6 action-icon" data-action="showEmployee" title="Εμφάνιση προσωπικού" role="button"></i>`
+        } 
+      },
+      filter: false, 
+      flex:0.5
+    }
   ];
 
   removeAccents(input: string): string {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ColDef, GridApi, GridReadyEvent, CellClickedEvent, RowClickedEvent, FirstDataRenderedEvent } from 'ag-grid-community';
@@ -37,6 +37,8 @@ import { IEquipment } from 'src/app/shared/interfaces/equipment/equipment';
   styleUrl: './equipment.component.css'
 })
 export class EquipmentComponent implements OnInit {
+   @ViewChild('resourceSubcategoryField') resourceSubcategoryField!: ElementRef<HTMLSelectElement>;
+
   userService = inject(UserService);
   resourcesService = inject(ResourcesService)
   modalService = inject(ModalService);
@@ -65,6 +67,7 @@ export class EquipmentComponent implements OnInit {
   showOtherField = false;
   showGrid = false;
   showGridEquipment = false;
+  readOnlyMode = false;
   updateEquipment: IEquipment | null;
 
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
@@ -119,6 +122,7 @@ export class EquipmentComponent implements OnInit {
   }
 
   newEquipment(data: IOrganizationList) {
+    this.showForm = false;
     this.initializeForm()
     this.organization = data.preferredLabel
     this.organizationCode = data.code
@@ -135,9 +139,14 @@ export class EquipmentComponent implements OnInit {
         }
       })
     this.showGridEquipment = false;
+
+    setTimeout(() => {
+      this.resourceSubcategoryField?.nativeElement.focus();
+    })
   }    
   
   showEquipments(code: string){
+    this.showForm = false;
     this.equipments = []
 
     setTimeout(() => {
@@ -202,7 +211,6 @@ export class EquipmentComponent implements OnInit {
   onGridEquipmentReady(params: GridReadyEvent<IEquipment>): void {
     this.gridApiEquipment = params.api;
     // this.gridApiEquipment.showLoadingOverlay();
-    console.log("equipments",this.equipments);
     if (this.equipments.length > 0) {
       this.gridApiEquipment.hideOverlay();
     } else {
@@ -211,18 +219,35 @@ export class EquipmentComponent implements OnInit {
   }
 
   onCellEquipmentClicked(event: CellClickedEvent): void {
+    this.showForm = false;
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
         
     if (action === 'editEquipment') {
       this.editEquipment(event.data);
+    } else if (action === 'showEquipment'){
+      this.showEquipment(event.data);
     } else if (action === 'deleteEquipment') {
       this.deleteEquipment(event.data)
     } 
   }
 
+  showEquipment(data: IEquipment){
+    // reuse your editFacility logic to populate the form
+    this.editEquipment(data);
+
+    // disable the entire form after patching
+    setTimeout(() => {
+      this.form.disable();
+    });
+    
+    this.readOnlyMode = true; // activate readonly mode
+  }
+  
   editEquipment(data: IEquipment){
+    this.readOnlyMode = false; // editing mode
     this.initializeForm()
+    this.form.enable(); // ensure form is editable
     this.organization = data.organization
     this.organizationCode = data.organizationCode
     
@@ -235,6 +260,7 @@ export class EquipmentComponent implements OnInit {
       acquisitionDate: new Date(data.acquisitionDate["$date"]).toISOString().split('T')[0],
       status: data.status
     });
+
     this.showForm = true;
     this.kind = this.getKinds(data.resourceSubcategory);
     this.type = this.getTypes(data.resourceSubcategory, data.kind);
@@ -287,8 +313,20 @@ export class EquipmentComponent implements OnInit {
               }
             });
           }, 50) // 50ms delay to wait for grid to stabilize
+
+          if (this.readOnlyMode) {
+            setTimeout(() => {
+              this.gridApi.forEachNode((node) => {
+                node.selectable = false; // Disable checkbox for unselected rows
+              });
+            }, 50)
+          }
         }
       })
+
+    setTimeout(() => {
+      this.resourceSubcategoryField?.nativeElement.focus();
+    });
   }
 
   deleteEquipment(data: IEquipment){
@@ -348,6 +386,7 @@ export class EquipmentComponent implements OnInit {
   }
   
   showOrganizationDetails(code: string): void {
+    this.showForm = false;
     this.modalService.showOrganizationDetails(code);
   }
 

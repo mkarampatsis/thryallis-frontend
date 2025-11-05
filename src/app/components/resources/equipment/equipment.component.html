@@ -62,7 +62,7 @@
       [paginationPageSize]="20"
       [loadingOverlayComponent]="loadingOverlayComponent" 
       [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (cellDoubleClicked)="onCellEquipmentClicked($event)" 
+      (cellClicked)="onCellEquipmentClicked($event)" 
       (gridReady)="onGridEquipmentReady($event)" class="ag-theme-balham">
     </ag-grid-angular>
   </div>
@@ -92,7 +92,7 @@
 
         <div class="col-sm-4">
           <select class="form-select" aria-label="Default select example" formControlName="resourceSubcategory"
-            (change)="onResourcesubcategoryChange($event)">
+            (change)="onResourcesubcategoryChange($event)" #resourceSubcategoryField>
             <option value="" disabled selected>
               Επιλέξτε υποκατηγορία
             </option>
@@ -174,15 +174,21 @@
         <div>
           <span>Eπιλέξτε τους χώρους που επιθυμείτε για το νέο εξοπλισμό</span>
         </div>
-        <div *ngIf="selectedSpaces.length > 0">
+        <div *ngIf="selectedSpaces.length > 0 && !readOnlyMode">
           <button class="btn btn-danger btn-sm mb-1" (click)="clearSelections()">Καθάρισμα επιλογών</button>
         </div>
       </div>
-      <ag-grid-angular [domLayout]="'autoHeight'" [rowData]="spaces" [defaultColDef]="defaultColDef"
-        [columnDefs]="spaceColDefs" [pagination]="true" [paginationPageSize]="20"
+      <ag-grid-angular 
+        [domLayout]="'autoHeight'" 
+        [rowData]="spaces" 
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="spaceColDefs" 
+        [pagination]="true" 
+        [paginationPageSize]="20"
         [loadingOverlayComponent]="loadingOverlayComponent"
         [loadingOverlayComponentParams]="loadingOverlayComponentParams" rowSelection="multiple"
-        (rowSelected)="onRowSelected($event)" (gridReady)="onGridReady($event)"
+        (rowSelected)="onRowSelected($event)" 
+        (gridReady)="onGridReady($event)"
         (firstDataRendered)="onFirstDataRendered($event)" class="ag-theme-balham">
       </ag-grid-angular>
 
@@ -216,7 +222,7 @@
       </div>
     </fieldset>
 
-    <div class="d-flex gap-2">
+    <div *ngIf="!readOnlyMode" class="d-flex gap-2">
       <button type="button" class="btn btn-primary" [disabled]="form.invalid" (click)="submitForm()">
         Υποβολή
       </button>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 
@@ -31,6 +31,8 @@ import { IEmployee } from 'src/app/shared/interfaces/employee/employee';;
   styleUrl: './employee.component.css'
 })
 export class EmployeeComponent implements OnInit {
+  @ViewChild('firstnameField') firstnameField!: ElementRef<HTMLInputElement>;
+
   userService = inject(UserService);
   modalService = inject(ModalService);
   resourceService = inject(ResourcesService);
@@ -44,6 +46,7 @@ export class EmployeeComponent implements OnInit {
 
   showForm: boolean = false;
   showGrid: boolean = false;
+  readOnlyMode: boolean = false;
 
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
   defaultColDef = this.constFacilityService.defaultColDef;
@@ -103,6 +106,9 @@ export class EmployeeComponent implements OnInit {
     this.form.controls.organization.setValue(this.organization);
     this.form.controls.organizationCode.setValue(this.organizationCode);
     this.showForm = true;
+    setTimeout(() => {
+      this.firstnameField?.nativeElement.focus();
+    })
   }
 
   showEmployeesGrid(data: IOrganizationList) {
@@ -111,13 +117,99 @@ export class EmployeeComponent implements OnInit {
       const body = response.body;          
       const status = response.status;        
       if (status === 200) {
-        console.log(body);
         this.employees = body;
         if (this.employees.length > 0) {
           this.showGrid = true;
         }
       }
     })
+  }
+
+  onCellClicked(event: CellClickedEvent): void {
+    this.showForm = false;
+    const action = (event.event.target as HTMLElement).getAttribute('data-action');
+    if (!action) return;
+        
+    if (action === 'showEmployee') {
+      this.showEmployee(event.data);
+    } else if (action === 'editEmployee'){
+      this.showEmployee(event.data);
+    } else if (action === 'deleteEmployee') {
+      this.deleteEmployee(event.data)
+    } 
+  }
+
+  showEmployee(data: IEmployee){
+    // reuse your editFacility logic to populate the form
+    this.editEmployee(data);
+
+    // disable the entire form after patching
+    setTimeout(() => {
+      this.form.disable();
+    });
+    
+    this.readOnlyMode = true; // activate readonly mode
+  }
+
+  editEmployee(employee: IEmployee){
+    this.readOnlyMode = false; // editing mode
+    // Reset the form first
+    this.form.reset();
+
+    // Patch simple (non-array) values
+    this.form.patchValue({
+      organization: employee.organization,
+      organizationCode: employee.organizationCode,
+      code: employee.code,
+      firstname: employee.firstname,
+      lastname: employee.lastname,
+      fathername: employee.fathername,
+      mothername: employee.mothername,
+      identity: employee.identity,
+      birthday: employee.birthday,
+      sex: employee.sex,
+      dateAppointment: employee.dateAppointment,
+      workStatus: employee.workStatus,
+      workCategory: employee.workCategory,
+      workSector: employee.workSector,
+      organizationalUnit: employee.organizationalUnit,
+      organizationalUnitCode: employee.organizationalUnitCode,
+      building: employee.building,
+      office: employee.office,
+      phoneWork: employee.phoneWork,
+      emailWork: employee.emailWork,
+      finalized: employee.finalized || false,
+    });
+
+    // Handle qualifications array
+    const qualificationsFormArray = this.form.get('qualifications') as FormArray;
+    qualificationsFormArray.clear();
+
+    if (employee.qualifications && employee.qualifications.length > 0) {
+      employee.qualifications.forEach((q: any) => {
+        qualificationsFormArray.push(new FormGroup({
+          qualification: new FormControl(q.qualification),
+          qualificationTitle: new FormControl(q.qualificationTitle),
+          qualificationOrganization: new FormControl(q.qualificationOrganization),
+          date: new FormControl(q.date ? q.date.split('T')[0] : ''),
+          file: new FormControl(q.file || null)
+        }));
+      });
+    } else {
+      // If none exist, ensure at least one blank group remains
+      qualificationsFormArray.push(this.createQualification());
+    }
+
+    // Optionally re-enable disabled controls for editing
+    if (this.readOnlyMode){
+      this.form.enable();
+    } else {
+      this.form.disable();
+    }
+  }
+
+  deleteEmployee(data: IEmployee){
+
   }
 
   get qualifications(): FormArray {
@@ -173,6 +265,7 @@ export class EmployeeComponent implements OnInit {
       workCategory: '',
       workSector: '',
       organizationalUnit: '',
+      organizationalUnitCode: '',
       building: '',
       office: '',
       phoneWork: '',

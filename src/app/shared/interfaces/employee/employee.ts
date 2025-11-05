@@ -24,6 +24,7 @@ export interface IEmployee {
   workCategory?: string;
   workSector?: string;
   organizationalUnit?: string;
+  organizationalUnitCode?: string;
   building?: string;
   office?: string;
   phoneWork?: string;

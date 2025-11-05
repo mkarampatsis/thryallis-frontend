@@ -36,7 +36,7 @@ import { take } from 'rxjs';
 })
 export class FacilityComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('kaekFied') kaekFied!: ElementRef<HTMLInputElement>;
+  @ViewChild('kaekField') kaekField!: ElementRef<HTMLInputElement>;
 
   constFacilityService = inject(ConstFacilityService);
   constService = inject(ConstService);
@@ -202,7 +202,7 @@ export class FacilityComponent {
     this.showForm = true;
 
     setTimeout(() => {
-      this.kaekFied?.nativeElement.focus();
+      this.kaekField?.nativeElement.focus();
     });
     
     this.organization = facility.organization
@@ -338,7 +338,7 @@ export class FacilityComponent {
     this.showGrid = true;
 
     setTimeout(() => {
-      this.kaekFied?.nativeElement.focus();
+      this.kaekField?.nativeElement.focus();
     });
   }
 

@@ -90,7 +90,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
       this.notFinalized = data.filter(item => item.finalized === false && item.email === this.user().email);
     })
     this.initializeForm();
-    console.log("user Help>>",this.user());
   }
 
   ngOnDestroy(): void {
@@ -137,8 +136,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log(this.form.controls.taxid? "yes":"no");
-    console.log(this.form.controls.taxid.value);
     const helpQuestion = {
       email: this.form.controls.email? this.form.controls.email.value:"-",
       taxid: this.form.controls.taxid? this.form.controls.taxid.value:"-",
@@ -156,7 +153,6 @@ export class EditorsComponent implements OnInit, OnDestroy {
     } as unknown as IHelpbox;
 
     // const value = this.form.controls.questionSelect.value.split('_');
-    console.log("helpQuestion>>>", helpQuestion);
 
     // if (value[0]==="new"){ 
     if (!this.newQuestion) {
