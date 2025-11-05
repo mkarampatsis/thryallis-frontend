@@ -133,7 +133,7 @@ export class EmployeeComponent implements OnInit {
     if (action === 'showEmployee') {
       this.showEmployee(event.data);
     } else if (action === 'editEmployee'){
-      this.showEmployee(event.data);
+      this.editEmployee(event.data);
     } else if (action === 'deleteEmployee') {
       this.deleteEmployee(event.data)
     } 
@@ -153,8 +153,16 @@ export class EmployeeComponent implements OnInit {
 
   editEmployee(employee: IEmployee){
     this.readOnlyMode = false; // editing mode
+    this.showForm = true;
     // Reset the form first
     this.form.reset();
+   
+    const toDateString = (dateObj: any) => {
+      if (!dateObj) return '';
+      if (typeof dateObj === 'string') return dateObj; // already in ISO form
+      if (dateObj.$date) return new Date(dateObj.$date).toISOString().substring(0, 10);
+      return '';
+    };
 
     // Patch simple (non-array) values
     this.form.patchValue({
@@ -166,9 +174,9 @@ export class EmployeeComponent implements OnInit {
       fathername: employee.fathername,
       mothername: employee.mothername,
       identity: employee.identity,
-      birthday: employee.birthday,
+      birthday: toDateString(employee.birthday),
       sex: employee.sex,
-      dateAppointment: employee.dateAppointment,
+      dateAppointment: toDateString(employee.dateAppointment),
       workStatus: employee.workStatus,
       workCategory: employee.workCategory,
       workSector: employee.workSector,
@@ -191,7 +199,7 @@ export class EmployeeComponent implements OnInit {
           qualification: new FormControl(q.qualification),
           qualificationTitle: new FormControl(q.qualificationTitle),
           qualificationOrganization: new FormControl(q.qualificationOrganization),
-          date: new FormControl(q.date ? q.date.split('T')[0] : ''),
+          date: new FormControl(toDateString(q.date)),
           file: new FormControl(q.file || null)
         }));
       });
@@ -201,11 +209,11 @@ export class EmployeeComponent implements OnInit {
     }
 
     // Optionally re-enable disabled controls for editing
-    if (this.readOnlyMode){
-      this.form.enable();
-    } else {
-      this.form.disable();
-    }
+    this.form.enable();
+    
+    setTimeout(() => {
+      this.firstnameField?.nativeElement.focus();
+    })
   }
 
   deleteEmployee(data: IEmployee){

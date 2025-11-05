@@ -221,7 +221,7 @@
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-outline-primary" (click)="addQualification()">
+        <button *ngIf="!readOnlyMode" type="button" class="btn btn-outline-primary" (click)="addQualification()">
           <i class="bi bi-plus-circle"></i> Προσθήκη Προσόντος
         </button>
       </div>
