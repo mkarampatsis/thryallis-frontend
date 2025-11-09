@@ -47,6 +47,7 @@ export class EmployeeComponent implements OnInit {
   showForm: boolean = false;
   showGrid: boolean = false;
   readOnlyMode: boolean = false;
+  updateMode: boolean = false;
 
   autoSizeStrategy = this.constFacilityService.autoSizeStrategy;
   defaultColDef = this.constFacilityService.defaultColDef;
@@ -58,17 +59,17 @@ export class EmployeeComponent implements OnInit {
   gridApi: GridApi;
 
   form = new FormGroup({
-    organization: new FormControl({ value: '', disabled: true }, Validators.required),
-    organizationCode: new FormControl('', Validators.required),
+    organization: new FormControl({ value: '', disabled: true }),
+    organizationCode: new FormControl(''),
     code: new FormControl({ value: '', disabled: true }),
-    firstname: new FormControl(''),
+    firstname: new FormControl('', Validators.required),
     lastname: new FormControl('', Validators.required),
     fathername: new FormControl('', Validators.required),
     mothername: new FormControl('', Validators.required),
     identity: new FormControl('', Validators.required),
-    birthday: new FormControl(''),
-    sex: new FormControl(''),
-    dateAppointment: new FormControl(''),
+    birthday: new FormControl('', Validators.required),
+    sex: new FormControl('', Validators.required),
+    dateAppointment: new FormControl('', Validators.required),
     workStatus: new FormControl(''),
     workCategory: new FormControl(''),
     workSector: new FormControl(''),
@@ -77,7 +78,7 @@ export class EmployeeComponent implements OnInit {
     building: new FormControl(''),
     office: new FormControl(''),
     phoneWork: new FormControl(''),
-    emailWork: new FormControl('', Validators.email),
+    emailWork: new FormControl('', [Validators.required, Validators.email, Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/)]),
     finalized: new FormControl(false),
     qualifications: new FormArray([this.createQualification()]),
   });
@@ -127,6 +128,7 @@ export class EmployeeComponent implements OnInit {
 
   onCellClicked(event: CellClickedEvent): void {
     this.showForm = false;
+    this.updateMode = false;
     const action = (event.event.target as HTMLElement).getAttribute('data-action');
     if (!action) return;
         
@@ -153,6 +155,7 @@ export class EmployeeComponent implements OnInit {
 
   editEmployee(employee: IEmployee){
     this.readOnlyMode = false; // editing mode
+    this.updateMode = true;
     this.showForm = true;
     // Reset the form first
     this.form.reset();
@@ -217,7 +220,16 @@ export class EmployeeComponent implements OnInit {
   }
 
   deleteEmployee(data: IEmployee){
-
+    const email = data.emailWork
+    this.resourceService.deleteEmployee(email)
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 201) {
+          this.getEmployees(this.organizationCode)
+          this.resetForm();
+        }
+      })
   }
 
   get qualifications(): FormArray {
@@ -235,17 +247,47 @@ export class EmployeeComponent implements OnInit {
   }
 
   onSubmit(): void {
+
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    console.log(invalid)
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     const employeeData = this.form.getRawValue() as unknown as IEmployee;
     if (this.form.valid) {
-      this.resourceService.newEmployee(employeeData)
-        .subscribe(response => {
-          const body = response.body;          
-          const status = response.status;        
-          if (status === 201) {
-            this.getEmployees(this.organizationCode)
-            this.resetForm();
-          }
-        })
+      console.log(employeeData)
+
+      if (!this.updateMode){
+        this.resourceService.newEmployee(employeeData)
+          .subscribe(response => {
+            const body = response.body;          
+            const status = response.status;        
+            if (status === 201) {
+              this.getEmployees(this.organizationCode)
+              this.resetForm();
+            }
+          })
+      } else {
+        console.log("update");
+        this.resourceService.updateEmployee(employeeData)
+          .subscribe(response => {
+            const body = response.body;          
+            const status = response.status;        
+            if (status === 201) {
+              this.getEmployees(this.organizationCode)
+              this.resetForm();
+            }
+          })
+      }
     }
   }
 

@@ -135,7 +135,7 @@ export class ResourcesService {
     return this.http.delete<IEquipment>(url, { observe: 'response' });
   }
 
-  // Employee Requeasts
+  // Employee Requests
   getAllEmployess(): Observable<IEmployee[]> {
     return this.http.get<IEmployee[]>(APIPREFIX_EMPLOYEE);
   }
@@ -152,6 +152,15 @@ export class ResourcesService {
 
   newEmployee(data: IEmployee): Observable<HttpResponse<{ message: string }>> {
     return this.http.post<{ message: string }>(APIPREFIX_EMPLOYEE, data, { observe: 'response' });
+  }
+
+  updateEmployee(data: IEmployee): Observable<HttpResponse<{ message: string }>> {
+    const email = data.emailWork;
+    return this.http.put<{ message: string }>(`${APIPREFIX_EMPLOYEE}/${email}`, data, { observe: 'response' });
+  }
+
+  deleteEmployee(email: string): Observable<HttpResponse<{ message: string }>> {
+    return this.http.delete<{ message: string }>(`${APIPREFIX_EMPLOYEE}/${email}`, { observe: 'response' });
   }
 
   // General Requests

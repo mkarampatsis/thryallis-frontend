@@ -84,37 +84,79 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Όνομα</label>
-          <input type="text" class="form-control" formControlName="firstname" #firstnameField>
+          <input type="text" class="form-control" formControlName="firstname" #firstnameField
+            [ngClass]="{
+              'is-invalid':
+                form.get('firstname')?.invalid &&
+                (form.get('firstname')?.touched || form.get('firstname')?.dirty)
+            }"
+          >
         </div>
         <div class="col-md-4">
           <label class="form-label">Επώνυμο</label>
-          <input type="text" class="form-control" formControlName="lastname">
+          <input type="text" class="form-control" formControlName="lastname"
+            [ngClass]="{
+              'is-invalid':
+                form.get('lastname')?.invalid &&
+                (form.get('lastname')?.touched || form.get('lastname')?.dirty)
+            }"
+          >
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-4">
           <label class="form-label">Πατρώνυμο</label>
-          <input type="text" class="form-control" formControlName="fathername">
+          <input type="text" class="form-control" formControlName="fathername"
+            [ngClass]="{
+              'is-invalid':
+                form.get('fathername')?.invalid &&
+                (form.get('fathername')?.touched || form.get('fathername')?.dirty)
+            }"
+          >
         </div>
         <div class="col-md-4">
           <label class="form-label">Μητρώνυμο</label>
-          <input type="text" class="form-control" formControlName="mothername">
+          <input type="text" class="form-control" formControlName="mothername"
+            [ngClass]="{
+              'is-invalid':
+                form.get('mothername')?.invalid &&
+                (form.get('mothername')?.touched || form.get('mothername')?.dirty)
+            }"
+          >
         </div>
         <div class="col-md-4">
           <label class="form-label">Αριθμός Ταυτότητας/Α.Φ.Μ</label>
-          <input type="text" class="form-control" formControlName="identity">
+          <input type="text" class="form-control" formControlName="identity"
+            [ngClass]="{
+              'is-invalid':
+                form.get('identity')?.invalid &&
+                (form.get('identity')?.touched || form.get('identity')?.dirty)
+            }"
+          >
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-4">
           <label class="form-label">Ημερομηνία Γέννησης</label>
-          <input type="date" class="form-control" formControlName="birthday">
+          <input type="date" class="form-control" formControlName="birthday"
+            [ngClass]="{
+              'is-invalid':
+                form.get('birthday')?.invalid &&
+                (form.get('birthday')?.touched || form.get('birthday')?.dirty)
+            }"
+          >
         </div>
         <div class="col-md-4">
           <label class="form-label">Φύλο</label>
-          <select class="form-select" formControlName="sex">
+          <select class="form-select" formControlName="sex"
+            [ngClass]="{
+              'is-invalid':
+                form.get('sex')?.invalid &&
+                (form.get('sex')?.touched || form.get('sex')?.dirty)
+            }"
+          >
             <option value="Male">Άνδρας</option>
             <option value="Female">Γυναίκα</option>
           </select>
@@ -126,7 +168,13 @@
       <div class="row mb-3">
         <div class="col-md-4">
           <label class="form-label">Ημερομηνία διορισμού</label>
-          <input type="date" class="form-control" formControlName="dateAppointment">
+          <input type="date" class="form-control" formControlName="dateAppointment"
+             [ngClass]="{
+              'is-invalid':
+                form.get('dateAppointment')?.invalid &&
+                (form.get('dateAppointment')?.touched || form.get('dateAppointment')?.dirty)
+            }"
+          >
         </div>
         <div class="col-md-4">
           <label class="form-label">Σχέση Εργασίας</label>
@@ -148,7 +196,13 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Οργανική μονάδα</label>
-          <input type="text" class="form-control" formControlName="organizationalUnit">
+          <input type="text" class="form-control" formControlName="organizationalUnit"
+            [ngClass]="{
+              'is-invalid':
+                form.get('organizationalUnit')?.invalid &&
+                (form.get('organizationalUnit')?.touched || form.get('organizationalUnit')?.dirty)
+            }"
+          >
         </div>
       </div>
       
@@ -170,7 +224,13 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Email Εργασίας</label>
-          <input type="email" class="form-control" formControlName="emailWork">
+          <input type="email" class="form-control" formControlName="emailWork"
+            [ngClass]="{
+              'is-invalid':
+                form.get('organizationalUnit')?.invalid &&
+                (form.get('organizationalUnit')?.touched || form.get('organizationalUnit')?.dirty)
+            }"
+          >
         </div>
       </div>
 
@@ -208,7 +268,13 @@
           <div class="row mt-2">
             <div class="col-md-6">
               <label class="form-label">Ημερομηνία κτήσης του προσόντος</label>
-              <input type="date" class="form-control" formControlName="date">
+              <input type="date" class="form-control" formControlName="date"
+                [ngClass]="{
+                  'is-invalid':
+                    form.get('birthday')?.invalid &&
+                    (form.get('birthday')?.touched || form.get('birthday')?.dirty)
+                }"
+              >
             </div>
             <div class="col-md-5">
               <label class="form-label">Αρχείο</label>
@@ -236,7 +302,6 @@
         *ngIf="!readOnlyMode"
         type="submit" 
         class="btn btn-primary" 
-        [disabled]="form.invalid"
         (click)="onSubmit()">
         Αποθήκευση
       </button>
