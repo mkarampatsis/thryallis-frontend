@@ -226,7 +226,7 @@ export class EmployeeComponent implements OnInit {
         const body = response.body;          
         const status = response.status;        
         if (status === 201) {
-          this.getEmployees(this.organizationCode)
+          this.getEmployees(data.organizationCode);
           this.resetForm();
         }
       })
@@ -255,7 +255,6 @@ export class EmployeeComponent implements OnInit {
         invalid.push(name);
       }
     }
-    console.log(invalid)
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -264,7 +263,6 @@ export class EmployeeComponent implements OnInit {
 
     const employeeData = this.form.getRawValue() as unknown as IEmployee;
     if (this.form.valid) {
-      console.log(employeeData)
 
       if (!this.updateMode){
         this.resourceService.newEmployee(employeeData)
@@ -277,13 +275,12 @@ export class EmployeeComponent implements OnInit {
             }
           })
       } else {
-        console.log("update");
         this.resourceService.updateEmployee(employeeData)
           .subscribe(response => {
             const body = response.body;          
             const status = response.status;        
             if (status === 201) {
-              this.getEmployees(this.organizationCode)
+              this.getEmployees(employeeData.organizationCode)
               this.resetForm();
             }
           })
