@@ -102,6 +102,8 @@ export class EmployeeComponent implements OnInit {
   }
 
   newEmployee(data: IOrganizationList) {
+    // Reset the form first
+    this.form.reset();
     this.organization = data.preferredLabel
     this.organizationCode = data.code
     this.form.controls.organization.setValue(this.organization);

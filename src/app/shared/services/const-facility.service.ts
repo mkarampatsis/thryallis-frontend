@@ -553,6 +553,10 @@ export class ConstFacilityService {
 
   SPACE_EQUIPMENT_COL_DEFS: ColDef[] = [
     { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, filter: false, flex: 0.5 },
+    { field: 'spaces.spaceName', headerName: 'Ονομασία χώρου', flex: 1 },
+    { field: 'spaces.spaceUse.space', headerName: 'Χρήση χώρου', flex: 1 },
+    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή ονομασία ακινήτου', flex: 1 },
+    { field: 'spaces.spaceUse.type', headerName: 'Τύπος χρήσης ακινήτου', flex: 1 },
     { 
       field: 'organizationalUnit', 
       headerName: 'Μονάδα', 
@@ -566,12 +570,7 @@ export class ConstFacilityService {
       // },  
       filter: true,
       flex: 1 
-    },
-    { field: 'spaces.spaceName', headerName: 'Ονομασία χώρου', flex: 1 },
-    { field: 'spaces.spaceUse.space', headerName: 'Χρήση χώρου', flex: 1 },
-    { field: 'distinctiveNameOfFacility', headerName: 'Διακριτή ονομασία ακινήτου', flex: 1 },
-    { field: 'spaces.spaceUse.type', headerName: 'Τύπος χρήσης ακινήτου', flex: 1 },
-   
+    }
   ];
 
   EQUIPMENT_COL_DEFS: ColDef[] = [
