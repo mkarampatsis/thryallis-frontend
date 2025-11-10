@@ -311,8 +311,9 @@ export class SearchFormComponent {
   submitForm() {
     this.rowData = [];
     if (this.form.valid) {
-      // console.log('Form Data1:', this.form.getRawValue()); 
+      console.log('Form Data1:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
+      console.log("rowData", this.rowData)
     } else {
       console.log('Form is invalid');
     }
@@ -343,6 +344,15 @@ export class SearchFormComponent {
         facilityExist = true;
       }
 
+      if (f.distinctiveNameOfFacility) {
+        pushCond("facilities", {
+          field: "distinctiveNameOfFacility",
+          type: f.organizationSearch || "phrase",
+          query: f.distinctiveNameOfFacility.trim()
+        });
+        facilityExist = true;
+      }
+
       if (f.kaek) {
         pushCond("facilities", { field: "kaek", type: "phrase", query: f.kaek });
         facilityExist = true;
@@ -360,6 +370,11 @@ export class SearchFormComponent {
 
       if (f.coveredPremisesArea.from || f.coveredPremisesArea.until) {
         pushCond("facilities", { field: "coveredPremisesArea", query: { gte: f.coveredPremisesArea.from, lte: f.coveredPremisesArea.until } });
+        facilityExist = true;
+      }
+
+      if (f.floorsOrLevels.from || f.floorsOrLevels.until) {
+        pushCond("facilities", { field: "floorsOrLevels", query: { gte: f.floorsOrLevels.from, lte: f.floorsOrLevels.until } });
         facilityExist = true;
       }
 

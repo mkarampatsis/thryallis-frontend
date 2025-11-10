@@ -143,9 +143,9 @@ export class SearchFormComponent {
       .postSearch(searchQuery)
       .pipe(take(1))
       .subscribe((data) => {
-        console.log("Data>>",data)
+        // console.log("Data>>",data)
         const gridData = this.searchService.createGridData(data)
-        console.log("gridData>>",gridData);
+        // console.log("gridData>>",gridData);
         this.rowData = gridData;
         this.loading = false;
       });
@@ -323,7 +323,7 @@ export class SearchFormComponent {
             // }
             if (item.from || item.until) {
 
-              if ("from" in item) {
+              if (item.from && "from" in item) {
                 mustArray.push({
                   field: `${key}`,
                   // type: "date",
@@ -331,7 +331,7 @@ export class SearchFormComponent {
                 });
               }
 
-              if ("until" in item) {
+              if (item.until && "until" in item) {
                 mustArray.push({
                   field: `${key}`,
                   // type: "date",
