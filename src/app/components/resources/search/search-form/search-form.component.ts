@@ -347,7 +347,7 @@ export class SearchFormComponent {
       if (f.distinctiveNameOfFacility) {
         pushCond("facilities", {
           field: "distinctiveNameOfFacility",
-          type: f.organizationSearch || "phrase",
+          type: "phrase",
           query: f.distinctiveNameOfFacility.trim()
         });
         facilityExist = true;
