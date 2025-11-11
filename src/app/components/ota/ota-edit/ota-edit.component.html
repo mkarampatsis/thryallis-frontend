@@ -1,1 +1,104 @@
-<p>ota-edit works!</p>
+<h1 class="govgr-heading-md">Ψηφιοποίηση του Κώδικα των ΟΤΑ</h1>
+
+<form [formGroup]="otaForm" (ngSubmit)="onCreate()" class="container mt-4">
+
+  <div class="mb-3">
+    <label class="form-label">Remit Content</label>
+    <input formControlName="remitContent" type="text" class="form-control" />
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Organization</label>
+      <select formControlName="organization" class="form-select">
+        <option value="">-- Επιλογή --</option>
+        <option *ngFor="let org of organizations" [value]="org.name">{{ org.name }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Organization Code</label>
+      <input formControlName="organizationCode" type="text" class="form-control" />
+    </div>
+  </div>
+
+  <!-- Remit Type Group -->
+  <fieldset formGroupName="remitType" class="border rounded p-3 mb-4">
+    <legend class="float-none w-auto px-2">Remit Type</legend>
+
+    <div class="mb-3">
+      <label class="form-label">Remit Content</label>
+      <input formControlName="remitContent" type="text" class="form-control" />
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Organization Remit Competence</label>
+        <select formControlName="organizationRemitCompetence" class="form-select">
+          <option value="">-- Επιλογή --</option>
+          <option *ngFor="let comp of remitCompetences" [value]="comp">{{ comp }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Remit Type</label>
+        <select formControlName="remitType" class="form-select">
+          <option value="">-- Επιλογή --</option>
+          <option *ngFor="let type of remitTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Legal Provision</label>
+      <input formControlName="legalProvision" type="text" class="form-control" />
+    </div>
+  </fieldset>
+
+  <!-- Legal Provision -->
+  <div class="mb-3">
+    <label class="form-label">Legal Provision</label>
+    <input formControlName="legalProvision" type="text" class="form-control" />
+  </div>
+
+  <!-- Circular Instructions -->
+  <div class="mb-3">
+    <label class="form-label">Circular Instructions</label>
+    <input formControlName="circularInstructions" type="text" class="form-control" />
+  </div>
+
+  <!-- Public Policy Agency -->
+  <fieldset formGroupName="publicPolicyAgency" class="border rounded p-3 mb-4">
+    <legend class="float-none w-auto px-2">Public Policy Agency</legend>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Organization</label>
+        <input formControlName="organization" type="text" class="form-control" />
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Organization Code</label>
+        <input formControlName="organizationCode" type="text" class="form-control" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Organizational Unit</label>
+        <input formControlName="organizationalUnit" type="text" class="form-control" />
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Organizational Unit Code</label>
+        <input formControlName="organizationalUnitCode" type="text" class="form-control" />
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- CRUD Buttons -->
+  <div class="d-flex gap-2">
+    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="button" class="btn btn-warning" (click)="onUpdate()">Update</button>
+    <button type="button" class="btn btn-danger" (click)="onDelete()">Delete</button>
+    <button type="button" class="btn btn-secondary" (click)="onClear()">Clear</button>
+  </div>
+</form>>
