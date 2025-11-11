@@ -55,6 +55,10 @@ export const routes: Routes = [
     loadChildren: () => import('./components/resources/resources.routes').then((m) => m.ResourcesRoutes),
   },
   {
+    path: 'ota',
+    loadChildren: () => import('./components/ota/ota.routes').then((m) => m.OtaRoutes),
+  },
+  {
     path: 'landing',
     loadChildren: () => import('./components/landing/landing.routes').then((m) => m.LandingRoutes),
   },

@@ -56,4 +56,12 @@ export class NavigationComponent {
   hasUserResourcesEditorRole() {
     return this.userService.hasUserResourcesEditorRole()
   }
+
+  hasOtaAdminRole() {
+    return this.userService.hasOtaAdminRole()
+  }
+
+  hasOtaEditorRole() {
+    return this.userService.hasOtaEditorRole()
+  }
 }

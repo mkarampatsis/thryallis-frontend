@@ -129,6 +129,30 @@
                     </li>
 									</ul>
 								</li>
+								<li *ngIf="hasFacilityAdminRole() || hasFacilityEditorRole()" class="dropdown">
+									<a class="dropdown-item dropdown-toggle mt-1" data-bs-toggle="dropdown" role="button"
+										aria-expanded="false">
+										ΟΤΑ
+									</a>
+									<ul class="dropdown-menu">
+										<!-- <li><a class="dropdown-item" href="#">Εμφάνιση Στοιχείων</a></li> -->
+										<li *ngIf="hasOtaAdminRole() || hasOtaEditorRole()">
+                      <a class="dropdown-item"
+                        routerLink="ota/details" 
+                        routerLinkActive="fw-bold">
+                      	Κώδικας ΟΤΑ
+                      </a>
+                    </li>
+										<li>
+                      <a class="dropdown-item" 
+                        routerLink="ota/search" 
+                        routerLinkActive="fw-bold"
+                      >
+                        Αναζήτηση
+                      </a>
+                    </li>
+									</ul>
+								</li>
 							</ul>
 						</div>
 						<!-- } -->

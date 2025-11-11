@@ -164,6 +164,20 @@ export class UserService {
   }
 
 
+  hasOtaAdminRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'OTA_ADMIN' && role.active);
+    }
+    return false;
+  }
+
+  hasOtaEditorRole() {
+    if (this.user()) {
+      return this.user().roles.some((role) => role.role === 'OTA_EDITOR' && role.active);
+    }
+    return false;
+  }
+
   setUserAccesses(email: string, organizationCodes: string[], organizationalUnitCodes: string[]): Observable<{ msg: string }> {
     const url = `${APIPREFIX_USER}/${email}`;
     return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });
