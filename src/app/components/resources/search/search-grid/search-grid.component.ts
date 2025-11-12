@@ -112,8 +112,9 @@ export class SearchGridComponent implements OnChanges {
     .subscribe(response => {
       if (response.status === 200) {
         this.elasticData = response.body
+        console.log("ElasticData", this.elasticData);
         this.elasticData.spaces = this.enrichedSpaces(this.elasticData);
-        console.log(this.elasticData.spaces)
+        // console.log(this.elasticData.spaces)
         this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
         // console.log(this.elasticData); 
       }

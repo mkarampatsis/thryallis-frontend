@@ -1,59 +1,95 @@
 <h1 class="govgr-heading-md">Ψηφιοποίηση του Κώδικα των ΟΤΑ</h1>
 
-<form [formGroup]="otaForm" (ngSubmit)="onCreate()" class="container mt-4">
+<form [formGroup]="form" (ngSubmit)="onCreate()" class="container mt-4">
 
   <div class="mb-3">
-    <label class="form-label">Remit Content</label>
-    <input formControlName="remitContent" type="text" class="form-control" />
+    <label class="form-label">Περιεχόμενο αρμοδιότητας:</label>
+    <div class="NgxEditor__Wrapper">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+        <ngx-editor [editor]="editor" formControlName="remitText"></ngx-editor>
+      </div>
+      @if (form.controls.remitText.touched && form.controls.remitText.invalid) {
+      <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+      }
   </div>
 
   <div class="row">
     <div class="col-md-6 mb-3">
-      <label class="form-label">Organization</label>
-      <select formControlName="organization" class="form-select">
-        <option value="">-- Επιλογή --</option>
-        <option *ngFor="let org of organizations" [value]="org.name">{{ org.name }}</option>
+      <label class="form-label">Φορέας άσκησης αρμοδιότητας:</label>
+      <select formControlName="remitCompetence" class="form-select">
+        <option value="" disabled>-- Επιλογή --</option>
+        @for (name of remitCompetences; track name) {
+          <option [value]="name">{{ name }}</option>
+        }
       </select>
     </div>
 
     <div class="col-md-6 mb-3">
-      <label class="form-label">Organization Code</label>
-      <input formControlName="organizationCode" type="text" class="form-control" />
+      <label class="form-label">Τύπος αρμοδιότητας:</label>
+      <select formControlName="remitType" class="form-select">
+        <option value="" disabled>-- Επιλογή --</option>
+        @for (name of remitTypes; track name) {
+          <option [value]="name">{{ name }}</option>
+        }
+      </select>
     </div>
   </div>
 
-  <!-- Remit Type Group -->
-  <fieldset formGroupName="remitType" class="border rounded p-3 mb-4">
-    <legend class="float-none w-auto px-2">Remit Type</legend>
-
+  <div class="mb-3">
+    <!-- @if (legalProvisions.length === 0) {
+      <button type="button" class="btn btn-primary mb-3"
+        (click)="newLegalProvision()">
+        Προσθήκη Διάταξης
+      </button>
+    }
+    @if (remit && remit.status) {
     <div class="mb-3">
-      <label class="form-label">Remit Content</label>
-      <input formControlName="remitContent" type="text" class="form-control" />
+      <button (click)="initializeRemitTextfromLegalProvisions()" type="button" class="btn btn-info btn-sm me-2">
+        Αρχικοποίηση κειμένου
+      </button>
+      @if (remit.status === "ΕΝΕΡΓΗ") {
+      <button (click)="changeRemitStatus('ΑΝΕΝΕΡΓΗ')" type="button" class="btn btn-danger btn-sm">
+        Απενεργοποίηση Αρμοδιότητας
+      </button>
+      } @else {
+      <button (click)="changeRemitStatus('ΕΝΕΡΓΗ')" type="button" class="btn btn-success btn-sm">
+        Ενεργοποίηση Αρμοδιότητας
+      </button>
+      }
     </div>
+    }
+    @if (!canAddLegalProvision) {
+    <ngb-alert [dismissible]="false" [type]="'info'">
+      Εισάγετε αρχικά διάταξη και στη συνέχεια επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG
+    </ngb-alert>
+    }
+    @if (!legalProvisions.length) {
+    <ngb-alert [dismissible]="false" [type]="'info'">
+      Δεν υπάρχει προς το παρόν κάποια διάταξη
+    </ngb-alert>
+    } @else { -->
+    <div class="mb-3 d-flex flex-column">
+      <label class="form-label d-flex justify-content-between">
+        <span>
+          @if (legalProvisions.length === 1) {
+          Διάταξη
+          } @else {
+          Διατάξεις
+          }
+          Πρόβλεψης Κώδικα:
+        </span>
 
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Organization Remit Competence</label>
-        <select formControlName="organizationRemitCompetence" class="form-select">
-          <option value="">-- Επιλογή --</option>
-          <option *ngFor="let comp of remitCompetences" [value]="comp">{{ comp }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Remit Type</label>
-        <select formControlName="remitType" class="form-select">
-          <option value="">-- Επιλογή --</option>
-          <option *ngFor="let type of remitTypes" [value]="type">{{ type }}</option>
-        </select>
-      </div>
+        <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
+          (click)="newLegalProvision()">
+          Προσθήκη Διάταξης
+        </button>
+      </label>
+      <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
+        [remitID]="ota?._id" [provisionType]="'remit'" [actionColumnVisible]="ota !== null">
+      </app-list-legal-provisions>
     </div>
-
-    <div class="mb-3">
-      <label class="form-label">Legal Provision</label>
-      <input formControlName="legalProvision" type="text" class="form-control" />
-    </div>
-  </fieldset>
+    <!-- } -->
+  </div>
 
   <!-- Legal Provision -->
   <div class="mb-3">

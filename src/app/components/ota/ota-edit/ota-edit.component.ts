@@ -1,15 +1,30 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { ModalService } from 'src/app/shared/services/modal.service';
+import { ListLegalProvisionsComponent } from 'src/app/shared/components/list-legal-provisions/list-legal-provisions.component';
+
+import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
+import { isEqual, uniqWith } from 'lodash-es';
+import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
+import { IOta } from 'src/app/shared/interfaces/ota/ota.interface';
 
 @Component({
   selector: 'app-ota-edit',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgxEditorModule, ListLegalProvisionsComponent],
   templateUrl: './ota-edit.component.html',
   styleUrl: './ota-edit.component.css'
 })
 export class OtaEditComponent{
-  otaForm!: FormGroup;
+  modalService = inject(ModalService);
+
+  editor: Editor = new Editor();
+  toolbar: Toolbar = DEFAULT_TOOLBAR;
+
+  legalProvisions: ILegalProvision[] = [];
+  showInfoText: string = '';
+
+  ota: IOta = null;
 
   organizations = [
     { name: 'Υπουργείο Εσωτερικών', code: 'YPI-001' },
@@ -34,15 +49,16 @@ export class OtaEditComponent{
   ];
 
   form = new FormGroup({
-    remitContent: new FormControl('', Validators.required),
-    organization: new FormControl('', Validators.required),
-    organizationCode: new FormControl('', Validators.required),
-    remitType: new FormGroup({
-      remitContent: new FormControl('', Validators.required),
-      organizationRemitCompetence: new FormControl('', Validators.required),
-      remitType: new FormControl('', Validators.required),
-      legalProvision: new FormControl('', Validators.required)
-    }),
+    remitText: new FormControl('', Validators.required),
+    remitCompetence: new FormControl('', Validators.required),
+    remitType: new FormControl('', Validators.required),
+    legalProvisions: new FormControl([], Validators.required),
+    // remitType: new FormGroup({
+    //   remitContent: new FormControl('', Validators.required),
+    //   organizationRemitCompetence: new FormControl('', Validators.required),
+    //   remitType: new FormControl('', Validators.required),
+    //   legalProvision: new FormControl('', Validators.required)
+    // }),
     legalProvision: new FormControl('', Validators.required),
     circularInstructions: new FormControl('', Validators.required),
     publicPolicyAgency: new FormGroup({
@@ -55,13 +71,13 @@ export class OtaEditComponent{
 
   // CRUD Methods
   onCreate() {
-    if (this.otaForm.valid) {
-      console.log('Create:', this.otaForm.getRawValue());
+    if (this.form.valid) {
+      console.log('Create:', this.form.getRawValue());
     }
   }
 
   onUpdate() {
-    console.log('Update:', this.otaForm.getRawValue());
+    console.log('Update:', this.form.getRawValue());
   }
 
   onDelete() {
@@ -69,6 +85,38 @@ export class OtaEditComponent{
   }
 
   onClear() {
-    this.otaForm.reset();
+    this.form.reset();
+  }
+
+  get canAddLegalProvision() {
+    return (
+      this.form.get('remitCompetence').value &&
+      this.form.get('remitType').value 
+    );
+  }
+  
+  newLegalProvision(): void {
+    this.modalService.newLegalProvision().subscribe((data) => {
+      if (data) {
+        const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.legalProvisions];
+        this.legalProvisions = uniqWith(tempLegalProvision, (a, b) => {
+          return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
+        });
+        this.form.get('legalProvisions').setValue(this.legalProvisions);
+        this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
+      }
+    });
+  }
+
+  updateRemitTextWithNewProvision(newText: string) {
+    const remitText = this.form.get('remitText').value;
+
+    if (!(this.legalProvisions.length === 1 && ('isNew' in this.legalProvisions[0]))) {
+      this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την εισαγωγή της τελευταίας διάταξης που έχετε εισάγει</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας όπως <strong>ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
+    }
+    // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
+    const updatedtext = `${newText}${remitText}`;
+
+    this.form.get('remitText').setValue(updatedtext);
   }
 }

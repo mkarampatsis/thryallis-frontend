@@ -170,7 +170,6 @@ export class SearchFormComponent {
   }
 
   updateUseOfFacilityData() {
-    console.log(">>",this.useOfFacilityArray.value);
     this.useOfFacilityForSpace = this.useOfFacilityArray.value;
   }
 
@@ -313,7 +312,7 @@ export class SearchFormComponent {
     if (this.form.valid) {
       console.log('Form Data1:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
-      console.log("rowData", this.rowData)
+      console.log("transformData", this.rowData)
     } else {
       console.log('Form is invalid');
     }
