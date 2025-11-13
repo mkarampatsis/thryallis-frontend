@@ -12,7 +12,7 @@ import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { SearchService } from 'src/app/shared/services/search.service';
-import { Observable, Subscription, take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { selectRemits$, selectRemitsLoading$ } from 'src/app/shared/state/remits.state';
 import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/state/organizational-units.state';
 import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
@@ -202,7 +202,7 @@ export class MatrixComponent {
       this.showError2 = false;
     } else {
       this.showTable2 = false;
-      this.showError3 = true;
+      this.showError2 = true;
     }
 
   }

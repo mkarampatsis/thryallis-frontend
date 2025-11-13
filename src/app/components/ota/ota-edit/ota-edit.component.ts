@@ -5,18 +5,31 @@ import { ListLegalProvisionsComponent } from 'src/app/shared/components/list-leg
 import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 import { isEqual, uniqWith } from 'lodash-es';
+import { Subscription } from 'rxjs';
 import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
 import { IOta } from 'src/app/shared/interfaces/ota/ota.interface';
+
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
+import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
+import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
+import { IOrganizationList } from 'src/app/shared/interfaces/organization';
+import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
+
+import { AppState } from 'src/app/shared/state/app.state';
+import { Store } from '@ngrx/store';
+import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
 
 @Component({
   selector: 'app-ota-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, NgxEditorModule, ListLegalProvisionsComponent],
+  imports: [ReactiveFormsModule, NgxEditorModule, ListLegalProvisionsComponent, AgGridAngular],
   templateUrl: './ota-edit.component.html',
   styleUrl: './ota-edit.component.css'
 })
 export class OtaEditComponent{
   modalService = inject(ModalService);
+  constOtaService = inject(ConstOtaService);
 
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
@@ -25,6 +38,26 @@ export class OtaEditComponent{
   showInfoText: string = '';
 
   ota: IOta = null;
+  monades: IOrganizationUnitList[] = [];
+
+  gridSelectedData = [];
+  gridData = [];
+
+  subscriptions: Subscription[] = [];
+  store = inject(Store<AppState>);
+  organizational_units$ = selectOrganizationalUnits$
+  organizationUnitCodesMap = this.constOtaService.ORGANIZATION_UNIT_CODES_MAP;
+  organizationUnitTypesMap = this.constOtaService.ORGANIZATION_UNIT_TYPES_MAP;
+  organizationCodesMap = this.constOtaService.ORGANIZATION_CODES_MAP;
+
+  defaultColDef = this.constOtaService.defaultColDef;
+  colDefs: ColDef[] = this.constOtaService.ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES
+  autoSizeStrategy = this.constOtaService.autoSizeStrategy;
+
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
+
+  gridApiOrganizationalUnit: GridApi<IOrganizationList>;
 
   organizations = [
     { name: 'Υπουργείο Εσωτερικών', code: 'YPI-001' },
@@ -53,14 +86,7 @@ export class OtaEditComponent{
     remitCompetence: new FormControl('', Validators.required),
     remitType: new FormControl('', Validators.required),
     legalProvisions: new FormControl([], Validators.required),
-    // remitType: new FormGroup({
-    //   remitContent: new FormControl('', Validators.required),
-    //   organizationRemitCompetence: new FormControl('', Validators.required),
-    //   remitType: new FormControl('', Validators.required),
-    //   legalProvision: new FormControl('', Validators.required)
-    // }),
-    legalProvision: new FormControl('', Validators.required),
-    circularInstructions: new FormControl('', Validators.required),
+    instructionProvisions: new FormControl([], Validators.required),
     publicPolicyAgency: new FormGroup({
       organization: new FormControl('', Validators.required),
       organizationCode: new FormControl('', Validators.required),
@@ -118,5 +144,50 @@ export class OtaEditComponent{
     const updatedtext = `${newText}${remitText}`;
 
     this.form.get('remitText').setValue(updatedtext);
+  }
+
+  //  Grid Conf
+  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
+    this.gridApiOrganizationalUnit = params.api;
+    this.gridApiOrganizationalUnit.showLoadingOverlay();
+    this.subscriptions.push(
+      this.store.select(this.organizational_units$).subscribe((data) => {
+        this.monades = data.map((org) => {
+          return {
+            ...org,
+            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
+            organization: this.organizationCodesMap.get(org.organizationCode),
+            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
+          };
+        });
+        this.gridApiOrganizationalUnit.hideOverlay();
+      }),
+    )
+  }
+
+  onRowSelected(event: any) {
+    const selectedNodes = event.api.getSelectedNodes();
+
+    // Log selected rows to the console
+    this.gridSelectedData = selectedNodes.map(node => node.data);
+  }
+
+  showData(code: string, unitType: string) {
+    const result = this.gridData.filter((data) => {
+      if (code === data.organizationCode && data.description === unitType)
+        return data
+    })
+
+    if (result.length > 0)
+      return result[0]['count']
+    else
+      return '-'
+  }
+
+  clearSelection() {
+    if (this.gridApiOrganizationalUnit) {
+      this.gridApiOrganizationalUnit.deselectAll(); // Clear all selected rows
+      this.gridApiOrganizationalUnit.setFilterModel(null);
+    }
   }
 }

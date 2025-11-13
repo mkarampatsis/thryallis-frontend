@@ -22,7 +22,7 @@ export class ListLegalProvisionsComponent implements OnChanges {
   @Output() legalProvisionsChange = new EventEmitter<ILegalProvision[]>();
   @Input() code: string = null;
   @Input() remitID: string = null;
-  @Input() provisionType: 'organization' | 'organizationalUnit' | 'remit' | 'ota' = null;
+  @Input() provisionType: 'organization' | 'organizationalUnit' | 'remit' | 'ota' | 'ota_instructions' = null;
   @Input() actionColumnVisible = false;
   modalService = inject(ModalService);
   legalProvisionService = inject(LegalProvisionService);

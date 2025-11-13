@@ -85,51 +85,102 @@
         </button>
       </label>
       <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
-        [remitID]="ota?._id" [provisionType]="'remit'" [actionColumnVisible]="ota !== null">
+        [remitID]="ota?._id" [provisionType]="'ota'" [actionColumnVisible]="ota !== null">
       </app-list-legal-provisions>
     </div>
     <!-- } -->
   </div>
 
-  <!-- Legal Provision -->
   <div class="mb-3">
-    <label class="form-label">Legal Provision</label>
-    <input formControlName="legalProvision" type="text" class="form-control" />
+    <!-- @if (legalProvisions.length === 0) {
+      <button type="button" class="btn btn-primary mb-3"
+        (click)="newLegalProvision()">
+        Προσθήκη Διάταξης
+      </button>
+    }
+    @if (remit && remit.status) {
+    <div class="mb-3">
+      <button (click)="initializeRemitTextfromLegalProvisions()" type="button" class="btn btn-info btn-sm me-2">
+        Αρχικοποίηση κειμένου
+      </button>
+      @if (remit.status === "ΕΝΕΡΓΗ") {
+      <button (click)="changeRemitStatus('ΑΝΕΝΕΡΓΗ')" type="button" class="btn btn-danger btn-sm">
+        Απενεργοποίηση Αρμοδιότητας
+      </button>
+      } @else {
+      <button (click)="changeRemitStatus('ΕΝΕΡΓΗ')" type="button" class="btn btn-success btn-sm">
+        Ενεργοποίηση Αρμοδιότητας
+      </button>
+      }
+    </div>
+    }
+    @if (!canAddLegalProvision) {
+    <ngb-alert [dismissible]="false" [type]="'info'">
+      Εισάγετε αρχικά διάταξη και στη συνέχεια επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG
+    </ngb-alert>
+    }
+    @if (!legalProvisions.length) {
+    <ngb-alert [dismissible]="false" [type]="'info'">
+      Δεν υπάρχει προς το παρόν κάποια διάταξη
+    </ngb-alert>
+    } @else { -->
+    <div class="mb-3 d-flex flex-column">
+      <label class="form-label d-flex justify-content-between">
+        <span>
+          @if (legalProvisions.length === 1) {
+          Εγκύκλια
+          } @else {
+          Εγκύκλιες
+          }
+          Οδηγίες:
+        </span>
+
+        <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
+          (click)="newLegalProvision()">
+          Προσθήκη Εγκύκλιας Οδηγίας
+        </button>
+      </label>
+      <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
+        [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
+      </app-list-legal-provisions>
+    </div>
+    <!-- } -->
   </div>
 
-  <!-- Circular Instructions -->
+  
   <div class="mb-3">
-    <label class="form-label">Circular Instructions</label>
-    <input formControlName="circularInstructions" type="text" class="form-control" />
+    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Φορέας Δημόσιας Πολιτικής</h1>
+
+    <ul>
+        @for (unit of gridData; track unit ){
+            <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+        }
+    </ul>
+
+    <div class="d-flex justify-content-between small">
+        <div>
+            <span>Eπιλέξτε τους φορείς/μονάδες που επιθυμείτε να συγκρίνετε</span>
+        </div>
+        <div>
+            <a (click)="clearSelection()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+        </div>
+    </div>
+
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="monades"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="10"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        rowSelection="multiple"
+        (rowSelected)="onRowSelected($event)"
+        (gridReady)="onGridReady($event)"
+        class="ag-theme-balham">
+    </ag-grid-angular>
   </div>
-
-  <!-- Public Policy Agency -->
-  <fieldset formGroupName="publicPolicyAgency" class="border rounded p-3 mb-4">
-    <legend class="float-none w-auto px-2">Public Policy Agency</legend>
-
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Organization</label>
-        <input formControlName="organization" type="text" class="form-control" />
-      </div>
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Organization Code</label>
-        <input formControlName="organizationCode" type="text" class="form-control" />
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Organizational Unit</label>
-        <input formControlName="organizationalUnit" type="text" class="form-control" />
-      </div>
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Organizational Unit Code</label>
-        <input formControlName="organizationalUnitCode" type="text" class="form-control" />
-      </div>
-    </div>
-  </fieldset>
-
   <!-- CRUD Buttons -->
   <div class="d-flex gap-2">
     <button type="submit" class="btn btn-primary">Create</button>

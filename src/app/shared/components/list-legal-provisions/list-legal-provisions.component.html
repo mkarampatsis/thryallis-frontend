@@ -1,5 +1,9 @@
 @if (legalProvisions.length === 0) {
-    <div class="alert alert-info">Δεν υπάρχουν προς το παρόν διατάξεις πρόβλεψης</div>
+    @if (provisionType==='ota_instructions'){
+      <div class="alert alert-info">Δεν υπάρχουν προς το παρόν εγκύκλιες οδηγίες</div>
+    } @else {
+      <div class="alert alert-info">Δεν υπάρχουν προς το παρόν διατάξεις πρόβλεψης </div>
+    }
 } @else {
     <table class="table table-bordered small">
         <thead>
