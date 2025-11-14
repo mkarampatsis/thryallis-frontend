@@ -19,6 +19,7 @@ import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-un
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
 import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-ota-edit',
@@ -30,11 +31,13 @@ import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational
 export class OtaEditComponent{
   modalService = inject(ModalService);
   constOtaService = inject(ConstOtaService);
+  sanitizer = inject(DomSanitizer);
 
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
 
   legalProvisions: ILegalProvision[] = [];
+  instructionProvisions: ILegalProvision[] = [];
   showInfoText: string = '';
 
   ota: IOta = null;
@@ -57,7 +60,7 @@ export class OtaEditComponent{
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
 
-  gridApiOrganizationalUnit: GridApi<IOrganizationList>;
+  gridApi: GridApi<IOrganizationList>;
 
   organizations = [
     { name: 'Υπουργείο Εσωτερικών', code: 'YPI-001' },
@@ -134,10 +137,23 @@ export class OtaEditComponent{
     });
   }
 
+   newInstructionProvision(): void {
+    this.modalService.newLegalProvision().subscribe((data) => {
+      if (data) {
+        const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.instructionProvisions];
+        this.instructionProvisions = uniqWith(tempLegalProvision, (a, b) => {
+          return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
+        });
+        this.form.get('instructionProvisions').setValue(this.instructionProvisions);
+        this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
+      }
+    });
+  }
+
   updateRemitTextWithNewProvision(newText: string) {
     const remitText = this.form.get('remitText').value;
 
-    if (!(this.legalProvisions.length === 1 && ('isNew' in this.legalProvisions[0]))) {
+    if (!(this.instructionProvisions.length === 1 && ('isNew' in this.instructionProvisions[0])) || !(this.legalProvisions.length === 1 && ('isNew' in this.legalProvisions[0])) ) {
       this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την εισαγωγή της τελευταίας διάταξης που έχετε εισάγει</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας όπως <strong>ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
     }
     // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
@@ -148,8 +164,8 @@ export class OtaEditComponent{
 
   //  Grid Conf
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
-    this.gridApiOrganizationalUnit = params.api;
-    this.gridApiOrganizationalUnit.showLoadingOverlay();
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
     this.subscriptions.push(
       this.store.select(this.organizational_units$).subscribe((data) => {
         this.monades = data.map((org) => {
@@ -160,7 +176,7 @@ export class OtaEditComponent{
             subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
           };
         });
-        this.gridApiOrganizationalUnit.hideOverlay();
+        this.gridApi.hideOverlay();
       }),
     )
   }
@@ -170,6 +186,7 @@ export class OtaEditComponent{
 
     // Log selected rows to the console
     this.gridSelectedData = selectedNodes.map(node => node.data);
+    console.log(this.gridSelectedData)
   }
 
   showData(code: string, unitType: string) {
@@ -185,9 +202,17 @@ export class OtaEditComponent{
   }
 
   clearSelection() {
-    if (this.gridApiOrganizationalUnit) {
-      this.gridApiOrganizationalUnit.deselectAll(); // Clear all selected rows
-      this.gridApiOrganizationalUnit.setFilterModel(null);
+    if (this.gridApi) {
+      this.gridApi.deselectAll(); // Clear all selected rows
+      this.gridApi.setFilterModel(null);
+    }
+  }
+
+  sanitizeHtml(html): SafeHtml {
+    if (html) {
+      return this.sanitizer.bypassSecurityTrustHtml(html);
+    } else {
+      return ""
     }
   }
 }
