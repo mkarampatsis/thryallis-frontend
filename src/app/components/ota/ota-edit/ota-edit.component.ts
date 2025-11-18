@@ -100,9 +100,17 @@ export class OtaEditComponent{
 
   // CRUD Methods
   onCreate() {
-    if (this.form.valid) {
+    // if (this.form.valid) {
       console.log('Create:', this.form.getRawValue());
-    }
+      this.modalService.getUserConsent("sssss")
+        .subscribe(result => {
+          if (result) {
+            console.log("yes")
+          } else {
+            console.log("no")
+          }
+        })
+    // }
   }
 
   onUpdate() {
