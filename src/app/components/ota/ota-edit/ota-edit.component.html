@@ -89,9 +89,9 @@
           Προσθήκη Διάταξης
         </button>
       </label>
-      <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
+      <!-- <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
         [remitID]="ota?._id" [provisionType]="'ota'" [actionColumnVisible]="ota !== null">
-      </app-list-legal-provisions>
+      </app-list-legal-provisions> -->
     </div>
     <!-- } -->
   </div>
@@ -145,15 +145,15 @@
           Προσθήκη Εγκύκλιας Οδηγίας
         </button>
       </label>
-      <app-list-legal-provisions [legalProvisions]="instructionProvisions" [code]=""
+      <!-- <app-list-legal-provisions [legalProvisions]="instructionProvisions" [code]=""
         [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
-      </app-list-legal-provisions>
+      </app-list-legal-provisions> -->
     </div>
     <!-- } -->
   </div>
 
   
-  <div class="mb-3">
+  <!-- <div class="mb-3">
     <label class="form-label d-flex justify-content-between">Φορέας Δημόσιας Πολιτικής</label>
 
     <ul>
@@ -185,7 +185,7 @@
       (gridReady)="onGridReady($event)"
       class="ag-theme-balham">
     </ag-grid-angular>
-  </div>
+  </div> -->
   <!-- CRUD Buttons -->
   <div class="d-flex gap-2">
     <button type="submit" class="btn btn-primary">Create</button>

@@ -113,10 +113,14 @@ export class SearchGridComponent implements OnChanges {
       if (response.status === 200) {
         this.elasticData = response.body
         console.log("ElasticData", this.elasticData);
-        this.elasticData.spaces = this.enrichedSpaces(this.elasticData);
-        // console.log(this.elasticData.spaces)
-        this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
-        // console.log(this.elasticData); 
+        if (this.elasticData.spaces) {
+          this.elasticData.spaces = this.enrichedSpaces(this.elasticData);
+          // console.log(this.elasticData.spaces)
+        }
+        if (this.elasticData.equipment) {
+          this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
+          // console.log(this.elasticData);
+        } 
       }
       this.loading = false;
     });
@@ -181,10 +185,11 @@ export class SearchGridComponent implements OnChanges {
 
   enrichedEquipments(data: IElasticResources): IEquipmentElastic[]{ 
     return data.equipment.map(eq => {
+      console.log(eq);
       const relatedSpaces = eq.spaceWithinFacility
         .map(spaceId => data.spaces.find(sp => sp.object_id === spaceId))
         .filter(Boolean); 
-
+      console.log(relatedSpaces);
       return {
         ...eq,
         spaces: relatedSpaces.map(sp => ({

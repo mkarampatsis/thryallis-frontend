@@ -15,7 +15,7 @@
         }
     </div>
 
-    @if (elasticData.facilities.length){
+    @if (elasticData.facilities && elasticData.facilities.length){
       <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Ακινήτων</h1>
       <ag-grid-angular
           [domLayout]="'autoHeight'"
@@ -32,7 +32,7 @@
       </ag-grid-angular>
     }
 
-    @if (elasticData.spaces.length) {
+    @if (elasticData.spaces && elasticData.spaces.length) {
       <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Χώρων Ακινήτων</h1>
       <ag-grid-angular
           [domLayout]="'autoHeight'"
@@ -49,7 +49,7 @@
       </ag-grid-angular>
     }
 
-    @if (elasticData.equipment.length) {
+    @if (elasticData.equipment && elasticData.equipment.length) {
       <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Στοιχεία Πόρων</h1>
       <ag-grid-angular
           [domLayout]="'autoHeight'"

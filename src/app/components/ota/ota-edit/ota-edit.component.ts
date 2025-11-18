@@ -8,59 +8,27 @@ import { isEqual, uniqWith } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
 import { IOta } from 'src/app/shared/interfaces/ota/ota.interface';
-
-import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
-import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
-import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
-import { IOrganizationList } from 'src/app/shared/interfaces/organization';
-import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
-
-import { AppState } from 'src/app/shared/state/app.state';
-import { Store } from '@ngrx/store';
-import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 
 @Component({
   selector: 'app-ota-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, NgxEditorModule, ListLegalProvisionsComponent, AgGridAngular],
+  imports: [ReactiveFormsModule, NgxEditorModule],
   templateUrl: './ota-edit.component.html',
   styleUrl: './ota-edit.component.css'
 })
 export class OtaEditComponent{
   modalService = inject(ModalService);
-  constOtaService = inject(ConstOtaService);
-  sanitizer = inject(DomSanitizer);
-
+  
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
+  sanitizer = inject(DomSanitizer);
 
   legalProvisions: ILegalProvision[] = [];
   instructionProvisions: ILegalProvision[] = [];
   showInfoText: string = '';
 
   ota: IOta = null;
-  monades: IOrganizationUnitList[] = [];
-
-  gridSelectedData = [];
-  gridData = [];
-
-  subscriptions: Subscription[] = [];
-  store = inject(Store<AppState>);
-  organizational_units$ = selectOrganizationalUnits$
-  organizationUnitCodesMap = this.constOtaService.ORGANIZATION_UNIT_CODES_MAP;
-  organizationUnitTypesMap = this.constOtaService.ORGANIZATION_UNIT_TYPES_MAP;
-  organizationCodesMap = this.constOtaService.ORGANIZATION_CODES_MAP;
-
-  defaultColDef = this.constOtaService.defaultColDef;
-  colDefs: ColDef[] = this.constOtaService.ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES
-  autoSizeStrategy = this.constOtaService.autoSizeStrategy;
-
-  loadingOverlayComponent = GridLoadingOverlayComponent;
-  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
-
-  gridApi: GridApi<IOrganizationList>;
 
   organizations = [
     { name: 'Υπουργείο Εσωτερικών', code: 'YPI-001' },
@@ -100,9 +68,17 @@ export class OtaEditComponent{
 
   // CRUD Methods
   onCreate() {
-    if (this.form.valid) {
-      console.log('Create:', this.form.getRawValue());
-    }
+    // if (this.form.valid) {
+    console.log('Create:', this.form.getRawValue());
+    this.modalService.getUserConsent("sssss")
+      .subscribe(result => {
+        if (result) {
+          console.log("yes")
+        } else {
+          console.log("no")
+        }
+      })
+  // }
   }
 
   onUpdate() {
@@ -125,29 +101,29 @@ export class OtaEditComponent{
   }
   
   newLegalProvision(): void {
-    this.modalService.newLegalProvision().subscribe((data) => {
-      if (data) {
-        const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.legalProvisions];
-        this.legalProvisions = uniqWith(tempLegalProvision, (a, b) => {
-          return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
-        });
-        this.form.get('legalProvisions').setValue(this.legalProvisions);
-        this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
-      }
-    });
+    // this.modalService.newLegalProvision().subscribe((data) => {
+    //   if (data) {
+    //     const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.legalProvisions];
+    //     this.legalProvisions = uniqWith(tempLegalProvision, (a, b) => {
+    //       return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
+    //     });
+    //     this.form.get('legalProvisions').setValue(this.legalProvisions);
+    //     this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
+    //   }
+    // });
   }
 
    newInstructionProvision(): void {
-    this.modalService.newLegalProvision().subscribe((data) => {
-      if (data) {
-        const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.instructionProvisions];
-        this.instructionProvisions = uniqWith(tempLegalProvision, (a, b) => {
-          return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
-        });
-        this.form.get('instructionProvisions').setValue(this.instructionProvisions);
-        this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
-      }
-    });
+    // this.modalService.newLegalProvision().subscribe((data) => {
+    //   if (data) {
+    //     const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.instructionProvisions];
+    //     this.instructionProvisions = uniqWith(tempLegalProvision, (a, b) => {
+    //       return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
+    //     });
+    //     this.form.get('instructionProvisions').setValue(this.instructionProvisions);
+    //     this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
+    //   }
+    // });
   }
 
   updateRemitTextWithNewProvision(newText: string) {
@@ -160,52 +136,6 @@ export class OtaEditComponent{
     const updatedtext = `${newText}${remitText}`;
 
     this.form.get('remitText').setValue(updatedtext);
-  }
-
-  //  Grid Conf
-  onGridReady(params: GridReadyEvent<IOrganizationList>): void {
-    this.gridApi = params.api;
-    this.gridApi.showLoadingOverlay();
-    this.subscriptions.push(
-      this.store.select(this.organizational_units$).subscribe((data) => {
-        this.monades = data.map((org) => {
-          return {
-            ...org,
-            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
-            organization: this.organizationCodesMap.get(org.organizationCode),
-            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
-          };
-        });
-        this.gridApi.hideOverlay();
-      }),
-    )
-  }
-
-  onRowSelected(event: any) {
-    const selectedNodes = event.api.getSelectedNodes();
-
-    // Log selected rows to the console
-    this.gridSelectedData = selectedNodes.map(node => node.data);
-    console.log(this.gridSelectedData)
-  }
-
-  showData(code: string, unitType: string) {
-    const result = this.gridData.filter((data) => {
-      if (code === data.organizationCode && data.description === unitType)
-        return data
-    })
-
-    if (result.length > 0)
-      return result[0]['count']
-    else
-      return '-'
-  }
-
-  clearSelection() {
-    if (this.gridApi) {
-      this.gridApi.deselectAll(); // Clear all selected rows
-      this.gridApi.setFilterModel(null);
-    }
   }
 
   sanitizeHtml(html): SafeHtml {
