@@ -112,14 +112,7 @@ export class SearchFormComponent {
         organization: new FormControl(''),
         organizationSearch: new FormControl('words'),
         spaceName: new FormControl(''),
-        spaceUse: new FormArray([
-          new FormGroup({
-            type: new FormControl(''),
-            subtype: new FormControl(''),
-            space: new FormControl(''),
-            auxiliarySpace: new FormControl(false)
-          }),
-        ]),
+        spaceUse: new FormArray([]),
         spaceArea: new FormGroup({
           from: new FormControl('', [Validators.pattern(/^\d+(\.\d+)?$/)]),
           until: new FormControl('', [Validators.pattern(/^\d+(\.\d+)?$/)]),

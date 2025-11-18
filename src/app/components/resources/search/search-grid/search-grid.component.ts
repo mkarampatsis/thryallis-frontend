@@ -50,8 +50,21 @@ export class SearchGridComponent implements OnChanges {
     { field: 'distinctiveNameOfFacility', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'spaceName', headerName: 'Χώρος', flex: 1 },
     { 
-      field: 'spaceUse.type', 
-      headerName: 'Χρήση',
+      field: 'spaceUse', 
+      headerName: 'Τρόπος Χρήσης',
+      valueGetter: (params) => {
+        if (!params.data.spaceUse) return '';
+        return params.data.spaceUse.split(',')[0];
+      }, 
+      flex: 2 
+    },
+    { 
+      field: 'spaceUse', 
+      headerName: 'Κατηγορία Xρήσης',
+      valueGetter: (params) => {
+        if (!params.data.spaceUse) return '';
+        return params.data.spaceUse.split(',')[1];
+      }, 
       flex: 2 
     },
     { field: 'spaceArea', headerName: 'Εμβαδόν', flex: .5 },
@@ -121,7 +134,10 @@ export class SearchGridComponent implements OnChanges {
           this.elasticData.equipment = this.enrichedEquipments(this.elasticData);
           // console.log(this.elasticData);
         } 
+      } else {
+        console.log("ERROOOOOOOOR")
       }
+
       this.loading = false;
     });
   }
@@ -158,7 +174,6 @@ export class SearchGridComponent implements OnChanges {
   }
 
   onCellEquipmentClicked(event: CellClickedEvent): void  {
-    console.log(event.data)
     const code = event.data['object_id'];
     this.modalService.showResourcesEquipemntDetails(code);
     // if (event.colDef.field=="preferredLabel") {
@@ -185,11 +200,16 @@ export class SearchGridComponent implements OnChanges {
 
   enrichedEquipments(data: IElasticResources): IEquipmentElastic[]{ 
     return data.equipment.map(eq => {
-      console.log(eq);
-      const relatedSpaces = eq.spaceWithinFacility
+
+      const spaceIds = Array.isArray(eq.spaceWithinFacility)
+        ? eq.spaceWithinFacility
+        : eq.spaceWithinFacility
+          ? [eq.spaceWithinFacility]
+          : [];
+
+      const relatedSpaces = spaceIds
         .map(spaceId => data.spaces.find(sp => sp.object_id === spaceId))
         .filter(Boolean); 
-      console.log(relatedSpaces);
       return {
         ...eq,
         spaces: relatedSpaces.map(sp => ({
@@ -200,6 +220,4 @@ export class SearchGridComponent implements OnChanges {
       }
     });
   }
-
-
 }
