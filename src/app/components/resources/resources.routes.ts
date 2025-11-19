@@ -6,6 +6,7 @@ import { EmployeeComponent } from './employee/employee.component';
 import { EquipmentAdminComponent } from './equipment-admin/equipment-admin.component';
 import { FacilityAdminComponent } from './facility-admin/facility-admin.component';
 import { SearchComponent } from './search/search.component';
+import { EmployeeAdminComponent } from './employee-admin/employee-admin.component';
 
 export const ResourcesRoutes: Route[] = [
   {
@@ -27,6 +28,10 @@ export const ResourcesRoutes: Route[] = [
   {
     path: 'facility-admin',
     component: FacilityAdminComponent,
+  },
+  {
+    path: 'employee-admin',
+    component: EmployeeAdminComponent,
   },
   {
     path:'search',

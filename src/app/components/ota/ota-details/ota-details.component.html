@@ -1,0 +1,22 @@
+<h1 class="govgr-heading-md">Ψηφιοποίηση του Κώδικα των ΟΤΑ</h1>
+
+<div class="d-flex justify-content-between mb-2">
+  <span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του ΟΤΑ με διπλό κλικ</span>
+  <button class="btn btn-primary btn-sm" (click)="modalService.otaEdit(null, true)">
+    Νέα Εγγραφή
+  </button>
+</div>
+  
+<ag-grid-angular
+  [domLayout]="'autoHeight'"
+  [rowData]="otaDetails"
+  [defaultColDef]="defaultColDef"
+  [columnDefs]="colDefs"
+  [pagination]="true"
+  [paginationPageSize]="10"
+  [loadingOverlayComponent]="loadingOverlayComponent"
+  [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+  (rowDoubleClicked)="onRowSelected($event)"
+  (gridReady)="onGridReady($event)"
+  class="ag-theme-balham">
+</ag-grid-angular>

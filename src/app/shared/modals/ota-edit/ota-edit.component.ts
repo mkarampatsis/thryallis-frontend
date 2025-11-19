@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { ModalService } from 'src/app/shared/services/modal.service';
+import { ModalService } from '../../services/modal.service';
+
 import { ListLegalProvisionsComponent } from 'src/app/shared/components/list-legal-provisions/list-legal-provisions.component';
 
 import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -13,13 +14,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 @Component({
   selector: 'app-ota-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, NgxEditorModule],
+  imports: [ReactiveFormsModule, NgxEditorModule, ListLegalProvisionsComponent],
   templateUrl: './ota-edit.component.html',
   styleUrl: './ota-edit.component.css'
 })
-export class OtaEditComponent{
+export class OtaEditComponent {
   modalService = inject(ModalService);
-  
+
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
   sanitizer = inject(DomSanitizer);
@@ -27,6 +28,10 @@ export class OtaEditComponent{
   legalProvisions: ILegalProvision[] = [];
   instructionProvisions: ILegalProvision[] = [];
   showInfoText: string = '';
+
+  data: IOta = null;
+  readOnly: boolean = false;
+  modalRef: any;
 
   ota: IOta = null;
 
@@ -79,14 +84,6 @@ export class OtaEditComponent{
         }
       })
   // }
-  }
-
-  onUpdate() {
-    console.log('Update:', this.form.getRawValue());
-  }
-
-  onDelete() {
-    console.log('Delete current entry');
   }
 
   onClear() {

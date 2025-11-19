@@ -116,6 +116,13 @@
                         Διαχείριση Ειδών Ακινήτων
                       </a>
                     </li>
+                    <li *ngIf="hasUserResourcesAdminRole()">
+                      <a class="dropdown-item"
+                        routerLink="resources/employee-admin" 
+                        routerLinkActive="fw-bold">
+                        Διαχείριση Kλάδων Προσωπικού
+                      </a>
+                    </li>
 										<li>
 											<hr class="dropdown-divider">
 										</li>

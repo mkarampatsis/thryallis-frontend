@@ -38,6 +38,8 @@ import { ShowResourcesDetailsComponent } from '../modals/show-resources-details/
 import { IFacility, ISpace } from '../interfaces/facility/facility';
 import { ShowResourcesDetailsSpaceComponent } from '../modals/show-resources-details-space/show-resources-details-space.component';
 import { ShowResourcesDetailsEquipmentComponent } from '../modals/show-resources-details-equipment/show-resources-details-equipment.component';
+import { OtaEditComponent } from '../modals/ota-edit/ota-edit.component';
+import { IOta } from '../interfaces/ota/ota.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -350,6 +352,17 @@ export class ModalService {
     });
     modalRef.componentInstance.code = code;
     modalRef.componentInstance.modalRef = modalRef;
+  }
+
+  otaEdit(data: IOta, readOnly: boolean) {
+    const modalRef = this.modalService.open(OtaEditComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = data;
+    modalRef.componentInstance.readOnly = readOnly;
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<IOta>;
   }
 
 }

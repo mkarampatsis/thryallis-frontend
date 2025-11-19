@@ -1,0 +1,208 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Ψηφιοποίηση του Κώδικα των ΟΤΑ</span>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()">
+  </button>
+</div>
+
+<div class="modal-body">
+  <div class="mb-3 mt-3 p-2">
+    <form [formGroup]="form" (ngSubmit)="onCreate()" class="container mt-4">
+
+      <div class="mb-3">
+        <label class="form-label">
+          Περιεχόμενο αρμοδιότητας:
+          @if (showInfoText) {
+            <div class="mt-2" [innerHTML]="sanitizeHtml(showInfoText)"></div>
+          }
+        </label>
+        <div class="NgxEditor__Wrapper">
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+            <ngx-editor [editor]="editor" formControlName="remitText"></ngx-editor>
+          </div>
+          @if (form.controls.remitText.touched && form.controls.remitText.invalid) {
+          <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+          }
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Φορέας άσκησης αρμοδιότητας:</label>
+          <select formControlName="remitCompetence" class="form-select">
+            <option value="" disabled>-- Επιλογή --</option>
+            @for (name of remitCompetences; track name) {
+              <option [value]="name">{{ name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Τύπος αρμοδιότητας:</label>
+          <select formControlName="remitType" class="form-select">
+            <option value="" disabled>-- Επιλογή --</option>
+            @for (name of remitTypes; track name) {
+              <option [value]="name">{{ name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <!-- @if (legalProvisions.length === 0) {
+          <button type="button" class="btn btn-primary mb-3"
+            (click)="newLegalProvision()">
+            Προσθήκη Διάταξης
+          </button>
+        }
+        @if (remit && remit.status) {
+        <div class="mb-3">
+          <button (click)="initializeRemitTextfromLegalProvisions()" type="button" class="btn btn-info btn-sm me-2">
+            Αρχικοποίηση κειμένου
+          </button>
+          @if (remit.status === "ΕΝΕΡΓΗ") {
+          <button (click)="changeRemitStatus('ΑΝΕΝΕΡΓΗ')" type="button" class="btn btn-danger btn-sm">
+            Απενεργοποίηση Αρμοδιότητας
+          </button>
+          } @else {
+          <button (click)="changeRemitStatus('ΕΝΕΡΓΗ')" type="button" class="btn btn-success btn-sm">
+            Ενεργοποίηση Αρμοδιότητας
+          </button>
+          }
+        </div>
+        }
+        @if (!canAddLegalProvision) {
+        <ngb-alert [dismissible]="false" [type]="'info'">
+          Εισάγετε αρχικά διάταξη και στη συνέχεια επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG
+        </ngb-alert>
+        }
+        @if (!legalProvisions.length) {
+        <ngb-alert [dismissible]="false" [type]="'info'">
+          Δεν υπάρχει προς το παρόν κάποια διάταξη
+        </ngb-alert>
+        } @else { -->
+        <div class="mb-3 d-flex flex-column">
+          <label class="form-label d-flex justify-content-between">
+            <span>
+              @if (legalProvisions.length === 1) {
+              Διάταξη
+              } @else {
+              Διατάξεις
+              }
+              Πρόβλεψης Κώδικα:
+            </span>
+
+            <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
+              (click)="newLegalProvision()">
+              Προσθήκη Διάταξης
+            </button>
+          </label>
+          <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
+            [remitID]="ota?._id" [provisionType]="'ota'" [actionColumnVisible]="ota !== null">
+          </app-list-legal-provisions>
+        </div>
+        <!-- } -->
+      </div>
+
+      <div class="mb-3">
+        <!-- @if (legalProvisions.length === 0) {
+          <button type="button" class="btn btn-primary mb-3"
+            (click)="newLegalProvision()">
+            Προσθήκη Διάταξης
+          </button>
+        }
+        @if (remit && remit.status) {
+        <div class="mb-3">
+          <button (click)="initializeRemitTextfromLegalProvisions()" type="button" class="btn btn-info btn-sm me-2">
+            Αρχικοποίηση κειμένου
+          </button>
+          @if (remit.status === "ΕΝΕΡΓΗ") {
+          <button (click)="changeRemitStatus('ΑΝΕΝΕΡΓΗ')" type="button" class="btn btn-danger btn-sm">
+            Απενεργοποίηση Αρμοδιότητας
+          </button>
+          } @else {
+          <button (click)="changeRemitStatus('ΕΝΕΡΓΗ')" type="button" class="btn btn-success btn-sm">
+            Ενεργοποίηση Αρμοδιότητας
+          </button>
+          }
+        </div>
+        }
+        @if (!canAddLegalProvision) {
+        <ngb-alert [dismissible]="false" [type]="'info'">
+          Εισάγετε αρχικά διάταξη και στη συνέχεια επιλέξτε τύπο αρμοδιότητας και τα πεδία COFOG
+        </ngb-alert>
+        }
+        @if (!legalProvisions.length) {
+        <ngb-alert [dismissible]="false" [type]="'info'">
+          Δεν υπάρχει προς το παρόν κάποια διάταξη
+        </ngb-alert>
+        } @else { -->
+        <div class="mb-3 d-flex flex-column">
+          <label class="form-label d-flex justify-content-between">
+            <span>
+              @if (legalProvisions.length === 1) {
+              Εγκύκλια
+              } @else {
+              Εγκύκλιες
+              }
+              Οδηγίες:
+            </span>
+
+            <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
+              (click)="newInstructionProvision()">
+              Προσθήκη Εγκύκλιας Οδηγίας
+            </button>
+          </label>
+          <app-list-legal-provisions [legalProvisions]="instructionProvisions" [code]=""
+            [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
+          </app-list-legal-provisions>
+        </div>
+        <!-- } -->
+      </div>
+
+      
+      <!-- <div class="mb-3">
+        <label class="form-label d-flex justify-content-between">Φορέας Δημόσιας Πολιτικής</label>
+
+        <ul>
+          @for (unit of gridSelectedData; track unit ){
+            <li><strong>Φορέας: </strong>{{unit.organization}}, <strong>Μονάδα: </strong>{{unit.preferredLabel}}</li>
+          }
+        </ul>
+
+        <div class="d-flex justify-content-between small">
+          <div>
+            <span>Eπιλέξτε τους φορείς/μονάδες που επιθυμείτε</span>
+          </div>
+          <div>
+            <a (click)="clearSelection()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+          </div>
+        </div>
+
+        <ag-grid-angular
+          [domLayout]="'autoHeight'"
+          [rowData]="monades"
+          [defaultColDef]="defaultColDef"
+          [columnDefs]="colDefs"
+          [pagination]="true"
+          [paginationPageSize]="10"
+          [loadingOverlayComponent]="loadingOverlayComponent"
+          [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+          rowSelection="multiple"
+          (rowSelected)="onRowSelected($event)"
+          (gridReady)="onGridReady($event)"
+          class="ag-theme-balham">
+        </ag-grid-angular>
+      </div> -->
+      <!-- CRUD Buttons -->
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Υποβολή</button>
+        <button type="button" class="btn btn-secondary" (click)="onClear()">Καθάρισμα</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+  <button ngbAutofocus type="button" class="btn btn-primary" (click)="modalRef.close()">
+    Επιστροφή
+  </button>
+</div>
