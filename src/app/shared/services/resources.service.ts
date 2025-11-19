@@ -482,9 +482,9 @@ export class ResourcesService {
 
   onExportToExcelSearch(data: IElasticResources) {
     // Convert each array into worksheet
-    const facilitiesSheet = XLSX.utils.json_to_sheet(data.facilities);
-    const spacesSheet = XLSX.utils.json_to_sheet(data.spaces);
-    const equipmentSheet = XLSX.utils.json_to_sheet(data.equipment);
+    const facilitiesSheet = data.facilities ? XLSX.utils.json_to_sheet(data.facilities) : [];
+    const spacesSheet = data.spaces ? XLSX.utils.json_to_sheet(data.spaces) : []
+    const equipmentSheet = data.equipment ? XLSX.utils.json_to_sheet(data.equipment) : [];
 
     // Create workbook and append sheets
     const workbook: XLSX.WorkBook = {

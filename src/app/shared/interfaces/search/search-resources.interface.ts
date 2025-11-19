@@ -5,6 +5,7 @@ interface IFaclitityElastic {
   object_id: string;
   score: number;
   useOfFacility: string;
+  organization:string;
 }
 
 export interface ISpaceElastic {

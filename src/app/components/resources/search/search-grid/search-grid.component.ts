@@ -47,17 +47,7 @@ export class SearchGridComponent implements OnChanges {
   ];
 
   colDefs_Spaces: ColDef[] = [
-    { field: 'distinctiveNameOfFacility', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'spaceName', headerName: 'Χώρος', flex: 1 },
-    { 
-      field: 'spaceUse', 
-      headerName: 'Τρόπος Χρήσης',
-      valueGetter: (params) => {
-        if (!params.data.spaceUse) return '';
-        return params.data.spaceUse.split(',')[0];
-      }, 
-      flex: 2 
-    },
     { 
       field: 'spaceUse', 
       headerName: 'Κατηγορία Xρήσης',
@@ -68,11 +58,20 @@ export class SearchGridComponent implements OnChanges {
       flex: 2 
     },
     { field: 'spaceArea', headerName: 'Εμβαδόν', flex: .5 },
-    { field: 'addressOfFacility', headerName: 'Ακίνητο', flex: 2 }
+    { 
+      field: 'spaceUse', 
+      headerName: 'Τρόπος Χρήσης Ακινήτου',
+      valueGetter: (params) => {
+        if (!params.data.spaceUse) return '';
+        return params.data.spaceUse.split(',')[0];
+      }, 
+      flex: 2 
+    },
+    { field: 'addressOfFacility', headerName: 'Ακίνητο', flex: 2 },
+    { field: 'organization', headerName: 'Φορέας', flex: 1 },
   ];
 
   colDefs_Equipments: ColDef[] = [
-    { field: 'organization', headerName: 'Φορέας Χρήσης', flex: 1 },
     { field: 'kind', headerName: 'Είδος', flex: 1 },
     { field: 'type', headerName: 'Τύπος', flex: 1 },
     { 
@@ -99,6 +98,7 @@ export class SearchGridComponent implements OnChanges {
       },  
       flex: 2 
     },
+    { field: 'organization', headerName: 'Φορέας Χρήσης', flex: 1 }
   ];
 
   autoSizeStrategy = this.constService.autoSizeStrategy;
@@ -191,7 +191,8 @@ export class SearchGridComponent implements OnChanges {
           ...space,
           addressOfFacility: facility.addressOfFacility,
           distinctiveNameOfFacility: facility.distinctiveNameOfFacility,
-          kaek: facility.kaek
+          kaek: facility.kaek,
+          organization: facility.organization
         };
       }
       return space;

@@ -137,6 +137,8 @@ export class SearchFormComponent {
         status: new FormControl(''),
       })
     });
+
+    this.useOfFacilityForSpace = this.useOfFacility;
   }
 
   // Getters for FormArrays
