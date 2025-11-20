@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ModalService } from '../../services/modal.service';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
+import { OtaService } from '../../services/ota.service';
 
 import { ListLegalProvisionsComponent } from 'src/app/shared/components/list-legal-provisions/list-legal-provisions.component';
 
@@ -32,6 +33,7 @@ import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational
 export class OtaEditComponent {
   modalService = inject(ModalService);
   constOtaService = inject(ConstOtaService);
+  otaService = inject(OtaService);
 
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
@@ -39,10 +41,12 @@ export class OtaEditComponent {
 
   legalProvisions: ILegalProvision[] = [];
   instructionProvisions: ILegalProvision[] = [];
+  
   showInfoText: string = '';
 
   data: IOta = null;
   readOnly: boolean = false;
+  updateMode: boolean = false;
   modalRef: any;
 
   ota: IOta = null;
@@ -106,17 +110,40 @@ export class OtaEditComponent {
 
   // CRUD Methods
   onCreate() {
-    // if (this.form.valid) {
-    console.log('Create:', this.form.getRawValue());
-    this.modalService.getUserConsent("sssss")
-      .subscribe(result => {
-        if (result) {
-          console.log("yes")
-        } else {
-          console.log("no")
-        }
-      })
-  // }
+    
+    console.log('Final Value to submit:', this.form.getRawValue());
+    
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const otaData = this.form.getRawValue() as unknown as IOta;
+    if (this.form.valid) {
+
+      if (!this.updateMode){
+        this.otaService.newOta(otaData)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.onClear();
+            this.modalRef.close(true);
+          }
+        })
+      } else {
+        this.otaService.updateOta(otaData, this.ota._id)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.modalRef.close(true);
+            this.onClear();
+          }
+        })
+      }
+    }
   }
 
   onClear() {
@@ -129,7 +156,7 @@ export class OtaEditComponent {
       this.form.get('remitType').value 
     );
   }
-  
+
   newLegalProvision(): void {
     this.modalService.newLegalProvision().subscribe((data) => {
       if (data) {
@@ -196,10 +223,15 @@ export class OtaEditComponent {
 
   onRowSelected(event: any) {
     const selectedNodes = event.api.getSelectedNodes();
-
-    // Log selected rows to the console
+    
     this.gridSelectedData = selectedNodes.map(node => node.data);
-    console.log(this.gridSelectedData)
+
+    this.form.controls.publicPolicyAgency.setValue({
+      organization: this.gridSelectedData[0].organization,
+      organizationCode: this.gridSelectedData[0].organizationCode,
+      organizationalUnit: this.gridSelectedData[0].preferredLabel,
+      organizationalUnitCode: this.gridSelectedData[0].code,
+    });
   }
 
   clearSelection() {

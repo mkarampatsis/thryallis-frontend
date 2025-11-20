@@ -250,13 +250,13 @@ export class EmployeeComponent implements OnInit {
 
   onSubmit(): void {
 
-    const invalid = [];
-    const controls = this.form.controls;
-    for (const name in controls) {
-      if (controls[name].invalid) {
-        invalid.push(name);
-      }
-    }
+    // const invalid = [];
+    // const controls = this.form.controls;
+    // for (const name in controls) {
+    //   if (controls[name].invalid) {
+    //     invalid.push(name);
+    //   }
+    // }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();

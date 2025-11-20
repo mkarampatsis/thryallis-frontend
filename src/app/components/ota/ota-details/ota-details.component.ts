@@ -6,6 +6,7 @@ import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-
 
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
+import { OtaService } from 'src/app/shared/services/ota.service';
 
 @Component({
   selector: 'app-ota-details',
@@ -17,6 +18,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 export class OtaDetailsComponent {
   constOtaService = inject(ConstOtaService);
   modalService = inject(ModalService);
+  otaService  = inject(OtaService);
 
   otaDetails: IOta[] = [];
 
@@ -28,7 +30,8 @@ export class OtaDetailsComponent {
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
 
   gridApi: GridApi<IOta[]>;
-
+  showGrid: boolean = false;
+  
   onGridReady(params: GridReadyEvent<IOta[]>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
@@ -38,6 +41,54 @@ export class OtaDetailsComponent {
   }
 
   onRowSelected(event: any): void {
-    this.modalService.otaEdit(event.data, false);
+    this.modalService.otaEdit(event.data, false)
+    .subscribe(result => {
+      if (result) {
+        console.log('Refresh Grid Data', result);
+        this.otaService.getAllOta()
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 200) {
+            this.getOta();
+            // this.gridApi.setRowData(this.otaDetails);
+          }
+        });
+      }
+    });
+  }
+
+  newOta(){
+    this.modalService.otaEdit(null, true)
+    .subscribe(result => {
+      if (result) {
+        console.log('Refresh Grid Data', result);
+        this.otaService.getAllOta()
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 200) {
+            this.getOta();
+            // this.gridApi.setRowData(this.otaDetails);
+          }
+        });
+      }
+    })
+  }
+
+  getOta(){
+    this.otaService.getAllOta()
+      .subscribe(response => {
+        const body = response.body;          
+        const status = response.status;        
+        if (status === 200) {
+          this.otaDetails = body;
+          console.log('OTA Details:', this.otaDetails);
+          if (this.otaDetails.length > 0) {
+            // this.gridApi.setRowData(this.otaDetails);
+            this.showGrid = true;
+          }
+        }
+      })
   }
 }
