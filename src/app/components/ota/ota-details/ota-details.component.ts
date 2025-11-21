@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { take } from 'rxjs';
 import { IOta } from 'src/app/shared/interfaces/ota/ota.interface';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 
@@ -15,7 +16,7 @@ import { OtaService } from 'src/app/shared/services/ota.service';
   templateUrl: './ota-details.component.html',
   styleUrl: './ota-details.component.css'
 })
-export class OtaDetailsComponent {
+export class OtaDetailsComponent implements OnInit {
   constOtaService = inject(ConstOtaService);
   modalService = inject(ModalService);
   otaService  = inject(OtaService);
@@ -34,20 +35,22 @@ export class OtaDetailsComponent {
 
   organizationUnitTypesMap = this.constOtaService.ORGANIZATION_UNIT_TYPES_MAP;
   
+  ngOnInit() {
+    this.getOta();
+  } 
+
   onGridReady(params: GridReadyEvent<IOta>): void {
     this.gridApi = params.api;
-    this.gridApi.showLoadingOverlay();
-      this.getOta();
-      if (this.otaDetails.length === 0) {
-        this.gridApi.showNoRowsOverlay();
-      } else {
-        // this.gridApi.setRowData(this.otaDetails);
-        this.gridApi.hideOverlay
-      };
+    if (this.otaDetails.length > 0) {
+      this.gridApi.hideOverlay();
+    } else {
+      this.gridApi.showNoRowsOverlay();
+    }
   }
 
   onRowSelected(event: any): void {
     this.modalService.otaEdit(event.data, false)
+    .pipe(take(1))
     .subscribe(result => {
       if (result) {
         console.log('Refresh Grid Data', result);
@@ -76,7 +79,6 @@ export class OtaDetailsComponent {
           const status = response.status;        
           if (status === 200) {
             this.getOta();
-            // this.gridApi.setRowData(this.otaDetails);
           }
         });
       }
@@ -85,21 +87,39 @@ export class OtaDetailsComponent {
 
   getOta(){
     this.loading = true;
+    setTimeout(() => {
+      console.log('Show Loading Overlay1');
+      if (this.gridApi) {
+        console.log('Show Loading Overlay2');
+        this.gridApi.showLoadingOverlay();
+      }
+    });
+
     this.otaService.getAllOta()
-      .subscribe(response => {
-        const body = response.body;          
-        const status = response.status;        
+    .subscribe({
+      next: (response) => {
+        const body = response.body;
+        const status = response.status;
+
         if (status === 200) {
           this.otaDetails = body;
-          console.log('OTA Details:', this.otaDetails);
-
-          if (this.gridApi) {
-            this.gridApi.setRowData(this.otaDetails);
-            this.gridApi.hideOverlay();
-          }
-
-          this.loading = true;          
+          this.loading = false;
         }
-      })
+
+        if (this.gridApi) {
+          console.log('Show Loading Overlay3');
+          if (this.otaDetails.length > 0) {
+            this.gridApi.hideOverlay();
+          } else {
+            this.gridApi.showNoRowsOverlay();
+          }
+        }
+      },
+      error: () => {
+        if (this.gridApi) {
+          this.gridApi.showNoRowsOverlay();
+        }
+      },
+    });
   }
 }

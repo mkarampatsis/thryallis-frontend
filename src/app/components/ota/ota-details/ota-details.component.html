@@ -1,6 +1,6 @@
 <h1 class="govgr-heading-md">Ψηφιοποίηση του Κώδικα των ΟΤΑ</h1>
 
-<!-- @if (loading) {
+@if (loading) {
   <span class="d-flex align-items-center gap-2">
     Αναμονή αποτελεσμάτων...
     <span
@@ -9,8 +9,9 @@
         <span class="visually-hidden">Loading...</span>
     </span>
   </span>
-} -->
-<!-- @if(otaDetails.length > 0) { -->
+}
+
+@if(!loading) { 
   <div class="d-flex justify-content-between mb-2">
     <span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του ΟΤΑ με διπλό κλικ</span>
     <button class="btn btn-primary btn-sm" (click)="newOta()">
@@ -25,12 +26,10 @@
     [columnDefs]="colDefs"
     [pagination]="true"
     [paginationPageSize]="10"
-    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponent]="loadingOverlayComponent" 
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
     (rowDoubleClicked)="onRowSelected($event)"
     (gridReady)="onGridReady($event)"
     class="ag-theme-balham">
   </ag-grid-angular>
-<!-- } @else {
-  <p>Δεν υπάρχουν στοιχεία</p>
-} -->
+}

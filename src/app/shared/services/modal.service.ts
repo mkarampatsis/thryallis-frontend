@@ -362,7 +362,7 @@ export class ModalService {
     modalRef.componentInstance.data = data;
     modalRef.componentInstance.readOnly = readOnly;
     modalRef.componentInstance.modalRef = modalRef;
-    return modalRef.dismissed.pipe(take(1)) as Observable<IOta>;
+    return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
   }
 
 }
