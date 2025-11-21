@@ -23,21 +23,27 @@ export class OtaDetailsComponent {
   otaDetails: IOta[] = [];
 
   defaultColDef = this.constOtaService.defaultColDef;
-  colDefs: ColDef[] = this.constOtaService.OTA_COL_DEFS;
+  colDefs: ColDef[] = this.constOtaService.OTA_DETAILS_COL_DEFS;
   autoSizeStrategy = this.constOtaService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
 
-  gridApi: GridApi<IOta[]>;
-  showGrid: boolean = false;
+  gridApi: GridApi<IOta>;
+  loading: boolean = false;
+
+  organizationUnitTypesMap = this.constOtaService.ORGANIZATION_UNIT_TYPES_MAP;
   
-  onGridReady(params: GridReadyEvent<IOta[]>): void {
+  onGridReady(params: GridReadyEvent<IOta>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
-    
-        this.gridApi.hideOverlay();
-    
+      this.getOta();
+      if (this.otaDetails.length === 0) {
+        this.gridApi.showNoRowsOverlay();
+      } else {
+        // this.gridApi.setRowData(this.otaDetails);
+        this.gridApi.hideOverlay
+      };
   }
 
   onRowSelected(event: any): void {
@@ -61,6 +67,7 @@ export class OtaDetailsComponent {
   newOta(){
     this.modalService.otaEdit(null, true)
     .subscribe(result => {
+      console.log('OTA Edit Modal Result:', result);
       if (result) {
         console.log('Refresh Grid Data', result);
         this.otaService.getAllOta()
@@ -77,6 +84,7 @@ export class OtaDetailsComponent {
   }
 
   getOta(){
+    this.loading = true;
     this.otaService.getAllOta()
       .subscribe(response => {
         const body = response.body;          
@@ -84,10 +92,13 @@ export class OtaDetailsComponent {
         if (status === 200) {
           this.otaDetails = body;
           console.log('OTA Details:', this.otaDetails);
-          if (this.otaDetails.length > 0) {
-            // this.gridApi.setRowData(this.otaDetails);
-            this.showGrid = true;
+
+          if (this.gridApi) {
+            this.gridApi.setRowData(this.otaDetails);
+            this.gridApi.hideOverlay();
           }
+
+          this.loading = true;          
         }
       })
   }

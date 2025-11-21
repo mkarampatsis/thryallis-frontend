@@ -46,14 +46,22 @@ export class ConstOtaService {
     | SizeColumnsToFitProvidedWidthStrategy
     | SizeColumnsToContentStrategy = { type: 'fitCellContents' };
 
+
+  OTA_DETAILS_COL_DEFS: ColDef[] = [
+    { field: 'remitCompetence', headerName: 'Φορέας άσκησης', flex: 0.5 },
+    { field: 'remitType', headerName: 'Τύπος αρμοδιότητας', flex: 0.5 },
+    { field: 'remitLocalOrGlobal', headerName: 'Αυτοδιοικητική Αρμοδιότητα', flex: 1 },
+    { field: 'publicPolicyAgency.organizationalUnit', headerName: 'Μονάδα Δημόσιας Πολιτικής', flex: 1 },
+    { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
+    { field: 'remitText', headerName: 'Αρμοδιότητα', flex: 1 },
+  ];
+
   
   OTA_COL_DEFS: ColDef[] = [
-    { field: 'code', headerName: 'Κωδικός Μονάδας', flex: 0.5 },
-    { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
-    { field: 'organizationType', headerName: 'Τύπος Μονάδας', flex: 0.5 },
-    { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
-    { field: 'organization', headerName: 'Φορέας', flex: 1 },
-    { field: 'organizationCode', headerName: 'Κωδικός Φορέα', flex: 1 }
+    { field: 'organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
+    { field: 'organizationCode', headerName: 'Κωδικός Φορέα', flex: 0.3 },
+    { field: 'preferredLabel', headerName: 'Μονάδα Δημόσιας Πολιτικής', flex: 1 }, 
+    { field: 'code', headerName: 'Κωδικός Μονάδας', flex: 0.3 },   
   ];
 
   constructor() {

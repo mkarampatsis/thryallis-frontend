@@ -1,91 +1,60 @@
-<div class="container py-4">
+<div class="container py-3">
 
-  <!-- CATEGORIES -->
-  <div class="card mb-4">
-    <div class="card-header fw-bold">Κατηγορίες</div>
-    <div class="card-body">
-
-      <!-- List -->
-      <ul class="list-group mb-3">
-        @for (cat of categories(); track cat; let i = $index) {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <input type="text" class="form-control w-50" [(ngModel)]="categories()[i]"
-            (blur)="update(categories, i, categories()[i])">
-
-          <button class="btn btn-danger btn-sm" (click)="remove(categories, i)">
-            Διαγραφή
-          </button>
-        </li>
-        }
-      </ul>
-
-      <!-- Add new -->
-      <div class="input-group">
-        <input type="text" class="form-control" [(ngModel)]="newCategory" placeholder="Νέα Κατηγορία">
-        <button class="btn btn-primary" (click)="add(categories, newCategory); newCategory=''">
-          Προσθήκη
-        </button>
-      </div>
-
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Διαχείριση Κατηγοριών / Κλάδων / Ειδικοτήτων</h4>
+    <div>
+      <button class="btn btn-sm btn-primary" (click)="addCategory()">+ Προσθήκη Κατηγορίας</button>
     </div>
   </div>
 
+  <!-- categories -->
+  @for (cat of employeeCategories(); let catIndex = $index; track catIndex) {
+    <div class="card mb-3">
+      <div class="card-body">
 
-  <!-- BRANCHES -->
-  <div class="card mb-4">
-    <div class="card-header fw-bold">Κλάδοι</div>
-    <div class="card-body">
+        <div class="d-flex align-items-center mb-2 gap-2">
+          <label class="form-label mb-0 me-2"><strong>Κατηγορία</strong></label>
+          <input
+            class="form-control form-control-sm w-50"
+            [value]="cat.category.name"
+            (blur)="updateCategoryName(catIndex, $event)"
+          />
+          <button class="btn btn-sm btn-danger ms-2" (click)="removeCategory(catIndex)">Διαγραφή</button>
+          <button class="btn btn-sm btn-success ms-2" (click)="addBranch(catIndex)">+ Κλάδος</button>
+        </div>
 
-      <ul class="list-group mb-3">
-        @for (branch of branches(); track branch; let i = $index) {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <input type="text" class="form-control w-50" [(ngModel)]="branches()[i]"
-            (blur)="update(branches, i, branches()[i])">
+        <!-- branches -->
+        @for (br of cat.category.branches; let brIndex = $index; track brIndex) {
+          <div class="border rounded p-2 mb-2">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <label class="form-label mb-0 me-2">Κλάδος</label>
+              <input
+                class="form-control form-control-sm w-50"
+                [value]="br.name"
+                (blur)="updateBranchName(catIndex, brIndex, $event)"
+              />
+              <button class="btn btn-sm btn-danger ms-2" (click)="removeBranch(catIndex, brIndex)">Διαγραφή</button>
+              <button class="btn btn-sm btn-outline-primary ms-2" (click)="addSpecialty(catIndex, brIndex)">+ Ειδικότητα</button>
+            </div>
 
-          <button class="btn btn-danger btn-sm" (click)="remove(branches, i)">
-            Διαγραφή
-          </button>
-        </li>
-        }
-      </ul>
+            <!-- specialties -->
+            <ul class="list-group">
+              @for (spec of br.specialties; let specIndex = $index; track specIndex) {
+                <li class="list-group-item d-flex align-items-center justify-content-between">
+                  <input
+                    class="form-control form-control-sm w-50"
+                    [value]="spec"
+                    (blur)="updateSpecialty(catIndex, brIndex, specIndex, $event)"
+                  />
+                  <button class="btn btn-sm btn-outline-danger" (click)="removeSpecialty(catIndex, brIndex, specIndex)">✖</button>
+                </li>
+              }
+            </ul>
+          </div>
+        } <!-- end branches for -->
 
-      <div class="input-group">
-        <input type="text" class="form-control" [(ngModel)]="newBranch" placeholder="Νέος Κλάδος">
-        <button class="btn btn-primary" (click)="add(branches, newBranch); newBranch=''">
-          Προσθήκη
-        </button>
       </div>
-
     </div>
-  </div>
-
-
-  <!-- SPECIALTIES -->
-  <div class="card mb-4">
-    <div class="card-header fw-bold">Ειδικότητες</div>
-    <div class="card-body">
-
-      <ul class="list-group mb-3">
-        @for (spec of specialties(); track spec; let i = $index) {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <input type="text" class="form-control w-50" [(ngModel)]="specialties()[i]"
-            (blur)="update(specialties, i, specialties()[i])">
-
-          <button class="btn btn-danger btn-sm" (click)="remove(specialties, i)">
-            Διαγραφή
-          </button>
-        </li>
-        }
-      </ul>
-
-      <div class="input-group">
-        <input type="text" class="form-control" [(ngModel)]="newSpecialty" placeholder="Νέα Ειδικότητα">
-        <button class="btn btn-primary" (click)="add(specialties, newSpecialty); newSpecialty=''">
-          Προσθήκη
-        </button>
-      </div>
-
-    </div>
-  </div>
+  } <!-- end categories for -->
 
 </div>

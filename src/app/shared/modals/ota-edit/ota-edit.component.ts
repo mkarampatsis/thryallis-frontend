@@ -97,17 +97,16 @@ export class OtaEditComponent {
       organization: new FormControl('', Validators.required),
       organizationCode: new FormControl('', Validators.required),
       organizationalUnit: new FormControl('', Validators.required),
-      organizationalUnitCode: new FormControl('', Validators.required)
+      organizationalUnitCode: new FormControl('', Validators.required),
+      subOrganizationOf: new FormControl('', Validators.required),
+      supervisorUnitCode: new FormControl('', Validators.required),
+      unitType: new FormControl('', Validators.required)
     }),
     remitLocalOrGlobal: new FormControl('', Validators.required),
   })
 
   // CRUD Methods
   onCreate() {
-    
-    console.log('Final Value to submit:', this.form.getRawValue());
-    
-
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -122,7 +121,7 @@ export class OtaEditComponent {
           const body = response.body;          
           const status = response.status;        
           if (status === 201) {
-            this.onClear();
+            this.resetForm();
             this.modalRef.close(true);
           }
         })
@@ -133,14 +132,14 @@ export class OtaEditComponent {
           const status = response.status;        
           if (status === 201) {
             this.modalRef.close(true);
-            this.onClear();
+            this.resetForm();
           }
         })
       }
     }
   }
 
-  onClear() {
+  resetForm() {
     this.form.reset();
   }
 
@@ -219,12 +218,15 @@ export class OtaEditComponent {
     const selectedNodes = event.api.getSelectedNodes();
     
     this.gridSelectedData = selectedNodes.map(node => node.data);
-
+    console.log('Selected Data:', this.gridSelectedData);
     this.form.controls.publicPolicyAgency.setValue({
       organization: this.gridSelectedData[0].organization,
       organizationCode: this.gridSelectedData[0].organizationCode,
       organizationalUnit: this.gridSelectedData[0].preferredLabel,
       organizationalUnitCode: this.gridSelectedData[0].code,
+      unitType: this.gridSelectedData[0].unitType,
+      subOrganizationOf: this.gridSelectedData[0].subOrganizationOf,
+      supervisorUnitCode: this.gridSelectedData[0].supervisorUnitCode
     });
   }
 

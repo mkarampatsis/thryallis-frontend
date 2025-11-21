@@ -1,10 +1,13 @@
 import { ILegalProvision } from '../legal-provision/legal-provision.interface';
 
 export interface PublicPolicyAgency {
-  organization: string
-  organizationCode: string
-  organizationalUnit: string
-  organizationalUnitCode: string
+  organization: string;
+  organizationCode: string;
+  organizationalUnit: string;
+  organizationalUnitCode: string;
+  unitType: string;
+  subOrganizationOf: string;
+  supervisorUnitCode: string;
 }
 
 export interface IOta {
