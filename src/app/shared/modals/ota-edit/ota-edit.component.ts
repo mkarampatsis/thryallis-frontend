@@ -71,12 +71,6 @@ export class OtaEditComponent {
 
   gridApi: GridApi<IOrganizationList>;
 
-  organizations = [
-    { name: 'Υπουργείο Εσωτερικών', code: 'YPI-001' },
-    { name: 'Περιφέρεια Αττικής', code: 'PER-002' },
-    { name: 'Δήμος Αθηναίων', code: 'DIM-003' }
-  ];
-
   remitCompetences = [
     'Περιφέρειες',
     'Δήμοι',
