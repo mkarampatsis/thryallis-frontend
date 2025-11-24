@@ -1,0 +1,101 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">
+    @if (instructionProvision === null) {
+    Εισαγωγή Νέας
+    } @else {
+    Επεξεργασία
+    }
+    Διάταξης
+  </span>
+  <button type="button" class="btn-close" (click)="dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  @if (!selectedInstructionActKey) {
+  <p class="mb-4">
+    Επιλέξτε αρχικά μια Νομική Πράξη και στη συνέχεια συμπληρώστε τα στοιχεία της Διάταξης που θέλετε να
+    εισάγετε.
+  </p>
+  }
+
+  <form [formGroup]="form" class="d-flex flex-column gap-2">
+    @if (selectedInstructionActKey) {
+    <div class="mb-3">
+      <label for="legalActKey" class="form-label">
+        Από τη Νομική Πράξη:
+      </label>
+      <div class="d-flex gap-2 align-items-center">
+        <input type="text" class="form-control" id="legalActKey" formControlName="legalActKey"
+          [value]="selectedInstructionActKey" readonly />
+
+        <button class="btn btn-primary btn-small" (click)="selectLegalAct()">
+          Αλλαγή
+        </button>
+      </div>
+    </div>
+    <div class="mb-3 d-flex gap-2 justify-content-between" formGroupName="legalProvisionSpecs">
+      <div>
+        <label for="meros" class="form-label">
+          Μέρος:
+        </label>
+        <input type="text" class="form-control" id="meros" formControlName="meros" />
+      </div>
+      <div>
+        <label for="kefalaio" class="form-label">
+          Κεφάλαιο:
+        </label>
+        <input type="text" class="form-control" id="kefalaio" formControlName="kefalaio" />
+      </div>
+      <div>
+        <label for="arthro" class="form-label">
+          Άρθρο:
+        </label>
+        <input type="text" class="form-control" id="arthro" formControlName="arthro" />
+      </div>
+      <div>
+        <label for="paragrafos" class="form-label">
+          Παράγραφος:
+        </label>
+        <input type="text" class="form-control" id="paragrafos" formControlName="paragrafos" />
+      </div>
+      <div>
+        <label for="edafio" class="form-label">
+          Εδάφιο:
+        </label>
+        <input type="text" class="form-control" id="edafio" formControlName="edafio" />
+      </div>
+      <div>
+        <label for="pararthma" class="form-label">
+          Παράρτημα:
+        </label>
+        <input type="text" class="form-control" id="pararthma" formControlName="pararthma" />
+      </div>
+    </div>
+    <div>
+      <label for="legalActText" class="form-label">
+        Κείμενο Νομικής Πράξης:
+      </label>
+      <div class="NgxEditor__Wrapper">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+        <!-- <ngx-editor
+                        (paste)="onPaste($event)"
+                        [editor]="editor"
+                        id="legalActText"
+                        formControlName="legalActText"></ngx-editor> -->
+        <ngx-editor [editor]="editor" id="legalActText" formControlName="legalActText"></ngx-editor>
+      </div>
+    </div>
+    } @else {
+    <div class="d-flex">
+      <button type="button" class="btn btn-primary" (click)="selectLegalAct()">
+        Επιλογή Νομικής Πράξης
+      </button>
+    </div>
+    }
+    <div class="d-flex">
+      <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="!form.valid">
+        Υποβολή
+      </button>
+    </div>
+  </form>
+</div>

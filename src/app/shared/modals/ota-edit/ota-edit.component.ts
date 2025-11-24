@@ -143,12 +143,12 @@ export class OtaEditComponent {
     this.form.reset();
   }
 
-  get canAddLegalProvision() {
-    return (
-      this.form.get('remitCompetence').value &&
-      this.form.get('remitType').value 
-    );
-  }
+  // get canAddLegalProvision() {
+  //   return (
+  //     this.form.get('remitCompetence').value &&
+  //     this.form.get('remitType').value 
+  //   );
+  // }
 
   newLegalProvision(): void {
     this.modalService.newLegalProvision().subscribe((data) => {
