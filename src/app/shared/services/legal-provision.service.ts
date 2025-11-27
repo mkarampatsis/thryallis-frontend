@@ -3,8 +3,6 @@ import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
-import { ILegalProvisionSpecs } from '../interfaces/legal-provision/legal-provision-specs.interface';
-import { IReguLatedObject } from '../interfaces/legal-provision/regulated-object.interface';
 
 const APIPREFIX = `${environment.apiUrl}/legal_provision`;
 

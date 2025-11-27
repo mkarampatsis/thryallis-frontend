@@ -40,6 +40,9 @@ import { ShowResourcesDetailsSpaceComponent } from '../modals/show-resources-det
 import { ShowResourcesDetailsEquipmentComponent } from '../modals/show-resources-details-equipment/show-resources-details-equipment.component';
 import { OtaEditComponent } from '../modals/ota-edit/ota-edit.component';
 import { IOta } from '../interfaces/ota/ota.interface';
+import { IInstructionProvision } from '../interfaces/instruction-provision/instruction-provision.interface';
+import { ShowInstructionProvisionComponent } from '../modals/show-instruction-provision/show-instruction-provision.component';
+import { InstructionProvisionModalComponent } from '../modals/instruction-provision-modal/instruction-provision-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -113,6 +116,15 @@ export class ModalService {
     modalRef.componentInstance.modalRef = modalRef;
   }
 
+  showInstructionProvision(instructionProvision: IInstructionProvision) {
+    const modalRef = this.modalService.open(ShowInstructionProvisionComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.instructionProvision = instructionProvision;
+    modalRef.componentInstance.modalRef = modalRef;
+  }
+
   showLegalProvision(legalProvision: ILegalProvision) {
     const modalRef = this.modalService.open(ShowLegalProvisionComponent, {
       size: 'xl',
@@ -143,6 +155,19 @@ export class ModalService {
     modalRef.componentInstance.remit = remit;
   }
 
+  newInstructionProvision() {
+    const modalRef = this.modalService.open(InstructionProvisionModalComponent, {
+      size: 'xl',
+      centered: true,
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.modalRef = modalRef;
+
+    return modalRef.dismissed.pipe(take(1)) as Observable<{
+      instructionProvision: IInstructionProvision;
+    }>;
+  }
+
   newLegalProvision() {
     const modalRef = this.modalService.open(LegalProvisionModalComponent, {
       size: 'xl',
@@ -153,6 +178,20 @@ export class ModalService {
 
     return modalRef.dismissed.pipe(take(1)) as Observable<{
       legalProvision: ILegalProvision;
+    }>;
+  }
+
+  editInstructionProvision(instructionProvision: IInstructionProvision) {
+    const modalRef = this.modalService.open(LegalProvisionModalComponent, {
+      size: 'xl',
+      centered: true,
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.modalRef = modalRef;
+    modalRef.componentInstance.instructionProvision = instructionProvision;
+
+    return modalRef.dismissed.pipe(take(1)) as Observable<{
+      instructionProvision: IInstructionProvision;
     }>;
   }
 

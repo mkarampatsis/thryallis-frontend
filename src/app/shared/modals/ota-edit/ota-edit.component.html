@@ -100,9 +100,12 @@
                 Προσθήκη Εγκύκλιας Οδηγίας
               </button>
             </label>
-            <app-list-legal-provisions [legalProvisions]="instructionProvisions" [code]=""
+            <app-list-instruction-provisions [instructionProvisions]="instructionProvisions" [code]=""
               [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
-            </app-list-legal-provisions>
+            </app-list-instruction-provisions>
+            <!-- <app-list-legal-provisions [legalProvisions]="instructionProvisions" [code]=""
+              [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
+            </app-list-legal-provisions> -->
           </div>
         </div>
        }

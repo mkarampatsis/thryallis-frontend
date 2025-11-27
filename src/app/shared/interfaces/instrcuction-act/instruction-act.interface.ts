@@ -4,10 +4,10 @@ export interface IInstructionAct {
     _id: { $oid: string };
     ada: string;
     fek: IFek;
-    InstructionActKey: string;
-    InstructionActFile: { $oid: string };
-    InstructionActNumber: string;
-    InstructionActType: string;
-    InstructionActTypeOther: string;
-    InstructionActDateOrYear: string;
+    instructionActKey: string;
+    instructionActFile: { $oid: string };
+    instructionActNumber: string;
+    instructionActType: string;
+    instructionActTypeOther: string;
+    instructionActDateOrYear: string;
 }

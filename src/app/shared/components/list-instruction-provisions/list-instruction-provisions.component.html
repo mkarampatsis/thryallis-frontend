@@ -1,1 +1,66 @@
-<p>list-instruction-provisions works!</p>
+@if (instructionProvisions.length === 0) {
+@if (provisionType==='ota_instructions'){
+<div class="alert alert-info">Δεν υπάρχουν προς το παρόν εγκύκλιες οδηγίες</div>
+} @else {
+<div class="alert alert-info">Δεν υπάρχουν προς το παρόν διατάξεις πρόβλεψης </div>
+}
+} @else {
+<table class="table table-bordered small">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Νομική Πράξη</th>
+      <th class="text-center">Μέρος</th>
+      <th class="text-center">Κεφάλαιο</th>
+      <th class="text-center">Άρθρο</th>
+      <th class="text-center">Παράγραφος</th>
+      <th class="text-center">Εδάφιο</th>
+      <th class="text-center">Παράρτημα</th>
+      <th class="text-center">Κείμενο</th>
+      @if (actionColumnVisible) {
+      <th class="text-center">Ενέργειες</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (instructionProvision of instructionProvisions; let i = $index; track i) {
+    <tr>
+      <td class="text-center align-content-center">
+        {{ i + 1 }}
+      </td>
+      <td class="align-content-center">
+        {{ instructionProvision.instructionActKey }}
+      </td>
+      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.meros }}</td>
+      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.kefalaio }}</td>
+      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.arthro }}</td>
+      <td class="text-center align-content-center">
+        {{ instructionProvision.instructionProvisionSpecs.paragrafos }}
+      </td>
+      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.edafio }}</td>
+      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.pararthma }}</td>
+      <td class="text-center align-content-center">
+        <i role="button" (click)="displayInstructionProvision(instructionProvision)" class="bi bi-file-text fs-5 me-2"
+          ngbTooltip="Εμφάνιση κειμένου"></i>
+        <i [cdkCopyToClipboard]="instructionProvision.instructionProvisionText" role="button" class="bi bi-copy fs-5"
+          ngbTooltip="Αντιγραφή κειμένου"></i>
+        <i (click)="displayPDF(instructionProvision.instructionActKey)" role="button" class="bi bi-file-earmark-pdf fs-5"
+          ngbTooltip="Εμφάνιση διάταξης"></i>
+      </td>
+      @if (actionColumnVisible) {
+      <td class="text-center align-content-center">
+        @if (!instructionProvision.isNew) {
+        <i role="button" (click)="editInstructionProvision(instructionProvision)" class="bi bi-pencil-square fs-5 me-2"></i>
+        @if (countAllInstructionProvisionsExceptNew > 1) {
+        <i role="button" (click)="removeInstructionProvision(i)" class="bi bi-trash fs-5"></i>
+        }
+        } @else {
+        <i role="button" (click)="removeNewInstructionProvision(i)" class="bi bi-trash fs-5"></i>
+        }
+      </td>
+      }
+    </tr>
+    }
+  </tbody>
+</table>
+}

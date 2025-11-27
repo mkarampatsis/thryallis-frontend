@@ -4,6 +4,7 @@ import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { OtaService } from '../../services/ota.service';
 
 import { ListLegalProvisionsComponent } from 'src/app/shared/components/list-legal-provisions/list-legal-provisions.component';
+import { ListInstructionProvisionsComponent } from '../../components/list-instruction-provisions/list-instruction-provisions.component';
 
 import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
@@ -22,11 +23,18 @@ import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-un
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
 import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
+import { IInstructionProvision } from '../../interfaces/instruction-provision/instruction-provision.interface';
 
 @Component({
   selector: 'app-ota-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, NgxEditorModule, ListLegalProvisionsComponent, AgGridAngular],
+  imports: [
+    ReactiveFormsModule, 
+    NgxEditorModule, 
+    ListLegalProvisionsComponent,
+    ListInstructionProvisionsComponent, 
+    AgGridAngular
+  ],
   templateUrl: './ota-edit.component.html',
   styleUrl: './ota-edit.component.css'
 })
@@ -40,7 +48,7 @@ export class OtaEditComponent {
   sanitizer = inject(DomSanitizer);
 
   legalProvisions: ILegalProvision[] = [];
-  instructionProvisions: ILegalProvision[] = [];
+  instructionProvisions: IInstructionProvision[] = [];
   
   showInfoText: string = '';
 
@@ -164,14 +172,14 @@ export class OtaEditComponent {
   }
 
    newInstructionProvision(): void {
-    this.modalService.newLegalProvision().subscribe((data) => {
+    this.modalService.newInstructionProvision().subscribe((data) => {
       if (data) {
-        const tempLegalProvision = [{ ...data.legalProvision, isNew: true }, ...this.instructionProvisions];
-        this.instructionProvisions = uniqWith(tempLegalProvision, (a, b) => {
-          return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
+        const tempProvision = [{ ...data.instructionProvision, isNew: true }, ...this.instructionProvisions];
+        this.instructionProvisions = uniqWith(tempProvision, (a, b) => {
+          return a.instructionActKey === b.instructionActKey && isEqual(a.instructionProvisionSpecs, b.instructionProvisionSpecs);
         });
         this.form.get('instructionProvisions').setValue(this.instructionProvisions);
-        this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
+        this.updateRemitTextWithNewProvision(data.instructionProvision.instructionProvisionText);
       }
     });
   }
