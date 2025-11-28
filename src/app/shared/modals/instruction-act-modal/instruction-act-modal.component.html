@@ -1,1 +1,196 @@
-<p>instruction-act-modal works!</p>
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">
+    @if (instructionAct === null) {
+    Εισαγωγή Νέας
+    } @else {
+    Επεξεργασία
+    }
+    Εγκύκλιας Οδηγίας
+  </span>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  @if (instructionAct !== null) {
+  <ngb-alert type="info" [dismissible]="false">
+    <p>
+      Έχετε επιλέξει να επεξεργαστείτε μια υπάρχουσα εγκύκλια οδηγία. Έχουν ανασυρθεί τα στοιχεία της οδηγίας και
+      έχουν ανατεθεί στα αντίστοιχα πεδία.
+      <strong>ΠΡΟΣΟΧΗ:</strong>
+      αν επιλέξετε νέο αρχείο PDF, το παλιό αρχείο θα αντικατασταθεί! Βεβαιωθείτε πως η αλλαγή που θα κάνετε
+      συμβαδίζει με τις υπάρχουσες οδηγίες που χρησιμοποιούν την εγκύκλια οδηγία που αλλάζετε!
+    </p>
+  </ngb-alert>
+  }
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <div class="d-flex gap-3 align-items-baseline justify-content-between">
+        <div class="flex-grow-1">
+          <label for="instructionActType" class="form-label">
+            Τύπος Πράξης:
+          </label>
+          <div class="d-flex flex-column justify-content-between">
+            <select class="form-select" aria-label="Default select example" id="instructionActType"
+              formControlName="instructionActType" [class.is-invalid]="form.controls.instructionActType.invalid">
+              <option value="" disabled selected>
+                Επιλέξτε Τύπο Πράξης
+              </option>
+              @for (actType of actTypes; track $index) {
+              <option [ngValue]="actType">{{ actType }}</option>
+              }
+            </select>
+
+            @if (showOtherInstructionActType) {
+            <input type="text" class="form-control mt-2" [class.is-invalid]="form.controls.instructionActTypeOther.invalid"
+              id="instructionActTypeOther" formControlName="instructionActTypeOther"
+              placeholder='Προσδιορίστε τον "άλλο" τύπο πράξης' placement="top"
+              ngbTooltip='Προσδιορίστε τον "άλλο" τύπο πράξης' />
+            }
+
+            @if (form.controls.instructionActType.invalid || form.controls.instructionActTypeOther.invalid) {
+            <div class="invalid-feedback">Πρέπει να προσδιορίσετε τύπο πράξης</div>
+            }
+          </div>
+        </div>
+        <!-- instructionActType -->
+        <div class="flex-grow-1">
+          <label for="instructionActNumber" class="form-label">
+            Αριθμός Πράξης:
+          </label>
+          <input type="text" class="form-control" [class.is-invalid]="form.controls.instructionActNumber.invalid"
+            id="instructionActNumber" formControlName="instructionActNumber" placeholder="Εισάγετε αριθμό πράξης" />
+          @if (form.controls.instructionActNumber.invalid) {
+          <div class="invalid-feedback">Πρέπει να εισάγετε αριθμό πράξης</div>
+          }
+        </div>
+        <!-- instructionActNumber -->
+        @if (!hideInstructionActDateOrYear()) {
+        <div class="flex-grow-1">
+          @if (actNeedsOnlyYear()) {
+          <label class="form-label">Έτος πράξης:</label>
+
+          <select class="form-select" [class.is-invalid]="form.controls.instructionActDateOrYear.invalid"
+            formControlName="instructionActDateOrYear">
+            @for (year of years; track year) {
+            <option [value]="year">{{ year }}</option>
+            }
+          </select>
+          @if (form.controls.instructionActDateOrYear.invalid) {
+          <div class="invalid-feedback">Πρέπει να καταχωρήσετε το έτος πράξης</div>
+          }
+          } @else {
+          <label for="instructionActDateOrYear" class="form-label">
+            Ημερομηνία πράξης:
+          </label>
+          <input type="date" class="form-control" [class.is-invalid]="form.controls.instructionActDateOrYear.invalid"
+            formControlName="instructionActDateOrYear" />
+          @if (form.controls.instructionActDateOrYear.invalid) {
+          <div class="invalid-feedback">Πρέπει να καταχωρήσετε την ημερομηνία της πράξης</div>
+          }
+          }
+        </div>
+        }
+        <!-- instructionActDate -->
+      </div>
+    </div>
+
+    <ngb-alert *ngIf="fekDateVSActDateInvalid()" type="danger" [dismissible]="false">
+      Το έτος της πράξης πρέπει να συμπίπτει με το έτος του ΦΕΚ.
+    </ngb-alert>
+
+    <div class="mb-3">
+      <div class="d-flex gap-3 align-items-baseline">
+        <div formGroupName="fek" class="d-flex gap-3 align-items-baseline">
+          <!-- <div class="flex-grow-1">
+            <label for="number" class="form-label text-nowrap">
+              Αριθμός ΦΕΚ:
+            </label>
+            <input type="text" class="form-control" formControlName="number" [class.is-invalid]="
+                                form.controls.fek.controls.number.touched && form.controls.fek.controls.number.invalid
+                            " id="number" />
+            @if (form.controls.fek.controls.number.invalid) {
+            <div class="invalid-feedback">Μη αποδεκτός αριθμός ΦΕΚ</div>
+            }
+          </div> -->
+          <!-- fek.number -->
+          <!-- <div class="flex-grow-1">
+            <label for="issue" class="form-label text-nowrap">
+              Τεύχος ΦΕΚ:
+            </label>
+            <select class="form-select" id="issue" formControlName="issue">
+              <option [value]="'Α'">Α</option>
+              <option [value]="'Β'">Β</option>
+              <option [value]="'Υ.Ο.Δ.Δ.'">Υ.Ο.Δ.Δ.</option>
+            </select>
+          </div> -->
+          <!-- fek.issue -->
+
+          <div class="flex-grow-1">
+            <label for="fek-date" class="form-label text-nowrap">
+              Ημερομηνία ΦΕΚ:
+            </label>
+            <input type="date" id="fek-date" class="form-control" formControlName="date" />
+          </div>
+          <!-- fek.date -->
+        </div>
+
+        <div class="flex-grow-1">
+          <label for="ada" class="form-label">
+            ΑΔΑ:
+          </label>
+
+          <input [class.is-invalid]="form.controls.ada.invalid" type="text" class="form-control" id="ada"
+            formControlName="ada" placeholder="Εισάγετε ΑΔΑ" />
+          @if (form.controls.ada.invalid) {
+          <div class="invalid-feedback">H μορφή του ΑΔΑ είναι ΑΒΓ4ΕΖ44ΙΚ-5ΜΝ</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-column gap-3">
+      @if (emptyFEK()) {
+      <ngb-alert type="warning" [dismissible]="false">
+        Αν δεν συμπληρωθούν και τα τρία πεδία του ΦΕΚ, θα καταχωρηθεί στον αριθμό η ένδειξη "Μη δημοσιευτέα
+        πράξη"
+      </ngb-alert>
+      }
+      @if (emptyADA()) {
+      <ngb-alert type="warning" [dismissible]="false" class="mt-2">
+        Αν δεν συμπληρώσετε το ΑΔΑ, θα καταχωρηθεί η ένδειξη "Μη αναρτητέα πράξη"
+      </ngb-alert>
+      }
+      @if (moreThan30) {
+      <ngb-alert *ngIf="moreThan30" type="info" [dismissible]="false" class="mt-2">
+        Προσοχή: Οι ημερομηνίες της πράξης και του ΦΕΚ διαφέρουν περισσότερο από 30 ημέρες.
+      </ngb-alert>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Αρχείο PDF (16MB maximum):</label>
+      <input class="form-control" [class.is-invalid]="form.controls.instructionActFile.invalid" type="file"
+        (change)="selectFile($event)" />
+      @if (form.controls.instructionActFile.invalid) {
+      <div class="invalid-feedback">Πρέπει να μεταφορτώσετε ένα αρχείο PDF</div>
+      }
+      @if (hasUploadedFile() && instructionAct) {
+      <ngb-alert type="info" [dismissible]="false" class="mt-2">
+        Υπάρχει ήδη μεταφορτωμένο αρχείο.
+      </ngb-alert>
+      }
+      @if (progress) {
+      <div class="progress mt-2">
+        <div class="progress-bar progress-bar-info" role="progressbar" attr.aria-valuenow="{{ progress }}"
+          aria-valuemin="0" aria-valuemax="100" [ngStyle]="{ width: progress + '%' }">
+          {{ progress }}%
+        </div>
+      </div>
+      }
+    </div>
+
+    <button type="button" class="btn btn-primary" type="submit" [disabled]="!formValid() || form.pristine">
+      Υποβολή
+    </button>
+  </form>
+</div>

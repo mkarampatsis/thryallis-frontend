@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-import { IInstructionAct } from '../interfaces/instrcuction-act/instruction-act.interface';
+import { IInstructionAct } from '../interfaces/instruction-act/instruction-act.interface';
 
 const APIPREFIX = `${environment.apiUrl}/instruction_act`;
 
@@ -26,7 +26,7 @@ export class InstructionActService {
         return this.http.get<IInstructionAct[]>(APIPREFIX);
     }
 
-    getInstructionsActById(id: string): Observable<IInstructionAct> {
+    getInstructionActById(id: string): Observable<IInstructionAct> {
         const url = `${APIPREFIX}/by-id/${id}`;
         return this.http.get<IInstructionAct>(url);
     }

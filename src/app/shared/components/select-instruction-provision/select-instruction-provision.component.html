@@ -1,0 +1,41 @@
+<div class="d-flex align-items-center justify-content-between">
+  <button
+    class="btn btn-primary btn-sm mb-2"
+    (click)="newLegalProvision()">
+    Εγκύκλια Οδηγία
+  </button>
+  <span class="small">Επιλέξτε με κλικ κάποια εγκύκλια οδηγία (ctrl+κλικ για επιπλέον εγκυκλίες οδηγίες)</span>
+</div>
+<ag-grid-angular
+  [domLayout]="'autoHeight'"
+  [rowData]="instructionProvisions"
+  [defaultColDef]="defaultColDef"
+  [columnDefs]="colDefs"
+  [rowClassRules]="rowClassRules"
+  [pagination]="true"
+  [paginationPageSize]="20"
+  [loadingOverlayComponent]="loadingOverlayComponent"
+  [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+  [rowSelection]="rowSelection"
+  (gridReady)="onGridReady($event)"
+  (selectionChanged)="onSelectionChanged()"
+  class="ag-theme-balham">
+</ag-grid-angular>
+@if (currentInstructionProvisions.length) {
+  <div class="d-flex justify-content-end small mt-2">
+    @if (currentInstructionProvisions.length > 1) {
+      <button
+        (click)="onSelectedInstructionProvisions()"
+        class="btn btn-primary btn-sm">
+        Επιλογή {{ currentInstructionProvisions.length }} διατάξεων
+      </button>
+    } @else {
+      <button
+        (click)="onSelectedInstructionProvisions()"
+        class="btn btn-primary btn-sm">
+        Επιλογή διάταξης
+      </button>
+    }
+  </div>
+}
+

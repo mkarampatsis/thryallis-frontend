@@ -1,0 +1,7 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Επιλογή Εγκύκλιας Οδηγίας</span>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <app-select-instruction-action (selectedInstructionAct)="onSelectedInstructionAct($event)"></app-select-instruction-action>
+</div>

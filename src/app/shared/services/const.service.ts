@@ -296,6 +296,101 @@ export class ConstService {
     },
   };
 
+  INSTRUCTION_ACTS_COL_DEFS: ColDef[] = [
+    {
+      valueGetter: function (params) {
+        if (params.data.instructionActType === 'ΑΛΛΟ') {
+          return params.data.instructionActTypeOther;
+        } else {
+          return params.data.instructionActType;
+        }
+      },
+      field: 'legalActType',
+      headerName: 'Τύπος',
+      flex: 2,
+    },
+    { field: 'instructionActNumber', headerName: 'Αριθμός', flex: 1 },
+    { field: 'instructionActDateOrYear', headerName: 'Έτος ή Ημερομηνία', flex: 1 },
+    // {
+    //   valueGetter: function (params) {
+    //     if (params.data.fek.number.startsWith('ΜΗ ΔΗΜΟΣΙΕΥΤΕΑ ΠΡΑΞΗ-')) {
+    //       return params.data.fek.number.split('-', 2)[0];
+    //     } else {
+    //       return params.data.fek.number;
+    //     }
+    //   },
+    //   field: 'fek.number',
+    //   headerName: 'ΦΕΚ (Αριθμός)',
+    //   flex: 1,
+    // },
+    // { field: 'fek.issue', headerName: 'ΦΕΚ (Τεύχος)', flex: 1 },
+    { field: 'fek.date', headerName: '(Ημερομηνία)', flex: 1 },
+
+    {
+      valueGetter: function (params) {
+        if (params.data.ada.startsWith('ΜΗ ΑΝΑΡΤΗΤΕΑ ΠΡΑΞΗ-')) {
+          return params.data.ada.split('-', 2)[0];
+        } else {
+          return params.data.ada;
+        }
+      },
+      field: 'ada',
+      headerName: 'ΑΔΑ',
+      flex: 1,
+    },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: LegalActsActionsComponent,
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      flex: 1,
+      resizable: false,
+    },
+  ];
+
+  INSTRUCTION_PROVISIONS_COL_DEFS: ColDef[] = [
+    {
+      valueGetter: function (params) {
+        if (params.data.legalActType === 'ΑΛΛΟ') {
+          return params.data.legalActTypeOther;
+        } else {
+          return params.data.legalActType;
+        }
+      },
+      field: 'instructionActType',
+      headerName: 'Πράξη',
+      flex: 1,
+    },
+    { field: 'instructionActNumber', headerName: 'Αριθμός', flex: 1 },
+    { field: 'instructionActYear', headerName: 'Έτος', flex: 1 },
+    // { field: 'fek.number', headerName: 'ΦΕΚ (Αριθμός)', flex: 1 },
+    // { field: 'fek.issue', headerName: 'ΦΕΚ (Τεύχος)', flex: 1 },
+    { field: 'fek.date', headerName: '(Ημερομηνία)', flex: 1 },
+    { field: 'instructionProvisionSpecs.meros', headerName: 'Μέρος', flex: 1 },
+    { field: 'instructionProvisionSpecs.arthro', headerName: 'Άρθρο', flex: 1 },
+    { field: 'instructionProvisionSpecs.paragrafos', headerName: 'Παράγραφος', flex: 1 },
+    { field: 'instructionProvisionSpecs.edafio', headerName: 'Εδάφιο', flex: 1 },
+    { field: 'instructionProvisionSpecs.pararthma', headerName: 'Παράρτημα', flex: 1 },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: LegalProvisionsActionsComponent,
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      resizable: false,
+      flex: 0.5,
+    },
+  ];
+
+  INSTRUCTION_PROVISIONS_ROW_CLASS_RULES: RowClassRules = {
+    'rag-red-outer': (params: any) => {
+      return !params.data.regulatedObject;
+    },
+  };
+
   constructor() {
     this.organizationalUnitService
       .getAllOrganizationalUnits()

@@ -4,21 +4,22 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { take } from 'rxjs';
-import { LegalActService } from '../../services/legal-act.service';
-import { ILegalAct } from '../../interfaces/legal-act/legal-act.interface';
+import { InstructionActService } from '../../services/instruction-act.service';
+import { IInstructionAct } from '../../interfaces/instruction-act/instruction-act.interface';
 import { AuthService } from '../../services/auth.service';
 
+
 @Component({
-  selector: 'app-legal-acts-actions',
+  selector: 'app-instruction-acts-actions',
   standalone: true,
   imports: [],
-  templateUrl: './legal-acts-actions.component.html',
-  styleUrl: './legal-acts-actions.component.css',
+  templateUrl: './instruction-acts-actions.component.html',
+  styleUrl: './instruction-acts-actions.component.css'
 })
-export class LegalActsActionsComponent implements ICellRendererAngularComp {
+export class InstructionActsActionsComponent {
   modalService = inject(ModalService);
   uploadService = inject(FileUploadService);
-  legalActService = inject(LegalActService);
+  instructionActService = inject(InstructionActService);
   authService = inject(AuthService)
 
   user = this.authService.user;
@@ -35,32 +36,29 @@ export class LegalActsActionsComponent implements ICellRendererAngularComp {
 
   displayFEK() {
     this.uploadService
-      .getUploadByID(this.params.data.legalActFile.$oid)
+      .getUploadByID(this.params.data.instrctionActFile.$oid)
       .pipe(take(1))
       .subscribe((data) => {
         const url = window.URL.createObjectURL(data);
         const link = document.createElement('a');
         link.href = url;
-        link.download = this.params.data.legalActKey + '.pdf';
+        link.download = this.params.data.instructionActKey + '.pdf';
         this.modalService.showPdfViewer(link);
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
       });
   }
 
-  editLegalAct() {
-    this.legalActService
-      .getLegalActById(this.params.data._id.$oid)
+  editInstructionAct() {
+    this.instructionActService
+      .getInstructionActById(this.params.data._id.$oid)
       .pipe(take(1))
-      .subscribe((legalAct: ILegalAct) => {
+      .subscribe((instructionAct: IInstructionAct) => {
         this.modalService
-          .editLegalAct(legalAct)
+          .editInstructionAct(instructionAct)
           .pipe(take(1))
           .subscribe({
             next: (data) => {
-              console.log('LEGAL ACT EDITED', data);
-              this.legalActService.legalActsNeedUpdate.set(true);
+              console.log('INSTRUCTION ACT EDITED', data);
+              this.instructionActService.instructionActsNeedUpdate.set(true);
             },
             error: (error) => {
               console.error(error);

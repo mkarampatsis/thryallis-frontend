@@ -10,9 +10,9 @@ import { ILegalProvision } from '../../interfaces/legal-provision/legal-provisio
     styleUrl: './select-legal-provision-modal.component.css',
 })
 export class SelectLegalProvisionModalComponent {
-    modalRef: any;
+  modalRef: any;
 
-    onSelectedLegalProvision(selectedLegalProvision: ILegalProvision[]) {
-        this.modalRef.dismiss(selectedLegalProvision);
-    }
+  onSelectedLegalProvision(selectedLegalProvision: ILegalProvision[]) {
+    this.modalRef.dismiss(selectedLegalProvision);
+  }
 }

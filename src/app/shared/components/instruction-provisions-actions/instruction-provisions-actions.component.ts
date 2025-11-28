@@ -6,12 +6,13 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
+  selector: 'app-instruction-provisions-actions',
   standalone: true,
   imports: [MatIconModule, NgbTooltipModule],
-  templateUrl: './legal-provisions-actions.component.html',
-  styleUrl: './legal-provisions-actions.component.css',
+  templateUrl: './instruction-provisions-actions.component.html',
+  styleUrl: './instruction-provisions-actions.component.css'
 })
-export class LegalProvisionsActionsComponent implements ICellRendererAngularComp {
+export class InstructionProvisionsActionsComponent {
   modalService = inject(ModalService);
   params: ICellRendererParams;
 
@@ -23,7 +24,7 @@ export class LegalProvisionsActionsComponent implements ICellRendererAngularComp
     return false;
   }
 
-  displayLegalProvision() {
-    this.modalService.showLegalProvision(this.params.data);
+  displayInstructionProvision() {
+    this.modalService.showInstructionProvision(this.params.data);
   }
 }

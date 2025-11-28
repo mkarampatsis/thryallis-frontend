@@ -1,0 +1,38 @@
+<p class="mb-4">
+    Επιλέξτε μια Εγκύκλια Οδηγία για να ενεργοποιηθεί το κουμπί της επιλογής ή εισάγετε μια νέα Εγκύκλια Οδήγια και στη
+    συνέχεια επιλέξτε την.
+</p>
+<div class="d-flex align-items-center justify-content-between">
+  <button
+    class="btn btn-primary btn-sm mb-2"
+    (click)="newInstructionAct()">
+    Νέα Εγκύκλια Οδηγία
+  </button>
+  <span class="small">Επιλέξτε με κλίκ κάποια εγκύκλια οδηγία</span>
+</div>
+<ag-grid-angular
+  [domLayout]="'autoHeight'"
+  [rowData]="instructionActs"
+  [defaultColDef]="defaultColDef"
+  [columnDefs]="colDefs"
+  [pagination]="true"
+  [paginationPageSize]="50"
+  [loadingOverlayComponent]="loadingOverlayComponent"
+  [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+  [rowSelection]="rowSelection"
+  (rowDoubleClicked)="onRowDoubleClicked($event)"
+  (gridReady)="onGridReady($event)"
+  (selectionChanged)="onSelectionChanged()"
+  class="ag-theme-balham">
+</ag-grid-angular>
+@if (currentInstructionAct) {
+  <div class="d-flex gap-2 align-items-center justify-content-end small mt-2">
+    <span class="small">{{ currentInstructionAct?.instructionActKey }}</span>
+    <button
+      class="btn btn-primary"
+      (click)="onSelectedInstructionAct()">
+      Επιλογή
+    </button>
+  </div>
+}
+

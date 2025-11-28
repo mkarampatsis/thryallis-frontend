@@ -48,12 +48,12 @@ export class ConstOtaService {
 
 
   OTA_DETAILS_COL_DEFS: ColDef[] = [
-    { field: 'remitCompetence', headerName: 'Φορέας άσκησης', flex: 0.5 },
-    { field: 'remitType', headerName: 'Τύπος αρμοδιότητας', flex: 0.5 },
-    { field: 'remitLocalOrGlobal', headerName: 'Αυτοδιοικητική Αρμοδιότητα', flex: 1 },
-    { field: 'publicPolicyAgency.organizationalUnit', headerName: 'Μονάδα Δημόσιας Πολιτικής', flex: 1 },
-    { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
     { field: 'remitText', headerName: 'Αρμοδιότητα', flex: 1 },
+    { field: 'remitLocalOrGlobal', headerName: 'Αυτοδιοικητική/Κρατική', flex: 1 },
+    { field: 'remitType', headerName: 'Τύπος Αρμοδιότητας', flex: 0.5 },
+    { field: 'remitCompetence', headerName: 'Φορέας Άσκησης', flex: 0.5 },
+    { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
+    // { field: 'publicPolicyAgency.organizationalUnit', headerName: 'Μονάδα Δημόσιας Πολιτικής', flex: 1 }    
   ];
 
   

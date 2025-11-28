@@ -72,12 +72,12 @@ export class InstructionProvisionModalComponent {
     ) {
       return null;
     } else {
-      return { emptyLegalProvision: true };
+      return { emptyInstructionProvision: true };
     }
   }
 
-  selectLegalAct() {
-    this.modalService.selectLegalAct().subscribe((data) => {
+  selectInstructionAct() {
+    this.modalService.selectInstructionAct().subscribe((data) => {
       // console.log(">>",data);
       this.selectedInstructionActKey = data;
       this.form.get('instructionActKey').setValue(data);

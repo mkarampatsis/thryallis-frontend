@@ -5,7 +5,7 @@
     } @else {
     Επεξεργασία
     }
-    Διάταξης
+    Εγκύκλιας Οδηγίας
   </span>
   <button type="button" class="btn-close" (click)="dismiss()"></button>
 </div>
@@ -13,7 +13,7 @@
 <div class="modal-body">
   @if (!selectedInstructionActKey) {
   <p class="mb-4">
-    Επιλέξτε αρχικά μια Νομική Πράξη και στη συνέχεια συμπληρώστε τα στοιχεία της Διάταξης που θέλετε να
+    Επιλέξτε αρχικά μια Εγκύκλια Οδηγία και στη συνέχεια συμπληρώστε τα στοιχεία της Εγκύκλιας Οδηγίας που θέλετε να
     εισάγετε.
   </p>
   }
@@ -21,19 +21,19 @@
   <form [formGroup]="form" class="d-flex flex-column gap-2">
     @if (selectedInstructionActKey) {
     <div class="mb-3">
-      <label for="legalActKey" class="form-label">
-        Από τη Νομική Πράξη:
+      <label for="instructionActKey" class="form-label">
+        Από την Εγκύκλια Οδηγία:
       </label>
       <div class="d-flex gap-2 align-items-center">
-        <input type="text" class="form-control" id="legalActKey" formControlName="legalActKey"
+        <input type="text" class="form-control" id="instructionActKey" formControlName="instructionActKey"
           [value]="selectedInstructionActKey" readonly />
 
-        <button class="btn btn-primary btn-small" (click)="selectLegalAct()">
+        <button class="btn btn-primary btn-small" (click)="selectInstructionAct()">
           Αλλαγή
         </button>
       </div>
     </div>
-    <div class="mb-3 d-flex gap-2 justify-content-between" formGroupName="legalProvisionSpecs">
+    <div class="mb-3 d-flex gap-2 justify-content-between" formGroupName="instructionProvisionSpecs">
       <div>
         <label for="meros" class="form-label">
           Μέρος:
@@ -72,23 +72,18 @@
       </div>
     </div>
     <div>
-      <label for="legalActText" class="form-label">
-        Κείμενο Νομικής Πράξης:
+      <label for="instructionActText" class="form-label">
+        Κείμενο Εγκύκλιας Οδηγίας:
       </label>
       <div class="NgxEditor__Wrapper">
         <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
-        <!-- <ngx-editor
-                        (paste)="onPaste($event)"
-                        [editor]="editor"
-                        id="legalActText"
-                        formControlName="legalActText"></ngx-editor> -->
-        <ngx-editor [editor]="editor" id="legalActText" formControlName="legalActText"></ngx-editor>
+        <ngx-editor [editor]="editor" id="instructionActText" formControlName="instructionActText"></ngx-editor>
       </div>
     </div>
     } @else {
     <div class="d-flex">
-      <button type="button" class="btn btn-primary" (click)="selectLegalAct()">
-        Επιλογή Νομικής Πράξης
+      <button type="button" class="btn btn-primary" (click)="selectInstructionAct()">
+        Επιλογή Εγκύκλιας Οδηγίας
       </button>
     </div>
     }

@@ -43,6 +43,10 @@ import { IOta } from '../interfaces/ota/ota.interface';
 import { IInstructionProvision } from '../interfaces/instruction-provision/instruction-provision.interface';
 import { ShowInstructionProvisionComponent } from '../modals/show-instruction-provision/show-instruction-provision.component';
 import { InstructionProvisionModalComponent } from '../modals/instruction-provision-modal/instruction-provision-modal.component';
+import { SelectInstructionActionModalComponent } from '../modals/select-instruction-action-modal/select-instruction-action-modal.component';
+import { SelectInstructionProvisionModalComponent } from '../modals/select-instruction-provision-modal/select-instruction-provision-modal.component';
+import { InstructionActModalComponent } from '../modals/instruction-act-modal/instruction-act-modal.component';
+import { IInstructionAct } from '../interfaces/instruction-act/instruction-act.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -209,6 +213,16 @@ export class ModalService {
     }>;
   }
 
+  newInstructionAct() {
+    const modalRef = this.modalService.open(InstructionActModalComponent, {
+      size: 'xl',
+      centered: true,
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
+  }
+
   newLegalAct() {
     const modalRef = this.modalService.open(LegalActModalComponent, {
       size: 'xl',
@@ -216,6 +230,17 @@ export class ModalService {
       backdrop: 'static',
     });
     modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
+  }
+
+  editInstructionAct(instructionAct: IInstructionAct) {
+    const modalRef = this.modalService.open(InstructionActModalComponent, {
+      size: 'xl',
+      centered: true,
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.modalRef = modalRef;
+    modalRef.componentInstance.instructionAct = instructionAct;
     return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
   }
 
@@ -237,6 +262,26 @@ export class ModalService {
     });
     modalRef.componentInstance.modalRef = modalRef;
     return modalRef.dismissed.pipe(take(1)) as Observable<string>;
+  }
+
+  selectInstructionAct() {
+    const modalRef = this.modalService.open(SelectInstructionActionModalComponent, {
+      fullscreen: 'lg',
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<string>;
+  }
+
+  selectInstructionProvision() {
+    const modalRef = this.modalService.open(SelectInstructionProvisionModalComponent, {
+      fullscreen: 'lg',
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<IInstructionProvision[]>;
   }
 
   selectLegalAct() {
