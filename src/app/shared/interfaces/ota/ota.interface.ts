@@ -3,11 +3,10 @@ import { ILegalProvision } from '../legal-provision/legal-provision.interface';
 export interface PublicPolicyAgency {
   organization: string;
   organizationCode: string;
-  organizationalUnit: string;
-  organizationalUnitCode: string;
-  unitType: string;
+  organizationType: string;
+​​  status: string;
   subOrganizationOf: string;
-  supervisorUnitCode: string;
+  subOrganizationOfCode: string;
 }
 
 export interface IOta {
@@ -16,6 +15,11 @@ export interface IOta {
   remitCompetence: string;
   remitType: string;
   remitLocalOrGlobal: string;
+  cofog: {
+    cofog1: string;
+    cofog2: string;
+    cofog3: string;
+  };
   legalProvisions: ILegalProvision[];
   instructionProvisions: ILegalProvision[];
   publicPolicyAgency: PublicPolicyAgency;

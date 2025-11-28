@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ModalService } from '../../services/modal.service';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { OtaService } from '../../services/ota.service';
@@ -9,7 +9,7 @@ import { ListInstructionProvisionsComponent } from '../../components/list-instru
 import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 import { isEqual, uniqWith } from 'lodash-es';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { ILegalProvision } from 'src/app/shared/interfaces/legal-provision/legal-provision.interface';
 import { IOta } from 'src/app/shared/interfaces/ota/ota.interface';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
@@ -18,12 +18,14 @@ import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
-import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 
 import { AppState } from 'src/app/shared/state/app.state';
 import { Store } from '@ngrx/store';
-import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
+import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
+
 import { IInstructionProvision } from '../../interfaces/instruction-provision/instruction-provision.interface';
+import { ICofog2 } from '../../interfaces/cofog/cofog2.interface';
+import { ICofog3 } from '../../interfaces/cofog/cofog3.interface';
 
 @Component({
   selector: 'app-ota-edit',
@@ -38,7 +40,7 @@ import { IInstructionProvision } from '../../interfaces/instruction-provision/in
   templateUrl: './ota-edit.component.html',
   styleUrl: './ota-edit.component.css'
 })
-export class OtaEditComponent {
+export class OtaEditComponent implements OnInit {
   modalService = inject(ModalService);
   constOtaService = inject(ConstOtaService);
   otaService = inject(OtaService);
@@ -49,6 +51,12 @@ export class OtaEditComponent {
 
   legalProvisions: ILegalProvision[] = [];
   instructionProvisions: IInstructionProvision[] = [];
+
+  cofog1 = this.constOtaService.COFOG;
+  cofog2: ICofog2[] = [];
+  cofog3: ICofog3[] = [];
+  cofog1_selected: boolean = false;
+  cofog2_selected: boolean = false;
   
   showInfoText: string = '';
 
@@ -58,17 +66,16 @@ export class OtaEditComponent {
   modalRef: any;
 
   ota: IOta = null;
-  monades: IOrganizationUnitList[] = [];
+  foreis: IOrganizationList[] = [];
 
   gridSelectedData = [];
   gridData = [];
 
-  subscriptions: Subscription[] = [];
   store = inject(Store<AppState>);
-  organizational_units$ = selectOrganizationalUnits$
-  organizationUnitCodesMap = this.constOtaService.ORGANIZATION_UNIT_CODES_MAP;
-  organizationUnitTypesMap = this.constOtaService.ORGANIZATION_UNIT_TYPES_MAP;
+  organizations$ = selectOrganizations$;
+
   organizationCodesMap = this.constOtaService.ORGANIZATION_CODES_MAP;
+  organizationTypesMap = this.constOtaService.ORGANIZATION_TYPES_MAP;
 
   defaultColDef = this.constOtaService.defaultColDef;
   colDefs: ColDef[] = this.constOtaService.OTA_COL_DEFS;
@@ -84,7 +91,7 @@ export class OtaEditComponent {
     'Δήμοι',
     'Νησιωτικοί Δήμοι',
     'Ορεινοί Δήμοι',
-    'Μητροπολιτικές Αρμοδιότητες'
+    // 'Μητροπολιτικές Αρμοδιότητες'
   ];
 
   remitTypes = [
@@ -99,20 +106,45 @@ export class OtaEditComponent {
     remitText: new FormControl('', Validators.required),
     remitCompetence: new FormControl('', Validators.required),
     remitType: new FormControl('', Validators.required),
+    cofog1: new FormControl('', Validators.required),
+    cofog2: new FormControl('', Validators.required),
+    cofog3: new FormControl('', Validators.required),
     legalProvisions: new FormControl([], Validators.required),
     instructionProvisions: new FormControl([], Validators.required),
     publicPolicyAgency: new FormGroup({
       organization: new FormControl('', Validators.required),
       organizationCode: new FormControl('', Validators.required),
-      organizationalUnit: new FormControl('', Validators.required),
-      organizationalUnitCode: new FormControl('', Validators.required),
-      subOrganizationOf: new FormControl('', Validators.required),
-      supervisorUnitCode: new FormControl('', Validators.required),
-      unitType: new FormControl('', Validators.required)
+      organizationType: new FormControl('', Validators.required),
+​​      status:  new FormControl('', Validators.required),
+      subOrganizationOf: new FormControl('', Validators.required),​
+      subOrganizationOfCode: new FormControl('', Validators.required),
     }),
     remitLocalOrGlobal: new FormControl('', Validators.required),
-  })
+  });
+  formSubscriptions: Subscription[] = [];
 
+  ngOnInit(): void {
+    this.formSubscriptions.push(
+      this.form.get('cofog1').valueChanges.subscribe((value) => {
+        if (value) {
+          this.form.get('cofog2').setValue('');
+          this.cofog1_selected = true;
+          this.cofog2_selected = false;
+          this.cofog2 = this.constOtaService.COFOG.find((cofog) => cofog.code === value)?.cofog2 || [];
+        }
+      }),
+    );
+
+    this.formSubscriptions.push(
+      this.form.get('cofog2').valueChanges.subscribe((value) => {
+        if (value) {
+          this.form.get('cofog3').setValue('');
+          this.cofog2_selected = true;
+          this.cofog3 = this.cofog2.find((cofog) => cofog.code === value)?.cofog3 || [];
+        }
+      }),
+    );
+  }
   // CRUD Methods
   onCreate() {
     if (this.form.invalid) {
@@ -207,19 +239,20 @@ export class OtaEditComponent {
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApi = params.api;
     this.gridApi.showLoadingOverlay();
-    this.subscriptions.push(
-      this.store.select(this.organizational_units$).subscribe((data) => {
-        this.monades = data.map((org) => {
+    this.store
+      .select(selectOrganizations$)
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.foreis = data.map((org) => {
           return {
             ...org,
-            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
-            organization: this.organizationCodesMap.get(org.organizationCode),
-            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
+            organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
+            subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
+            subOrganizationOfCode: org.subOrganizationOf
           };
         });
         this.gridApi.hideOverlay();
-      }),
-    )
+      });    
   }
 
   onRowSelected(event: any) {
@@ -228,13 +261,12 @@ export class OtaEditComponent {
     this.gridSelectedData = selectedNodes.map(node => node.data);
     console.log('Selected Data:', this.gridSelectedData);
     this.form.controls.publicPolicyAgency.setValue({
-      organization: this.gridSelectedData[0].organization,
+      organization: this.gridSelectedData[0].preferredLabel,
       organizationCode: this.gridSelectedData[0].organizationCode,
-      organizationalUnit: this.gridSelectedData[0].preferredLabel,
-      organizationalUnitCode: this.gridSelectedData[0].code,
-      unitType: this.gridSelectedData[0].unitType,
+      organizationType: this.gridSelectedData[0].organizationType,
+​​      status: this.gridSelectedData[0].status,
       subOrganizationOf: this.gridSelectedData[0].subOrganizationOf,
-      supervisorUnitCode: this.gridSelectedData[0].supervisorUnitCode
+      subOrganizationOfCode: this.gridSelectedData[0].subOrganizationOfCode
     });
   }
 

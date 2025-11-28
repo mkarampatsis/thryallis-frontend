@@ -33,8 +33,6 @@ export class OtaDetailsComponent implements OnInit {
   gridApi: GridApi<IOta>;
   loading: boolean = false;
 
-  organizationUnitTypesMap = this.constOtaService.ORGANIZATION_UNIT_TYPES_MAP;
-  
   ngOnInit() {
     this.getOta();
   } 

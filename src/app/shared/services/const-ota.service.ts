@@ -13,6 +13,8 @@ import { IDictionaryType, IOrganizationCode, IOrganizationUnitCode } from 'src/a
 import { DictionaryService } from 'src/app/shared/services/dictionary.service';
 import { OrganizationService } from 'src/app/shared/services/organization.service';
 import { OrganizationalUnitService } from 'src/app/shared/services/organizational-unit.service';
+import { ICofog } from '../interfaces/cofog/cofog.interface';
+import { CofogService } from 'src/app/shared/services/cofog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,15 +23,20 @@ export class ConstOtaService {
   dictionaryService = inject(DictionaryService);
   organizationService = inject(OrganizationService);
   organizationalUnitService = inject(OrganizationalUnitService);
+  cofogService = inject(CofogService);
    
   ORGANIZATION_CODES: IOrganizationCode[] = [];
   ORGANIZATION_CODES_MAP: Map<string, string> = new Map<string, string>();
   
-  ORGANIZATION_UNIT_TYPES: IDictionaryType[] = [];
-  ORGANIZATION_UNIT_TYPES_MAP: Map<number, string> = new Map<number, string>();
+  ORGANIZATION_TYPES: IDictionaryType[] = [];
+  ORGANIZATION_TYPES_MAP: Map<number, string> = new Map<number, string>();
 
-  ORGANIZATION_UNIT_CODES: IOrganizationUnitCode[] = [];
-  ORGANIZATION_UNIT_CODES_MAP: Map<string, string> = new Map<string, string>(); 
+  INSTRUCTION_TYPES = [
+    'Εγκυκλιος',
+    'Έγγραφο ',
+  ];
+
+  COFOG: ICofog[] = [];
 
   // AgGrid related constants
   defaultColDef = {
@@ -58,24 +65,24 @@ export class ConstOtaService {
 
   
   OTA_COL_DEFS: ColDef[] = [
-    { field: 'organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
-    { field: 'organizationCode', headerName: 'Κωδικός Φορέα', flex: 0.3 },
-    { field: 'preferredLabel', headerName: 'Μονάδα Δημόσιας Πολιτικής', flex: 1 }, 
-    { field: 'code', headerName: 'Κωδικός Μονάδας', flex: 0.3 },   
+    {
+      field: 'preferredLabel',
+      headerName: 'Φορέας Δημόσιας Πολιτικής',
+      flex: 4,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        textMatcher: ({ value, filterText }) => {
+          return value.indexOf(this.removeAccents(filterText)) !== -1;
+        },
+      },
+    },
+    { field: 'code', headerName: 'Κωδικός', flex: 1 },
+    { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
+    { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 }      
   ];
 
   constructor() {
     
-    this.dictionaryService
-      .getAllOrganizationUnitTypes()
-      .pipe(take(1))
-      .subscribe((data) => {
-        this.ORGANIZATION_UNIT_TYPES = data;
-        this.ORGANIZATION_UNIT_TYPES.forEach((x) => {
-          this.ORGANIZATION_UNIT_TYPES_MAP.set(x.apografi_id, x.description);
-        });
-      });
-
     this.organizationService
       .getAllOrganizationCodes()
       .pipe(take(1))
@@ -86,15 +93,25 @@ export class ConstOtaService {
         });
       });
 
-
-    this.organizationalUnitService
-      .getAllOrganizationalUnitCodes()
+    this.dictionaryService
+      .getAllOrganizationTypes()
       .pipe(take(1))
       .subscribe((data) => {
-        this.ORGANIZATION_UNIT_CODES = data;
-        this.ORGANIZATION_UNIT_CODES.forEach((x) => {
-          this.ORGANIZATION_UNIT_CODES_MAP.set(x.code, x.preferredLabel);
+        this.ORGANIZATION_TYPES = data;
+        this.ORGANIZATION_TYPES.forEach((x) => {
+          this.ORGANIZATION_TYPES_MAP.set(x.apografi_id, x.description);
         });
       });
-  }  
+
+    this.cofogService
+      .getCofog()
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.COFOG = data.data;
+      });
+  } 
+  
+  removeAccents(input: string): string {
+    return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
 }
