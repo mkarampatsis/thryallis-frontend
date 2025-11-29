@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
-import { IFek } from 'src/app/shared/interfaces/legal-act/fek.interface';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { ConstOtaService } from '../../services/const-ota.service';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
@@ -34,17 +32,9 @@ export class InstructionActModalComponent {
 
   modalRef: any;
 
-  years: number[] = [];
-  currentYear: number = new Date().getFullYear();
-
   progress = 0;
   currentFile: File;
   uploadObjectID: string | null = null;
-
-  fek: IFek;
-  fekYear: string = null;
-
-  moreThan30 = false;
 
   instructionTypes = this.constOtaService.INSTRUCTION_TYPES;
 
@@ -55,9 +45,6 @@ export class InstructionActModalComponent {
     ada: new FormControl(null, Validators.pattern(/^[Α-Ω,0-9]{10}-[Α-Ω,0-9]{3}$/)),
     instructionActFile: new FormControl(null, Validators.required),
   });
-
-  formSubscriptions: Subscription[] = [];
-  showOtherInstructionActType = false;
 
   ngOnInit(): void {
     if (this.instructionAct) {
@@ -78,33 +65,38 @@ export class InstructionActModalComponent {
     }
   }
 
-  i
-
-  ngOnDestroy(): void {
-    this.formSubscriptions.forEach((sub) => sub.unsubscribe());
-  }
-
   onSubmit() {
+
+    // const invalid = [];
+    // const controls = this.form.controls;
+    // for (const name in controls) {
+    //   if (controls[name].invalid) {
+    //     invalid.push(name);
+    //   }
+    // }
+    // console.log(invalid)
+
     let data = {
       ...this.form.value,
     } as IInstructionAct;
 
     if (data.ada === '') data.ada = null;
-    if (data.fek.number === '') data.fek.number = null;
 
     if (this.instructionAct === null) {
       console.log('Will create new instruction act using data: ', data);
-      this.instructionActService.newInstructionAct(data).subscribe((data) => {
-        console.log('Data', data);
-        this.modalRef.dismiss(true);
-      });
+      this.instructionActService.newInstructionAct(data)
+        .subscribe((data) => {
+          console.log('Data', data);
+          this.modalRef.dismiss(true);
+        });
     } else {
       console.log('Will update instruction act using data: ', data);
       const id = this.instructionAct._id.$oid;
-      this.instructionActService.updateInstructionAct(id, data).subscribe((data) => {
-        console.log('Data', data);
-        this.modalRef.dismiss(data);
-      });
+      this.instructionActService.updateInstructionAct(id, data)
+        .subscribe((data) => {
+          console.log('Data', data);
+          this.modalRef.dismiss(data);
+        });
     }
   }
 
@@ -131,11 +123,6 @@ export class InstructionActModalComponent {
         console.log('Upload complete');
       },
     });
-  }
-
-  emptyADA() {
-    const ada = this.form.get('ada').value;
-    return ada === null || ada.trim() === '';
   }
 
   hasUploadedFile(): boolean {

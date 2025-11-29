@@ -305,27 +305,21 @@ export class ConstService {
           return params.data.instructionActType;
         }
       },
-      field: 'legalActType',
-      headerName: 'Τύπος',
-      flex: 2,
+      field: 'instructionActType',
+      headerName: 'Τύπος Εγκυκλίου',
+      flex: 1
     },
-    { field: 'instructionActNumber', headerName: 'Αριθμός', flex: 1 },
-    { field: 'instructionActDateOrYear', headerName: 'Έτος ή Ημερομηνία', flex: 1 },
-    // {
-    //   valueGetter: function (params) {
-    //     if (params.data.fek.number.startsWith('ΜΗ ΔΗΜΟΣΙΕΥΤΕΑ ΠΡΑΞΗ-')) {
-    //       return params.data.fek.number.split('-', 2)[0];
-    //     } else {
-    //       return params.data.fek.number;
-    //     }
-    //   },
-    //   field: 'fek.number',
-    //   headerName: 'ΦΕΚ (Αριθμός)',
-    //   flex: 1,
-    // },
-    // { field: 'fek.issue', headerName: 'ΦΕΚ (Τεύχος)', flex: 1 },
-    { field: 'fek.date', headerName: '(Ημερομηνία)', flex: 1 },
-
+    { field: 'instructionActNumber', headerName: 'Αριθμός Εγκυκλίου', flex: 1 },
+    { 
+      field: 'instructionActDateISO', 
+      headerName: 'Ημερομηνία',
+      valueFormatter: params => {
+        if (!params.value) return '';
+        const d = new Date(params.value["$date"]);
+        return d.toLocaleDateString('el-GR'); // 03/11/2025
+      }, 
+      flex: 1 
+    },
     {
       valueGetter: function (params) {
         if (params.data.ada.startsWith('ΜΗ ΑΝΑΡΤΗΤΕΑ ΠΡΑΞΗ-')) {

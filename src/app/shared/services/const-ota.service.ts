@@ -32,7 +32,7 @@ export class ConstOtaService {
   ORGANIZATION_TYPES_MAP: Map<number, string> = new Map<number, string>();
 
   INSTRUCTION_TYPES = [
-    'Εγκυκλιος',
+    'Εγκύκλιος',
     'Έγγραφο ',
   ];
 

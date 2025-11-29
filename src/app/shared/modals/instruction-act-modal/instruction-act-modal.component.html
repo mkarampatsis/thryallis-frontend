@@ -30,8 +30,12 @@
             Τύπος Πράξης:
           </label>
           <div class="d-flex flex-column justify-content-between">
-            <select class="form-select" aria-label="Default select example" id="instructionActType"
-              formControlName="instructionActType" [class.is-invalid]="form.controls.instructionActType.invalid">
+            <select 
+              class="form-select" 
+              aria-label="Default select example" 
+              id="instructionActType"
+              formControlName="instructionActType" 
+              [class.is-invalid]="form.controls.instructionActType.invalid">
               <option value="" disabled selected>
                 Επιλέξτε Τύπο Πράξης
               </option>
@@ -50,8 +54,13 @@
           <label for="instructionActNumber" class="form-label">
             Αριθμός Πράξης:
           </label>
-          <input type="text" class="form-control" [class.is-invalid]="form.controls.instructionActNumber.invalid"
-            id="instructionActNumber" formControlName="instructionActNumber" placeholder="Εισάγετε αριθμό πράξης" />
+          <input 
+            type="text" 
+            class="form-control" 
+            [class.is-invalid]="form.controls.instructionActNumber.invalid"
+            id="instructionActNumber" 
+            formControlName="instructionActNumber" 
+            placeholder="Εισάγετε αριθμό πράξης" />
           @if (form.controls.instructionActNumber.invalid) {
             <div class="invalid-feedback">Πρέπει να εισάγετε αριθμό πράξης</div>
           }
@@ -61,6 +70,21 @@
 
     <div class="mb-3">
       <div class="d-flex gap-3 align-items-baseline">
+        <div class="flex-grow-1">
+          <label
+              for="legalActDateOrYear"
+              class="form-label">
+              Ημερομηνία πράξης:
+          </label>
+          <input
+            type="date"
+            class="form-control"
+            [class.is-invalid]="form.controls.instructionActDate.invalid"
+            formControlName="instructionActDate" />
+          @if (form.controls.instructionActDate.invalid) {
+            <div class="invalid-feedback">Πρέπει να καταχωρήσετε την ημερομηνία της πράξης</div>
+          }
+        </div>
         <div class="flex-grow-1">
           <label for="ada" class="form-label">
             ΑΔΑ:
@@ -96,7 +120,7 @@
       }
     </div>
 
-    <button type="button" class="btn btn-primary" type="submit" [disabled]="form.invalid">
+    <button type="button" class="btn btn-primary" [disabled]="form.invalid" type="submit">
       Υποβολή
     </button>
   </form>

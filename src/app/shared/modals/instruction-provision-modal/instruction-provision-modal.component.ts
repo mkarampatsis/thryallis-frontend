@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
-import { take } from 'rxjs';
+import { from, take } from 'rxjs';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { cloneDeep, isEqual, uniqWith } from 'lodash-es';
 import { IInstructionProvision } from '../../interfaces/instruction-provision/instruction-provision.interface';
@@ -31,13 +31,14 @@ export class InstructionProvisionModalComponent {
   form = new FormGroup(
     {
       instructionActText: new FormControl('', Validators.required),
+      instructionPages: new FormGroup({
+        from: new FormControl(''),
+        to: new FormControl(''),
+      }),
       instructionProvisionSpecs: new FormGroup({
-        meros: new FormControl(''),
-        kefalaio: new FormControl(''),
         arthro: new FormControl(''),
         paragrafos: new FormControl(''),
         edafio: new FormControl(''),
-        pararthma: new FormControl(''),
       }),
       instructionActKey: new FormControl({ value: '', disabled: true }, Validators.required),
     },
@@ -46,10 +47,6 @@ export class InstructionProvisionModalComponent {
 
   ngOnInit(): void {
     if (this.instructionProvision) {
-      // if (!this.legalProvision.legalProvisionSpecs.kefalaio) {
-      //     this.legalProvision.legalProvisionSpecs.kefalaio = "-";
-      // }
-      // console.log(this.legalProvision, this.legalProvision.legalActKey)
       this.selectedInstructionActKey = this.instructionProvision.instructionActKey;
       this.form.get('instructionActText')?.setValue(this.instructionProvision.instructionProvisionText);
       this.form.get('instructionProvisionSpecs')?.setValue(this.instructionProvision.instructionProvisionSpecs);
