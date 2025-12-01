@@ -1,11 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
-import { from, take } from 'rxjs';
+import { take } from 'rxjs';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
-import { cloneDeep, isEqual, uniqWith } from 'lodash-es';
 import { IInstructionProvision } from '../../interfaces/instruction-provision/instruction-provision.interface';
 import { IInstructionProvisionSpecs } from '../../interfaces/instruction-provision/instruction-provision-specs.interface';
 
@@ -32,8 +31,8 @@ export class InstructionProvisionModalComponent {
     {
       instructionActText: new FormControl('', Validators.required),
       instructionPages: new FormGroup({
-        from: new FormControl(''),
-        to: new FormControl(''),
+        from: new FormControl('', this.integerValidator),
+        to: new FormControl('', this.integerValidator),
       }),
       instructionProvisionSpecs: new FormGroup({
         arthro: new FormControl(''),
@@ -71,6 +70,14 @@ export class InstructionProvisionModalComponent {
     }
   }
 
+  integerValidator(control: AbstractControl) {
+    const value = control.value;
+
+    if (value === null || value === '') return null; // optional field → OK
+
+    return Number.isInteger(Number(value)) ? null : { notInteger: true };
+  }
+
   selectInstructionAct() {
     this.modalService.selectInstructionAct().subscribe((data) => {
       // console.log(">>",data);
@@ -106,7 +113,7 @@ export class InstructionProvisionModalComponent {
     if (this.form.dirty) {
       this.modalService
         .getUserConsent(
-          `Αν κλείσετε το παράθυρο οι αλλαγές στη διάταξη δεν θα αποθηκευτούν! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
+          `Αν κλείσετε το παράθυρο οι αλλαγές στην εγκύκλια οδηγίας δεν θα αποθηκευτούν! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
         )
         .pipe(take(1))
         .subscribe((consent) => {

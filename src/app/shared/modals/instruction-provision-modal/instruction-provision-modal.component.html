@@ -58,13 +58,29 @@
         <label for="arthro" class="form-label">
           Σελίδα από:
         </label>
-        <input type="text" class="form-control" id="arthro" formControlName="from" />
+        <input 
+          type="text" 
+          class="form-control" 
+          [class.is-invalid]="form.get('instructionPages.from')?.invalid && (form.get('instructionPages.from')?.dirty || form.get('instructionPages.from')?.touched)"
+          id="arthro" 
+          formControlName="from" />
+        @if (form.get('instructionPages.from')?.errors?.['notInteger']) {
+          <div class="invalid-feedback">Πρέπει να είναι ακέραιος αριθμός.</div>
+        }
       </div>
       <div class="col-md-6">
         <label for="paragrafos" class="form-label">
           έως:
         </label>
-        <input type="text" class="form-control" id="paragrafos" formControlName="to" />
+        <input 
+          type="text" 
+          class="form-control" 
+          [class.is-invalid]="form.get('instructionPages.to')?.invalid && (form.get('instructionPages.to')?.dirty || form.get('instructionPages.to')?.touched)"
+          id="paragrafos" 
+          formControlName="to" />
+        @if (form.get('instructionPages.to')?.errors?.['notInteger']) {
+          <div class="invalid-feedback">Πρέπει να είναι ακέραιος αριθμός.</div>
+        }
       </div>
     </div>
     <div>
