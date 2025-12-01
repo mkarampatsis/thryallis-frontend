@@ -33,42 +33,38 @@
         </button>
       </div>
     </div>
-    <div class="mb-3 d-flex gap-2 justify-content-between" formGroupName="instructionProvisionSpecs">
-      <div>
-        <label for="meros" class="form-label">
-          Μέρος:
-        </label>
-        <input type="text" class="form-control" id="meros" formControlName="meros" />
-      </div>
-      <div>
-        <label for="kefalaio" class="form-label">
-          Κεφάλαιο:
-        </label>
-        <input type="text" class="form-control" id="kefalaio" formControlName="kefalaio" />
-      </div>
-      <div>
+    <div class="row mb-3" formGroupName="instructionProvisionSpecs">
+      <div class="col-md-4">
         <label for="arthro" class="form-label">
           Άρθρο:
         </label>
         <input type="text" class="form-control" id="arthro" formControlName="arthro" />
       </div>
-      <div>
+      <div class="col-md-4">
         <label for="paragrafos" class="form-label">
           Παράγραφος:
         </label>
         <input type="text" class="form-control" id="paragrafos" formControlName="paragrafos" />
       </div>
-      <div>
+      <div class="col-md-4">
         <label for="edafio" class="form-label">
           Εδάφιο:
         </label>
         <input type="text" class="form-control" id="edafio" formControlName="edafio" />
       </div>
-      <div>
-        <label for="pararthma" class="form-label">
-          Παράρτημα:
+    </div>
+    <div class="row mb-3" formGroupName="instructionPages">
+      <div class="col-md-6">
+        <label for="arthro" class="form-label">
+          Σελίδα από:
         </label>
-        <input type="text" class="form-control" id="pararthma" formControlName="pararthma" />
+        <input type="text" class="form-control" id="arthro" formControlName="from" />
+      </div>
+      <div class="col-md-6">
+        <label for="paragrafos" class="form-label">
+          έως:
+        </label>
+        <input type="text" class="form-control" id="paragrafos" formControlName="to" />
       </div>
     </div>
     <div>

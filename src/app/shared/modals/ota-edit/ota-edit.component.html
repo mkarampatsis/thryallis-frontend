@@ -133,10 +133,6 @@
               Πρόβλεψης Κώδικα:
             </span>
 
-            <!-- <button type="button" class="btn btn-primary btn-sm" [disabled]="!canAddLegalProvision"
-              (click)="newLegalProvision()">
-              Προσθήκη Διάταξης
-            </button> -->
             <button type="button" class="btn btn-primary btn-sm" (click)="newLegalProvision()">
               Προσθήκη Διάταξης
             </button>
@@ -167,9 +163,6 @@
             <app-list-instruction-provisions [instructionProvisions]="instructionProvisions" [code]=""
               [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
             </app-list-instruction-provisions>
-            <!-- <app-list-legal-provisions [legalProvisions]="instructionProvisions" [code]=""
-              [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
-            </app-list-legal-provisions> -->
           </div>
         </div>
        }

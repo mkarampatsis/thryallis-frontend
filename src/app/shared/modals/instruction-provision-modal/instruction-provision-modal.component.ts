@@ -51,6 +51,7 @@ export class InstructionProvisionModalComponent {
       this.form.get('instructionActText')?.setValue(this.instructionProvision.instructionProvisionText);
       this.form.get('instructionProvisionSpecs')?.setValue(this.instructionProvision.instructionProvisionSpecs);
       this.form.get('instructionActKey')?.setValue(this.instructionProvision.instructionActKey);
+      this.form.get('instructionPages')?.setValue(this.instructionProvision.instructionPages);
     }
   }
 
@@ -60,12 +61,9 @@ export class InstructionProvisionModalComponent {
 
   checkInstructionProvision(form: FormGroup): { [key: string]: boolean } | null {
     if (
-      form.get('instructionProvisionSpecs').get('meros').value.trim() !== '' ||
-      form.get('instructionProvisionSpecs').get('kefalaio').value.trim() !== '' ||
       form.get('instructionProvisionSpecs').get('arthro').value.trim() !== '' ||
       form.get('instructionProvisionSpecs').get('paragrafos').value.trim() !== '' ||
-      form.get('instructionProvisionSpecs').get('edafio').value.trim() !== '' ||
-      form.get('instructionProvisionSpecs').get('pararthma').value.trim() !== ''
+      form.get('instructionProvisionSpecs').get('edafio').value.trim() !== ''
     ) {
       return null;
     } else {
@@ -91,19 +89,16 @@ export class InstructionProvisionModalComponent {
   onSubmit() {
     // console.log(this.form.value);
     const instructionProvisionSpecs = this.form.get('instructionProvisionSpecs').value as IInstructionProvisionSpecs;
-
     const instructionActKey = this.form.get('instructionActKey').value;
     const instructionProvisionText = this.form.get('instructionActText').value;
+    const instructionPages = this.form.get('instructionPages').value;
+    
     const instructionProvision = {
       instructionProvisionSpecs,
       instructionActKey,
       instructionProvisionText,
+      instructionPages
     } as IInstructionProvision;
-    // this.legalProvisionService.newLegalProvision(legalProvision).subscribe((data) => {
-    //     const { message, legalProvision } = data;
-    //     console.log(message);
-    //     this.modalRef.dismiss({ legalProvision });
-    // });
     this.modalRef.dismiss({ instructionProvision });
   }
 

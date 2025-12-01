@@ -107,8 +107,11 @@ export class OtaEditComponent implements OnInit {
     remitCompetence: new FormControl('', Validators.required),
     remitType: new FormControl('', Validators.required),
     cofog1: new FormControl('', Validators.required),
+    cofog1_name: new FormControl(''),
     cofog2: new FormControl('', Validators.required),
+    cofog2_name: new FormControl(''),
     cofog3: new FormControl('', Validators.required),
+    cofog3_name: new FormControl(''),
     legalProvisions: new FormControl([], Validators.required),
     instructionProvisions: new FormControl([], Validators.required),
     publicPolicyAgency: new FormGroup({
@@ -154,6 +157,23 @@ export class OtaEditComponent implements OnInit {
 
     const otaData = this.form.getRawValue() as unknown as IOta;
     if (this.form.valid) {
+
+      const cofog1_name = this.constOtaService.COFOG
+        .find((cofog) => cofog.code === this.form.controls.cofog1.value).name;
+      const cofog2_name = this.constOtaService.COFOG
+        .find((cofog) => cofog.code === this.form.controls.cofog1.value).cofog2
+        .find((cofog) => cofog.code === this.form.controls.cofog2.value).name;
+      const cofog3_name = this.constOtaService.COFOG
+        .find((cofog) => cofog.code === this.form.controls.cofog1.value).cofog2
+        .find((cofog) => cofog.code === this.form.controls.cofog2.value).cofog3
+        .find((cofog) => cofog.code === this.form.controls.cofog3.value).name
+      this.form.controls.cofog1_name.setValue(cofog1_name);
+      this.form.controls.cofog2_name.setValue(cofog2_name);
+      this.form.controls.cofog3_name.setValue(cofog3_name);
+
+      console.log(cofog1_name,cofog2_name,cofog3_name);
+      console.log("Form value", this.form.value);
+      
 
       if (!this.updateMode){
         this.otaService.newOta(otaData)
@@ -259,10 +279,9 @@ export class OtaEditComponent implements OnInit {
     const selectedNodes = event.api.getSelectedNodes();
     
     this.gridSelectedData = selectedNodes.map(node => node.data);
-    console.log('Selected Data:', this.gridSelectedData);
     this.form.controls.publicPolicyAgency.setValue({
       organization: this.gridSelectedData[0].preferredLabel,
-      organizationCode: this.gridSelectedData[0].organizationCode,
+      organizationCode: this.gridSelectedData[0].code,
       organizationType: this.gridSelectedData[0].organizationType,
 ​​      status: this.gridSelectedData[0].status,
       subOrganizationOf: this.gridSelectedData[0].subOrganizationOf,

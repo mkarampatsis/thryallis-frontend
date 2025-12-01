@@ -1,9 +1,6 @@
 <div class="d-flex justify-content-between m-3">
-    <span class="h5">Κείμενο Διάταξης από τη Νομοθεσία</span>
-    <button
-        type="button"
-        class="btn-close"
-        (click)="modalRef.dismiss()"></button>
+    <span class="h5">Κείμενο Εγκύκλιας Οδηγίας από τη Νομοθεσία</span>
+    <button type="button" class="btn-close" (click)="modalRef.dismiss()"></button>
 </div>
 
 <div class="modal-body">
@@ -13,69 +10,29 @@
 
             <table class="w-50">
                 <tr>
-                    <th
-                        *ngIf="instructionProvision.instructionProvisionSpecs.meros"
-                        class="text-center">
-                        Μέρος
-                    </th>
-                    <th
-                        *ngIf="instructionProvision.instructionProvisionSpecs.kefalaio"
-                        class="text-center">
-                        Κεφάλαιο
-                    </th>
-                    <th
-                        *ngIf="instructionProvision.instructionProvisionSpecs.arthro"
-                        class="text-center">
+                    <th *ngIf="instructionProvision.instructionProvisionSpecs.arthro" class="text-center">
                         Άρθρο
                     </th>
-                    <th
-                        *ngIf="instructionProvision.instructionProvisionSpecs.paragrafos"
-                        class="text-center">
+                    <th *ngIf="instructionProvision.instructionProvisionSpecs.paragrafos" class="text-center">
                         Παράγραφος
                     </th>
-                    <th
-                        *ngIf="instructionProvision.instructionProvisionSpecs.edafio"
-                        class="text-center">
+                    <th *ngIf="instructionProvision.instructionProvisionSpecs.edafio" class="text-center">
                         Εδάφιο
-                    </th>
-                    <th
-                        *ngIf="instructionProvision.instructionProvisionSpecs.pararthma"
-                        class="text-center">
-                        Παράρτημα
                     </th>
                 </tr>
                 <tr>
-                    <td
-                        *ngIf="instructionProvision.instructionProvisionSpecs.meros"
-                        class="text-center">
-                        {{ instructionProvision.instructionProvisionSpecs.meros }}
-                    </td>
-                    <td
-                        *ngIf="instructionProvision.instructionProvisionSpecs.arthro"
-                        class="text-center">
+                    <td *ngIf="instructionProvision.instructionProvisionSpecs.arthro" class="text-center">
                         {{ instructionProvision.instructionProvisionSpecs.arthro }}
                     </td>
-                    <td
-                        *ngIf="instructionProvision.instructionProvisionSpecs.paragrafos"
-                        class="text-center">
+                    <td *ngIf="instructionProvision.instructionProvisionSpecs.paragrafos" class="text-center">
                         {{ instructionProvision.instructionProvisionSpecs.paragrafos }}
                     </td>
-                    <td
-                        *ngIf="instructionProvision.instructionProvisionSpecs.edafio"
-                        class="text-center">
+                    <td *ngIf="instructionProvision.instructionProvisionSpecs.edafio" class="text-center">
                         {{ instructionProvision.instructionProvisionSpecs.edafio }}
-                    </td>
-                    <td
-                        *ngIf="instructionProvision.instructionProvisionSpecs.pararthma"
-                        class="text-center">
-                        {{ instructionProvision.instructionProvisionSpecs.pararthma }}
                     </td>
                 </tr>
             </table>
         </div>
-        <div
-            class="card-body"
-            [innerHTML]="instructionProvision.instructionProvisionText"></div>
+        <div class="card-body" [innerHTML]="instructionProvision.instructionProvisionText"></div>
     </div>
 </div>
-
