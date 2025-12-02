@@ -13,17 +13,3 @@ export interface IInstructionProvision {
     };
     isNew?: boolean;
 }
-
-// export interface IInstructionProvisionGroup {
-//   instructionActKey: string;
-//   items: IInstructionProvisionItem[];
-// }
-
-// export interface IInstructionProvisionItem {
-//   instructionProvisionSpecs: IInstructionProvisionSpecs;
-//   instructionProvisionText: string;
-//   instructionPages?: {
-//     from?: string;
-//     to?: string;
-//   };
-// }

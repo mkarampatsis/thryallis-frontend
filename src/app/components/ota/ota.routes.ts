@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 import { OtaComponent } from './ota.component';
 import { OtaDetailsComponent } from './ota-details/ota-details.component';
-import { OtaSearchComponent } from './ota-search/ota-search.component';
+import { SearchComponent } from './search/search.component';
 import { InstructionProvisionsComponent } from './instruction-provisions/instruction-provisions.component';
 
 export const OtaRoutes: Route[] = [
@@ -15,7 +15,7 @@ export const OtaRoutes: Route[] = [
     },
     {
         path: 'search',
-        component: OtaSearchComponent,
+        component: SearchComponent,
     },
     {
         path: 'instruction-provisions',

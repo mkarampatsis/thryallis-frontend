@@ -86,21 +86,8 @@ export class OtaEditComponent implements OnInit {
 
   gridApi: GridApi<IOrganizationList>;
 
-  remitCompetences = [
-    'Περιφέρειες',
-    'Δήμοι',
-    'Νησιωτικοί Δήμοι',
-    'Ορεινοί Δήμοι',
-    // 'Μητροπολιτικές Αρμοδιότητες'
-  ];
-
-  remitTypes = [
-    'Επιτελική',
-    'Εκτελεστική',
-    'Υποστηρικτική',
-    'Ελεγκτική',
-    'Παρακολούθησης αποτελεσματικής πολιτικής και αξιολόγησης αποτελεσμάτων'
-  ];
+  remitCompetences = this.constOtaService.REMIT_COMPETENCES;
+  remitTypes = this.constOtaService.REMIT_TYPES;
 
   form = new FormGroup({
     remitText: new FormControl('', Validators.required),

@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
@@ -10,10 +10,13 @@ import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { OtaService } from 'src/app/shared/services/ota.service';
 
+import { OtaActsActionsComponent } from 'src/app/shared/components/ota-acts-actions/ota-acts-actions.component';
+import { UserService } from 'src/app/shared/services/user.service';
+
 @Component({
   selector: 'app-ota-details',
   standalone: true,
-  imports: [AgGridAngular, GridLoadingOverlayComponent],
+  imports: [CommonModule,AgGridAngular,GridLoadingOverlayComponent],
   templateUrl: './ota-details.component.html',
   styleUrl: './ota-details.component.css'
 })
@@ -21,6 +24,7 @@ export class OtaDetailsComponent implements OnInit {
   constOtaService = inject(ConstOtaService);
   modalService = inject(ModalService);
   otaService  = inject(OtaService);
+  userService = inject(UserService);
 
   otaDetails: IOta[] = [];
 
@@ -38,6 +42,16 @@ export class OtaDetailsComponent implements OnInit {
     { field: 'remitType', headerName: 'Τύπος Αρμοδιότητας', flex: 0.5 },
     { field: 'remitCompetence', headerName: 'Φορέας Άσκησης', flex: 0.5 },
     { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
+    {
+      field: 'actionCell',
+      headerName: 'Ενέργειες',
+      cellRenderer: OtaActsActionsComponent,
+      filter: false,
+      sortable: false,
+      floatingFilter: false,
+      flex: 0.5,
+      resizable: false,
+    },
   ];
   autoSizeStrategy = this.constOtaService.autoSizeStrategy;
 
@@ -60,26 +74,10 @@ export class OtaDetailsComponent implements OnInit {
     }
   }
 
-  onRowSelected(event: any): void {
-    console.log('Row selected:', event.data);
-    this.modalService.showOtaDetails(event.data);
-    // this.modalService.editOta(event.data)
-    // .pipe(take(1))
-    // .subscribe(result => {
-    //   if (result) {
-    //     console.log('Refresh Grid Data', result);
-    //     this.otaService.getAllOta()
-    //     .subscribe(response => {
-    //       const body = response.body;          
-    //       const status = response.status;        
-    //       if (status === 200) {
-    //         this.getOta();
-    //         // this.gridApi.setRowData(this.otaDetails);
-    //       }
-    //     });
-    //   }
-    // });
-  }
+  // onRowSelected(event: any): void {
+  //   console.log('Row selected:', event.data);
+  //   this.modalService.showOtaDetails(event.data);
+  // }
 
   newOta(){
     this.modalService.otaEdit(null, true)
@@ -135,6 +133,14 @@ export class OtaDetailsComponent implements OnInit {
         }
       },
     });
+  }
+
+  hasOtaAdminRole() {
+    return this.userService.hasOtaAdminRole()
+  }
+
+  hasOtaEditorRole() {
+    return this.userService.hasOtaEditorRole()
   }
 }
 

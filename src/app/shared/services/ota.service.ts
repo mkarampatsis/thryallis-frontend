@@ -41,6 +41,10 @@ export class OtaService {
     return this.http.put<{ message: string }>(`${APIPREFIX_OTA}/${OtaId}`, data, { observe: 'response' });
   }
 
+  getUniqueOrganizationTypes(): Observable<HttpResponse<string[]>> {
+    return this.http.get<string[]>(`${APIPREFIX_OTA}/organization-types`, { observe: 'response' });
+  }
+
   
   onExportToExcelSearch(data: IElasticResources) {
     // Convert each array into worksheet

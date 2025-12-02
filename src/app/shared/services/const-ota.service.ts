@@ -32,6 +32,22 @@ export class ConstOtaService {
   ORGANIZATION_TYPES: IDictionaryType[] = [];
   ORGANIZATION_TYPES_MAP: Map<number, string> = new Map<number, string>();
 
+  REMIT_COMPETENCES = [
+    'Περιφέρειες',
+    'Δήμοι',
+    'Νησιωτικοί Δήμοι',
+    'Ορεινοί Δήμοι',
+    // 'Μητροπολιτικές Αρμοδιότητες'
+  ];
+
+  REMIT_TYPES = [
+    'Επιτελική',
+    'Εκτελεστική',
+    'Υποστηρικτική',
+    'Ελεγκτική',
+    'Παρακολούθησης αποτελεσματικής πολιτικής και αξιολόγησης αποτελεσμάτων'
+  ];
+
   INSTRUCTION_TYPES = [
     'Εγκύκλιος',
     'Έγγραφο ',
@@ -76,7 +92,7 @@ export class ConstOtaService {
     {
       field: 'instructionActType',
       headerName: 'Τύπος',
-      flex: 2,
+      flex: 1,
     },
     { field: 'instructionActNumber', headerName: 'Αριθμός', flex: 1 },
     { field: 'instructionActDate', headerName: 'Ημερομηνία', flex: 1 },

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SearchGridComponent } from '../search-grid/search-grid.component';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,7 +7,6 @@ import { ConstService } from 'src/app/shared/services/const.service';
 import { ConstFacilityService } from 'src/app/shared/services/const-facility.service';
 import { SearchService } from 'src/app/shared/services/search.service';
 import { ISearchGridOutput } from 'src/app/shared/interfaces/search/search.interface';
-import { NgFor } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { ResourcesService } from 'src/app/shared/services/resources.service';
 import { IFacilityConfig } from 'src/app/shared/interfaces/facility/facilityConfig';

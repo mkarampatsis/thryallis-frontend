@@ -1,0 +1,6 @@
+<div class="d-flex gap-1 align-items-center">
+  <i class="bi bi-eye fs-4" role="button" ngbTooltip="Εμφάνιση Στοιχείων " (click)="displayOta()"></i>
+  @if(hasOtaAdminRole() || hasOtaEditorRole()){
+    <i class="bi bi-pencil-square fs-4" role="button" ngbTooltip="Επεξεργασία" (click)="editOta()"></i>
+  }
+</div>

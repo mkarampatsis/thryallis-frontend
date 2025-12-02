@@ -1,0 +1,148 @@
+<h4 class="govgr-heading-md">Αναζήτηση</h4>
+
+<div class="container mt-4 mb-4">
+  <form [formGroup]="form">
+
+    <div class="mb-3">
+      <label class="form-label">
+        Περιεχόμενο αρμοδιότητας:
+      </label>
+      <input type="text" formControlName="remitText" class="form-control" placeholder="Εισάγετε κείμενο">
+    </div>
+      
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Φορέας άσκησης αρμοδιότητας:</label>
+        <select formControlName="remitCompetence" class="form-select">
+          <option value="" disabled>-- Επιλογή --</option>
+          @for (name of remitCompetences; track name) {
+            <option [value]="name">{{ name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Τύπος αρμοδιότητας:</label>
+        <select formControlName="remitType" class="form-select">
+          <option value="" disabled>-- Επιλογή --</option>
+          @for (name of remitTypes; track name) {
+            <option [value]="name">{{ name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label" for="remitLocalOrGlobal">Αυτοδιοικητική Αρμοδιότητα:</label>
+        <select formControlName="remitLocalOrGlobal" id="remitLocalOrGlobal" class="form-select">
+          <option value="" disabled>-- Επιλογή --</option>
+          <option value="Αυτοδιοικητική Αρμοδιότητα (Τοπική)">Αυτοδιοικητική Αρμοδιότητα (Τοπική)</option>
+          <option value="Αρμοδιότητα που συνιστά αποστολή του κράτους (Κρατική)">Αρμοδιότητα που συνιστά αποστολή του κράτους (Κρατική)</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="cofog1" class="form-label">
+          Λειτουργική Περιοχή COFOG:
+        </label>
+        <select class="form-select"
+          [class.is-invalid]="form.controls.cofog1.touched && form.controls.cofog1.invalid"
+          aria-label="Default select example" id="cofog1" formControlName="cofog1">
+          <option value="" disabled selected>
+            Επιλέξτε Λειτουργική Περιοχή COFOG
+          </option>
+          @for (cofog of cofog1; track $index) {
+          <option [ngValue]="cofog.code">{{ cofog.code }}. {{ cofog.name }}</option>
+          }
+        </select>
+        @if (form.controls.cofog1.touched && form.controls.cofog1.invalid) {
+        <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+        }
+      </div>
+    </div>
+
+    @if (cofog1_selected) {
+      <div class="mb-3 d-flex gap-3">
+        <div class="w-50">
+          <label for="cofog2" class="form-label">
+            Λειτουργικός Τομέας COFOG:
+          </label>
+          <select class="form-select"
+            [class.is-invalid]="form.controls.cofog2.touched && form.controls.cofog2.invalid"
+            aria-label="Default select example" id="cofog2" formControlName="cofog2">
+            <option value="" disabled selected>
+              Επιλέξτε Λειτουργικό Τομέα COFOG
+            </option>
+            @for (cofog of cofog2; track $index) {
+              <option [ngValue]="cofog.code">{{ cofog.code }}. {{ cofog.name }}</option>
+            }
+          </select>
+          @if (form.controls.cofog2.touched && form.controls.cofog2.invalid) {
+            <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+          }
+        </div>
+        @if (cofog2_selected) {
+          <div class="w-50">
+            <label for="cofog3" class="form-label">
+              Θεματική Περιοχή COFOG:
+            </label>
+            <select class="form-select"
+              [class.is-invalid]="form.controls.cofog3.touched && form.controls.cofog3.invalid"
+              aria-label="Default select example" id="cofog3" formControlName="cofog3">
+              <option value="" disabled selected>
+                Επιλέξτε Θεματική Περιοχή COFOG
+              </option>
+              @for (cofog of cofog3; track $index) {
+              <option [ngValue]="cofog.code">{{ cofog.code }}. {{ cofog.name }}</option>
+              }
+            </select>
+            @if (form.controls.cofog3.touched && form.controls.cofog3.invalid) {
+            <div class="invalid-feedback">Το πεδίο είναι υποχρεωτικό</div>
+            }
+          </div>
+        }
+      </div>
+    }
+    <div class="row mb-3" formGroupName="publicPolicyAgency">
+      <div class="col-md-6">
+        <label class="form-label">
+          Φορέας Δημόσιας Πολιτικής:
+        </label>
+        <input type="text" formControlName="organization" class="form-control" placeholder="Εισάγετε κείμενο">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          Τύπος Φορέα Δημόσιας Πολιτικής:
+        </label>
+        <select formControlName="organizationType" class="form-select">
+          <option value="" disabled>-- Επιλογή --</option>
+          @for (name of organizationTypes; track name) {
+            <option [value]="name">{{ name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <button type="button" class="btn btn-primary" (click)="onSubmit()">
+        Υποβολή
+      </button>
+      <button type="button" class="btn btn-danger" (click)="resetForm()">
+        Επαναφορά
+      </button>
+      @if (loading) {
+      <span class="d-flex align-items-center gap-2">
+        Αναμονή αποτελεσμάτων...
+        <span class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </span>
+      }
+    </div>
+  </form>
+</div>
+
+@if(rowData) {
+  <h5>Αποτελέσματα αναζήτησης</h5>
+  <app-search-grid [data]="rowData"></app-search-grid>
+}

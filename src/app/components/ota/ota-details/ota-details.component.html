@@ -14,7 +14,7 @@
 @if(!loading) { 
   <div class="d-flex justify-content-between mb-2">
     <span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του ΟΤΑ με διπλό κλικ</span>
-    <button class="btn btn-primary btn-sm" (click)="newOta()">
+    <button *ngIf ="hasOtaAdminRole() || hasOtaEditorRole()" class="btn btn-primary btn-sm" (click)="newOta()">
       Νέα Αρμοδιότητα
     </button>
   </div>
@@ -28,8 +28,8 @@
     [paginationPageSize]="10"
     [loadingOverlayComponent]="loadingOverlayComponent" 
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (rowDoubleClicked)="onRowSelected($event)"
     (gridReady)="onGridReady($event)"
     class="ag-theme-balham">
   </ag-grid-angular>
 }
+<!-- (rowDoubleClicked)="onRowSelected($event)" -->

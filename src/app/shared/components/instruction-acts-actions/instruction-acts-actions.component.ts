@@ -6,7 +6,7 @@ import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { take } from 'rxjs';
 import { InstructionActService } from '../../services/instruction-act.service';
 import { IInstructionAct } from '../../interfaces/instruction-act/instruction-act.interface';
-import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 
 
 @Component({
@@ -20,9 +20,7 @@ export class InstructionActsActionsComponent {
   modalService = inject(ModalService);
   uploadService = inject(FileUploadService);
   instructionActService = inject(InstructionActService);
-  authService = inject(AuthService)
-
-  user = this.authService.user;
+  userService = inject(UserService)
 
   params: ICellRendererParams;
 
@@ -65,5 +63,13 @@ export class InstructionActsActionsComponent {
             },
           });
       });
+  }
+
+  hasOtaAdminRole() {
+    return this.userService.hasOtaAdminRole()
+  }
+
+  hasOtaEditorRole() {
+    return this.userService.hasOtaEditorRole()
   }
 }
