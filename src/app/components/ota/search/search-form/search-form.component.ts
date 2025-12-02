@@ -50,6 +50,7 @@ export class SearchFormComponent {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.createCofogSubscriptions();
     this.otaService.getUniqueOrganizationTypes().subscribe({
       next: (response) => {
         this.organizationTypes = response.body || [];
@@ -57,7 +58,50 @@ export class SearchFormComponent {
       error: (error) => {
         console.error('Error fetching organization types:', error);
       }
+    });    
+  }
+
+  ngOnDestroy(): void {
+    this.formSubscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  initializeForm() {
+    this.form = new FormGroup({
+      remitText: new FormControl(''),
+      remitCompetence: new FormControl(''),
+      remitType: new FormControl(''),
+      cofog1: new FormControl(''),
+      cofog2: new FormControl(''),
+      cofog3: new FormControl(''),
+      publicPolicyAgency: new FormGroup({
+        organization: new FormControl(''),
+        organizationType: new FormControl(''),
+      }),
+      remitLocalOrGlobal: new FormControl(''),
     });
+  }
+
+  onSubmit() {
+    this.rowData = [];
+    if (this.form.valid) {
+      console.log('Form Data:', this.form.getRawValue()); 
+      this.rowData = this.transformData(this.form.getRawValue());
+      console.log("transformData", this.rowData)
+    } else {
+      console.log('Form is invalid');
+    }
+  }
+
+  resetForm() {
+    this.initializeForm();
+    this.createCofogSubscriptions();
+    this.rowData = null
+    this.cofog1_selected = false;
+    this.cofog2_selected = false;
+    this.loading = false
+  }
+
+  createCofogSubscriptions() {
     this.formSubscriptions.push(
       this.form.get('cofog1').valueChanges.subscribe((value) => {
         if (value) {
@@ -79,41 +123,7 @@ export class SearchFormComponent {
       }),
     );
   }
-
-  initializeForm() {
-    this.form = new FormGroup({
-      remitText: new FormControl(''),
-      remitCompetence: new FormControl(''),
-      remitType: new FormControl(''),
-      cofog1: new FormControl(''),
-      cofog2: new FormControl(''),
-      cofog3: new FormControl(''),
-      publicPolicyAgency: new FormGroup({
-        organization: new FormControl(''),
-        organizationType: new FormControl(''),
-      }),
-      remitLocalOrGlobal: new FormControl('', Validators.required),
-    });
-  }
-
-  onSubmit() {
-    this.rowData = [];
-    if (this.form.valid) {
-      console.log('Form Data:', this.form.getRawValue()); 
-      this.rowData = this.transformData(this.form.getRawValue());
-      console.log("transformData", this.rowData)
-    } else {
-      console.log('Form is invalid');
-    }
-  }
-  resetForm() {
-    this.initializeForm();
-    this.rowData = null
-    this.cofog1_selected = false;
-    this.cofog2_selected = false;
-    this.loading = false
-  }
-
+  
   transformData(input: IOtaSearch) {
     const result: any = {
       ota: { must: [] }
@@ -172,27 +182,33 @@ export class SearchFormComponent {
         query: input.remitLocalOrGlobal.trim()
       });
     };
-
+    
     if (input.cofog1) {
-      pushCond("cofog1", {
+      const cofog1 = this.cofog1.find((cofog) => cofog.code === input.cofog1);
+      pushCond("ota", {
         field: "cofog1",
         type: "words",
+        // query: cofog1.name
         query: input.cofog1.trim()
       });
     };
 
     if (input.cofog2) {
-      pushCond("cofog2", {
+      const cofog2 = this.cofog2.find((cofog) => cofog.code === input.cofog2);
+      pushCond("ota", {
         field: "cofog2",
         type: "words",
-        query: input.cofog1.trim()
+        query: input.cofog2.trim()
+        // query: cofog2.name
       });
     };
 
     if (input.cofog3) {
-      pushCond("cofog3", {
+      const cofog3 = this.cofog3.find((cofog) => cofog.code === input.cofog3);
+      pushCond("ota", {
         field: "cofog3",
         type: "words",
+        // query: cofog3.name
         query: input.cofog3.trim()
       });
     };
