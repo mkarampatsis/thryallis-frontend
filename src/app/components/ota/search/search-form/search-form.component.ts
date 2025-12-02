@@ -9,6 +9,7 @@ import { ICofog2 } from 'src/app/shared/interfaces/cofog/cofog2.interface';
 import { ICofog3 } from 'src/app/shared/interfaces/cofog/cofog3.interface';
 import { Subscription } from 'rxjs';
 import { OtaService } from 'src/app/shared/services/ota.service';
+import { IOtaSearch } from 'src/app/shared/interfaces/ota/ota.interface';
 
 @Component({
   selector: 'app-search-form',
@@ -98,7 +99,7 @@ export class SearchFormComponent {
   onSubmit() {
     this.rowData = [];
     if (this.form.valid) {
-      console.log('Form Data1:', this.form.getRawValue()); 
+      console.log('Form Data:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
       console.log("transformData", this.rowData)
     } else {
@@ -113,245 +114,88 @@ export class SearchFormComponent {
     this.loading = false
   }
 
-  transformData(input: any) {
+  transformData(input: IOtaSearch) {
     const result: any = {
-      facilities: { must: [] },
-      spaces: { must: [] },
-      equipments: { must: [] }
+      ota: { must: [] }
+      // spaces: { must: [] },
+      // equipments: { must: [] }
     };
 
     const pushCond = (section: string, cond: any) => {
       if (cond) result[section].must.push(cond);
     };
 
-    // === FACILITIES ===
-    if (input.facilities) {
-      const f = input.facilities;
-      let facilityExist = false;
-      
-      if (f.organization) {
-        pushCond("facilities", {
-          field: "organization",
-          type: f.organizationSearch || "phrase",
-          query: f.organization.trim()
-        });
-        facilityExist = true;
-      }
-
-      if (f.distinctiveNameOfFacility) {
-        pushCond("facilities", {
-          field: "distinctiveNameOfFacility",
-          type: "words",
-          query: f.distinctiveNameOfFacility.trim()
-        });
-        facilityExist = true;
-      }
-
-      if (f.kaek) {
-        pushCond("facilities", { field: "kaek", type: "words", query: f.kaek });
-        facilityExist = true;
-      }
-
-      if (Array.isArray(f.useOfFacility) && f.useOfFacility.length ) {
-        let useOfFacility = []
-        f.useOfFacility.forEach((use: string) => {
-          useOfFacility.push(use);
-          // pushCond("facilities", { field: "useOfFacility", type: "words", query: use });
-        });
-        pushCond("facilities", { field: "useOfFacility", type: "words", query: useOfFacility });
-        facilityExist = true;
-      }
-
-      if (f.coveredPremisesArea.from || f.coveredPremisesArea.until) {
-        const areaQuery: any = {};
-
-        if (f.coveredPremisesArea.from) {
-          areaQuery.gte = f.coveredPremisesArea.from;
-        }
-
-        if (f.coveredPremisesArea.until) {
-          areaQuery.lte = f.coveredPremisesArea.until;
-        }
-
-        pushCond("facilities", { 
-          field: "coveredPremisesArea", 
-          query:areaQuery 
-        });
-        facilityExist = true;
-      }
-
-      if (f.floorsOrLevels.from || f.floorsOrLevels.until) {
-        const floorOrLevelQuery: any = {};
-
-        if (f.floorsOrLevels.from) {
-          floorOrLevelQuery.gte = f.floorsOrLevels.from;
-        }
-
-        if (f.floorsOrLevels.until) {
-          floorOrLevelQuery.lte = f.floorsOrLevels.until;
-        }
-
-        pushCond("facilities", { 
-          field: "floorsOrLevels", 
-          query: floorOrLevelQuery 
-         });
-        facilityExist = true;
-      }
-
-      // Join addressOfFacility fields
-      if (f.addressOfFacility.street || f.addressOfFacility.number || f.addressOfFacility.postcode || f.addressOfFacility.area || f.addressOfFacility.municipality || f.addressOfFacility.geographicRegion) {
-        const addrParts = [
-          f.addressOfFacility.street,
-          f.addressOfFacility.number,
-          f.addressOfFacility.postcode,
-          f.addressOfFacility.area,
-          f.addressOfFacility.municipality,
-          f.addressOfFacility.geographicRegion,
-          f.addressOfFacility.country
-        ].filter(Boolean);
-        if (addrParts.length) {
-          pushCond("facilities", {
-            field: "addressOfFacility",
-            type: "words",
-            query: addrParts.join(", ")
-          });
-        }
-        facilityExist = true;
-      }
-
-      // booleans (uniqueUseOfFacility, private)
-      if (facilityExist) {
-        ["uniqueUseOfFacility", "private"].forEach((field) => {
-          if (f[field] !== undefined) {
-            pushCond("facilities", { field, type: "words", query: f[field] });
-          }
-        });
-      }
-    }
-
-    // === SPACES ===
-    if (input.spaces) {
-      const s = input.spaces;
-      
-      if (s.organization) {
-        pushCond("spaces", { field: "organization", type: s.organizationSearch || "phrase", query: s.organization });
-      }
-
-      if (s.spaceName) {
-        pushCond("spaces", { field: "spaceName", type: "words", query: s.spaceName });
-      }
-
-      if (Array.isArray(s.spaceUse) && s.spaceUse.length) {
-        let spaceUse = []
-        if (s.spaceUse.length==1 && s.spaceUse[0].type=='') {
-          console.log(s.spaceUse.length, s.spaceUse[0].type);
-        } else {
-          // const joined = s.spaceUse
-          // .map((su: any) => [su.type, su.subtype, su.space, su.auxiliarySpace].filter((x) => x !== "").join(","))
-          // .join("$");
-          // pushCond("spaces", { field: "spaceUse", type: "words", query: joined });
-          spaceUse = s.spaceUse
-            .map((su: any) => [su.type, su.subtype, su.space, su.auxiliarySpace]
-            .filter((x) => x !== "").join(","))
-
-        }
-        if (spaceUse.length){
-          pushCond("spaces", { field: "spaceUse", type: "words", query: spaceUse });
-        }        
-      }
-
-      if (s.spaceArea.from || s.spaceArea.until) {
-        const spaceAreaQuery: any = {};
-
-        if (s.spaceArea.from) {
-          spaceAreaQuery.gte = s.spaceArea.from;
-        }
-
-        if (s.spaceArea.until) {
-          spaceAreaQuery.lte = s.spaceArea.until;
-        }
-
-        pushCond("spaces", { 
-          field: "spaceArea", 
-          query: spaceAreaQuery
-        });
-      }
-    }
-
-    // === EQUIPMENTS ===
-    if (input.equipments) {
-      const e = input.equipments;
-      let equipmentExist = false;
-
-      if (e.organization) {
-        pushCond("equipments", { field: "organization", type: e.organizationSearch || "phrase", query: e.organization });
-      }
-
-      ["resourceSubcategory", "kind", "type", "status"].forEach((field) => {
-        if (e[field]) {
-          pushCond("equipments", { field, type: "words", query: e[field] });
-        }
+    if (input.remitText) {
+      pushCond("ota", {
+        field: "remitText",
+        type: "phrase",
+        query: input.remitText.trim()
       });
+    };
 
-      // Join itemDescription
-      if (Array.isArray(e.itemDescription) && e.itemDescription.length) {
-        // const joined = e.itemDescription
-        //   .map((item: any) => `${item.description}=${item.value}`)
-        //   .join("$");
-        // pushCond("equipments", { field: "itemDescription", type: "words", query: joined });
-         // Keep only items where item.value has data
-        const validItems = e.itemDescription.filter(
-          (item: any) => item?.value !== null && item?.value !== undefined && item?.value !== ""
-        );
-        // If no item has value → do NOT push condition
-        if (validItems.length) {
-          // Build query string only for valid items
-          const itemDescription = validItems
-            .map((item: any) => `${item.description}=${item.value}`)
+    if (input.remitCompetence) {
+      pushCond("ota", {
+        field: "remitCompetence",
+        type: "words",
+        query: input.remitCompetence.trim()
+      });
+    };
 
-          pushCond("equipments", {
-            field: "itemDescription",
-            type: "words",
-            query: itemDescription,
-          });
-        }        
-      }
+    if (input.remitType) {
+      pushCond("ota", {
+        field: "remitText",
+        type: "words",
+        query: input.remitText.trim()
+      });
+    };
 
-      if (e.acquisitionDate.from || e.acquisitionDate.until) {
-        const acquisitionDateQuery: any = {};
+    if (input.publicPolicyAgency.organization) {
+      pushCond("ota", {
+        field: "publicPolicyAgency.organization",
+        type: "words",
+        query: input.publicPolicyAgency.organization.trim()
+      });
+    };
 
-        if (e.acquisitionDate.from) {
-          acquisitionDateQuery.gte = new Date(e.acquisitionDate.from).toISOString();
-        }
+    if (input.publicPolicyAgency.organizationType) {
+      pushCond("ota", {
+        field: "publicPolicyAgency.organizationType",
+        type: "words",
+        query: input.publicPolicyAgency.organizationType.trim()
+      });
+    };
 
-        if (e.acquisitionDate.until) {
-          acquisitionDateQuery.lte = new Date(e.acquisitionDate.until).toISOString();
-        }
+    if (input.remitLocalOrGlobal) {
+      pushCond("ota", {
+        field: "remitLocalOrGlobal",
+        type: "words",
+        query: input.remitLocalOrGlobal.trim()
+      });
+    };
 
-        pushCond("equipments", { 
-          field: "acquisitionDate", 
-            query: acquisitionDateQuery
-          })
-      }
+    if (input.cofog1) {
+      pushCond("cofog1", {
+        field: "cofog1",
+        type: "words",
+        query: input.cofog1.trim()
+      });
+    };
 
-      if (e.depreciationDate.from || e.depreciationDate.until) {
-        const depreciationDateQuery: any = {};
+    if (input.cofog2) {
+      pushCond("cofog2", {
+        field: "cofog2",
+        type: "words",
+        query: input.cofog1.trim()
+      });
+    };
 
-        if (e.acquisitionDate.from) {
-          depreciationDateQuery.gte = new Date(e.depreciationDate.from).toISOString();
-        }
-
-        if (e.acquisitionDate.until) {
-          depreciationDateQuery.lte = new Date(e.depreciationDate.until).toISOString();
-        }
-
-        pushCond("equipments", { 
-          field: "depreciationDate", 
-          query: depreciationDateQuery
-        });
-      }
-    }
-
+    if (input.cofog3) {
+      pushCond("cofog3", {
+        field: "cofog3",
+        type: "words",
+        query: input.cofog3.trim()
+      });
+    };
     return result;
   }
 }

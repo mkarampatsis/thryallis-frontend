@@ -30,3 +30,17 @@ export interface IOta {
   status: string;
   finalized: boolean;
 }
+
+export interface IOtaSearch {
+  remitText: string;
+  remitCompetence: string;
+  remitType: string;
+  cofog1: string;
+  cofog2: string;
+  cofog3: string;
+  publicPolicyAgency: {
+    organization: string;
+    organizationType: string;
+  };
+  remitLocalOrGlobal: string;
+}
