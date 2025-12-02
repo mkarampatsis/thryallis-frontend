@@ -1,1 +1,23 @@
-<p>instruction-provisions works!</p>
+<h1 class="govgr-heading-sm">Εγκύκλιες Οδηγίες Κώδικα Τοπικής Αυτοδιοίκησης</h1>
+
+@if(user()) {
+    <button
+        class="btn btn-primary mb-2"
+        (click)="newInstructionAct()">
+        Νέα Εγκύκλια Οδηγία
+    </button>
+}
+
+<div class="govgr-body">
+    <ag-grid-angular
+        [domLayout]="'autoHeight'"
+        [rowData]="instructionActs"
+        [defaultColDef]="defaultColDef"
+        [columnDefs]="colDefs"
+        [pagination]="true"
+        [paginationPageSize]="50"
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+        (gridReady)="onGridReady($event)"
+        class="ag-theme-balham"></ag-grid-angular>
+</div>

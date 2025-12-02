@@ -12,92 +12,92 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
-    selector: 'app-nomikes-praxeis',
-    standalone: true,
-    imports: [AgGridAngular, GridLoadingOverlayComponent],
-    templateUrl: './nomikes-praxeis.component.html',
-    styleUrl: './nomikes-praxeis.component.css',
+  selector: 'app-nomikes-praxeis',
+  standalone: true,
+  imports: [AgGridAngular, GridLoadingOverlayComponent],
+  templateUrl: './nomikes-praxeis.component.html',
+  styleUrl: './nomikes-praxeis.component.css',
 })
 export class NomikesPraxeisComponent implements OnInit {
-    constService = inject(ConstService);
-    modalService = inject(ModalService);
-    legalActService = inject(LegalActService);
-    authService = inject(AuthService);
-    user = this.authService.user;
-    legalActs: ILegalAct[] = [];
+  constService = inject(ConstService);
+  modalService = inject(ModalService);
+  legalActService = inject(LegalActService);
+  authService = inject(AuthService);
+  user = this.authService.user;
+  legalActs: ILegalAct[] = [];
 
-    legalActsNeedUpdate = this.legalActService.legalActsNeedUpdate;
+  legalActsNeedUpdate = this.legalActService.legalActsNeedUpdate;
 
-    defaultColDef = this.constService.defaultColDef;
+  defaultColDef = this.constService.defaultColDef;
 
-    colDefs = this.constService.LEGAL_ACTS_COL_DEFS;
+  colDefs = this.constService.LEGAL_ACTS_COL_DEFS;
 
-    autoSizeStrategy = this.constService.autoSizeStrategy;
+  autoSizeStrategy = this.constService.autoSizeStrategy;
 
-    loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση νομικών πράξεων...' };
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση νομικών πράξεων...' };
 
-    gridApi: GridApi<ILegalAct>;
+  gridApi: GridApi<ILegalAct>;
 
-    constructor() {
-        effect(
-            () => {
-                if (this.legalActsNeedUpdate()) {
-                    this.gridApi.showLoadingOverlay();
-                    this.legalActService
-                        .getAllLegalActs()
-                        .pipe(
-                            take(1),
-                            map((data) => {
-                                return data.map((legalAct) => {
-                                    return {
-                                        ...legalAct,
-                                    };
-                                });
-                            }),
-                        )
-                        .subscribe((data) => {
-                            this.legalActs = data;
-                            this.gridApi.hideOverlay();
-                        });
-                    this.legalActsNeedUpdate.set(false);
-                }
-            },
-            { allowSignalWrites: true },
-        );
-    }
-
-    ngOnInit() {
-        // console.log(this.legalActsNeedUpdate());
-    }
-
-    onGridReady(params: GridReadyEvent<ILegalAct>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.legalActService
+  constructor() {
+    effect(
+      () => {
+        if (this.legalActsNeedUpdate()) {
+          this.gridApi.showLoadingOverlay();
+          this.legalActService
             .getAllLegalActs()
             .pipe(
-                take(1),
-                map((data) => {
-                    return data.map((legalAct) => {
-                        return {
-                            ...legalAct,
-                        };
-                    });
-                }),
+              take(1),
+              map((data) => {
+                return data.map((legalAct) => {
+                  return {
+                    ...legalAct,
+                  };
+                });
+              }),
             )
             .subscribe((data) => {
-                this.legalActs = data;
-                this.gridApi.hideOverlay();
+              this.legalActs = data;
+              this.gridApi.hideOverlay();
             });
-    }
+          this.legalActsNeedUpdate.set(false);
+        }
+      },
+      { allowSignalWrites: true },
+    );
+  }
 
-    newLegalAct(): void {
-        this.modalService
-            .newLegalAct()
-            .pipe(take(1))
-            .subscribe((data) => {
-                this.legalActsNeedUpdate.set(true);
-            });
-    }
+  ngOnInit() {
+    // console.log(this.legalActsNeedUpdate());
+  }
+
+  onGridReady(params: GridReadyEvent<ILegalAct>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.legalActService
+      .getAllLegalActs()
+      .pipe(
+        take(1),
+        map((data) => {
+          return data.map((legalAct) => {
+            return {
+              ...legalAct,
+            };
+          });
+        }),
+      )
+      .subscribe((data) => {
+        this.legalActs = data;
+        this.gridApi.hideOverlay();
+      });
+  }
+
+  newLegalAct(): void {
+    this.modalService
+      .newLegalAct()
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.legalActsNeedUpdate.set(true);
+      });
+  }
 }

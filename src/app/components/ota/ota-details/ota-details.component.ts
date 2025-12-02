@@ -1,5 +1,6 @@
+import { NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { take } from 'rxjs';
 import { IOta } from 'src/app/shared/interfaces/ota/ota.interface';
@@ -24,7 +25,20 @@ export class OtaDetailsComponent implements OnInit {
   otaDetails: IOta[] = [];
 
   defaultColDef = this.constOtaService.defaultColDef;
-  colDefs: ColDef[] = this.constOtaService.OTA_DETAILS_COL_DEFS;
+  colDefs: ColDef[] = [
+    { 
+      field: 'remitText', 
+      headerName: 'Αρμοδιότητα', 
+      flex: 1,
+      cellRenderer: HtmlCellRenderer,
+      autoHeight: true,
+      cellStyle: { 'white-space': 'normal' },
+    },
+    { field: 'remitLocalOrGlobal', headerName: 'Αυτοδιοικητική/Κρατική', flex: 1 },
+    { field: 'remitType', headerName: 'Τύπος Αρμοδιότητας', flex: 0.5 },
+    { field: 'remitCompetence', headerName: 'Φορέας Άσκησης', flex: 0.5 },
+    { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
+  ];
   autoSizeStrategy = this.constOtaService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
@@ -47,22 +61,24 @@ export class OtaDetailsComponent implements OnInit {
   }
 
   onRowSelected(event: any): void {
-    this.modalService.otaEdit(event.data, false)
-    .pipe(take(1))
-    .subscribe(result => {
-      if (result) {
-        console.log('Refresh Grid Data', result);
-        this.otaService.getAllOta()
-        .subscribe(response => {
-          const body = response.body;          
-          const status = response.status;        
-          if (status === 200) {
-            this.getOta();
-            // this.gridApi.setRowData(this.otaDetails);
-          }
-        });
-      }
-    });
+    console.log('Row selected:', event.data);
+    this.modalService.showOtaDetails(event.data);
+    // this.modalService.editOta(event.data)
+    // .pipe(take(1))
+    // .subscribe(result => {
+    //   if (result) {
+    //     console.log('Refresh Grid Data', result);
+    //     this.otaService.getAllOta()
+    //     .subscribe(response => {
+    //       const body = response.body;          
+    //       const status = response.status;        
+    //       if (status === 200) {
+    //         this.getOta();
+    //         // this.gridApi.setRowData(this.otaDetails);
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   newOta(){
@@ -119,5 +135,57 @@ export class OtaDetailsComponent implements OnInit {
         }
       },
     });
+  }
+}
+
+@Component({
+  selector: 'app-html-cell-renderer',
+  standalone: true,
+  imports: [NgIf],
+  template: `
+    <div
+      [innerHTML]="shortText"
+      *ngIf="!showFullText"></div>
+    <div
+      [innerHTML]="params.value"
+      *ngIf="showFullText"></div>
+    <button
+      class="btn btn-info btn-sm mb-2"
+      *ngIf="isLongText"
+      (click)="toggleText()">
+      {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
+    </button>
+  `,
+})
+export class HtmlCellRenderer implements ICellRendererAngularComp {
+  params: any;
+  showFullText = false;
+  shortText = '';
+  isLongText = false;
+
+  agInit(params: any): void {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
+    }
+  }
+
+  refresh(params: any): boolean {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
+    }
+    this.showFullText = false; // Reset the text display state
+    return true;
+  }
+
+  toggleText(): void {
+    this.showFullText = !this.showFullText;
   }
 }

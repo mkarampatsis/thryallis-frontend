@@ -157,23 +157,15 @@ export class OtaEditComponent implements OnInit {
 
     const otaData = this.form.getRawValue() as unknown as IOta;
     if (this.form.valid) {
-
-      const cofog1_name = this.constOtaService.COFOG
-        .find((cofog) => cofog.code === this.form.controls.cofog1.value).name;
-      const cofog2_name = this.constOtaService.COFOG
-        .find((cofog) => cofog.code === this.form.controls.cofog1.value).cofog2
-        .find((cofog) => cofog.code === this.form.controls.cofog2.value).name;
-      const cofog3_name = this.constOtaService.COFOG
-        .find((cofog) => cofog.code === this.form.controls.cofog1.value).cofog2
-        .find((cofog) => cofog.code === this.form.controls.cofog2.value).cofog3
-        .find((cofog) => cofog.code === this.form.controls.cofog3.value).name
-      this.form.controls.cofog1_name.setValue(cofog1_name);
-      this.form.controls.cofog2_name.setValue(cofog2_name);
-      this.form.controls.cofog3_name.setValue(cofog3_name);
-
-      console.log(cofog1_name,cofog2_name,cofog3_name);
-      console.log("Form value", this.form.value);
       
+      const cofogNames = this.constOtaService.getCofogNames(
+        this.form.controls.cofog1.value,
+        this.form.controls.cofog2.value,
+        this.form.controls.cofog3.value
+      );  
+      this.form.controls.cofog1_name.setValue(cofogNames[0]);
+      this.form.controls.cofog2_name.setValue(cofogNames[1]);
+      this.form.controls.cofog3_name.setValue(cofogNames[2]);
 
       if (!this.updateMode){
         this.otaService.newOta(otaData)

@@ -31,8 +31,8 @@ export class InstructionProvisionModalComponent {
     {
       instructionActText: new FormControl('', Validators.required),
       instructionPages: new FormGroup({
-        from: new FormControl('', this.integerValidator),
-        to: new FormControl('', this.integerValidator),
+        from_pages: new FormControl('', this.integerValidator),
+        to_pages: new FormControl('', this.integerValidator),
       }),
       instructionProvisionSpecs: new FormGroup({
         arthro: new FormControl(''),

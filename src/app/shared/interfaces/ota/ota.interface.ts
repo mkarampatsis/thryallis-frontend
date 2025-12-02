@@ -1,4 +1,5 @@
 import { ILegalProvision } from '../legal-provision/legal-provision.interface';
+import { IInstructionProvision } from '../instruction-provision/instruction-provision.interface';
 
 export interface PublicPolicyAgency {
   organization: string;
@@ -19,8 +20,13 @@ export interface IOta {
     cofog1: string;
     cofog2: string;
     cofog3: string;
+    cofog1_name: string;
+    cofog2_name: string;
+    cofog3_name: string;  
   };
   legalProvisions: ILegalProvision[];
-  instructionProvisions: ILegalProvision[];
+  instructionProvisions: IInstructionProvision[];
   publicPolicyAgency: PublicPolicyAgency;
+  status: string;
+  finalized: boolean;
 }

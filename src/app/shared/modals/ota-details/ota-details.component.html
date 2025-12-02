@@ -1,0 +1,69 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Αρμοδιότητα Κώδικα Τοπικής Αυτοδιοίκησης</span>
+
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()">
+  </button>
+</div>
+<div class="modal-body">
+  <span class="d-flex justify-content-center fs-5 fw-bolder mb-3">Στοιχεία Αρμοδιότητας</span>
+  <div class="d-flex flex-column gap-2">
+
+    @if (this.data) {
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <td class="d-flex flex-column gap-2" [ngClass]="{'bg-warning': data.status === 'ΑΝΕΝΕΡΓΗ'}">
+              <div [innerHTML]="data.remitText"></div>
+              <table class="table table-bordered">
+                <tr>
+                  <td class="fw-semibold">Φορέας άσκησης αρμοδιότητας</td>
+                  <td class="fw-semibold">Τύπος αρμοδιότητας</td>
+                </tr>
+                <tr>
+                  <td>{{ data.remitCompetence }}</td>
+                  <td>{{ data.remitType }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Αυτοδιοικητική Αρμοδιότητα</td>
+                  <td class="fw-semibold">Λειτουργική Περιοχή COFOG</td>
+                </tr>
+                <tr>
+                  <td>{{ data.remitLocalOrGlobal }}</td>
+                  <td>{{ data.cofog.cofog1_name }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Λειτουργικός Τομέας COFOG</td>
+                  <td class="fw-semibold">Θεματική Περιοχή COFOG</td>
+                </tr>
+                <tr>
+                  <td>{{ data.cofog.cofog2_name }}</td>
+                  <td>{{ data.cofog.cofog3_name }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Φορέας Δημόσιας Πολιτικής</td>
+                  <td class="fw-semibold">Τύπος</td>
+                </tr>
+                <tr>
+                  <td>{{ data.publicPolicyAgency.organization }}</td>
+                  <td>{{ data.publicPolicyAgency.organizationType }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <app-list-legal-provisions 
+        [legalProvisions]="data.legalProvisions">
+      </app-list-legal-provisions>
+      <app-list-instruction-provisions
+        [instructionProvisions]="data.instructionProvisions">
+      </app-list-instruction-provisions>
+    }
+  </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+  <button ngbAutofocus type="button" class="btn btn-primary" (click)="modalRef.close()">
+    Επιστροφή
+  </button>
+</div>

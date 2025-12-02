@@ -34,9 +34,9 @@ export class InstructionActsActionsComponent {
     return false;
   }
 
-  displayFEK() {
+  displayFile() {
     this.uploadService
-      .getUploadByID(this.params.data.instrctionActFile.$oid)
+      .getUploadByID(this.params.data.instructionActFile.$oid)
       .pipe(take(1))
       .subscribe((data) => {
         const url = window.URL.createObjectURL(data);

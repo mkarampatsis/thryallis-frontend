@@ -61,10 +61,10 @@
         <input 
           type="text" 
           class="form-control" 
-          [class.is-invalid]="form.get('instructionPages.from')?.invalid && (form.get('instructionPages.from')?.dirty || form.get('instructionPages.from')?.touched)"
+          [class.is-invalid]="form.get('instructionPages.from_pages')?.invalid && (form.get('instructionPages.from_pages')?.dirty || form.get('instructionPages.from_pages')?.touched)"
           id="arthro" 
-          formControlName="from" />
-        @if (form.get('instructionPages.from')?.errors?.['notInteger']) {
+          formControlName="from_pages" />
+        @if (form.get('instructionPages.from_pages')?.errors?.['notInteger']) {
           <div class="invalid-feedback">Πρέπει να είναι ακέραιος αριθμός.</div>
         }
       </div>
@@ -75,10 +75,10 @@
         <input 
           type="text" 
           class="form-control" 
-          [class.is-invalid]="form.get('instructionPages.to')?.invalid && (form.get('instructionPages.to')?.dirty || form.get('instructionPages.to')?.touched)"
+          [class.is-invalid]="form.get('instructionPages.to_pages')?.invalid && (form.get('instructionPages.to_pages')?.dirty || form.get('instructionPages.to_pages')?.touched)"
           id="paragrafos" 
-          formControlName="to" />
-        @if (form.get('instructionPages.to')?.errors?.['notInteger']) {
+          formControlName="to_pages" />
+        @if (form.get('instructionPages.to_pages')?.errors?.['notInteger']) {
           <div class="invalid-feedback">Πρέπει να είναι ακέραιος αριθμός.</div>
         }
       </div>

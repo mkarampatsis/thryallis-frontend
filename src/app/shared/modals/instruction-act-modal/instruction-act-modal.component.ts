@@ -47,11 +47,12 @@ export class InstructionActModalComponent {
   });
 
   ngOnInit(): void {
+    console.log('InstructionActModalComponent initialized with instructionAct: ', this.instructionAct);
     if (this.instructionAct) {
       // If we are editing an existing legal act, we need to populate the form with the existing data
       this.form.controls.instructionActType.setValue(this.instructionAct.instructionActType);
       this.form.controls.instructionActNumber.setValue(this.instructionAct.instructionActNumber);
-      this.form.controls.instructionActDate.setValue(this.instructionAct.instructionActDateOrYear);
+      this.form.controls.instructionActDate.setValue(this.instructionAct.instructionActDate);
       if (this.instructionAct.ada.startsWith('ΜΗ ΑΝΑΡΤΗΤΕΑ ΠΡΑΞΗ')) {
         this.form.controls.ada.setValue(null);
       } else {

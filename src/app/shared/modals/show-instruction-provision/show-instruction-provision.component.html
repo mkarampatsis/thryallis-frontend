@@ -1,12 +1,12 @@
 <div class="d-flex justify-content-between m-3">
-    <span class="h5">Κείμενο Εγκύκλιας Οδηγίας από τη Νομοθεσία</span>
+    <span class="h5">Κείμενο Εγκύκλιας Οδηγίας</span>
     <button type="button" class="btn-close" (click)="modalRef.dismiss()"></button>
 </div>
 
 <div class="modal-body">
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between">
-            <span class="fw-semibold">{{ instructionProvision.instructionActKey }}</span>
+            <span class="fw-semibold">{{ instructionProvision.instructionActKey ? instructionProvision.instructionActKey : instructionProvision["instructionAct"]["instructionActKey"] }}</span>
 
             <table class="w-50">
                 <tr>

@@ -9,5 +9,5 @@ export interface IInstructionAct {
     instructionActNumber: string;
     instructionActType: string;
     instructionActTypeOther: string;
-    instructionActDateOrYear: string;
+    instructionActDate: string;
 }

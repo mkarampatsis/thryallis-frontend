@@ -47,6 +47,7 @@ import { SelectInstructionActionModalComponent } from '../modals/select-instruct
 import { SelectInstructionProvisionModalComponent } from '../modals/select-instruction-provision-modal/select-instruction-provision-modal.component';
 import { InstructionActModalComponent } from '../modals/instruction-act-modal/instruction-act-modal.component';
 import { IInstructionAct } from '../interfaces/instruction-act/instruction-act.interface';
+import { OtaDetailsComponent } from '../modals/ota-details/ota-details.component';
 
 @Injectable({
   providedIn: 'root',
@@ -447,6 +448,15 @@ export class ModalService {
     modalRef.componentInstance.readOnly = readOnly;
     modalRef.componentInstance.modalRef = modalRef;
     return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
+  }
+
+  showOtaDetails(data: IOta ) {
+    const modalRef = this.modalService.open(OtaDetailsComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = data;
+    modalRef.componentInstance.modalRef = modalRef;
   }
 
 }
