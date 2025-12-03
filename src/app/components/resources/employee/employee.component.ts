@@ -61,7 +61,8 @@ export class EmployeeComponent implements OnInit {
   form = new FormGroup({
     organization: new FormControl({ value: '', disabled: true }),
     organizationCode: new FormControl(''),
-    code: new FormControl({ value: '', disabled: true }),
+    // code: new FormControl({ value: '', disabled: true }),
+    code: new FormControl(''),
     firstname: new FormControl('', Validators.required),
     lastname: new FormControl('', Validators.required),
     fathername: new FormControl('', Validators.required),
@@ -102,6 +103,9 @@ export class EmployeeComponent implements OnInit {
   }
 
   newEmployee(data: IOrganizationList) {
+    this.readOnlyMode = false; // editing mode
+    this.updateMode = false;
+    this.form.enable();
     // Reset the form first
     this.form.reset();
     this.organization = data.preferredLabel
@@ -250,13 +254,13 @@ export class EmployeeComponent implements OnInit {
 
   onSubmit(): void {
 
-    // const invalid = [];
-    // const controls = this.form.controls;
-    // for (const name in controls) {
-    //   if (controls[name].invalid) {
-    //     invalid.push(name);
-    //   }
-    // }
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
