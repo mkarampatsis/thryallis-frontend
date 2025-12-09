@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SearchGridComponent } from '../search-grid/search-grid.component';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { ICofog2 } from 'src/app/shared/interfaces/cofog/cofog2.interface';
@@ -19,8 +19,6 @@ import { IOtaSearch } from 'src/app/shared/interfaces/ota/ota.interface';
     NgbNavModule,
     ReactiveFormsModule,
     SearchGridComponent,
-    NgFor,
-    MatIcon
   ],
   templateUrl: './search-form.component.html',
   styleUrl: './search-form.component.css'
@@ -84,12 +82,9 @@ export class SearchFormComponent {
   onSubmit() {
     this.rowData = [];
     if (this.form.valid) {
-      console.log('Form Data:', this.form.getRawValue()); 
       this.rowData = this.transformData(this.form.getRawValue());
       console.log("transformData", this.rowData)
-    } else {
-      console.log('Form is invalid');
-    }
+    } 
   }
 
   resetForm() {
@@ -126,7 +121,7 @@ export class SearchFormComponent {
   
   transformData(input: IOtaSearch) {
     const result: any = {
-      ota: { must: [] }
+      otas: { must: [] }
       // spaces: { must: [] },
       // equipments: { must: [] }
     };
@@ -136,15 +131,15 @@ export class SearchFormComponent {
     };
 
     if (input.remitText) {
-      pushCond("ota", {
+      pushCond("otas", {
         field: "remitText",
-        type: "phrase",
+        type: "words",
         query: input.remitText.trim()
       });
     };
 
     if (input.remitCompetence) {
-      pushCond("ota", {
+      pushCond("otas", {
         field: "remitCompetence",
         type: "words",
         query: input.remitCompetence.trim()
@@ -152,7 +147,7 @@ export class SearchFormComponent {
     };
 
     if (input.remitType) {
-      pushCond("ota", {
+      pushCond("otas", {
         field: "remitText",
         type: "words",
         query: input.remitText.trim()
@@ -160,7 +155,7 @@ export class SearchFormComponent {
     };
 
     if (input.publicPolicyAgency.organization) {
-      pushCond("ota", {
+      pushCond("otas", {
         field: "publicPolicyAgency.organization",
         type: "words",
         query: input.publicPolicyAgency.organization.trim()
@@ -168,7 +163,7 @@ export class SearchFormComponent {
     };
 
     if (input.publicPolicyAgency.organizationType) {
-      pushCond("ota", {
+      pushCond("otas", {
         field: "publicPolicyAgency.organizationType",
         type: "words",
         query: input.publicPolicyAgency.organizationType.trim()
@@ -176,7 +171,7 @@ export class SearchFormComponent {
     };
 
     if (input.remitLocalOrGlobal) {
-      pushCond("ota", {
+      pushCond("otas", {
         field: "remitLocalOrGlobal",
         type: "words",
         query: input.remitLocalOrGlobal.trim()
@@ -185,7 +180,7 @@ export class SearchFormComponent {
     
     if (input.cofog1) {
       const cofog1 = this.cofog1.find((cofog) => cofog.code === input.cofog1);
-      pushCond("ota", {
+      pushCond("otas", {
         field: "cofog1",
         type: "words",
         // query: cofog1.name
@@ -195,7 +190,7 @@ export class SearchFormComponent {
 
     if (input.cofog2) {
       const cofog2 = this.cofog2.find((cofog) => cofog.code === input.cofog2);
-      pushCond("ota", {
+      pushCond("otas", {
         field: "cofog2",
         type: "words",
         query: input.cofog2.trim()
@@ -205,7 +200,7 @@ export class SearchFormComponent {
 
     if (input.cofog3) {
       const cofog3 = this.cofog3.find((cofog) => cofog.code === input.cofog3);
-      pushCond("ota", {
+      pushCond("otas", {
         field: "cofog3",
         type: "words",
         // query: cofog3.name
