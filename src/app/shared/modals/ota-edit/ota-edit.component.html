@@ -175,7 +175,7 @@
 
           <ul>
             @for (unit of gridSelectedData; track unit ){
-              <li><strong>Φορέας Δημόσιας Πολιτικής: </strong>{{unit.preferredLabel}}, <strong>Εποπτεύουσα Αρχή: </strong>{{unit.subOrganizationOf}}</li>
+              <li><strong>Φορέας Δημόσιας Πολιτικής: </strong>{{unit.preferredLabel ? unit.preferredLabel: unit.organization}}, <strong>Εποπτεύουσα Αρχή: </strong>{{unit.subOrganizationOf}}</li>
             }
           </ul>
 
@@ -209,7 +209,7 @@
             type="submit" 
             class="btn btn-primary"
             [disabled]="!form.valid"
-            (click)="onCreate()"
+            (click)="onSubmit()"
             >Υποβολή</button>
           <button type="button" class="btn btn-secondary" (click)="resetForm()">Καθάρισμα</button>
         </div>

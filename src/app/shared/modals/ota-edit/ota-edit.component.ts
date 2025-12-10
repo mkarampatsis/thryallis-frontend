@@ -136,21 +136,10 @@ export class OtaEditComponent implements OnInit {
     );
 
     if (this.data) {
-      console.log('OTA Edit Data:', this.data);
-      this.form.patchValue(this.data);
-      this.legalProvisions = this.data.legalProvisions || [];
-      this.instructionProvisions = this.data.instructionProvisions || []; 
-      this.form.get('legalProvisions').setValue(this.legalProvisions);
-      this.form.get('instructionProvisions').setValue(this.instructionProvisions);
-
-      this.cofog1_selected = true;
-      this.cofog2 = this.constOtaService.COFOG.find((cofog) => cofog.code === this.data.cofog.cofog1)?.cofog2 || [];
-      this.cofog2_selected = true;
-      this.cofog3 = this.cofog2.find((cofog) => cofog.code === this.data.cofog.cofog2)?.cofog3 || [];
+      this.updateOta()
     }
   }
-  // CRUD Methods
-  onCreate() {
+  onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -180,18 +169,33 @@ export class OtaEditComponent implements OnInit {
           }
         })
       } else {
-        this.otaService.updateOta(otaData, this.ota._id)
-        .subscribe(response => {
-          const body = response.body;          
-          const status = response.status;        
-          if (status === 201) {
-            this.modalRef.dismiss(true);
-            // this.modalRef.close(true);
-            this.resetForm();
-          }
-        })
+        console.log('OTA Update Data:', otaData);
+        // this.otaService.updateOta(otaData, this.ota._id)
+        // .subscribe(response => {
+        //   const body = response.body;          
+        //   const status = response.status;        
+        //   if (status === 201) {
+        //     this.modalRef.dismiss(true);
+        //     // this.modalRef.close(true);
+        //     this.resetForm();
+        //   }
+        // })
       }
     }
+  }
+
+  updateOta() {
+    console.log('OTA Edit Data:', this.data);
+      this.form.patchValue(this.data);
+      this.legalProvisions = this.data.legalProvisions || [];
+      this.instructionProvisions = this.data.instructionProvisions || []; 
+      this.form.get('legalProvisions').setValue(this.legalProvisions);
+      this.form.get('instructionProvisions').setValue(this.instructionProvisions);
+      this.gridSelectedData = this.data.publicPolicyAgency ? [this.data.publicPolicyAgency] : [];
+      this.form.get('publicPolicyAgency').setValue(this.data.publicPolicyAgency);
+      this.form.get('cofog1').setValue(this.data.cofog.cofog1);
+      this.form.get('cofog2').setValue(this.data.cofog.cofog2);
+      this.form.get('cofog3').setValue(this.data.cofog.cofog3);
   }
 
   resetForm() {
