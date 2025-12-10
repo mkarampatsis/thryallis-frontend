@@ -1,7 +1,7 @@
 <div class="govgr-body mt-3">
   
   <div class="d-flex align-items-center gap-2 mb-3">
-    <button class="btn btn-primary btn-sm mb-1" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
+    <button *ngIf="elasticData.length > 0" class="btn btn-primary btn-sm mb-1" (click)="onBtnExportExcel()">Εξαγωγή σε Excel</button>
     @if (loading) {
     <span class="d-flex align-items-center gap-2">
       Αναμονή αποτελεσμάτων...
@@ -12,22 +12,23 @@
     }
   </div>
   
-
-  @if (elasticData.length > 0){
-    <ag-grid-angular 
-      [domLayout]="'autoHeight'" 
-      [rowData]="elasticData" 
-      [defaultColDef]="defaultColDef" 
-      [columnDefs]="colDefs"
-      [pagination]="true" 
-      [paginationPageSize]="50" 
-      [loadingOverlayComponent]="loadingOverlayComponent"
-      [loadingOverlayComponentParams]="loadingOverlayComponentParams" 
-      (gridReady)="onGridReady($event)"
-      (rowDoubleClicked)="onRowDoubleClicked($event)"
-      class="ag-theme-balham">
-    </ag-grid-angular>
-  } @else {
-    <p>Δεν εμφανίζονται αποτελέσματα γιατί o συνδυασμός των παραμέτρων αναζήτησης που θέσατε δεν υπάρχει.</p>
+  @if(showGrid){
+    @if (elasticData.length > 0) {
+      <ag-grid-angular 
+        [domLayout]="'autoHeight'" 
+        [rowData]="elasticData" 
+        [defaultColDef]="defaultColDef" 
+        [columnDefs]="colDefs"
+        [pagination]="true" 
+        [paginationPageSize]="50" 
+        [loadingOverlayComponent]="loadingOverlayComponent"
+        [loadingOverlayComponentParams]="loadingOverlayComponentParams" 
+        (gridReady)="onGridReady($event)"
+        (rowDoubleClicked)="onRowDoubleClicked($event)"
+        class="ag-theme-balham">
+      </ag-grid-angular>
+    } @else {
+      <p>Δεν εμφανίζονται αποτελέσματα γιατί o συνδυασμός των παραμέτρων αναζήτησης που θέσατε δεν υπάρχει.</p>
+    }
   }
 </div>

@@ -80,29 +80,19 @@ export class OtaDetailsComponent implements OnInit {
   // }
 
   newOta(){
-    this.modalService.otaEdit(null, true)
+    this.modalService.otaEdit(null, false)
     .subscribe(result => {
-      console.log('OTA Edit Modal Result:', result);
       if (result) {
-        console.log('Refresh Grid Data', result);
-        this.otaService.getAllOta()
-        .subscribe(response => {
-          const body = response.body;          
-          const status = response.status;        
-          if (status === 200) {
-            this.getOta();
-          }
-        });
+        this.getOta();
       }
     })
   }
 
   getOta(){
     this.loading = true;
+    
     setTimeout(() => {
-      console.log('Show Loading Overlay1');
       if (this.gridApi) {
-        console.log('Show Loading Overlay2');
         this.gridApi.showLoadingOverlay();
       }
     });
@@ -119,7 +109,6 @@ export class OtaDetailsComponent implements OnInit {
         }
 
         if (this.gridApi) {
-          console.log('Show Loading Overlay3');
           if (this.otaDetails.length > 0) {
             this.gridApi.hideOverlay();
           } else {

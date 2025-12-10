@@ -439,13 +439,13 @@ export class ModalService {
     modalRef.componentInstance.modalRef = modalRef;
   }
 
-  otaEdit(data: IOta, readOnly: boolean) {
+  otaEdit(data: IOta, updateMode: boolean) {
     const modalRef = this.modalService.open(OtaEditComponent, {
       size: 'xl',
       centered: true,
     });
     modalRef.componentInstance.data = data;
-    modalRef.componentInstance.readOnly = readOnly;
+    modalRef.componentInstance.updateMode = updateMode;
     modalRef.componentInstance.modalRef = modalRef;
     return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
   }

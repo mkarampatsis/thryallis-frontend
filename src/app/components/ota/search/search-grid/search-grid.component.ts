@@ -25,6 +25,7 @@ export class SearchGridComponent {
 
   loading = false;
   elasticData:ISearchOTA_Output[] = [];
+  showGrid = false;
 
   defaultColDef = this.constOtaService.defaultColDef;
 
@@ -59,6 +60,7 @@ export class SearchGridComponent {
 
   fetchData() {
     this.loading = true;
+    this.showGrid = false;
     this.otaService
     .postSearch(this.data)
     .pipe(take(1))
@@ -66,6 +68,7 @@ export class SearchGridComponent {
       if (response.status === 200) {
         this.elasticData = response.body
         console.log("ElasticData", this.elasticData);
+        this.showGrid = true;
       } 
       this.loading = false;
     });

@@ -40,8 +40,7 @@ export class OtaActsActionsComponent {
   }
 
   editOta() {
-    console.log('Edit OTA', this.params.data);
-    this.modalService.otaEdit(this.params.data, false)
+    this.modalService.otaEdit(this.params.data, true)
     .pipe(take(1))
     .subscribe(result => {
       if (result) {
