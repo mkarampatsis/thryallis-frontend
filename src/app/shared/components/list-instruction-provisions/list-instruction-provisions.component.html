@@ -10,9 +10,9 @@
     <tr>
       <th>#</th>
       <th>Εγκύκλια Οδηγία</th>
-      <th class="text-center">Άρθρο</th>
-      <th class="text-center">Παράγραφος</th>
-      <th class="text-center">Εδάφιο</th>
+      <th class="text-center">Επιμέρους ενότητα εγκυκλίου</th>
+      <!-- <th class="text-center">Παράγραφος</th>
+      <th class="text-center">Εδάφιο</th> -->
       <th class="text-center">Σελίδα</th>
       <th class="text-center">Κείμενο</th>
       @if (actionColumnVisible) {
@@ -30,10 +30,10 @@
         {{ instructionProvision.instructionActKey }}
       </td>
       <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.arthro }}</td>
-      <td class="text-center align-content-center">
+      <!-- <td class="text-center align-content-center">
         {{ instructionProvision.instructionProvisionSpecs.paragrafos }}
       </td>
-      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.edafio }}</td>
+      <td class="text-center align-content-center">{{ instructionProvision.instructionProvisionSpecs.edafio }}</td> -->
       <td class="text-center align-content-center">από: {{ instructionProvision.instructionPages.from_pages }} έως: {{ instructionProvision.instructionPages.to_pages }}</td>
       <td class="text-center align-content-center">
         <i role="button" (click)="displayInstructionProvision(instructionProvision)" class="bi bi-file-text fs-5 me-2"

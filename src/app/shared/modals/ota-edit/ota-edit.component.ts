@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ModalService } from '../../services/modal.service';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { OtaService } from '../../services/ota.service';
@@ -31,6 +32,7 @@ import { ICofog3 } from '../../interfaces/cofog/cofog3.interface';
   selector: 'app-ota-edit',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule, 
     NgxEditorModule, 
     ListLegalProvisionsComponent,
@@ -65,7 +67,6 @@ export class OtaEditComponent implements OnInit {
   updateMode: boolean = false;
   modalRef: any;
 
-  ota: IOta = null;
   foreis: IOrganizationList[] = [];
 
   gridSelectedData = [];
@@ -145,8 +146,12 @@ export class OtaEditComponent implements OnInit {
       return;
     }
 
-    const otaData = this.form.getRawValue() as unknown as IOta;
     if (this.form.valid) {
+      
+      const newLegalProvisions = this.legalProvisions.filter((legalProvision) => legalProvision.isNew);
+      const newInstructionProvisions = this.instructionProvisions.filter((instructionProvision) => instructionProvision.isNew);
+      this.form.controls.legalProvisions.setValue(newLegalProvisions);
+      this.form.controls.instructionProvisions.setValue(newInstructionProvisions);
       
       const cofogNames = this.constOtaService.getCofogNames(
         this.form.controls.cofog1.value,
@@ -156,7 +161,9 @@ export class OtaEditComponent implements OnInit {
       this.form.controls.cofog1_name.setValue(cofogNames[0]);
       this.form.controls.cofog2_name.setValue(cofogNames[1]);
       this.form.controls.cofog3_name.setValue(cofogNames[2]);
-
+      
+      const otaData = this.form.getRawValue() as unknown as IOta;
+      
       if (!this.updateMode){
         this.otaService.newOta(otaData)
         .subscribe(response => {
@@ -165,37 +172,33 @@ export class OtaEditComponent implements OnInit {
           if (status === 201) {
             this.resetForm();
             this.modalRef.dismiss(true);
-            // this.modalRef.close(true);
           }
         })
       } else {
-        console.log('OTA Update Data:', otaData);
-        // this.otaService.updateOta(otaData, this.ota._id)
-        // .subscribe(response => {
-        //   const body = response.body;          
-        //   const status = response.status;        
-        //   if (status === 201) {
-        //     this.modalRef.dismiss(true);
-        //     // this.modalRef.close(true);
-        //     this.resetForm();
-        //   }
-        // })
+        this.otaService.updateOta(otaData, this.data._id)
+        .subscribe(response => {
+          const body = response.body;          
+          const status = response.status;        
+          if (status === 201) {
+            this.modalRef.dismiss(true);
+            this.resetForm();
+          }
+        })
       }
     }
   }
 
   updateOta() {
-    console.log('OTA Edit Data:', this.data);
-      this.form.patchValue(this.data);
-      this.legalProvisions = this.data.legalProvisions || [];
-      this.instructionProvisions = this.data.instructionProvisions || []; 
-      this.form.get('legalProvisions').setValue(this.legalProvisions);
-      this.form.get('instructionProvisions').setValue(this.instructionProvisions);
-      this.gridSelectedData = this.data.publicPolicyAgency ? [this.data.publicPolicyAgency] : [];
-      this.form.get('publicPolicyAgency').setValue(this.data.publicPolicyAgency);
-      this.form.get('cofog1').setValue(this.data.cofog.cofog1);
-      this.form.get('cofog2').setValue(this.data.cofog.cofog2);
-      this.form.get('cofog3').setValue(this.data.cofog.cofog3);
+    this.form.patchValue(this.data);
+    this.legalProvisions = this.data.legalProvisions || [];
+    this.instructionProvisions = this.data.instructionProvisions || []; 
+    this.form.get('legalProvisions').setValue(this.legalProvisions);
+    this.form.get('instructionProvisions').setValue(this.instructionProvisions);
+    this.gridSelectedData = this.data.publicPolicyAgency ? [this.data.publicPolicyAgency] : [];
+    this.form.get('publicPolicyAgency').setValue(this.data.publicPolicyAgency);
+    this.form.get('cofog1').setValue(this.data.cofog.cofog1);
+    this.form.get('cofog2').setValue(this.data.cofog.cofog2);
+    this.form.get('cofog3').setValue(this.data.cofog.cofog3);
   }
 
   resetForm() {

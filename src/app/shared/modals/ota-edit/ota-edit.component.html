@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between m-3">
-  <span class="h5">Εισαγωγή Νέας Αρμοδιότητας ΟΤΑ</span>
-  <span class="h5">Εισαγωγή Νέας Αρμοδιότητας ΟΤΑ</span>
+  <span *ngIf="!updateMode" class="h5">Εισαγωγή Νέας Αρμοδιότητας ΟΤΑ</span>
+  <span *ngIf="updateMode" class="h5">Τροποποίηση Αρμοδιότητας ΟΤΑ</span>
   <button type="button" class="btn-close" (click)="modalRef.dismiss()">
   </button>
 </div>
@@ -139,7 +139,7 @@
             </button>
           </label>
           <app-list-legal-provisions [legalProvisions]="legalProvisions" [code]=""
-            [remitID]="ota?._id" [provisionType]="'ota'" [actionColumnVisible]="ota !== null">
+            [remitID]="data?._id" [provisionType]="'ota'" [actionColumnVisible]="data !== null">
           </app-list-legal-provisions>
         </div>
       </div>
@@ -162,7 +162,7 @@
               </button>
             </label>
             <app-list-instruction-provisions [instructionProvisions]="instructionProvisions" [code]=""
-              [remitID]="ota?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="ota !== null">
+              [remitID]="data?._id" [provisionType]="'ota_instructions'" [actionColumnVisible]="data !== null">
             </app-list-instruction-provisions>
           </div>
         </div>

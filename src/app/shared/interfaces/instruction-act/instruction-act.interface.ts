@@ -1,9 +1,9 @@
-import { IFek } from './fek.interface';
+// import { IFek } from './fek.interface';
 
 export interface IInstructionAct {
     _id: { $oid: string };
     ada: string;
-    fek: IFek;
+    // fek: IFek;
     instructionActKey: string;
     instructionActFile: { $oid: string };
     instructionActNumber: string;
