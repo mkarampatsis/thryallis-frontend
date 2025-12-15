@@ -44,7 +44,7 @@ export class OtaActsActionsComponent {
     .pipe(take(1))
     .subscribe(result => {
       if (result) {
-        console.log('Refresh Grid Data', result);
+        // console.log('Refresh Grid Data', result);
         this.otaService.getAllOta()
         .subscribe(response => {
           const body = response.body;          

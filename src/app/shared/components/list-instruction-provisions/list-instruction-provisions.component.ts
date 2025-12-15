@@ -88,11 +88,12 @@ export class ListInstructionProvisionsComponent {
   editInstructionProvision(currentProvision: IInstructionProvision): void {
     // console.log('CURRENT PROVISION >>>>>>>>>>>>>>>>', currentProvision);
     this.modalService.editInstructionProvision(currentProvision).subscribe((data) => {
+      // console.log('DATA >>>>>>>>>>>>>>>>', data);
       if (data) {
         const updatedProvision = data.instructionProvision;
         this.modalService
           .getUserConsent(
-            'Πρόκειται να ενημερώσετε μια υπάρχουσα διάταξη. Επιβεβαιώστε ότι θέλετε να συνεχίσετε.',
+            'Πρόκειται να ενημερώσετε μια υπάρχουσα επιμέρους ενότητα εγκυγκλίου. Επιβεβαιώστε ότι θέλετε να συνεχίσετε.',
           )
           .subscribe((result) => {
             if (result) {
@@ -105,7 +106,8 @@ export class ListInstructionProvisionsComponent {
                   this.remitID,
                 )
                 .subscribe((response) => {
-                  console.log("EDIT>>", response.updatedInstructionProvision);
+                  // console.log('RESPONSE>>>', response);
+                  // console.log("EDIT>>", response.updatedInstructionProvision);
                   const currentProvisionIndex = indexOf(this.instructionProvisions, currentProvision);
                   this.instructionProvisions.splice(currentProvisionIndex, 1);
                   this.instructionProvisions.push(response.updatedInstructionProvision);

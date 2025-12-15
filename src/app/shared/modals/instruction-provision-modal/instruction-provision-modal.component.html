@@ -39,6 +39,10 @@
           Επιμέρους ενότητα εγκυκλίου:
         </label>
         <input type="text" class="form-control" id="arthro" formControlName="arthro" />
+        <div class="text-danger mt-1"
+          *ngIf="form.get('legalProvisionSpecs.arthro')?.errors?.['invalidCharacters']">
+          Επιτρέπονται μόνο ελληνικά ή αγγλικά γράμματα, αριθμοί
+        </div>
       </div>
       <!-- <div class="col-md-4">
         <label for="paragrafos" class="form-label">

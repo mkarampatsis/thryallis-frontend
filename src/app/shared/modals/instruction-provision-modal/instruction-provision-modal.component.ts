@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { ConstOtaService } from 'src/app/shared/services/const-ota.service';
 import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
@@ -11,7 +12,7 @@ import { IInstructionProvisionSpecs } from '../../interfaces/instruction-provisi
 @Component({
   selector: 'app-instruction-provision-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
+  imports: [CommonModule,ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
   templateUrl: './instruction-provision-modal.component.html',
   styleUrl: './instruction-provision-modal.component.css'
 })
@@ -35,7 +36,7 @@ export class InstructionProvisionModalComponent {
         to_pages: new FormControl('', this.integerValidator),
       }),
       instructionProvisionSpecs: new FormGroup({
-        arthro: new FormControl(''),
+        arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
         paragrafos: new FormControl(''),
         edafio: new FormControl(''),
       }),
@@ -126,4 +127,28 @@ export class InstructionProvisionModalComponent {
     }
   }
 
+  greekEnglishLettersNumbersWithTrim(): ValidatorFn {
+    // Greek + English + numbers + spaces
+    const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+$/;
+
+    return (control: AbstractControl): ValidationErrors | null => {
+      let value = control.value;
+
+      if (value === null || value === undefined || value === '') {
+        return null;
+      }
+
+      // Auto-trim leading/trailing spaces
+      const trimmedValue = value.trim();
+
+      if (trimmedValue !== value) {
+        control.setValue(trimmedValue, { emitEvent: false });
+        value = trimmedValue;
+      }
+
+      return regex.test(value)
+      ? null
+      : { invalidCharacters: true };
+    };
+  }
 }

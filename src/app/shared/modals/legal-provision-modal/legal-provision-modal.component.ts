@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
@@ -14,7 +15,7 @@ import { cloneDeep, isEqual, uniqWith } from 'lodash-es';
 @Component({
     selector: 'app-new-legal-provision',
     standalone: true,
-    imports: [ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
+    imports: [CommonModule,ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
     templateUrl: './legal-provision-modal.component.html',
     styleUrl: './legal-provision-modal.component.css',
 })
@@ -36,12 +37,12 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
         {
             legalActText: new FormControl('', Validators.required),
             legalProvisionSpecs: new FormGroup({
-                meros: new FormControl(''),
-                kefalaio: new FormControl(''),
-                arthro: new FormControl(''),
-                paragrafos: new FormControl(''),
-                edafio: new FormControl(''),
-                pararthma: new FormControl(''),
+                meros: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+                kefalaio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+                arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+                paragrafos: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+                edafio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+                pararthma: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
             }),
             legalActKey: new FormControl({ value: '', disabled: true }, Validators.required),
         },
@@ -129,5 +130,30 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
         } else {
             this.modalRef.dismiss();
         }
+    }
+
+    greekEnglishLettersNumbersWithTrim(): ValidatorFn {
+        // Greek + English + numbers + spaces
+        const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+$/;
+
+        return (control: AbstractControl): ValidationErrors | null => {
+            let value = control.value;
+
+            if (value === null || value === undefined || value === '') {
+            return null;
+            }
+
+            // Auto-trim leading/trailing spaces
+            const trimmedValue = value.trim();
+
+            if (trimmedValue !== value) {
+            control.setValue(trimmedValue, { emitEvent: false });
+            value = trimmedValue;
+            }
+
+            return regex.test(value)
+            ? null
+            : { invalidCharacters: true };
+        };
     }
 }

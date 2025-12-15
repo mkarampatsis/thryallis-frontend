@@ -187,7 +187,7 @@ export class ModalService {
   }
 
   editInstructionProvision(instructionProvision: IInstructionProvision) {
-    const modalRef = this.modalService.open(LegalProvisionModalComponent, {
+    const modalRef = this.modalService.open(InstructionProvisionModalComponent, {
       size: 'xl',
       centered: true,
       backdrop: 'static',
