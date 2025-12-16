@@ -50,6 +50,7 @@ export class OtaActsActionsComponent {
           const body = response.body;          
           const status = response.status;        
           if (status === 200) {
+            this.otaService.otaActsNeedUpdate.set(true);
             // this.getOta();
             // this.gridApi.setRowData(this.otaDetails);
           }

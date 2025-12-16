@@ -153,15 +153,17 @@ export class OtaEditComponent implements OnInit {
       this.form.controls.legalProvisions.setValue(newLegalProvisions);
       this.form.controls.instructionProvisions.setValue(newInstructionProvisions);
       
-      const cofogNames = this.constOtaService.getCofogNames(
-        this.form.controls.cofog1.value,
-        this.form.controls.cofog2.value,
-        this.form.controls.cofog3.value
-      );  
-      this.form.controls.cofog1_name.setValue(cofogNames[0]);
-      this.form.controls.cofog2_name.setValue(cofogNames[1]);
-      this.form.controls.cofog3_name.setValue(cofogNames[2]);
-      
+      if (this.form.controls.cofog1.value != '') {
+        const cofogNames = this.constOtaService.getCofogNames(
+          this.form.controls.cofog1.value,
+          this.form.controls.cofog2.value,
+          this.form.controls.cofog3.value
+        );  
+        this.form.controls.cofog1_name.setValue(cofogNames[0]);
+        this.form.controls.cofog2_name.setValue(cofogNames[1]);
+        this.form.controls.cofog3_name.setValue(cofogNames[2]);
+      }
+            
       const otaData = this.form.getRawValue() as unknown as IOta;
       
       if (!this.updateMode){
@@ -240,13 +242,13 @@ export class OtaEditComponent implements OnInit {
 
   updateRemitTextWithNewProvision(newText: string) {
     const remitText = this.form.get('remitText').value;
-
-    if (!(this.instructionProvisions.length === 1 && ('isNew' in this.instructionProvisions[0])) || !(this.legalProvisions.length === 1 && ('isNew' in this.legalProvisions[0])) ) {
-      this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την εισαγωγή της τελευταίας διάταξης που έχετε εισάγει</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας όπως <strong>ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
+    if (remitText != '') {
+      // if (!(this.instructionProvisions.length === 1 && ('isNew' in this.instructionProvisions[0])) 
+      //     || !(this.legalProvisions.length === 1 && ('isNew' in this.legalProvisions[0])) ) {
+        this.showInfoText = "<p style='color:red'>Στο πάνω μέρος του Κειμένου της αρμοδιότητας, εμφανίζεται το κείμενο της τελευταίας διάταξης που έχετε εισάγει. Στο κάτω μέρος εμφανίζεται το προγενέστερο κείμενο <strong>ως είχε πριν την εισαγωγή της τελευταίας διάταξης που έχετε εισάγει</strong>. Επεξεργαστείτε και κωδικοποιήστε το κείμενο της αρμοδιότητας όπως <strong>ισχύει ενιαία με την τελευταία τροποποιητική διάταξη</strong>.</p>";
+      // }
     }
-    // const updatedtext = `<p style="color:red"><strong>Ελέγξτε και τροποποιήστε το συνολικό κείμενο της Αρμοδιότητας μετά την τελευταία προσθήκη Διάταξης:</strong></p>${newText}${remitText}`;
     const updatedtext = `${newText}${remitText}`;
-
     this.form.get('remitText').setValue(updatedtext);
   }
 

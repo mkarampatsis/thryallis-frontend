@@ -1,5 +1,5 @@
 import { CommonModule, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { take } from 'rxjs';
@@ -28,6 +28,8 @@ export class OtaDetailsComponent implements OnInit {
 
   otaDetails: IOta[] = [];
 
+  otaActsNeedUpdate = this.otaService.otaActsNeedUpdate;
+  
   defaultColDef = this.constOtaService.defaultColDef;
   colDefs: ColDef[] = [
     { 
@@ -61,6 +63,18 @@ export class OtaDetailsComponent implements OnInit {
   gridApi: GridApi<IOta>;
   loading: boolean = false;
 
+  constructor() {
+    effect(
+      () => {
+        if (this.otaActsNeedUpdate()) {
+          this.getOta();
+          this.otaActsNeedUpdate.set(false);
+        }
+      },
+      { allowSignalWrites: true },
+    );
+  }
+
   ngOnInit() {
     this.getOta();
   } 
@@ -73,11 +87,6 @@ export class OtaDetailsComponent implements OnInit {
       this.gridApi.showNoRowsOverlay();
     }
   }
-
-  // onRowSelected(event: any): void {
-  //   console.log('Row selected:', event.data);
-  //   this.modalService.showOtaDetails(event.data);
-  // }
 
   newOta(){
     this.modalService.otaEdit(null, false)

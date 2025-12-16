@@ -20,6 +20,8 @@ const APIPREFIX_ELASTIC = `${environment.elasticUrl}/search/ota`;
 export class OtaService {
   http = inject(HttpClient);
 
+  otaActsNeedUpdate = signal<boolean>(false);
+  
   // OTA CRUD Operations
   getAllOta(): Observable<HttpResponse<IOta[]>> {
     return this.http.get<IOta[]>(APIPREFIX_OTA, { observe: 'response' });
