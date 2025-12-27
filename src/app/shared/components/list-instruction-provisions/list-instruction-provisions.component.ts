@@ -11,6 +11,12 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
 import { take } from 'rxjs';
 
+
+interface InstructionProvisionVM extends IInstructionProvision {
+  rowspan?: number;
+  showInstructionActKey?: boolean;
+}
+
 @Component({
   selector: 'app-list-instruction-provisions',
   standalone: true,
@@ -31,16 +37,20 @@ export class ListInstructionProvisionsComponent {
   instructionActService = inject(InstructionActService);
   uploadService = inject(FileUploadService);
 
+  instructionProvisionsVM: InstructionProvisionVM[] = []
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.instructionProvisions) {
-      this.instructionProvisions = changes.instructionProvisions.currentValue;
+      // this.instructionProvisions = changes.instructionProvisions.currentValue;
+      this.instructionProvisionsVM = this.prepareInstructionProvisions(changes.instructionProvisions.currentValue);
       this.sortInstructionProvisions();
     }
+
   }
 
   sortInstructionProvisions() {
-    const instructionProvisions = this.instructionProvisions;
+    // const instructionProvisions = this.instructionProvisions;
+    const instructionProvisions = this.instructionProvisionsVM;
 
     const sortedData = instructionProvisions.map((obj) => {
       const dateStr = obj.instructionActKey.match(/\d{2}-\d{2}-\d{4}$/)?.[0]; // Extract date in format DD-MM-YYYY
@@ -56,7 +66,8 @@ export class ListInstructionProvisionsComponent {
 
     // Sort the array by date in descending order
     sortedData.sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
-    this.instructionProvisions = sortedData;
+    // this.instructionProvisions = sortedData;
+    this.instructionProvisionsVM = sortedData;
   }
 
   displayInstructionProvision(provision: IInstructionProvision) {
@@ -141,5 +152,43 @@ export class ListInstructionProvisionsComponent {
             this.modalService.showPdfViewer(link);
           });
       });
+  }
+
+  prepareInstructionProvisions(data: any[]): InstructionProvisionVM[] {
+    const result: InstructionProvisionVM[] = [];
+
+    let i = 0;
+    while (i < data.length) {
+      const currentKey = data[i].instructionActKey;
+
+      // Count how many consecutive rows share the same key
+      let count = 1;
+      while (
+        i + count < data.length &&
+        data[i + count].instructionActKey === currentKey
+      ) {
+        count++;
+      }
+
+      // First row → show cell with rowspan
+      result.push({
+        ...data[i],
+        rowspan: count,
+        showInstructionActKey: true,
+      });
+
+      // Remaining rows → hide the merged cell
+      for (let j = 1; j < count; j++) {
+        result.push({
+          ...data[i + j],
+          rowspan: 0,
+          showInstructionActKey: false,
+        });
+      }
+
+      i += count;
+    }
+
+    return result;
   }
 }

@@ -76,6 +76,10 @@ export class SearchFormComponent {
         organizationType: new FormControl(''),
       }),
       remitLocalOrGlobal: new FormControl(''),
+      instruction: new FormGroup({
+        instructionActKey: new FormControl(''),
+        instructionProvisionText: new FormControl(''),
+      }),
     });
   }
 
@@ -148,9 +152,9 @@ export class SearchFormComponent {
 
     if (input.remitType) {
       pushCond("otas", {
-        field: "remitText",
+        field: "remitType",
         type: "words",
-        query: input.remitText.trim()
+        query: input.remitType.trim()
       });
     };
 
@@ -167,6 +171,22 @@ export class SearchFormComponent {
         field: "publicPolicyAgency.organizationType",
         type: "words",
         query: input.publicPolicyAgency.organizationType.trim()
+      });
+    };
+
+    if (input.instruction.instructionActKey) {
+      pushCond("otas", {
+        field: "instruction.instructionActKey",
+        type: "words",
+        query: input.instruction.instructionActKey.trim()
+      });
+    };
+
+    if (input.instruction.instructionProvisionText) {
+      pushCond("otas", {
+        field: "instruction.instructionProvisionText",
+        type: "words",
+        query: input.instruction.instructionProvisionText.trim()
       });
     };
 

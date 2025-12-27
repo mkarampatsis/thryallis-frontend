@@ -42,5 +42,9 @@ export interface IOtaSearch {
     organization: string;
     organizationType: string;
   };
+  instruction: {
+    instructionActKey: string;
+    instructionProvisionText: string;
+  };
   remitLocalOrGlobal: string;
 }
