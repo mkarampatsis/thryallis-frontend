@@ -45,6 +45,8 @@ export interface IOtaSearch {
   instruction: {
     instructionActKey: string;
     instructionProvisionText: string;
+    from: string;
+    until:string;
   };
   remitLocalOrGlobal: string;
 }

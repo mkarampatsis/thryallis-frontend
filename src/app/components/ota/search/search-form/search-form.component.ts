@@ -79,6 +79,8 @@ export class SearchFormComponent {
       instruction: new FormGroup({
         instructionActKey: new FormControl(''),
         instructionProvisionText: new FormControl(''),
+        from: new FormControl(''),
+        until: new FormControl(''),
       }),
     });
   }
@@ -189,6 +191,23 @@ export class SearchFormComponent {
         query: input.instruction.instructionProvisionText.trim()
       });
     };
+
+    if (input.instruction.from || input.instruction.until) {
+      const instructionDate: any = {};
+
+      if (input.instruction.from) {
+        instructionDate.gte = new Date(input.instruction.from).toISOString();
+      }
+
+      if (input.instruction.until) {
+        instructionDate.lte = new Date(input.instruction.until).toISOString();
+      }
+
+      pushCond("otas", { 
+        field: "instruction.instructionProvisionDate", 
+        query: instructionDate 
+        });
+    }
 
     if (input.remitLocalOrGlobal) {
       pushCond("otas", {
