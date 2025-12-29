@@ -45,6 +45,16 @@ export class OtaDetailsComponent implements OnInit {
     { field: 'remitCompetence', headerName: 'Φορέας Άσκησης', flex: 0.5 },
     { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
     {
+      field: 'updatedAt',
+      headerName: 'Ημερομηνία',
+      valueFormatter: (params) => {
+        if (!params.value) return '';
+
+        const date = new Date(params.value.replace(' ', 'T'));
+        return date.toLocaleString('el-GR');
+      }
+    },
+    {
       field: 'actionCell',
       headerName: 'Ενέργειες',
       cellRenderer: OtaActsActionsComponent,
@@ -111,8 +121,9 @@ export class OtaDetailsComponent implements OnInit {
       next: (response) => {
         const body = response.body;
         const status = response.status;
-
+          
         if (status === 200) {
+          // console.log(body);
           this.otaDetails = body;
           this.loading = false;
         }
