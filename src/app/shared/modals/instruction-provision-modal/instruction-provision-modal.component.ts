@@ -36,13 +36,14 @@ export class InstructionProvisionModalComponent {
         to_pages: new FormControl('', this.integerValidator),
       }),
       instructionProvisionSpecs: new FormGroup({
-        arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        // arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        arthro: new FormControl(''),
         paragrafos: new FormControl(''),
         edafio: new FormControl(''),
       }),
       instructionActKey: new FormControl({ value: '', disabled: true }, Validators.required),
     },
-    this.checkInstructionProvision,
+    // this.checkInstructionProvision,
   );
 
   ngOnInit(): void {
@@ -59,17 +60,17 @@ export class InstructionProvisionModalComponent {
     this.editor.destroy();
   }
 
-  checkInstructionProvision(form: FormGroup): { [key: string]: boolean } | null {
-    if (
-      form.get('instructionProvisionSpecs').get('arthro').value.trim() !== '' ||
-      form.get('instructionProvisionSpecs').get('paragrafos').value.trim() !== '' ||
-      form.get('instructionProvisionSpecs').get('edafio').value.trim() !== ''
-    ) {
-      return null;
-    } else {
-      return { emptyInstructionProvision: true };
-    }
-  }
+  // checkInstructionProvision(form: FormGroup): { [key: string]: boolean } | null {
+  //   if (
+  //     form.get('instructionProvisionSpecs').get('arthro').value.trim() !== '' ||
+  //     form.get('instructionProvisionSpecs').get('paragrafos').value.trim() !== '' ||
+  //     form.get('instructionProvisionSpecs').get('edafio').value.trim() !== ''
+  //   ) {
+  //     return null;
+  //   } else {
+  //     return { emptyInstructionProvision: true };
+  //   }
+  // }
 
   integerValidator(control: AbstractControl) {
     const value = control.value;
@@ -95,6 +96,14 @@ export class InstructionProvisionModalComponent {
   }
 
   onSubmit() {
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    console.log(invalid)
     // console.log(this.form.value);
     const instructionProvisionSpecs = this.form.get('instructionProvisionSpecs').value as IInstructionProvisionSpecs;
     const instructionActKey = this.form.get('instructionActKey').value;
