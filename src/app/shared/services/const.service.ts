@@ -3,6 +3,7 @@ import { take } from 'rxjs';
 
 import {
   ColDef,
+  ITextFilterParams,
   RowClassRules,
   SizeColumnsToContentStrategy,
   SizeColumnsToFitGridStrategy,
@@ -137,6 +138,16 @@ export class ConstService {
     },
     { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
     { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
+    { 
+      field: 'status', 
+      headerName: 'Κατάσταση', 
+      valueGetter: (value) => value.data.status==="active" ? "Ενεργός" : 'Ανενεργός',
+      filterParams: {
+        filterOptions: ["contains", "equals","startsWith", "endsWith"],
+        defaultOption: "equals",
+      } as ITextFilterParams,
+      flex: 1 
+    },
   ];
 
 
