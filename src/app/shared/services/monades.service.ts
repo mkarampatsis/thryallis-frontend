@@ -7,6 +7,7 @@ import { IMonada } from '../interfaces/monada/monada.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 
 const APIPREFIX_APOGRAFI = `${environment.apiUrl}/apografi`;
+const APIPREFIX_SDAD = `${environment.apiUrl}/sdad`;
 const APIPREFIX_PSPED = `${environment.apiUrl}/psped`;
 
 @Injectable({
@@ -32,6 +33,7 @@ export class MonadesService {
         return this.http.put<IMonada>(url, data);
     }
 
+    // From SDAD
     getAllMonadesPagination(
         page: number,
         pageSize: number,
@@ -41,12 +43,48 @@ export class MonadesService {
         const params = {
             page: page,
             pageSize: pageSize,
-            filter: JSON.stringify(filterModel),
+            filter: JSON.stringify(filterModel)!='{}' ? JSON.stringify(this.agGridFilterToMongo(filterModel)) : JSON.stringify(filterModel),
             sort: JSON.stringify(sortModel)
         };
 
-        const url = `${APIPREFIX_APOGRAFI}/organizationalUnit/all/pagination`;
+        const url = `${APIPREFIX_SDAD}/organizationalUnit/all/pagination`;
         return this.http.get<{"rows": IOrganizationUnitList[], "total": number}>(url, { params })
+    }
+
+    agGridFilterToMongo(filterModel: any): any {
+      const mongoQuery: any = {};
+      Object.keys(filterModel).forEach(field => {
+        const f = filterModel[field];
+
+        if (f.filterType === 'text') {
+          if (f.type === 'contains') {
+            mongoQuery[field] = {
+              $regex: f.filter,
+              $options: 'i'
+            };
+          }
+
+          if (f.type === 'startsWith') {
+            mongoQuery[field] = {
+              $regex: `^${f.filter}`,
+              $options: 'i'
+            };
+          }
+
+          if (f.type === 'endsWith') {
+            mongoQuery[field] = {
+              $regex: `${f.filter}$`,
+              $options: 'i'
+            };
+          }
+
+          if (f.type === 'equals') {
+            mongoQuery[field] = f.filter;
+          }
+        }
+      });
+      console.log("mongoQuery",mongoQuery)
+      return mongoQuery;
     }
 
 }

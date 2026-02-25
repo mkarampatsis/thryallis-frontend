@@ -201,6 +201,39 @@ export class ConstService {
     // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
   ];
 
+
+  ORGANIZATION_UNITS_COL_DEFS_SDAD: ColDef[] = [
+    { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
+    { field: 'preferredLabel', headerName: 'Ονομασία', flex: 1 },
+    { field: 'organizationCode.preferredLabel', headerName: 'Φορέας', flex: 1 },
+    { field: 'supervisorUnitCode.preferredLabel', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
+    { field: 'unitType.description', headerName: 'Τύπος', flex: 0.5 },
+    {
+      field: 'remitsFinalized',
+      headerName: 'Αρμοδιότητες',
+      cellRenderer: function (params) {
+        return params.value ? "Ολοκληρωμένες" : 'Μη Ολοκληρωμένες';
+      },
+      valueFormatter: (params) => (params.value ? 'Ολοκληρωμένες' : 'Μη Ολοκληρωμένες'),
+      unSortIcon: true,
+      filter: false,
+      // filter: 'agTextColumnFilter',
+      // filterParams: {
+      //   suppressAndOrCondition: true, // Removes 'AND'/'OR' conditions
+      //   filterOptions: ['equals', 'contains'], // Only allow 'equals' filter option
+      //   textFormatter: (value: string) => {
+      //     console.log(">>", value);
+      //     if (value === 'xx') return 'true';
+      //     if (value === 'not') return 'false';
+      //     return value;
+      //   },
+      //   debounceMs: 200, // Reduces input delay
+      // },  
+      flex: 0.5
+    },
+    // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
+  ];
+
   ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES: ColDef[] = [
     { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
     { field: 'code', headerName: 'Κωδικός', flex: 0.5 },

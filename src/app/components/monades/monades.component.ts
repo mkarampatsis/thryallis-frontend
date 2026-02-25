@@ -51,7 +51,7 @@ export class MonadesComponent implements OnDestroy {
   organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
 
   defaultColDef = this.constService.defaultColDef;
-  colDefs: ColDef[] = this.constService.ORGANIZATION_UNITS_COL_DEFS;
+  colDefs: ColDef[] = this.constService.ORGANIZATION_UNITS_COL_DEFS_SDAD;
   autoSizeStrategy = this.constService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
