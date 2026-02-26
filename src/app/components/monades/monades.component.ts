@@ -141,7 +141,7 @@ export class MonadesComponent implements OnDestroy {
 
   onFilterChanged() {
     this.filterChange$.next();
-    console.log('Filter changed, triggering data reload', this.gridApi.getFilterModel());
+    // console.log('Filter changed, triggering data reload', this.gridApi.getFilterModel());
   }
 
   onSortChanged() {

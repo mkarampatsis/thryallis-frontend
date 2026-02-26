@@ -43,7 +43,8 @@ export class MonadesService {
         const params = {
             page: page,
             pageSize: pageSize,
-            filter: JSON.stringify(filterModel)!='{}' ? JSON.stringify(this.agGridFilterToMongo(filterModel)) : JSON.stringify(filterModel),
+            // filter: JSON.stringify(filterModel)!='{}' ? JSON.stringify(this.agGridFilterToMongo(filterModel)) : JSON.stringify(filterModel),
+            filter: JSON.stringify(filterModel),
             sort: JSON.stringify(sortModel)
         };
 
