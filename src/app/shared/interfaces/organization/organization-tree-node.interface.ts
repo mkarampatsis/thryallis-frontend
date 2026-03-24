@@ -6,3 +6,11 @@ export interface IOrganizationTreeNode {
     };
     level: number;
 }
+
+export interface IOrganizationTreeSdadNode {
+  code: string;
+  preferredLabel: string;
+  unitType?: number;
+  expandable: boolean;
+  level: number;
+}

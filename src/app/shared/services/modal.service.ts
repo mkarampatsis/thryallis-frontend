@@ -66,7 +66,6 @@ export class ModalService {
   }
 
   showOrganizationUnitDetails(organizationUnitCode: string) {
-    console.log("Service", organizationUnitCode);
     const modalRef = this.modalService.open(OrganizationUnitDetailsComponent, {
       size: 'xl',
       centered: true,

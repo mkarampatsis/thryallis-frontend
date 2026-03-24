@@ -10,7 +10,8 @@ import { ILegalProvision } from '../../interfaces/legal-provision/legal-provisio
 import { IForeas } from '../../interfaces/foreas/foreas.interface';
 import { ListLegalProvisionsComponent } from '../../components/list-legal-provisions/list-legal-provisions.component';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { OrganizationTreeComponent } from '../../components/organization-tree/organization-tree.component';
+// import { OrganizationTreeComponent } from '../../components/organization-tree/organization-tree.component';
+import { OrganizationTreeSdadComponent } from '../../components/organization-tree-sdad/organization-tree-sdad.component';
 
 @Component({
   selector: 'app-organization-details',
@@ -20,7 +21,8 @@ import { OrganizationTreeComponent } from '../../components/organization-tree/or
     CardRowRightLeftComponent,
     ListLegalProvisionsComponent,
     NgbAccordionModule,
-    OrganizationTreeComponent,
+    // OrganizationTreeComponent,
+    OrganizationTreeSdadComponent
   ],
   templateUrl: './organization-details.component.html',
   styleUrl: './organization-details.component.css',

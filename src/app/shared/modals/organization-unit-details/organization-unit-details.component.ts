@@ -63,7 +63,6 @@ export class OrganizationUnitDetailsComponent {
   modalRef: any;
 
   ngOnInit() {
-    console.log("Modal 1", this.organizationalUnitCode);
     this.organizationalUnitService
       .getOrganizationalUnitDetails(this.organizationalUnitCode)
       .pipe(take(1))
@@ -97,7 +96,6 @@ export class OrganizationUnitDetailsComponent {
   }
 
   constructor() {
-    console.log("Modal 2", this.organizationalUnitCode);
     effect(
       () => {
         if (this.legalProvisionsNeedUpdate()) {
@@ -220,7 +218,6 @@ export class OrganizationUnitDetailsComponent {
           // this.modalRef.dismiss();
           this.remitService.deleteRemitByID(id)
             .subscribe(data => {
-              console.log(data)
               this.getRemits(this.organizationalUnitCode)
             })
         }

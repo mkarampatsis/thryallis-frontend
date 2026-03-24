@@ -130,12 +130,12 @@ export class MonadesComponent implements OnDestroy {
   // }
 
   onCellClicked(event: any): void {
-    if (event.colDef.field == "organization") {
-      this.modalService.showOrganizationDetails(event.data.organizationCode);
+    if (event.colDef.field == "organizationCode.preferredLabel") {
+      this.modalService.showOrganizationDetails(event.data.organizationCode.code);
     } else if (event.colDef.field == "preferredLabel") {
       this.modalService.showOrganizationUnitDetails(event.data.code);
-    } else if (event.colDef.field == "subOrganizationOf") {
-      this.modalService.showOrganizationUnitDetails(event.data.supervisorUnitCode);
+    } else if (event.colDef.field == "supervisorUnitCode.preferredLabel") {
+      this.modalService.showOrganizationUnitDetails(event.data.supervisorUnitCode.code);
     } 
   }
 
