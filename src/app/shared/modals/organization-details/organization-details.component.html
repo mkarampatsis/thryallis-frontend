@@ -34,7 +34,7 @@
               }"></app-card-row-right-left>
             <app-card-row-right-left [keyValue]="{
                   key: 'Κατάσταση',
-                  value: organization?.status
+                  value: organization?.status=='active'?'Ενεργό':'Ανενεργό'
               }"></app-card-row-right-left>
             <app-card-row-right-left [keyValue]="{
                   key: 'Ημερομηνία Κύριας Ενημέρωσης',

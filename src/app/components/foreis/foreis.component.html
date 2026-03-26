@@ -1,7 +1,31 @@
 <h1 class="govgr-heading-sm">Φορείς του Ελληνικού Δημοσίου</h1>
 
-<span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω στο κελί</span>
+<div class="d-flex justify-content-between">
+  <span class="small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω στο κελί</span>
+  <button (click)="resetGridState()" class="btn btn-primary btn-sm mb-2">
+      Καθάρισμα επιλογών
+  </button>
+</div>
+
 <ag-grid-angular
+  class="ag-theme-balham"
+  style="height: 80vh"
+  [columnDefs]="colDefs"
+  [defaultColDef]="defaultColDef"
+  [rowModelType]="'infinite'"
+  [pagination]="true"
+  [paginationPageSize]="100"
+  (gridReady)="onGridReady($event)"
+  (filterChanged)="onFilterChanged()"
+  (sortChanged)="onSortChanged()"
+  (columnMoved)="onColumnStateChanged()"
+  (columnVisible)="onColumnStateChanged()"
+  (columnPinned)="onColumnStateChanged()"
+  (cellDoubleClicked)="onCellClicked($event)">
+</ag-grid-angular>
+
+<!-- OLD Code -->
+<!-- <ag-grid-angular
     [domLayout]="'autoHeight'"
     [rowData]="foreis"
     [defaultColDef]="defaultColDef"
@@ -12,4 +36,4 @@
     [loadingOverlayComponentParams]="loadingOverlayComponentParams"
     (cellDoubleClicked)="onCellClicked($event)"
     (gridReady)="onGridReady($event)"
-    class="ag-theme-balham"></ag-grid-angular>
+    class="ag-theme-balham"></ag-grid-angular> -->

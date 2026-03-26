@@ -7,19 +7,6 @@
   </button>
 </div>
 
-<!-- <ag-grid-angular
-    [domLayout]="'autoHeight'"
-    [rowData]="monades"
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs"
-    [pagination]="true"
-    [paginationPageSize]="50"
-    [loadingOverlayComponent]="loadingOverlayComponent"
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (cellDoubleClicked)="onCellClicked($event)"
-    (gridReady)="onGridReady($event)"
-    class="ag-theme-balham"></ag-grid-angular> -->
-
 <ag-grid-angular
   class="ag-theme-balham"
   style="height: 80vh"
@@ -36,3 +23,17 @@
   (columnPinned)="onColumnStateChanged()"
   (cellDoubleClicked)="onCellClicked($event)">
 </ag-grid-angular>
+
+<!-- OLD Code -->
+<!-- <ag-grid-angular
+    [domLayout]="'autoHeight'"
+    [rowData]="monades"
+    [defaultColDef]="defaultColDef"
+    [columnDefs]="colDefs"
+    [pagination]="true"
+    [paginationPageSize]="50"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    (cellDoubleClicked)="onCellClicked($event)"
+    (gridReady)="onGridReady($event)"
+    class="ag-theme-balham"></ag-grid-angular> -->

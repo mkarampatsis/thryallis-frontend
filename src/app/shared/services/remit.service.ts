@@ -55,4 +55,21 @@ export class RemitService {
     const url = `${APIPREFIX}/${remitID}`;
     return this.http.delete<{ message: string }>(url);
   }
+
+  getAllRemitsPagination(
+    page: number,
+    pageSize: number,
+    filterModel: any,
+    sortModel: any
+  ): Observable<{ "rows": IRemit[], "total": number }> {
+    const params = {
+      page: page,
+      pageSize: pageSize,
+      filter: JSON.stringify(filterModel),
+      sort: JSON.stringify(sortModel)
+    };
+
+    const url = `${APIPREFIX}/all/pagination`;
+    return this.http.get<{ "rows": IRemit[], "total": number }>(url, { params })
+  }
 }

@@ -150,6 +150,33 @@ export class ConstService {
     },
   ];
 
+  ORGANIZATIONS_COL_DEFS_SDAD: ColDef[] = [
+    { field: 'code', headerName: 'Κωδικός', flex: 1 },
+    {
+      field: 'preferredLabel',
+      headerName: 'Ονομασία',
+      flex: 4,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        textMatcher: ({ value, filterText }) => {
+          return value.indexOf(this.removeAccents(filterText)) !== -1;
+        },
+      },
+    },
+    { field: 'subOrganizationOf.preferredLabel', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
+    { field: 'organizationType.description', headerName: 'Τύπος', flex: 2 },
+    { 
+      field: 'status', 
+      headerName: 'Κατάσταση', 
+      valueGetter: (value) => value.data==="active" ? "Ενεργός" : 'Ανενεργός',
+      filterParams: {
+        filterOptions: ["contains", "equals","startsWith", "endsWith"],
+        defaultOption: "equals",
+      } as ITextFilterParams,
+      flex: 1 
+    },
+  ];
+
 
   ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES: ColDef[] = [
     { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },

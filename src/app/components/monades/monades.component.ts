@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular';
 import { 
   ColDef, 
@@ -8,24 +7,14 @@ import {
   GridReadyEvent, 
   IDatasource, 
   IGetRowsParams, 
-  IServerSideDatasource, 
-  IServerSideGetRowsParams, 
-  IServerSideGetRowsRequest
 } from 'ag-grid-community';
 import { Subject, Subscription, firstValueFrom, map, take } from 'rxjs';
-import { MonadesActionIconsComponent } from 'src/app/shared/components/monades-action-icons/monades-action-icons.component';
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { OrganizationalUnitService } from 'src/app/shared/services/organizational-unit.service';
-import { AppState } from 'src/app/shared/state/app.state';
 import { MonadesService } from 'src/app/shared/services/monades.service';
-import {
-  selectOrganizationalUnits$,
-  selectOrganizationalUnitsLoading$,
-} from 'src/app/shared/state/organizational-units.state';
-import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-monades',
@@ -34,17 +23,11 @@ import { debounceTime } from 'rxjs/operators';
   templateUrl: './monades.component.html',
   styleUrl: './monades.component.css',
 })
-export class MonadesComponent implements OnDestroy {
+export class MonadesComponent {
   constService = inject(ConstService);
   organizationalUnitService = inject(OrganizationalUnitService);
   modalService = inject(ModalService);
   monadesService = inject(MonadesService);
-
-  monades: IOrganizationUnitList[] = [];
-
-  store = inject(Store<AppState>);
-  organizationalUnits$ = selectOrganizationalUnits$;
-  isLoading$ = selectOrganizationalUnitsLoading$;
 
   organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
   organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
@@ -61,11 +44,11 @@ export class MonadesComponent implements OnDestroy {
   private filterChange$ = new Subject<void>();
   private sortChange$ = new Subject<void>();
 
-  subscriptions: Subscription[] = [];
+  // subscriptions: Subscription[] = [];
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
-  }
+  // ngOnDestroy(): void {
+  //   this.subscriptions.forEach((sub) => sub.unsubscribe());
+  // }
 
   onGridReady(params: GridReadyEvent<IOrganizationUnitList>): void {
     this.gridApi = params.api;
@@ -125,10 +108,6 @@ export class MonadesComponent implements OnDestroy {
     // );
   }
 
-  // onRowDoubleClicked(event: any): void {
-  //   this.modalService.showOrganizationUnitDetails(event.data.code);
-  // }
-
   onCellClicked(event: any): void {
     if (event.colDef.field == "organizationCode.preferredLabel") {
       this.modalService.showOrganizationDetails(event.data.organizationCode.code);
@@ -152,7 +131,7 @@ export class MonadesComponent implements OnDestroy {
     this.saveGridState();
   }
 
-  // 💾 Save grid layout, sorting, and filters
+  // Save grid layout, sorting, and filters
   private saveGridState() {
     if (!this.gridApi) return;
 

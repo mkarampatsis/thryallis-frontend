@@ -1,6 +1,35 @@
 <h1 class="govgr-heading-sm">Αρμοδιότητες Μονάδων του Ελληνικού Δημοσίου</h1>
 
+<div class="d-flex justify-content-between">
+  <span class="small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω στο κελί</span>
+  <button (click)="resetGridState()" class="btn btn-primary btn-sm mb-2">
+      Καθάρισμα επιλογών
+  </button>
+</div>
 <div class="govgr-body">
+  <ag-grid-angular
+      [domLayout]="'autoHeight'"
+      [rowData]="remits"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="'infinite'"
+      [columnDefs]="colDefs"
+      [pagination]="true"
+      [paginationPageSize]="10"
+      (filterChanged)="onFilterChanged()"
+      (sortChanged)="onSortChanged()"
+      (columnMoved)="onColumnStateChanged()"
+      (columnVisible)="onColumnStateChanged()"
+      (columnPinned)="onColumnStateChanged()"
+      [loadingOverlayComponent]="loadingOverlayComponent"
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (cellDoubleClicked)="onCellClicked($event)"
+      (gridReady)="onGridReady($event)"
+      style="height: 80vh"
+      class="ag-theme-balham"></ag-grid-angular>
+</div>
+
+<!-- OLD Code -->
+<!-- <div class="govgr-body">
     <ag-grid-angular
         [domLayout]="'autoHeight'"
         [rowData]="remits"
@@ -13,4 +42,4 @@
         (cellDoubleClicked)="onCellClicked($event)"
         (gridReady)="onGridReady($event)"
         class="ag-theme-balham"></ag-grid-angular>
-</div>
+</div> -->
