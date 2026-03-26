@@ -157,8 +157,11 @@ export class RemitModalComponent implements OnInit, OnDestroy {
   onSubmit() {
     // filter this.legalProvisions to only include new legal provisions
     const newLegalProvisions = this.legalProvisions.filter((legalProvision) => legalProvision.isNew);
+
     const remit = {
       _id: this.remit?._id,
+      organization: this.organization,
+      organizational_unit: this.organizationalUnit,
       organizationalUnitCode: this.organizationalUnit.code,
       remitText: this.form.get('remitText').value,
       remitType: this.form.get('remitType').value,

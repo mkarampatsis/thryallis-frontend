@@ -16,6 +16,8 @@
   [pagination]="true"
   [paginationPageSize]="100"
   (gridReady)="onGridReady($event)"
+  [loadingOverlayComponent]="loadingOverlayComponent"
+  [loadingOverlayComponentParams]="loadingOverlayComponentParams"
   (filterChanged)="onFilterChanged()"
   (sortChanged)="onSortChanged()"
   (columnMoved)="onColumnStateChanged()"

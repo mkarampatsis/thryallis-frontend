@@ -6,6 +6,14 @@ export interface IRemit {
     //     regulatedObjectType: 'remit';
     //     regulatedObjectCode: string;
     // };
+    organization: {
+      code: string;
+      preferredLabel: string
+    },
+    organizational_unit:{
+      code: string;
+      preferredLabel: string
+    },
     organizationalUnitCode: string;
     remitText: string;
     remitType: string;

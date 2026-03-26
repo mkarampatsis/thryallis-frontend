@@ -33,7 +33,7 @@ export class ArmodiothtesComponent {
   modalService = inject(ModalService);
   remits: IRemitExtended[] = [];
 
-    organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
   organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
 
   defaultColDef = this.constService.defaultColDef;
@@ -61,6 +61,7 @@ export class ArmodiothtesComponent {
   private sortChange$ = new Subject<void>();
 
   onGridReady(params: GridReadyEvent<IRemitExtended>): void {
+    console.log("1>>>");
     this.gridApi = params.api;
 
     this.restoreGridState();
@@ -72,7 +73,7 @@ export class ArmodiothtesComponent {
 
         const page = p.startRow / 100 + 1;
         const pageSize = 100;
-
+        console.log("2>>>");
         try {
           const response = await firstValueFrom(
             this.remitsService
@@ -83,14 +84,21 @@ export class ArmodiothtesComponent {
                 p.sortModel
               )
           );
-
-          const transformedRows = response.rows.map((org: IRemitExtended) => ({
-            ...org,
-          }));
+          
+          this.remits = response.rows.map((remit) => {
+            const orgUnitCode = remit.organizationalUnitCode;
+            const orgCode = this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
+            return {
+              ...remit,
+              organizationLabel: this.organizationCodesMap.get(orgCode),
+              organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
+              organizationCode: orgCode
+            };
+          });
 
           this.gridApi.hideOverlay();
 
-          p.successCallback(transformedRows, response.total);
+          p.successCallback(this.remits, response.total);
         } catch (err) {
           console.error('Error fetching data:', err);
           this.gridApi.showNoRowsOverlay();
@@ -98,7 +106,7 @@ export class ArmodiothtesComponent {
         }
       },
     }
-    this.gridApi.setDatasource(datasource);
+    this.gridApi.setGridOption('datasource',datasource);
   }
 
   onCellClicked(event: any): void {
@@ -270,13 +278,6 @@ export class ArmodiothtesComponent {
 //     );
 //   }
 
-//   // onRowDoubleClicked(event: any): void {
-//   //   this.modalService.showRemitDetails({
-//   //     organizationCode: event.data.organizationalUnitCode,
-//   //     remitId: event.data["_id"]["$oid"]
-//   //   })
-//   // }
-
 //    onCellClicked(event: any): void {
 //     if (event.colDef.field == "organizationLabel") {
 //       this.modalService.showOrganizationDetails(event.data.organizationCode);
@@ -288,50 +289,111 @@ export class ArmodiothtesComponent {
 //    }
 // }
 
+// @Component({
+//   selector: 'app-html-cell-renderer',
+//   standalone: true,
+//   imports: [NgIf],
+//   template: `
+//     <div
+//       [innerHTML]="shortText"
+//       *ngIf="!showFullText"></div>
+//     <div
+//       [innerHTML]="params.value"
+//       *ngIf="showFullText"></div>
+//     <button
+//       class="btn btn-info btn-sm mb-2"
+//       *ngIf="isLongText"
+//       (click)="toggleText()">
+//       {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
+//     </button>
+//   `,
+// })
+// export class HtmlCellRenderer implements ICellRendererAngularComp {
+//   params: any;
+//   showFullText = false;
+//   shortText = '';
+//   isLongText = false;
+
+//   agInit(params: any): void {
+//     this.params = params;
+//     const value = params.value ?? '';
+//     if (typeof value === 'string' && value.length > 500) {
+//       this.shortText = this.params.value.substr(0, 500);
+//       this.isLongText = true;
+//       console.log("1 T>>>",this.shortText, this.isLongText)
+//     } else {
+//       this.shortText = this.params.value;
+//       console.log("1 F>>>",this.shortText, this.isLongText)
+//     }
+//   }
+
+//   refresh(params: any): boolean {
+//     this.params = params;
+//     const value = params.value ?? '';
+//     if (typeof value === 'string' && value.length > 500) {
+//       this.shortText = this.params.value.substr(0, 500);
+//       this.isLongText = true;
+//       console.log("2 T>>>",this.shortText, this.isLongText)
+//     } else {
+//       this.shortText = this.params.value;
+//       console.log("2 F>>>",this.shortText, this.isLongText)
+//     }
+//     this.showFullText = false; // Reset the text display state
+//     console.log("Final>>>",this.shortText, this.isLongText)
+//     return true;
+//   }
+
+//   toggleText(): void {
+//     this.showFullText = !this.showFullText;
+//   }
+// }
+
+
 @Component({
   selector: 'app-html-cell-renderer',
   standalone: true,
   imports: [NgIf],
   template: `
-        <div
-            [innerHTML]="shortText"
-            *ngIf="!showFullText"></div>
-        <div
-            [innerHTML]="params.value"
-            *ngIf="showFullText"></div>
-        <button
-            class="btn btn-info btn-sm mb-2"
-            *ngIf="isLongText"
-            (click)="toggleText()">
-            {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
-        </button>
-    `,
+    <div 
+      [innerHTML]="shortText"
+      *ngIf="!showFullText"></div>
+    <div
+      [innerHTML]="fullText"
+      *ngIf="showFullText"></div>
+    <button
+      class="btn btn-info btn-sm mb-2"
+      *ngIf="isLongText"
+      (click)="toggleText()">
+      {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
+    </button>
+  `,
 })
 export class HtmlCellRenderer implements ICellRendererAngularComp {
   params: any;
   showFullText = false;
   shortText = '';
+  fullText = '';
   isLongText = false;
 
   agInit(params: any): void {
     this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
+    const value = typeof params.value === 'string' ? params.value : '';
+    this.fullText = value;
+    
+    if (value.length > 500) {
+      this.shortText = value.substring(0, 500) + '...';
       this.isLongText = true;
+      console.log("1 T>>>",this.shortText, this.isLongText)
     } else {
-      this.shortText = this.params.value;
+      this.shortText = value;
+      this.isLongText = false;
+      console.log("1 F>>>",this.shortText, this.isLongText)
     }
   }
 
   refresh(params: any): boolean {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
-    }
-    this.showFullText = false; // Reset the text display state
+    this.agInit(params);
+    this.showFullText = false;
     return true;
   }
 

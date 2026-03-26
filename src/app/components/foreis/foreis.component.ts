@@ -37,7 +37,7 @@ export class ForeisComponent {
   autoSizeStrategy = this.constService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
-  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση μονάδων...' };
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
 
   gridApi: GridApi<IOrganizationList>;
   private filterChange$ = new Subject<void>();
