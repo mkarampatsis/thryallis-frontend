@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h5 class="modal-title">Κείμενο Αρμοδιότητας</h5>
+  <button type="button" class="btn-close" (click)="modalRef.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <div class="d-flex gap-2 mb-2">
+    <button class="btn btn-primary btn-sm" (click)="expandAll()">Ανάπτυξη όλων</button>
+    <button class="btn btn-secondary btn-sm" (click)="collapseAll()">Σύμπτυξη όλων</button>
+    <button class="btn btn-outline-dark btn-sm" (click)="copy()">Αντιγραφή</button>
+  </div>
+
+  <div [innerHTML]="highlightedText" class="full-text"></div>
+</div>P

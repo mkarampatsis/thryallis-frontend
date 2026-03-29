@@ -38,8 +38,8 @@ export class ArmodiothtesComponent {
 
   defaultColDef = this.constService.defaultColDef;
   colDefs: ColDef[] = [
-    { field: 'organizationLabel', headerName: 'Φορέας', flex: 1 },
-    { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1 },
+    { field: 'organization.preferredLabel', headerName: 'Φορέας', flex: 1 },
+    { field: 'organizational_unit.preferredLabel', headerName: 'Μονάδα', flex: 1 },
     { field: 'remitType', headerName: 'Τύπος', flex: 1 },
     {
       field: 'remitText',
@@ -48,6 +48,13 @@ export class ArmodiothtesComponent {
       cellRenderer: HtmlCellRenderer,
       autoHeight: true,
       cellStyle: { 'white-space': 'normal' },
+    },
+    {
+      field: 'remitText',
+      headerName: '',
+      flex: 1,
+      cellRenderer: HtmlCellRendererShowButton,
+      cellStyle: { 'white-space': 'normal', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center' },
     },
   ];
 
@@ -61,8 +68,8 @@ export class ArmodiothtesComponent {
   private sortChange$ = new Subject<void>();
 
   onGridReady(params: GridReadyEvent<IRemitExtended>): void {
-    console.log("1>>>");
     this.gridApi = params.api;
+
 
     this.restoreGridState();
     
@@ -73,7 +80,6 @@ export class ArmodiothtesComponent {
 
         const page = p.startRow / 100 + 1;
         const pageSize = 100;
-        console.log("2>>>");
         try {
           const response = await firstValueFrom(
             this.remitsService
@@ -349,17 +355,113 @@ export class ArmodiothtesComponent {
 // }
 
 
+// @Component({
+//   selector: 'app-html-cell-renderer',
+//   standalone: true,
+//   imports: [NgIf],
+//   template: `
+//     <div 
+//       [innerHTML]="shortText"
+//       *ngIf="!showFullText"></div>
+//     <div
+//       [innerHTML]="fullText"
+//       *ngIf="showFullText"></div>
+//     <button
+//       class="btn btn-info btn-sm mb-2"
+//       *ngIf="isLongText"
+//       (click)="toggleText()">
+//       {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
+//     </button>
+//   `,
+// })
+// export class HtmlCellRenderer implements ICellRendererAngularComp {
+//   params: any;
+//   showFullText = false;
+//   shortText = '';
+//   fullText = '';
+//   isLongText = false;
+
+//   agInit(params: any): void {
+//     this.params = params;
+//     const value = typeof params.value === 'string' ? params.value : '';
+//     this.fullText = value;
+    
+//     if (value.length > 500) {
+//       this.shortText = value.substring(0, 500) + '...';
+//       this.isLongText = true;
+//       console.log("1 T>>>",this.shortText, this.isLongText, value.length)
+//     } else {
+//       this.shortText = value;
+//       this.isLongText = false;
+//       console.log("1 F>>>",this.shortText, this.isLongText, value.length)
+//     }
+//   }
+
+//   refresh(params: any): boolean {
+//     this.agInit(params);
+//     this.showFullText = false;
+//     return true;
+//   }
+
+//   toggleText(): void {
+//     this.showFullText = !this.showFullText;
+//   }
+// }
+
 @Component({
   selector: 'app-html-cell-renderer',
   standalone: true,
   imports: [NgIf],
   template: `
     <div 
-      [innerHTML]="shortText"
+      [innerHTML]="highlight(shortText)"
       *ngIf="!showFullText"></div>
     <div
-      [innerHTML]="fullText"
+      [innerHTML]="highlight(fullText)"
       *ngIf="showFullText"></div>
+  `,
+})
+export class HtmlCellRenderer implements ICellRendererAngularComp {
+  params: any;
+  showFullText = false;
+  shortText = '';
+  fullText = '';
+
+  agInit(params: any): void {
+    this.params = params;
+    const value = typeof params.value === 'string' ? params.value : '';
+    this.fullText = value;
+    
+    if (value.length > 300) {
+      this.shortText = value.substring(0, 200) + '...';
+    } else {
+      this.shortText = value;
+
+    }
+  }
+
+  highlight(text: string) {
+    if (!this.params.context?.searchTerm) return text;
+
+    const term = this.params.context.searchTerm;
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'gi');
+
+    return text.replace(regex, match => `<mark>${match}</mark>`);
+  }
+
+  refresh(params: any): boolean {
+    this.agInit(params);
+    this.showFullText = false;
+    return true;
+  }
+}
+
+@Component({
+  selector: 'app-html-cell-renderer-show-button',
+  standalone: true,
+  imports: [NgIf],
+  template: `
     <button
       class="btn btn-info btn-sm mb-2"
       *ngIf="isLongText"
@@ -368,26 +470,21 @@ export class ArmodiothtesComponent {
     </button>
   `,
 })
-export class HtmlCellRenderer implements ICellRendererAngularComp {
+export class HtmlCellRendererShowButton implements ICellRendererAngularComp {
   params: any;
-  showFullText = false;
-  shortText = '';
-  fullText = '';
   isLongText = false;
-
+  showFullText = false;
+  
+  modalService = inject(ModalService);
+  
   agInit(params: any): void {
     this.params = params;
     const value = typeof params.value === 'string' ? params.value : '';
-    this.fullText = value;
     
-    if (value.length > 500) {
-      this.shortText = value.substring(0, 500) + '...';
+    if (value.length > 300) {
       this.isLongText = true;
-      console.log("1 T>>>",this.shortText, this.isLongText)
     } else {
-      this.shortText = value;
       this.isLongText = false;
-      console.log("1 F>>>",this.shortText, this.isLongText)
     }
   }
 
@@ -398,6 +495,7 @@ export class HtmlCellRenderer implements ICellRendererAngularComp {
   }
 
   toggleText(): void {
-    this.showFullText = !this.showFullText;
+    console.log('Button clicked, toggling text display',this.params.value);
+    this.modalService.showFullRemitText({ text: this.params.value, searchTerm: this.params.context?.searchTerm || '' });
   }
 }

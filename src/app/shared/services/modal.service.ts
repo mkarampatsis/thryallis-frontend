@@ -48,6 +48,7 @@ import { SelectInstructionProvisionModalComponent } from '../modals/select-instr
 import { InstructionActModalComponent } from '../modals/instruction-act-modal/instruction-act-modal.component';
 import { IInstructionAct } from '../interfaces/instruction-act/instruction-act.interface';
 import { OtaDetailsComponent } from '../modals/ota-details/ota-details.component';
+import { RemitFullTextModalComponent } from '../modals/remit-full-text-modal/remit-full-text-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -157,6 +158,16 @@ export class ModalService {
     modalRef.componentInstance.modalRef = modalRef;
     modalRef.componentInstance.organizationalUnit = organizationalUnit;
     modalRef.componentInstance.remit = remit;
+  }
+
+  showFullRemitText(data: { text: string; searchTerm: string }) {
+    const modalRef = this.modalService.open(RemitFullTextModalComponent, { 
+      size: 'lg',
+      centered: true,
+      backdrop: 'static', 
+  });
+    modalRef.componentInstance.modalRef = modalRef;
+    modalRef.componentInstance.init(data);
   }
 
   newInstructionProvision() {
@@ -456,7 +467,6 @@ export class ModalService {
     });
     modalRef.componentInstance.data = data;
     modalRef.componentInstance.modalRef = modalRef;
-  }
-
+  }  
 }
 
