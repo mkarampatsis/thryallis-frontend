@@ -35,6 +35,10 @@ export class ArmodiothtesComponent {
 
   organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
   organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
+  
+  gridContext = {
+    searchTerm: ''
+  };
 
   defaultColDef = this.constService.defaultColDef;
   colDefs: ColDef[] = [
@@ -44,7 +48,7 @@ export class ArmodiothtesComponent {
     {
       field: 'remitText',
       headerName: 'Κείμενο',
-      flex: 6,
+      flex: 5,
       cellRenderer: HtmlCellRenderer,
       autoHeight: true,
       cellStyle: { 'white-space': 'normal' },
@@ -55,6 +59,8 @@ export class ArmodiothtesComponent {
       flex: 1,
       cellRenderer: HtmlCellRendererShowButton,
       cellStyle: { 'white-space': 'normal', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center' },
+      filter: false,
+      sortable: false,
     },
   ];
 
@@ -127,7 +133,7 @@ export class ArmodiothtesComponent {
 
   onFilterChanged() {
     this.filterChange$.next();
-    // console.log('Filter changed, triggering data reload', this.gridApi.getFilterModel());
+    this.gridContext.searchTerm = this.gridApi.getFilterModel()['remitText']?.filter || '';
   }
 
   onSortChanged() {
@@ -495,7 +501,6 @@ export class HtmlCellRendererShowButton implements ICellRendererAngularComp {
   }
 
   toggleText(): void {
-    console.log('Button clicked, toggling text display',this.params.value);
     this.modalService.showFullRemitText({ text: this.params.value, searchTerm: this.params.context?.searchTerm || '' });
   }
 }

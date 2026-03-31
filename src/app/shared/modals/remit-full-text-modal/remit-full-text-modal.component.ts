@@ -19,6 +19,7 @@ export class RemitFullTextModalComponent {
   highlightedText = '';
 
   init(data: { text: string; searchTerm: string }) {
+
     this.text = data.text;
     this.searchTerm = data.searchTerm;
     this.update();
@@ -37,22 +38,4 @@ export class RemitFullTextModalComponent {
 
     this.highlightedText = base.replace(regex, m => `<mark>${m}</mark>`);
   }
-
-  expandAll() {
-    this.expanded = true;
-    this.update();
-  }
-
-  collapseAll() {
-    this.expanded = false;
-    this.update();
-  }
-
-  copy() {
-    navigator.clipboard.writeText(this.text);
-  }
-
-  // close() {
-  //   this.modalService.close();
-  // }
 }
