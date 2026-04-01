@@ -1,27 +1,19 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
-import { selectOrganizations$ } from 'src/app/shared/state/organizations.state';
-import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
-import { AppState } from 'src/app/shared/state/app.state';
-import { Store } from '@ngrx/store';
+import { CommonModule, } from '@angular/common';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 import { IRemit } from 'src/app/shared/interfaces/remit/remit.interface';
 import { ConstService } from 'src/app/shared/services/const.service';
-import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
+import { AgGridAngular, } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent, IDatasource, IGetRowsParams } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { SearchService } from 'src/app/shared/services/search.service';
-import { Subscription, take } from 'rxjs';
-import { selectRemits$, selectRemitsLoading$ } from 'src/app/shared/state/remits.state';
-import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/state/organizational-units.state';
+import { firstValueFrom, Subject, Subscription } from 'rxjs';
 import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
 import { forkJoin, map } from 'rxjs';
-
-export interface IRemitExtended extends IRemit {
-  organizationLabel: string;
-  organizationUnitLabel: string;
-}
+import { ForeasService } from 'src/app/shared/services/foreas.service';
+import { MonadesService } from 'src/app/shared/services/monades.service';
+import { RemitService } from 'src/app/shared/services/remit.service';
 
 @Component({
   selector: 'app-matrix',
@@ -32,99 +24,133 @@ export interface IRemitExtended extends IRemit {
 })
 export class MatrixComponent {
   constService = inject(ConstService);
+  foreasService = inject(ForeasService);
+  monadesService = inject(MonadesService);
+  remitsService = inject(RemitService);
   legalProvisionService = inject(LegalProvisionService)
 
   loading = false;
-
-  store = inject(Store<AppState>);
-  organizations$ = selectOrganizations$;
-  organizational_units$ = selectOrganizationalUnits$
-  remits$ = selectRemits$;
-  remitsLoading$ = selectRemitsLoading$;
-  selectOrganizationCodeByOrganizationalUnitCode$ = selectOrganizationCodeByOrganizationalUnitCode$;
 
   searchService = inject(SearchService)
 
   foreis: IOrganizationList[] = [];
   monades: IOrganizationUnitList[] = [];
-  remits: IRemitExtended[] = [];
-
-  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
-  organizationTypesMap = this.constService.ORGANIZATION_TYPES_MAP;
-
-  organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
-  organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
 
   defaultColDef = this.constService.defaultColDef;
-  colDefs_Matrix1: ColDef[] = this.constService.ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES;
-  colDefs_Matrix2: ColDef[] = this.constService.ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES
   autoSizeStrategy = this.constService.autoSizeStrategy;
+  private showCheckboxes = true;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
   loadingOverlayComponentRemit = GridLoadingOverlayComponent;
   loadingOverlayComponentParamsRemit = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
+  // Matrix 1
+  colDefs_Matrix1: ColDef[];
   gridApiOrganization: GridApi<IOrganizationList>;
-  gridApiOrganizationalUnit: GridApi<IOrganizationList>;
-  gridApiRemit: GridApi<IRemitExtended>;
-
-  subscriptions: Subscription[] = [];
-
-  selectedRowLimit = 2;
-
+  private filterChange_organizations$ = new Subject<void>();
+  private sortChange_organizations$ = new Subject<void>();
   selectedDataMatrix1 = []
   matrixData1 = [];
   showTable1 = false;
   showError1 = false;
-
+  
+  
+  // Matrix 2
+  colDefs_Matrix2: ColDef[];
+  gridApiOrganizationalUnit: GridApi<IOrganizationList>;
+  private filterChange_organizational_units$ = new Subject<void>();
+  private sortChange_organizational_units$ = new Subject<void>();
   selectedDataMatrix2 = [];
   matrixData2 = [];
   showTable2 = false;
   showError2 = false;
 
+  // Matrix 3
+  colDefs_Matrix3: ColDef[];
+  gridApiRemit: GridApi<IRemit>;
+  private filterChange_remits$ = new Subject<void>();
+  private sortChange_remits$ = new Subject<void>();
   selectedDataMatrix3 = [];
   matrixData3 = [];
   showTable3 = false;
   showError3 = false;
   filteredRows = [];
+  gridContext = {searchTerm: ''};
+  remits: IRemit[] = [];
+
+  subscriptions: Subscription[] = [];
+  selectedRowLimit = 2;
+
+  ngOnInit() {
+    this.resetGridState_organizations()
+    this.colDefs_Matrix1 = this.constService.ORGANIZATIONS_COL_DEFS_SDAD.map((col, index) => {
+      if (index === 0 && !this.showCheckboxes) {
+        return { ...col, hide: true };
+      }
+      return col;
+    });
+
+    this.resetGridState_organizational_units()
+    this.colDefs_Matrix2 = this.constService.ORGANIZATION_UNITS_COL_DEFS_SDAD.map((col, index) => {
+      if (index === 0 && !this.showCheckboxes) {
+        return { ...col, hide: true };
+      }
+      return col;
+    });
+
+    this.colDefs_Matrix3 = this.constService.REMITS_COL_DEFS.map((col, index) => {
+      if (index === 0 && !this.showCheckboxes) {
+        return { ...col, hide: true };
+      }
+      return col;
+    });
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  colDefs_Matrix3: ColDef[] = [
-    { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
-    { field: 'organizationLabel', headerName: 'Φορέας', flex: 1 },
-    { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1 },
-    { field: 'remitType', headerName: 'Τύπος', flex: 1 },
-    {
-      field: 'remitText',
-      headerName: 'Κείμενο',
-      flex: 6,
-      cellRenderer: HtmlCellRenderer,
-      autoHeight: true,
-      cellStyle: { 'white-space': 'normal' },
-    },
-  ];
-
-  //   MATRIX 1 
   onGridReady_Matrix1(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApiOrganization = params.api;
-    this.gridApiOrganization.showLoadingOverlay();
-    this.store
-      .select(this.organizations$)
-      .pipe(take(1))
-      .subscribe((data) => {
-        this.foreis = data.map((org) => {
-          return {
+
+    this.restoreGridState_organizations();
+
+    const datasource: IDatasource = {
+      getRows: async (p: IGetRowsParams) => {
+
+        this.gridApiOrganization.showLoadingOverlay();
+
+        const page = p.startRow / 100 + 1;
+        const pageSize = 100;
+
+        try {
+          const response = await firstValueFrom(
+            this.foreasService
+              .getAllForeisPagination(
+                page,
+                pageSize,
+                p.filterModel,
+                p.sortModel
+              )
+          );
+
+          const transformedRows = response.rows.map((org: IOrganizationList) => ({
             ...org,
-            organizationType: this.organizationTypesMap.get(parseInt(String(org.organizationType))),
-            subOrganizationOf: this.organizationCodesMap.get(org.subOrganizationOf),
-          };
-        });
-        this.gridApiOrganization.hideOverlay();
-      });
+          }));
+
+          this.gridApiOrganization.hideOverlay();
+
+          p.successCallback(transformedRows, response.total);
+        } catch (err) {
+          console.error('Error fetching data:', err);
+          this.gridApiOrganization.showNoRowsOverlay();
+          p.failCallback();
+        }
+      },
+    }
+
+    this.gridApiOrganization.setGridOption('datasource',datasource);
   }
 
   onRowSelected_Matrix1(event: any) {
@@ -169,23 +195,113 @@ export class MatrixComponent {
     this.searchService.onExportToExcelMatrix(this.matrixData1);
   }
 
+  onFilterChanged_organizations() {
+    this.filterChange_organizations$.next();
+  }
+
+  onSortChanged_organizations() {
+    this.sortChange_organizations$.next();
+  }
+
+  onColumnStateChanged_organizations() {
+    this.saveGridState_organizations();
+  }
+
+  // Save grid layout, sorting, and filters
+  private saveGridState_organizations() {
+    if (!this.gridApiOrganization) return;
+
+    const filterModel = this.gridApiOrganization.getFilterModel();
+    const columnState = this.gridApiOrganization.getColumnState();
+    const sortModel = (this.gridApiOrganization as any).getSortModel?.();
+
+    const state = {
+      filterModel,
+      columnState,
+      sortModel,
+    };
+
+    localStorage.setItem('orgGridState', JSON.stringify(state));
+  }
+
+  private restoreGridState_organizations() {
+    const savedState = localStorage.getItem('orgGridState');
+    if (!savedState) return;
+
+    try {
+      const { filterModel, columnState, sortModel } = JSON.parse(savedState);
+
+      setTimeout(() => {
+        if (this.gridApiOrganization) {
+          if (filterModel) this.gridApiOrganization.setFilterModel(filterModel);
+          if (columnState)
+            this.gridApiOrganization.applyColumnState({ state: columnState, applyOrder: true });
+
+          (this.gridApiOrganization as any).setSortModel?.(sortModel);
+
+          this.gridApiOrganization.refreshInfiniteCache?.();  // if using infinite model
+          this.gridApiOrganization.refreshServerSide?.({ purge: true });
+        }
+      }, 200);
+    } catch (err) {
+      console.error('Failed to restore grid state:', err);
+    }
+  }
+
+  resetGridState_organizations() {
+    localStorage.removeItem('orgGridState');
+
+    if (this.gridApiOrganization) {
+      this.gridApiOrganization.setFilterModel(null);
+      (this.gridApiOrganization as any).setSortModel?.(null);
+      this.gridApiOrganization.applyColumnState({ state: [], applyOrder: true });
+
+      this.gridApiOrganization.refreshInfiniteCache?.();
+      this.gridApiOrganization.refreshServerSide?.({ purge: true });
+    }
+  }
+
   //   MATRIX 2 
   onGridReady_Matrix2(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApiOrganizationalUnit = params.api;
-    this.gridApiOrganizationalUnit.showLoadingOverlay();
-    this.subscriptions.push(
-      this.store.select(this.organizational_units$).subscribe((data) => {
-        this.monades = data.map((org) => {
-          return {
+
+    this.restoreGridState_organizational_units();
+
+    const datasource: IDatasource  = {
+      getRows: async (p: IGetRowsParams) => {
+
+        this.gridApiOrganizationalUnit.showLoadingOverlay();
+
+        const page = p.startRow / 100 + 1;
+        const pageSize = 100;
+
+        try {
+          const response = await firstValueFrom(
+            this.monadesService
+            .getAllMonadesPagination(
+              page, 
+              pageSize, 
+              p.filterModel, 
+              p.sortModel
+            )
+          );
+          
+          const transformedRows = response.rows.map((org: any) => ({
             ...org,
-            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
-            organization: this.organizationCodesMap.get(org.organizationCode),
-            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
-          };
-        });
-        this.gridApiOrganizationalUnit.hideOverlay();
-      }),
-    )
+          }));
+
+          this.gridApiOrganizationalUnit.hideOverlay();
+          
+          p.successCallback( transformedRows, response.total );
+        } catch (err) {
+          console.error('Error fetching data:', err);
+          this.gridApiOrganizationalUnit.showNoRowsOverlay();
+          p.failCallback();
+        }
+      },
+    }
+
+    this.gridApiOrganizationalUnit.setGridOption('datasource',datasource);
   }
 
   onRowSelected_Matrix2(event: any) {
@@ -230,25 +346,114 @@ export class MatrixComponent {
     this.searchService.onExportToExcelMatrix(this.matrixData2);
   }
 
+  onFilterChanged_organizational_units() {
+    this.filterChange_organizational_units$.next();
+  }
+
+  onSortChanged_organizational_units() {
+    this.sortChange_organizational_units$.next();
+  }
+
+  onColumnStateChanged_organizational_units() {
+    this.saveGridState_organizational_units();
+  }
+
+  // Save grid layout, sorting, and filters
+  private saveGridState_organizational_units() {
+    if (!this.gridApiOrganizationalUnit) return;
+
+    const filterModel = this.gridApiOrganizationalUnit.getFilterModel();
+    const columnState = this.gridApiOrganizationalUnit.getColumnState();
+    const sortModel = (this.gridApiOrganizationalUnit as any).getSortModel?.();
+
+    const state = {
+      filterModel,
+      columnState,
+      sortModel,
+    };
+
+    localStorage.setItem('orgUnitsGridState', JSON.stringify(state));
+  }
+
+  // Restore saved grid state
+  private restoreGridState_organizational_units() {
+    const savedState = localStorage.getItem('orgUnitsGridState');
+    if (!savedState) return;
+
+    try {
+      const { filterModel, columnState, sortModel  } = JSON.parse(savedState);
+
+      setTimeout(() => {
+        if (this.gridApiOrganizationalUnit) {
+          if (filterModel) this.gridApiOrganizationalUnit.setFilterModel(filterModel);
+          if (columnState)
+            this.gridApiOrganizationalUnit.applyColumnState({ state: columnState, applyOrder: true });
+          
+           (this.gridApiOrganizationalUnit as any).setSortModel?.(sortModel);
+
+          this.gridApiOrganizationalUnit.refreshInfiniteCache?.();  // if using infinite model
+          this.gridApiOrganizationalUnit.refreshServerSide?.({ purge: true });
+        }
+      }, 200);
+    } catch (err) {
+      console.error('Failed to restore grid state:', err);
+    }
+  }
+
+  resetGridState_organizational_units() {
+    localStorage.removeItem('orgUnitsGridState');
+    
+    if (this.gridApiOrganizationalUnit) {
+      this.gridApiOrganizationalUnit.setFilterModel(null);
+      (this.gridApiOrganizationalUnit as any).setSortModel?.(null);
+      this.gridApiOrganizationalUnit.applyColumnState({ state: [], applyOrder: true });
+
+      this.gridApiOrganizationalUnit.refreshInfiniteCache?.();
+      this.gridApiOrganizationalUnit.refreshServerSide?.({ purge: true });
+    }
+  }
+
   //   MATRIX 3 
-  onGridReady_Matrix3(params: GridReadyEvent<IRemitExtended>): void {
+  onGridReady_Matrix3(params: GridReadyEvent<IRemit>): void {
     this.gridApiRemit = params.api;
-    this.gridApiRemit.showLoadingOverlay();
-    this.subscriptions.push(
-      this.store.select(this.remits$).subscribe((data) => {
-        this.remits = data.map((remit) => {
-          const orgUnitCode = remit.organizationalUnitCode;
-          const orgCode =
-            this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
-          return {
-            ...remit,
-            organizationLabel: this.organizationCodesMap.get(orgCode),
-            organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
-          };
-        });
-        this.gridApiRemit.hideOverlay();
-      }),
-    );
+
+    this.restoreGridState_remits();
+    
+    const datasource: IDatasource = {
+      getRows: async (p: IGetRowsParams) => {
+
+        this.gridApiRemit.showLoadingOverlay();
+
+        const page = p.startRow / 100 + 1;
+        const pageSize = 100;
+        try {
+          const response = await firstValueFrom(
+            this.remitsService
+              .getAllRemitsPagination(
+                page,
+                pageSize,
+                p.filterModel,
+                p.sortModel
+              )
+          );
+          
+          this.remits = response.rows.map((remit) => {
+            return {
+              ...remit,
+            };
+          });
+
+          this.gridApiRemit.hideOverlay();
+
+          p.successCallback(this.remits, response.total);
+        } catch (err) {
+          console.error('Error fetching data:', err);
+          this.gridApiRemit.showNoRowsOverlay();
+          p.failCallback();
+        }
+      },
+    }
+    this.gridApiRemit.setGridOption('datasource',datasource);
   }
 
   onRowSelected_Matrix3(event: any) {
@@ -286,18 +491,18 @@ export class MatrixComponent {
     }
   }
 
-  onFilterChanged(event: any) {
-    this.filteredRows = [];
-    // let filteredRowCount = 0
-    this.gridApiRemit.forEachNodeAfterFilter((data) => {
-      console.log(data.data);
-      // Sxolio apo Marko giati epistrefei lathos apotelesmata
-      // this.filteredRows.push(data.data);
+  // onFilterChanged(event: any) {
+  //   this.filteredRows = [];
+  //   // let filteredRowCount = 0
+  //   this.gridApiRemit.forEachNodeAfterFilter((data) => {
+  //     console.log(data.data);
+  //     // Sxolio apo Marko giati epistrefei lathos apotelesmata
+  //     // this.filteredRows.push(data.data);
       
-      //  filteredRowCount++;
-    });
-    //  console.log(filteredRowCount);
-  }
+  //     //  filteredRowCount++;
+  //   });
+  //   //  console.log(filteredRowCount);
+  // }
 
   clearSelectionMatrix3() {
     if (this.gridApiRemit) {
@@ -383,56 +588,72 @@ export class MatrixComponent {
       }
     );
   }
-}
 
-@Component({
-  selector: 'app-html-cell-renderer',
-  standalone: true,
-  imports: [NgIf],
-  template: `
-        <div
-            [innerHTML]="shortText"
-            *ngIf="!showFullText"></div>
-        <div
-            [innerHTML]="params.value"
-            *ngIf="showFullText"></div>
-        <button
-            class="btn btn-info btn-sm mb-2"
-            *ngIf="isLongText"
-            (click)="toggleText()">
-            {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
-        </button>
-    `,
-})
-export class HtmlCellRenderer implements ICellRendererAngularComp {
-  params: any;
-  showFullText = false;
-  shortText = '';
-  isLongText = false;
+  onFilterChanged_remits() {
+    this.filterChange_remits$.next();
+    this.gridContext.searchTerm = this.gridApiRemit.getFilterModel()['remitText']?.filter || '';
+  }
 
-  agInit(params: any): void {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
+  onSortChanged_remits() {
+    this.sortChange_remits$.next();
+  }
+
+  onColumnStateChanged_remits() {
+    this.saveGridState_remits();
+  }
+
+  // Save grid layout, sorting, and filters
+  private saveGridState_remits() {
+    if (!this.gridApiRemit) return;
+
+    const filterModel = this.gridApiRemit.getFilterModel();
+    const columnState = this.gridApiRemit.getColumnState();
+    const sortModel = (this.gridApiRemit as any).getSortModel?.();
+
+    const state = {
+      filterModel,
+      columnState,
+      sortModel,
+    };
+
+    localStorage.setItem('remitGridState', JSON.stringify(state));
+  }
+
+  private restoreGridState_remits() {
+    const savedState = localStorage.getItem('remitGridState');
+    if (!savedState) return;
+
+    try {
+      const { filterModel, columnState, sortModel } = JSON.parse(savedState);
+
+      setTimeout(() => {
+        if (this.gridApiRemit) {
+          if (filterModel) this.gridApiRemit.setFilterModel(filterModel);
+          if (columnState)
+            this.gridApiRemit.applyColumnState({ state: columnState, applyOrder: true });
+
+          (this.gridApiRemit as any).setSortModel?.(sortModel);
+
+          this.gridApiRemit.refreshInfiniteCache?.();  // if using infinite model
+          this.gridApiRemit.refreshServerSide?.({ purge: true });
+        }
+      }, 200);
+    } catch (err) {
+      console.error('Failed to restore grid state:', err);
     }
   }
 
-  refresh(params: any): boolean {
-    this.params = params;
-    if (this.params.value.length > 500) {
-      this.shortText = this.params.value.substr(0, 500);
-      this.isLongText = true;
-    } else {
-      this.shortText = this.params.value;
-    }
-    this.showFullText = false; // Reset the text display state
-    return true;
-  }
+  resetGridState_remits() {
+    localStorage.removeItem('remitGridState');
 
-  toggleText(): void {
-    this.showFullText = !this.showFullText;
+    if (this.gridApiRemit) {
+      this.gridApiRemit.setFilterModel(null);
+      (this.gridApiRemit as any).setSortModel?.(null);
+      this.gridApiRemit.applyColumnState({ state: [], applyOrder: true });
+
+      this.gridApiRemit.refreshInfiniteCache?.();
+      this.gridApiRemit.refreshServerSide?.({ purge: true });
+    }
   }
 }
+

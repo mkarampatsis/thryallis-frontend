@@ -3,7 +3,7 @@
 <div class="d-flex justify-content-between">
   <span class="small">Ανοίξτε την καρτέλα της μονάδας με διπλό κλικ πάνω σε μια γραμμή</span>
   <button (click)="resetGridState()" class="btn btn-primary btn-sm mb-2">
-      Καθάρισμα επιλογών
+      Καθάρισμα φίλτρων
   </button>
 </div>
 
@@ -25,17 +25,3 @@
   (columnPinned)="onColumnStateChanged()"
   (cellDoubleClicked)="onCellClicked($event)">
 </ag-grid-angular>
-
-<!-- OLD Code -->
-<!-- <ag-grid-angular
-    [domLayout]="'autoHeight'"
-    [rowData]="monades"
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs"
-    [pagination]="true"
-    [paginationPageSize]="50"
-    [loadingOverlayComponent]="loadingOverlayComponent"
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (cellDoubleClicked)="onCellClicked($event)"
-    (gridReady)="onGridReady($event)"
-    class="ag-theme-balham"></ag-grid-angular> -->

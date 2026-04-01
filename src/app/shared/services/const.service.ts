@@ -21,6 +21,8 @@ import { LegalProvisionsActionsComponent } from '../components/legal-provisions-
 import { LegalActsActionsComponent } from '../components/legal-acts-actions/legal-acts-actions.component';
 import { ForeisActionIconsComponent } from '../components/foreis-action-icons/foreis-action-icons.component';
 import { IOrganizationUnitPSPED } from '../interfaces/organization-unit/organizational-unit-psped.interface';
+import { RemitsHtmlCellRendererComponent } from '../components/remits-html-cell-renderer/remits-html-cell-renderer.component';
+import { RemitsHtmlCellRendererShowButtonComponent } from '../components/remits-html-cell-renderer-show-button/remits-html-cell-renderer-show-button.component';
 
 @Injectable({
   providedIn: 'root',
@@ -151,11 +153,12 @@ export class ConstService {
   ];
 
   ORGANIZATIONS_COL_DEFS_SDAD: ColDef[] = [
+    { colId: 'checkbox', headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 1 },
     { field: 'code', headerName: 'Κωδικός', flex: 1 },
     {
       field: 'preferredLabel',
       headerName: 'Ονομασία',
-      flex: 4,
+      flex: 3,
       filter: 'agTextColumnFilter',
       filterParams: {
         textMatcher: ({ value, filterText }) => {
@@ -230,6 +233,7 @@ export class ConstService {
 
 
   ORGANIZATION_UNITS_COL_DEFS_SDAD: ColDef[] = [
+    { colId: 'checkbox', headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
     { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
     { field: 'preferredLabel', headerName: 'Ονομασία', flex: 1 },
     { field: 'organizationCode.preferredLabel', headerName: 'Φορέας', flex: 1 },
@@ -244,21 +248,8 @@ export class ConstService {
       valueFormatter: (params) => (params.value ? 'Ολοκληρωμένες' : 'Μη Ολοκληρωμένες'),
       unSortIcon: true,
       filter: false,
-      // filter: 'agTextColumnFilter',
-      // filterParams: {
-      //   suppressAndOrCondition: true, // Removes 'AND'/'OR' conditions
-      //   filterOptions: ['equals', 'contains'], // Only allow 'equals' filter option
-      //   textFormatter: (value: string) => {
-      //     console.log(">>", value);
-      //     if (value === 'xx') return 'true';
-      //     if (value === 'not') return 'false';
-      //     return value;
-      //   },
-      //   debounceMs: 200, // Reduces input delay
-      // },  
       flex: 0.5
     },
-    // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
   ];
 
   ORGANIZATION_UNITS_COL_DEFS_CHECKBOXES: ColDef[] = [
@@ -270,6 +261,30 @@ export class ConstService {
     { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
     { field: 'remitsFinalized', headerName: 'Αρμοδιότητες', flex: 0.5 },
     // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
+  ];
+
+  REMITS_COL_DEFS = [
+    { colId: 'checkbox', headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 1 },
+    { field: 'organization.preferredLabel', headerName: 'Φορέας', flex: 1 },
+    { field: 'organizational_unit.preferredLabel', headerName: 'Μονάδα', flex: 1 },
+    { field: 'remitType', headerName: 'Τύπος', flex: 1 },
+    {
+      field: 'remitText',
+      headerName: 'Κείμενο',
+      flex: 5,
+      cellRenderer: RemitsHtmlCellRendererComponent,
+      autoHeight: true,
+      cellStyle: { 'white-space': 'normal' },
+    },
+    {
+      field: 'remitText',
+      headerName: '',
+      flex: 1,
+      cellRenderer: RemitsHtmlCellRendererShowButtonComponent,
+      cellStyle: { 'white-space': 'normal', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center' },
+      filter: false,
+      sortable: false,
+    },
   ];
 
   LEGAL_ACTS_COL_DEFS: ColDef[] = [

@@ -2,9 +2,9 @@
 
 <div class="d-flex justify-content-between">
   <span class="small">Ανοίξτε την καρτέλα του φορέα με διπλό κλικ πάνω στο κελί</span>
-  <!-- <button (click)="resetGridState()" class="btn btn-primary btn-sm mb-2">
-      Καθάρισμα επιλογών
-  </button> -->
+  <button (click)="resetGridState()" class="btn btn-primary btn-sm mb-2">
+      Καθάρισμα φίλτρων
+  </button>
 </div>
 <div class="govgr-body">
   <ag-grid-angular
@@ -26,23 +26,5 @@
       (cellDoubleClicked)="onCellClicked($event)"
       (gridReady)="onGridReady($event)"
       [context]="gridContext"
-      style="height: 80vh"
       class="ag-theme-balham"></ag-grid-angular>
 </div>
-
-<!-- OLD Code -->
-<!-- <div class="govgr-body">
-  <ag-grid-angular
-    [domLayout]="'autoHeight'"
-    [rowData]="remits"
-    [defaultColDef]="defaultColDef"
-    [columnDefs]="colDefs"
-    [pagination]="true"
-    [paginationPageSize]="10"
-    [loadingOverlayComponent]="loadingOverlayComponent"
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-    (cellDoubleClicked)="onCellClicked($event)"
-    (gridReady)="onGridReady($event)"
-    class="ag-theme-balham">
-  </ag-grid-angular>
-</div> -->

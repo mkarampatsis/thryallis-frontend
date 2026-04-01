@@ -1,5 +1,6 @@
 <h4 class="govgr-heading-md">Συγκριτικά στοιχεία για Φορείς, Μονάδες, Αρμοδιότητες</h4>
 
+<!-- MATRIX 1 -->
 <div class="mt-4">
     <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση δύο Φορέων ως προς τον αριθμό Μονάδων ανά ιεραρχικό επίπεδο</h1>
     
@@ -15,22 +16,29 @@
         </div>
         <div>
             <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix1()">Καθάρισμα επιλογών</button>
+            <button class="btn btn-primary btn-sm mb-1 ms-1" (click)="resetGridState_organizations()">Καθάρισμα φίλτρων</button>
         </div>
     </div>
 
     <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="foreis"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Matrix1"
-        [pagination]="true"
-        [paginationPageSize]="10"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        rowSelection="multiple"
-        (rowSelected)="onRowSelected_Matrix1($event)"
-        (gridReady)="onGridReady_Matrix1($event)"
-        class="ag-theme-balham"></ag-grid-angular>
+      class="ag-theme-balham"
+      style="height: 80vh"
+      [columnDefs]="colDefs_Matrix1"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="'infinite'"
+      [pagination]="true"
+      [paginationPageSize]="100"
+      (gridReady)="onGridReady_Matrix1($event)"
+      [loadingOverlayComponent]="loadingOverlayComponent"
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (filterChanged)="onFilterChanged_organizations()"
+      (sortChanged)="onSortChanged_organizations()"
+      (columnMoved)="onColumnStateChanged_organizations()"
+      (columnVisible)="onColumnStateChanged_organizations()"
+      (columnPinned)="onColumnStateChanged_organizations()"
+      rowSelection="multiple"
+      (rowSelected)="onRowSelected_Matrix1($event)">
+    </ag-grid-angular>    
 
     @if(showTable1){   
     <div class="mt-4">
@@ -40,31 +48,31 @@
         
         <table class="table table-striped">
             <thead>
-                <tr>
-                    <th>Φορείς</th>
-                    <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
-                    <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
-                    <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
-                    <th>ΤΜΗΜΑ</th>
-                    <th>ΓΡΑΦΕΙΟ</th>
-                    <th>ΑΛΛΟ</th>
-                </tr>
+              <tr>
+                <th>Φορείς</th>
+                <th>ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                <th>ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ</th>
+                <th>ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ</th>
+                <th>ΔΙΕΥΘΥΝΣΗ</th>
+                <th>ΥΠΟΔΙΕΥΘΥΝΣΗ</th>
+                <th>ΤΜΗΜΑ</th>
+                <th>ΓΡΑΦΕΙΟ</th>
+                <th>ΑΛΛΟ</th>
+              </tr>
             </thead>
             <tbody>
                 @for (forea of selectedDataMatrix1; track forea ){
-                    <tr>
-                        <td>{{forea.preferredLabel}}</td> 
-                        <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΤΜΗΜΑ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΓΡΑΦΕΙΟ") }}</td>
-                        <td>{{ showMatrixData1(forea.code, "ΑΛΛΟ") }}</td>
-                    </tr>
+                  <tr>
+                    <td>{{forea.preferredLabel}}</td> 
+                    <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΕΙΔΙΚΗ ΓΡΑΜΜΑΤΕΙΑ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΓΕΝΙΚΗ ΔΙΕΥΘΥΝΣΗ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΔΙΕΥΘΥΝΣΗ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΥΠΟΔΙΕΥΘΥΝΣΗ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΤΜΗΜΑ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΓΡΑΦΕΙΟ") }}</td>
+                    <td>{{ showMatrixData1(forea.code, "ΑΛΛΟ") }}</td>
+                  </tr>
                 }
             </tbody>
         </table>
@@ -82,7 +90,9 @@
 <div class="text-success mt-4">
     <hr>
 </div>
-  
+
+<!-- MATRIX 2 -->
+
 <div class="mt-4">
     <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
 
@@ -97,24 +107,31 @@
             <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε</span>
         </div>
         <div>
-            <a (click)="clearSelectionMatrix2()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+            <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix2()">Καθάρισμα επιλογών</button>
+            <button class="btn btn-primary btn-sm mb-1 ms-1" (click)="resetGridState_organizational_units()">Καθάρισμα φίλτρων</button>
         </div>
     </div>
 
     <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="monades"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs_Matrix2"
-        [pagination]="true"
-        [paginationPageSize]="10"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        rowSelection="multiple"
-        (rowSelected)="onRowSelected_Matrix2($event)"
-        (gridReady)="onGridReady_Matrix2($event)"
-        class="ag-theme-balham"></ag-grid-angular>
-
+      class="ag-theme-balham"
+      style="height: 80vh"
+      [columnDefs]="colDefs_Matrix2"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="'infinite'"
+      [pagination]="true"
+      [paginationPageSize]="100"
+      (gridReady)="onGridReady_Matrix2($event)"
+      [loadingOverlayComponent]="loadingOverlayComponent"
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (filterChanged)="onFilterChanged_organizational_units()"
+      (sortChanged)="onSortChanged_organizational_units()"
+      (columnMoved)="onColumnStateChanged_organizational_units()"
+      (columnVisible)="onColumnStateChanged_organizational_units()"
+      (columnPinned)="onColumnStateChanged_organizational_units()"
+      rowSelection="multiple"
+      (rowSelected)="onRowSelected_Matrix2($event)">
+    </ag-grid-angular>
+    
     @if(showTable2){   
     <div class="mt-4">
         <h1 class="govgr-heading-sm">Σύγκριση δύο ομοειδών Μονάδων ως προς τον αριθμό των υπομονάδων τους</h1>
@@ -179,11 +196,34 @@
       <span>Eπιλέξτε τις μονάδες που επιθυμείτε να συγκρίνετε <strong>(μέχρι δύο επιλογές)</strong></span>
     </div>
     <div>
-      <a (click)="clearSelectionMatrix3()" class="btn btn-danger btn-sm mb-1" role="button">Καθάρισμα επιλογών</a>
+       <button class="btn btn-danger btn-sm mb-1" (click)="clearSelectionMatrix3()">Καθάρισμα επιλογών</button>
+        <button class="btn btn-primary btn-sm mb-1 ms-1" (click)="resetGridState_remits()">Καθάρισμα φίλτρων</button>
     </div>
   </div>
 
   <ag-grid-angular
+      [domLayout]="'autoHeight'"
+      [rowData]="remits"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="'infinite'"
+      [rowHeight]="100"
+      [columnDefs]="colDefs_Matrix3"
+      [pagination]="true"
+      [paginationPageSize]="10"
+      (filterChanged)="onFilterChanged_remits()"
+      (sortChanged)="onSortChanged_remits()"
+      (columnMoved)="onColumnStateChanged_remits()"
+      (columnVisible)="onColumnStateChanged_remits()"
+      (columnPinned)="onColumnStateChanged_remits()"
+      [loadingOverlayComponent]="loadingOverlayComponent"
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      rowSelection="multiple"
+      (rowSelected)="onRowSelected_Matrix3($event)"
+      (gridReady)="onGridReady_Matrix3($event)"
+      [context]="gridContext"
+      class="ag-theme-balham">
+    </ag-grid-angular>
+  <!-- <ag-grid-angular
     [domLayout]="'autoHeight'"
     [rowData]="remits"
     [defaultColDef]="defaultColDef"
@@ -197,7 +237,7 @@
     (gridReady)="onGridReady_Matrix3($event)"
     (filterChanged)="onFilterChanged($event)"
     class="ag-theme-balham">
-  </ag-grid-angular>
+  </ag-grid-angular> -->
 
     @if(showTable3){   
       <div class="mt-4">
