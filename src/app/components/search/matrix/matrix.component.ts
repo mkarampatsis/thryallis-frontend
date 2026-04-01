@@ -79,7 +79,6 @@ export class MatrixComponent {
   gridContext = {searchTerm: ''};
   remits: IRemit[] = [];
 
-  subscriptions: Subscription[] = [];
   selectedRowLimit = 2;
 
   ngOnInit() {
@@ -105,10 +104,6 @@ export class MatrixComponent {
       }
       return col;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   onGridReady_Matrix1(params: GridReadyEvent<IOrganizationList>): void {

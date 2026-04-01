@@ -1,39 +1,56 @@
 <h4 class="govgr-heading-md">Τυποποιημένες αναφορές</h4>
 
 <div class="mt-4">
-    <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Εμφάνιση λεπτομερών στοιχείων Φορέων/Μονάδων με ιεραρχικό επίπεδο</h1>
-    
-    <div class="d-flex justify-content-between small">
-        <div>
-            <span>Eπιλέξτε φορέα/μονάδα/προϊστάμενη μονάδα που επιθυμείτε</span>
-        </div>
-        <div>
-            <button class="btn btn-danger btn-sm mb-1" (click)="clearSelection()">Καθάρισμα επιλογών</button>
-        </div>
+  <h1 class="govgr-heading-sm bg-secondary-subtle text-center">Εμφάνιση λεπτομερών στοιχείων Φορέων/Μονάδων με ιεραρχικό
+    επίπεδο</h1>
+
+  <div class="d-flex justify-content-between small">
+    <div>
+      <span>Eπιλέξτε φορέα/μονάδα/προϊστάμενη μονάδα που επιθυμείτε</span>
     </div>
-    
-    <ag-grid-angular
-        [domLayout]="'autoHeight'"
-        [rowData]="monades"
-        [defaultColDef]="defaultColDef"
-        [columnDefs]="colDefs"
-        [pagination]="true"
-        [paginationPageSize]="10"
-        [loadingOverlayComponent]="loadingOverlayComponent"
-        [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-        rowSelection="single"
-        (cellDoubleClicked)="onCellClicked($event)"
-        (gridReady)="onGridReady($event)"
-        class="ag-theme-balham">
+    <div>
+      <button class="btn btn-danger btn-sm mb-1" (click)="clearSelection()">Καθάρισμα επιλογών</button>
+       <button class="btn btn-primary btn-sm mb-1 ms-1" (click)="resetGridState()">Καθάρισμα φίλτρων</button>
+    </div>
+  </div>
+
+  <!-- <ag-grid-angular 
+    [domLayout]="'autoHeight'" 
+    [rowData]="monades" 
+    [defaultColDef]="defaultColDef" 
+    [columnDefs]="colDefs"
+    [pagination]="true" 
+    [paginationPageSize]="10" 
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams" 
+    rowSelection="single"
+    (cellDoubleClicked)="onCellClicked($event)" 
+    (gridReady)="onGridReady($event)" class="ag-theme-balham">
+  </ag-grid-angular> -->
+  <ag-grid-angular
+      class="ag-theme-balham"
+      style="height: 80vh"
+      [columnDefs]="colDefs"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="'infinite'"
+      [pagination]="true"
+      [paginationPageSize]="100"
+      (gridReady)="onGridReady($event)"
+      [loadingOverlayComponent]="loadingOverlayComponent"
+      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+      (filterChanged)="onFilterChanged()"
+      (sortChanged)="onSortChanged()"
+      (columnMoved)="onColumnStateChanged()"
+      (columnVisible)="onColumnStateChanged()"
+      (columnPinned)="onColumnStateChanged()"
+      rowSelection="single"
+      (cellDoubleClicked)="onCellClicked($event)" >
     </ag-grid-angular>
 </div>
 
 @if (showReport) {
-    <p><strong>'Εχετε επιλέξει:</strong> {{showReportText}}</p>
-    <app-organization-tree-report 
-        [organizationName]="organizationName" 
-        [organizationCode]="organizationCode" 
-        [showReportText]="showReportText"
-        [code]="code">
-    </app-organization-tree-report>
+<p><strong>'Εχετε επιλέξει:</strong> {{showReportText}}</p>
+<app-organization-tree-report [organizationName]="organizationName" [organizationCode]="organizationCode"
+  [showReportText]="showReportText" [code]="code">
+</app-organization-tree-report>
 }

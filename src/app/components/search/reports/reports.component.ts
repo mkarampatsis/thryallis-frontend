@@ -1,16 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { selectOrganizationalUnits$, } from 'src/app/shared/state/organizational-units.state';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 import { ConstService } from 'src/app/shared/services/const.service';
-import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent, IDatasource, IGetRowsParams } from 'ag-grid-community';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
-import { Subscription, take } from 'rxjs';
+import { firstValueFrom, Subject, Subscription, take } from 'rxjs';
 
-import { AppState } from 'src/app/shared/state/app.state';
-import { Store } from '@ngrx/store';
 import { OrganizationTreeReportComponent } from 'src/app/shared/components/organization-tree-report/organization-tree-report.component';
+import { MonadesService } from 'src/app/shared/services/monades.service';
 
 @Component({
   selector: 'app-reports',
@@ -21,83 +19,90 @@ import { OrganizationTreeReportComponent } from 'src/app/shared/components/organ
 })
 export class ReportsComponent {
   constService = inject(ConstService);
-  store = inject(Store<AppState>);
+  monadesService = inject(MonadesService);
 
-  subscriptions: Subscription[] = [];
-
-  organizational_units$ = selectOrganizationalUnits$;
   loading = false;
   showReport = false;
   showReportText = '';
 
   monades: IOrganizationUnitList[] = [];
 
-  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
-  organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
-  organizationUnitTypesMap = this.constService.ORGANIZATION_UNIT_TYPES_MAP;
-
   defaultColDef = this.constService.defaultColDef;
-  colDefs: ColDef[] = [
-    { field: 'code', headerName: 'Κωδικός', flex: 0.5 },
-    { field: 'organization', headerName: 'Φορέας', flex: 1 },
-    { field: 'preferredLabel', headerName: 'Μονάδα', flex: 1 },
-    { field: 'subOrganizationOf', headerName: 'Προϊστάμενη Μονάδα', flex: 1 },
-    { field: 'organizationType', headerName: 'Τύπος', flex: 0.5 },
-    {
-      field: 'remitsFinalized',
-      headerName: 'Κατάσταση Αρμοδιοτητων',
-      flex: 0.5,
-      cellRenderer: function (params) {
-        return params.value ? "Ολοκληρώθηκαν" : 'Σε επεξεργασία';
-      },
-      cellStyle: params => {
-        if (params.value) {
-          return { color: 'green' };
-        } else {
-          return { color: 'red' };
-        }
-      },
-    },
-  ];
-
   autoSizeStrategy = this.constService.autoSizeStrategy;
-
-  loadingOverlayComponent = GridLoadingOverlayComponent;
-  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
-
-  gridApiOrganization: GridApi<IOrganizationList>;
+  
+  colDefs: ColDef[] 
   gridApiOrganizationalUnit: GridApi<IOrganizationList>;
 
   selectedData = []
   matrixData = []
   showTable = false
+  private filterChange$ = new Subject<void>();
+  private sortChange$ = new Subject<void>();
+  private showCheckboxes = false;
+
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση στοιχείων...' };
 
   organizationCode: string | null = null;
   code: string | null = null;
   organizationName: string | null = null
 
+  ngOnInit() {
+    this.resetGridState()
+    this.colDefs = this.constService.ORGANIZATION_UNITS_COL_DEFS_SDAD.map((col, index) => {
+      if (index === 0 && !this.showCheckboxes) {
+        return { ...col, hide: true };
+      }
+      return col;
+    });
+  }
+
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
     this.gridApiOrganizationalUnit = params.api;
-    this.gridApiOrganizationalUnit.showLoadingOverlay();
-    this.subscriptions.push(
-      this.store.select(this.organizational_units$).subscribe((data) => {
-        this.monades = data.map((org) => {
-          return {
+
+    this.restoreGridState();
+
+    const datasource: IDatasource  = {
+      getRows: async (p: IGetRowsParams) => {
+
+        this.gridApiOrganizationalUnit.showLoadingOverlay();
+
+        const page = p.startRow / 100 + 1;
+        const pageSize = 100;
+
+        try {
+          const response = await firstValueFrom(
+            this.monadesService
+            .getAllMonadesPagination(
+              page, 
+              pageSize, 
+              p.filterModel, 
+              p.sortModel
+            )
+          );
+          
+          const transformedRows = response.rows.map((org: any) => ({
             ...org,
-            organizationType: this.organizationUnitTypesMap.get(parseInt(String(org.unitType))),
-            organization: this.organizationCodesMap.get(org.organizationCode),
-            subOrganizationOf: this.organizationUnitCodesMap.get(org.supervisorUnitCode),
-          };
-        });
-        this.gridApiOrganizationalUnit.hideOverlay();
-      }),
-    )
+          }));
+
+          this.gridApiOrganizationalUnit.hideOverlay();
+          
+          p.successCallback( transformedRows, response.total );
+        } catch (err) {
+          console.error('Error fetching data:', err);
+          this.gridApiOrganizationalUnit.showNoRowsOverlay();
+          p.failCallback();
+        }
+      },
+    }
+
+    this.gridApiOrganizationalUnit.setGridOption('datasource',datasource);
   }
 
   onCellClicked(event: any): void {
-
-    this.organizationCode = event.data['organizationCode']
-    this.organizationName = event.data['organization']
+    console.log(event)
+    this.organizationCode = event.data['organizationCode']['code']
+    this.organizationName = event.data['organizationCode']['preferredLabel']
 
     this.showReport = false;
     this.showReportText = ''
@@ -106,12 +111,12 @@ export class ReportsComponent {
       this.code = event.data['code'];
       this.showReport = true;
       this.showReportText = event.data['preferredLabel'];
-    } else if (event.colDef.field == "organization") {
+    } else if (event.colDef.field == "organizationCode.preferredLabel") {
       this.code = event.data['organizationCode'];
       this.showReport = true;
       this.showReportText = event.data['organization'];
-    } else if (event.colDef.field == "subOrganizationOf") {
-      this.code = event.data['supervisorUnitCode'];
+    } else if (event.colDef.field == "supervisorUnitCode.preferredLabel") {
+      this.code = event.data['supervisorUnitCode']['code'];
       this.showReport = true;
       this.showReportText = event.data['subOrganizationOf'];
     } else {
@@ -126,8 +131,70 @@ export class ReportsComponent {
     this.showReport = false;
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  onFilterChanged() {
+    this.filterChange$.next();
   }
 
+  onSortChanged() {
+    this.sortChange$.next();
+  }
+
+  onColumnStateChanged() {
+    this.saveGridState();
+  }
+
+  // Save grid layout, sorting, and filters
+  private saveGridState() {
+    if (!this.gridApiOrganizationalUnit) return;
+
+    const filterModel = this.gridApiOrganizationalUnit.getFilterModel();
+    const columnState = this.gridApiOrganizationalUnit.getColumnState();
+    const sortModel = (this.gridApiOrganizationalUnit as any).getSortModel?.();
+
+    const state = {
+      filterModel,
+      columnState,
+      sortModel,
+    };
+
+    localStorage.setItem('orgUnitsGridState', JSON.stringify(state));
+  }
+
+  // Restore saved grid state
+  private restoreGridState() {
+    const savedState = localStorage.getItem('orgUnitsGridState');
+    if (!savedState) return;
+
+    try {
+      const { filterModel, columnState, sortModel  } = JSON.parse(savedState);
+
+      setTimeout(() => {
+        if (this.gridApiOrganizationalUnit) {
+          if (filterModel) this.gridApiOrganizationalUnit.setFilterModel(filterModel);
+          if (columnState)
+            this.gridApiOrganizationalUnit.applyColumnState({ state: columnState, applyOrder: true });
+          
+           (this.gridApiOrganizationalUnit as any).setSortModel?.(sortModel);
+
+          this.gridApiOrganizationalUnit.refreshInfiniteCache?.();  // if using infinite model
+          this.gridApiOrganizationalUnit.refreshServerSide?.({ purge: true });
+        }
+      }, 200);
+    } catch (err) {
+      console.error('Failed to restore grid state:', err);
+    }
+  }
+
+  resetGridState() {
+    localStorage.removeItem('orgUnitsGridState');
+    
+    if (this.gridApiOrganizationalUnit) {
+      this.gridApiOrganizationalUnit.setFilterModel(null);
+      (this.gridApiOrganizationalUnit as any).setSortModel?.(null);
+      this.gridApiOrganizationalUnit.applyColumnState({ state: [], applyOrder: true });
+
+      this.gridApiOrganizationalUnit.refreshInfiniteCache?.();
+      this.gridApiOrganizationalUnit.refreshServerSide?.({ purge: true });
+    }
+  }
 }
