@@ -8,6 +8,7 @@ import { AppState } from '../state/app.state';
 import { forkJoin, map, take } from 'rxjs';
 import { selectOrganizationalUnitByOrganizationCode$, selectOrganizationalUnitBysupervisorUnitCode$ } from 'src/app/shared/state/organizational-units.state';
 import { selectRemitByOrganizationalUnitCode$ } from 'src/app/shared/state/remits.state';
+import { IOrganization_Sdad } from '../interfaces/organization/organization-sdad.interface';
 import { Organization } from '../interfaces/search/search.interface';
 import { IOrganizationUnitList } from '../interfaces/organization-unit';
 import { ConstService } from './const.service';
@@ -82,7 +83,8 @@ export class SearchService {
     return result
   }
 
-  transformMatrixData_1(selectedOrganizations: Organization[]) {
+  transformMatrixData_1(selectedOrganizations: IOrganization_Sdad[]) {
+
     const observables = selectedOrganizations.map((data) =>
       this.store.select(this.selectOrganizationalUnitByOrganizationCode$(data.code)).pipe(
         take(1),
@@ -259,12 +261,10 @@ export class SearchService {
   transformMatrixData_3(rowsSelected: any, filteredRows: any) {
     let selectedRemits = []
 
-    console.log("transformMatrixData_3",rowsSelected, filteredRows)
-
     if (filteredRows.length === 0) {
       for (let data of rowsSelected) {
         this.store
-          .select(this.selectRemitByOrganizationalUnitCod$(data.organizationalUnitCode))
+          .select(this.selectRemitByOrganizationalUnitCod$(data.organizational_unit.code))
           .pipe(take(1))
           .subscribe((orgCodes) => {
             selectedRemits = selectedRemits.concat(...orgCodes)
@@ -275,7 +275,7 @@ export class SearchService {
       for (let data of rowsSelected) {
         let remits = []
         // console.log("Service>>",rowsSelected,filteredRows)
-        remits = filteredRows.filter(doc => doc.organizationalUnitCode === data.organizationalUnitCode)
+        remits = filteredRows.filter(doc => doc.organizational_unit.code === data.organizational_unit.code)
         selectedRemits = selectedRemits.concat(...remits)
       }
       // console.log(selectedRemits)

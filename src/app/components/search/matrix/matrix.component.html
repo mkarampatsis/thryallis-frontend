@@ -187,7 +187,7 @@
 
   <ul>
     @for (row of selectedDataMatrix3; track row ){
-      <li><strong>Φορέας: </strong>{{row.organizationLabel}}, <strong>Μονάδα: </strong>{{row.organizationUnitLabel}}</li>
+      <li><strong>Φορέας: </strong>{{row.organization.preferredLabel}}, <strong>Μονάδα: </strong>{{row.organizational_unit.preferredLabel}}</li>
     }
   </ul>
 

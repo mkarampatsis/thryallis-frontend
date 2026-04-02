@@ -1,4 +1,5 @@
 export interface ISubOrganizationOf {
-    id: string;
+    // id: string;
+    code: string;
     description: string;
 }

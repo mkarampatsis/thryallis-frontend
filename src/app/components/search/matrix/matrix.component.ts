@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, } from '@angular/common';
+import { IOrganization_Sdad } from 'src/app/shared/interfaces/organization/organization-sdad.interface';
+import { IOrganizationUnit_Sdad } from 'src/app/shared/interfaces/organization-unit/organization-unit-sdad.interface';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization';
 import { IOrganizationUnitList } from 'src/app/shared/interfaces/organization-unit';
 import { IRemit } from 'src/app/shared/interfaces/remit/remit.interface';
@@ -50,6 +52,7 @@ export class MatrixComponent {
   gridApiOrganization: GridApi<IOrganizationList>;
   private filterChange_organizations$ = new Subject<void>();
   private sortChange_organizations$ = new Subject<void>();
+  selectedOrgs = new Set<IOrganization_Sdad[]>();
   selectedDataMatrix1 = []
   matrixData1 = [];
   showTable1 = false;
@@ -61,6 +64,7 @@ export class MatrixComponent {
   gridApiOrganizationalUnit: GridApi<IOrganizationList>;
   private filterChange_organizational_units$ = new Subject<void>();
   private sortChange_organizational_units$ = new Subject<void>();
+  selectedOrgUnits = new Set<IOrganizationUnit_Sdad[]>();
   selectedDataMatrix2 = [];
   matrixData2 = [];
   showTable2 = false;
@@ -71,6 +75,7 @@ export class MatrixComponent {
   gridApiRemit: GridApi<IRemit>;
   private filterChange_remits$ = new Subject<void>();
   private sortChange_remits$ = new Subject<void>();
+  selectedRemits = new Set<IRemit[]>();
   selectedDataMatrix3 = [];
   matrixData3 = [];
   showTable3 = false;
@@ -136,7 +141,8 @@ export class MatrixComponent {
 
           this.gridApiOrganization.hideOverlay();
 
-          p.successCallback(transformedRows, response.total);
+          p.successCallback( transformedRows, response.total );
+
         } catch (err) {
           console.error('Error fetching data:', err);
           this.gridApiOrganization.showNoRowsOverlay();
@@ -149,12 +155,22 @@ export class MatrixComponent {
   }
 
   onRowSelected_Matrix1(event: any) {
-    const selectedNodes = event.api.getSelectedNodes();
+
+    const code = event.data.code;
+
+    if (event.node.isSelected()) {
+      this.selectedOrgs.add(event.data);
+    } else {
+      this.selectedOrgs.delete(event.data);
+    }
+
+    // const selectedNodes = event.api.getSelectedNodes();
     this.showTable1 = false;
     this.showError1 = false;
-
+    
     // Log selected rows to the console
-    this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
+    // this.selectedDataMatrix1 = selectedNodes.map(node => node.data);
+    this.selectedDataMatrix1 = this.selectedOrgs.size > 0 ? Array.from(this.selectedOrgs) : [];
     this.searchService.transformMatrixData_1(this.selectedDataMatrix1)
       .subscribe(data => {
         this.matrixData1 = data;
@@ -183,6 +199,7 @@ export class MatrixComponent {
     if (this.gridApiOrganization) {
       this.gridApiOrganization.deselectAll(); // Clear all selected rows
       this.gridApiOrganization.setFilterModel(null);
+      this.selectedOrgs.clear();
     }
   }
 
@@ -300,12 +317,20 @@ export class MatrixComponent {
   }
 
   onRowSelected_Matrix2(event: any) {
-    const selectedNodes = event.api.getSelectedNodes();
+
+    if (event.node.isSelected()) {
+      this.selectedOrgUnits.add(event.data);
+    } else {
+      this.selectedOrgUnits.delete(event.data);
+    }
+
+    // const selectedNodes = event.api.getSelectedNodes();
     this.showTable2 = false;
     this.showError2 = false;
 
     // Log selected rows to the console
-    this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
+    // this.selectedDataMatrix2 = selectedNodes.map(node => node.data);
+    this.selectedDataMatrix2 = this.selectedOrgUnits.size > 0 ? Array.from(this.selectedOrgUnits) : [];
     this.matrixData2 = this.searchService.transformMatrixData_2(this.selectedDataMatrix2)
 
     if (this.matrixData2.length > 0) {
@@ -334,6 +359,7 @@ export class MatrixComponent {
     if (this.gridApiOrganizationalUnit) {
       this.gridApiOrganizationalUnit.deselectAll(); // Clear all selected rows
       this.gridApiOrganizationalUnit.setFilterModel(null);
+      this.selectedOrgUnits.clear();
     }
   }
 
@@ -452,12 +478,20 @@ export class MatrixComponent {
   }
 
   onRowSelected_Matrix3(event: any) {
-    const selectedNodes = event.api.getSelectedNodes();
+
+    if (event.node.isSelected()) {
+      this.selectedRemits.add(event.data);
+    } else {
+      this.selectedRemits.delete(event.data);
+    }
+
+    // const selectedNodes = event.api.getSelectedNodes();
     this.showTable3 = false;
     this.showError3 = false;
 
     // Disable further selections if the limit is reached
-    if (selectedNodes.length >= this.selectedRowLimit) {
+    // if (selectedNodes.length >= this.selectedRowLimit) {
+    if (this.selectedRemits.size >= this.selectedRowLimit) {  
       event.api.forEachNode((node) => {
         if (!node.isSelected()) {
           node.selectable = false; // Disable checkbox for unselected rows
@@ -471,13 +505,11 @@ export class MatrixComponent {
     }
 
     // Log selected rows to the console
-    this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
-    // console.log("selected",this.selectedDataMatrix3);
-    // console.log("filteredRows",this.filteredRows);
+    // this.selectedDataMatrix3 = selectedNodes.map(node => node.data);
+    this.selectedDataMatrix3 = this.selectedRemits.size > 0 ? Array.from(this.selectedRemits) : [];
     
     this.matrixData3 = this.searchService.transformMatrixData_3(this.selectedDataMatrix3, this.filteredRows)
     if (this.matrixData3.length > 0) {
-      console.log("matrixData3",this.matrixData3);
       this.showTable3 = true;
       this.showError3 = false;
     } else {
@@ -503,6 +535,7 @@ export class MatrixComponent {
     if (this.gridApiRemit) {
       this.gridApiRemit.deselectAll(); // Clear all selected rows
       this.gridApiRemit.setFilterModel(null);
+      this.selectedRemits.clear();
     }
   }
 

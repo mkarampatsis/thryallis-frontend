@@ -112,13 +112,14 @@ export class ReportsComponent {
       this.showReport = true;
       this.showReportText = event.data['preferredLabel'];
     } else if (event.colDef.field == "organizationCode.preferredLabel") {
-      this.code = event.data['organizationCode'];
+      console.log(event.data['organizationCode']['preferredLabel'])
+      this.code = event.data['organizationCode']['code'];
       this.showReport = true;
-      this.showReportText = event.data['organization'];
+      this.showReportText = event.data['organizationCode']['preferredLabel'];
     } else if (event.colDef.field == "supervisorUnitCode.preferredLabel") {
       this.code = event.data['supervisorUnitCode']['code'];
       this.showReport = true;
-      this.showReportText = event.data['subOrganizationOf'];
+      this.showReportText = event.data['supervisorUnitCode']['preferredLabel'];
     } else {
       this.showReport = false;
       this.showReportText = ''

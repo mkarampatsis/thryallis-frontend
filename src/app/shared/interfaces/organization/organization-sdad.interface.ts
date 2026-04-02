@@ -4,7 +4,7 @@ import { IOrganizationType } from './organization-type';
 import { IPurpose } from './purpose.interface';
 import { ISubOrganizationOf } from './sub-organization.interface';
 
-export interface IOrganization {
+export interface IOrganization_Sdad {
     code: string;
     preferredLabel: string;
     alternativeLabels: string[];

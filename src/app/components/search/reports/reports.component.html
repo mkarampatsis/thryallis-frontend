@@ -14,43 +14,33 @@
     </div>
   </div>
 
-  <!-- <ag-grid-angular 
-    [domLayout]="'autoHeight'" 
-    [rowData]="monades" 
-    [defaultColDef]="defaultColDef" 
-    [columnDefs]="colDefs"
-    [pagination]="true" 
-    [paginationPageSize]="10" 
-    [loadingOverlayComponent]="loadingOverlayComponent"
-    [loadingOverlayComponentParams]="loadingOverlayComponentParams" 
-    rowSelection="single"
-    (cellDoubleClicked)="onCellClicked($event)" 
-    (gridReady)="onGridReady($event)" class="ag-theme-balham">
-  </ag-grid-angular> -->
   <ag-grid-angular
-      class="ag-theme-balham"
-      style="height: 80vh"
-      [columnDefs]="colDefs"
-      [defaultColDef]="defaultColDef"
-      [rowModelType]="'infinite'"
-      [pagination]="true"
-      [paginationPageSize]="100"
-      (gridReady)="onGridReady($event)"
-      [loadingOverlayComponent]="loadingOverlayComponent"
-      [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-      (filterChanged)="onFilterChanged()"
-      (sortChanged)="onSortChanged()"
-      (columnMoved)="onColumnStateChanged()"
-      (columnVisible)="onColumnStateChanged()"
-      (columnPinned)="onColumnStateChanged()"
-      rowSelection="single"
-      (cellDoubleClicked)="onCellClicked($event)" >
-    </ag-grid-angular>
+    class="ag-theme-balham"
+    style="height: 80vh"
+    [columnDefs]="colDefs"
+    [defaultColDef]="defaultColDef"
+    [rowModelType]="'infinite'"
+    [pagination]="true"
+    [paginationPageSize]="100"
+    (gridReady)="onGridReady($event)"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    (filterChanged)="onFilterChanged()"
+    (sortChanged)="onSortChanged()"
+    (columnMoved)="onColumnStateChanged()"
+    (columnVisible)="onColumnStateChanged()"
+    (columnPinned)="onColumnStateChanged()"
+    rowSelection="single"
+    (cellDoubleClicked)="onCellClicked($event)" >
+  </ag-grid-angular>
 </div>
 
 @if (showReport) {
 <p><strong>'Εχετε επιλέξει:</strong> {{showReportText}}</p>
-<app-organization-tree-report [organizationName]="organizationName" [organizationCode]="organizationCode"
-  [showReportText]="showReportText" [code]="code">
+<app-organization-tree-report 
+  [organizationName]="organizationName" 
+  [organizationCode]="organizationCode"
+  [showReportText]="showReportText" 
+  [code]="code">
 </app-organization-tree-report>
 }
