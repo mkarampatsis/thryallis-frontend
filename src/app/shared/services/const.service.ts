@@ -180,7 +180,6 @@ export class ConstService {
     },
   ];
 
-
   ORGANIZATIONS_COL_DEFS_WITH_CHECKBOXES: ColDef[] = [
     { headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },
     { field: 'code', headerName: 'Κωδικός', flex: 1 },
@@ -230,7 +229,6 @@ export class ConstService {
     },
     // { field: 'actionCell', headerName: 'Ενέργειες', cellRenderer: MonadesActionIconsComponent,  filter: false, sortable: false, floatingFilter:false, flex: 1, resizable: false},
   ];
-
 
   ORGANIZATION_UNITS_COL_DEFS_SDAD: ColDef[] = [
     { colId: 'checkbox', headerName: 'Επιλογή', headerCheckboxSelection: false, checkboxSelection: true, flex: 0.5 },

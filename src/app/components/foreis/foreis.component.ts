@@ -30,14 +30,14 @@ export class ForeisComponent {
   foreasService = inject(ForeasService);
 
   defaultColDef = this.constService.defaultColDef;
-  colDefs: ColDef[];
+  colDefs: ColDef[] = [];
   autoSizeStrategy = this.constService.autoSizeStrategy;
   
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
 
-  gridApi: GridApi<IOrganizationList>;
+  gridApi!: GridApi<IOrganizationList>;
   private filterChange$ = new Subject<void>();
   private sortChange$ = new Subject<void>();
   private showCheckboxes = false;

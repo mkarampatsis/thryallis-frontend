@@ -32,13 +32,13 @@ export class MonadesComponent {
   organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
 
   defaultColDef = this.constService.defaultColDef;
-  colDefs: ColDef[];
+  colDefs: ColDef[] = [];
   autoSizeStrategy = this.constService.autoSizeStrategy;
   
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση μονάδων...' };
 
-  gridApi: GridApi<IOrganizationUnitList>;
+  gridApi!: GridApi<IOrganizationUnitList>;
   private filterChange$ = new Subject<void>();
   private sortChange$ = new Subject<void>();
   private showCheckboxes = false;

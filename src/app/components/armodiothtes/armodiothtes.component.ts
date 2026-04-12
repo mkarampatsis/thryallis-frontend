@@ -33,14 +33,14 @@ export class ArmodiothtesComponent {
   };
 
   defaultColDef = this.constService.defaultColDef;
-  colDefs: ColDef[]
+  colDefs: ColDef[] = [];
   
   autoSizeStrategy = this.constService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
   loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
-  gridApi: GridApi<IRemit>;
+  gridApi!: GridApi<IRemit>;
   private filterChange$ = new Subject<void>();
   private sortChange$ = new Subject<void>();
   private showCheckboxes = false;
@@ -48,10 +48,10 @@ export class ArmodiothtesComponent {
   ngOnInit() {
     this.colDefs = this.constService.REMITS_COL_DEFS.map((col, index) => {
       if (index === 0 && !this.showCheckboxes) {
-        return { ...col, hide: true };
+        return { ...col, hide: true } as ColDef;
       }
-      return col;
-    });
+      return col as ColDef;
+    }) as ColDef[];
   }
 
   onGridReady(params: GridReadyEvent<IRemit>): void {
