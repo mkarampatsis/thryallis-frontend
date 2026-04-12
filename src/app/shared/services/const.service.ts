@@ -3,7 +3,9 @@ import { take } from 'rxjs';
 
 import {
   ColDef,
+  ICellRendererParams,
   ITextFilterParams,
+  // TextMatcherParams,
   RowClassRules,
   SizeColumnsToContentStrategy,
   SizeColumnsToFitGridStrategy,
@@ -110,19 +112,29 @@ export class ConstService {
       field: 'roles',
       headerName: 'Φορείς',
       flex: 1,
-      cellRenderer: (params) => params.value.find((data) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
+      // cellRenderer: (params) => params.value.find((data) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
+      cellRenderer: (params: ICellRendererParams) =>
+        (params.value as { role: string; foreas: string[] }[])
+          .find((data: { role: string; foreas: string[] }) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
     },
     {
       field: 'roles',
       headerName: 'Ρόλοι',
       flex: 1,
+      // valueGetter: (params) => {
+      //   return params.data.roles
+      //     .filter(role => role.active)  // Get only active roles
+      //     .map(role => role.role)       // Extract role names
+      //     .join(", ");                  // Convert to a string
+      // }
       valueGetter: (params) => {
-        return params.data.roles
-          .filter(role => role.active)  // Get only active roles
-          .map(role => role.role)       // Extract role names
-          .join(", ");                  // Convert to a string
+        return (params.data.roles as { role: string; active: boolean }[])
+          .filter((role: { role: string; active: boolean }) => role.active)
+          .map((role: { role: string; active: boolean }) => role.role)
+          .join(", ");
       }
     },
+
   ];
 
   ORGANIZATIONS_COL_DEFS: ColDef[] = [
@@ -132,11 +144,16 @@ export class ConstService {
       headerName: 'Ονομασία',
       flex: 4,
       filter: 'agTextColumnFilter',
+      // filterParams: {
+      //   textMatcher: ({ value, filterText }) => {
+      //     return value.indexOf(this.removeAccents(filterText)) !== -1;
+      //   },
+      // },
       filterParams: {
-        textMatcher: ({ value, filterText }) => {
-          return value.indexOf(this.removeAccents(filterText)) !== -1;
+        textMatcher: ({ value, filterText }: { value: string; filterText: string }) => {
+        return value.indexOf(this.removeAccents(filterText)) !== -1;
         },
-      },
+      }
     },
     { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
     { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
@@ -160,11 +177,16 @@ export class ConstService {
       headerName: 'Ονομασία',
       flex: 3,
       filter: 'agTextColumnFilter',
+      // filterParams: {
+      //   textMatcher: ({ value, filterText }) => {
+      //     return value.indexOf(this.removeAccents(filterText)) !== -1;
+      //   },
+      // },
       filterParams: {
-        textMatcher: ({ value, filterText }) => {
-          return value.indexOf(this.removeAccents(filterText)) !== -1;
+        textMatcher: ({ value, filterText }: { value: string; filterText: string }) => {
+        return value.indexOf(this.removeAccents(filterText)) !== -1;
         },
-      },
+      }
     },
     { field: 'subOrganizationOf.preferredLabel', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
     { field: 'organizationType.description', headerName: 'Τύπος', flex: 2 },
@@ -188,11 +210,12 @@ export class ConstService {
       headerName: 'Φορέας',
       flex: 4,
       filter: 'agTextColumnFilter',
-      filterParams: {
-        textMatcher: ({ value, filterText }) => {
-          return value.indexOf(this.removeAccents(filterText)) !== -1;
-        },
-      },
+      // filterParams: {
+      //   textMatcher: ({ value, filterText }) => {
+      //     return value.indexOf(this.removeAccents(filterText)) !== -1;
+      //   },
+      // },
+      
     },
     { field: 'subOrganizationOf', headerName: 'Εποπτεύουσα Αρχή', flex: 2 },
     { field: 'organizationType', headerName: 'Τύπος', flex: 2 },
@@ -207,8 +230,11 @@ export class ConstService {
     {
       field: 'remitsFinalized',
       headerName: 'Αρμοδιότητες',
-      cellRenderer: function (params) {
-        return params.value ? "Ολοκληρωμένες" : 'Μη Ολοκληρωμένες';
+      // cellRenderer: function (params) {
+      //   return params.value ? "Ολοκληρωμένες" : 'Μη Ολοκληρωμένες';
+      // },
+      cellRenderer: (params: ICellRendererParams) => {
+        return params.value ? "Ολοκληρωμένες" : "Μη Ολοκληρωμένες";
       },
       valueFormatter: (params) => (params.value ? 'Ολοκληρωμένες' : 'Μη Ολοκληρωμένες'),
       unSortIcon: true,
@@ -240,8 +266,11 @@ export class ConstService {
     {
       field: 'remitsFinalized',
       headerName: 'Αρμοδιότητες',
-      cellRenderer: function (params) {
-        return params.value ? "Ολοκληρωμένες" : 'Μη Ολοκληρωμένες';
+      // cellRenderer: function (params) {
+      //   return params.value ? "Ολοκληρωμένες" : 'Μη Ολοκληρωμένες';
+      // },
+      cellRenderer: (params: ICellRendererParams) => {
+        return params.value ? "Ολοκληρωμένες" : "Μη Ολοκληρωμένες";
       },
       valueFormatter: (params) => (params.value ? 'Ολοκληρωμένες' : 'Μη Ολοκληρωμένες'),
       unSortIcon: true,
