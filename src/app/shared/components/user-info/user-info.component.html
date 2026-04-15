@@ -13,10 +13,16 @@
         <span class="fw-bold">{{ user().name }}</span>
       </a>
 
-      <a ngbDropdownItem routerLink="/dashboard">
+      <a *ngIf="hasEditorRole()" ngbDropdownItem routerLink="/dashboard">
         <div class="d-flex align-items-center gap-3">
           <i class="bi bi-person-gear fs-4"></i>
           Οι προσβάσεις μου
+        </div>
+      </a>
+      <a ngbDropdownItem routerLink="/user-roles">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-person-gear fs-4"></i>
+          Οι ρόλοι μου
         </div>
       </a>
       <a *ngIf="hasAdminRole()" ngbDropdownItem routerLink="/user-admin">

@@ -37,19 +37,19 @@ export class UserService {
   }
 
   hasHelpDeskRole() {
-    return this.user().roles.some((role) => role.role === 'HELPDESK' && role.active);
+    return this.user()?.roles.some((role) => role.role === 'HELPDESK' && role.active);
   }
 
   hasEditorRole() {
-    return this.user().roles.some((role) => role.role === 'EDITOR' && role.active);
+    return this.user()?.roles.some((role) => role.role === 'EDITOR' && role.active);
   }
 
   hasAdminRole() {
-    return this.user().roles.some((role) => role.role === 'ADMIN' && role.active);
+    return this.user()?.roles.some((role) => role.role === 'ADMIN' && role.active);
   }
 
   getMyFacilites() {
-    const foreis = this.user().roles.find(role => role.role === 'FACILITY_EDITOR' && role.active)?.foreas ?? [];
+    const foreis = this.user()?.roles.find(role => role.role === 'FACILITY_EDITOR' && role.active)?.foreas ?? [];
 
     let organizations: IOrganizationList[] = [];
 
@@ -58,7 +58,8 @@ export class UserService {
         .select(this.organization$(forea))
         .pipe(take(1))
         .subscribe((org) => {
-          organizations = organizations.concat(...org);
+          // organizations = organizations.concat(...org);
+          organizations = organizations.concat(org ?? []);
         });
     }
 
@@ -67,7 +68,7 @@ export class UserService {
 
   hasFacilityAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_ADMIN' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'FACILITY_ADMIN' && role.active);
     }
 
     return false;
@@ -75,7 +76,7 @@ export class UserService {
 
   hasFacilityEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'FACILITY_EDITOR' && role.active);
     }
 
     return false;
@@ -83,14 +84,14 @@ export class UserService {
 
   hasFacilityEditorRoleInOrganization(code: string) {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code) && role.active);
+      return this.user()?.roles.some((role) => role.role === 'FACILITY_EDITOR' && role.foreas.includes(code) && role.active);
     }
 
     return false;
   }
 
   getMyEquipments() {
-    const foreis = this.user().roles.find(role => role.role === 'EQUIPMENT_EDITOR' && role.active)?.foreas ?? [];
+    const foreis = this.user()?.roles.find(role => role.role === 'EQUIPMENT_EDITOR' && role.active)?.foreas ?? [];
 
     let organizations: IOrganizationList[] = [];
 
@@ -99,7 +100,8 @@ export class UserService {
         .select(this.organization$(forea))
         .pipe(take(1))
         .subscribe((org) => {
-          organizations = organizations.concat(...org);
+          // organizations = organizations.concat(...org);
+          organizations = organizations.concat(org ?? []);
         });
     }
     return organizations;
@@ -107,48 +109,48 @@ export class UserService {
 
   hasEquipmentAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_ADMIN' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'EQUIPMENT_ADMIN' && role.active);
     }
     return false;
   }
 
   hasEquipmentEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.active);
     }
     return false;
   }
 
   hasEquipmentEditorRoleInOrganization(code: string) {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.foreas.includes(code) && role.active);
+      return this.user()?.roles.some((role) => role.role === 'EQUIPMENT_EDITOR' && role.foreas.includes(code) && role.active);
     }
     return false;
   }
 
   hasUserResourcesAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_ADMIN' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'USER_RESOURCES_ADMIN' && role.active);
     }
     return false;
   }
 
   hasUserResourcesEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.active);
     }
     return false;
   }
 
   hasUserResourcesEditorRoleInOrganization(code: string) {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.foreas.includes(code) && role.active);
+      return this.user()?.roles.some((role) => role.role === 'USER_RESOURCES_EDITOR' && role.foreas.includes(code) && role.active);
     }
     return false;
   }
 
   getMyUserResources() {
-    const foreis = this.user().roles.find(role => role.role === 'USER_RESOURCES_EDITOR' && role.active)?.foreas ?? [];
+    const foreis = this.user()?.roles.find(role => role.role === 'USER_RESOURCES_EDITOR' && role.active)?.foreas ?? [];
 
     let organizations: IOrganizationList[] = [];
 
@@ -157,7 +159,8 @@ export class UserService {
         .select(this.organization$(forea))
         .pipe(take(1))
         .subscribe((org) => {
-          organizations = organizations.concat(...org);
+          // organizations = organizations.concat(...org);
+          organizations = organizations.concat(org ?? []);
         });
     }
     return organizations;
@@ -166,14 +169,14 @@ export class UserService {
 
   hasOtaAdminRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'OTA_ADMIN' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'OTA_ADMIN' && role.active);
     }
     return false;
   }
 
   hasOtaEditorRole() {
     if (this.user()) {
-      return this.user().roles.some((role) => role.role === 'OTA_EDITOR' && role.active);
+      return this.user()?.roles.some((role) => role.role === 'OTA_EDITOR' && role.active);
     }
     return false;
   }

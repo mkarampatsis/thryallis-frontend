@@ -31,7 +31,11 @@ export class DashboardComponent implements OnInit {
   organizationUnitsService = inject(OrganizationalUnitService);
 
   user = this.authService.user;
-  roles = this.authService.user().roles.filter(role => role.role && role.active).map(role => role.role).join(',')
+ 
+  roles = (this.authService.user()?.roles ?? [])
+    .filter(role => role.role && role.active)
+    .map(role => role.role)
+    .join(',');
 
   store = inject(Store<AppState>);
 

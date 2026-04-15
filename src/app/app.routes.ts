@@ -43,6 +43,10 @@ export const routes: Routes = [
     loadChildren: () => import('./components/user-admin/user-admin.routes').then((m) => m.UserAdminRoutes),
   },
   {
+    path: 'user-roles',
+    loadChildren: () => import('./components/user-roles/user-roles.routes').then((m) => m.UserRolesRoutes),
+  },
+  {
     path: 'log-data',
     loadChildren: () => import('./components/log-data/log-data.routes').then((m) => m.LogDataRoutes),
   },

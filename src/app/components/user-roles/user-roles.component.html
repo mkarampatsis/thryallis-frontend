@@ -1,0 +1,33 @@
+<h4 class="govgr-heading-md">Οι ρόλοι σας</h4>
+
+<div *ngIf="user()" class="mb-5">
+  <h1 class="govgr-heading-sm">Συνδέθηκε ο χρήστης <strong>{{user().name}}</strong></h1>
+  <div *ngIf="user().roles" class="mb-3">
+    Επιλεγμένος ρόλος: 
+     @for (role of user().roles; track role.role) {
+      @if (user().roles.length>1){
+        <strong>{{ role.role }},</strong>
+      } @else {
+        <strong>{{ role.role }}</strong>
+      }      
+    }
+  </div> 
+  
+  <div class="d-flex justify-content-between mb-1">
+    <span class="small">Επιλέξτε ρόλο που επιθυμείτε:</span>
+    <button class="btn btn-danger btn-sm" (click)="resetRoles()">
+      Επαναφορά Ρόλων
+    </button>
+  </div>
+  <ag-grid-angular
+    class="ag-theme-balham",
+    style="height: 400px; width: 100%;"
+    [columnDefs]="colDefs"
+    [defaultColDef]="defaultColDef"
+    (gridReady)="onGridReady($event)"
+    [loadingOverlayComponent]="loadingOverlayComponent"
+    [loadingOverlayComponentParams]="loadingOverlayComponentParams"
+    rowSelection="single"
+    (rowSelected)="onRoleSelected($event)">
+  </ag-grid-angular>
+</div>
