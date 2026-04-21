@@ -67,7 +67,7 @@ export class UserRolesComponent {
   constructor() {
     effect(() => {
       const user = this.authService.user(); // read the signal
-      
+
       if (user) {
         this.roles = this.loadRolesFromToken().filter(r => r.role && r.active);
       }

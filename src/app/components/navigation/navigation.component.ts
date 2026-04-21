@@ -34,34 +34,38 @@ export class NavigationComponent {
   }
 
   hasFacilityAdminRole() {
-    return this.userService.hasFacilityAdminRole()
+    return this.userService.hasFacilityAdminRole();
   }
 
   hasFacilityEditorRole() {
-    return this.userService.hasFacilityEditorRole()
+    return this.userService.hasFacilityEditorRole();
   }
 
   hasEquipmentAdminRole() {
-    return this.userService.hasEquipmentAdminRole()
+    return this.userService.hasEquipmentAdminRole();
   }
 
   hasEquipmentEditorRole() {
-    return this.userService.hasEquipmentEditorRole()
+    return this.userService.hasEquipmentEditorRole();
   }
 
   hasUserResourcesAdminRole() {
-    return this.userService.hasUserResourcesAdminRole()
+    return this.userService.hasUserResourcesAdminRole();
   }
 
   hasUserResourcesEditorRole() {
-    return this.userService.hasUserResourcesEditorRole()
+    return this.userService.hasUserResourcesEditorRole();
   }
 
   hasOtaAdminRole() {
-    return this.userService.hasOtaAdminRole()
+    return this.userService.hasOtaAdminRole();
   }
 
   hasOtaEditorRole() {
-    return this.userService.hasOtaEditorRole()
+    return this.userService.hasOtaEditorRole();
+  }
+
+  hasOneRole() {
+    return this.userService.hasOneRole();
   }
 }

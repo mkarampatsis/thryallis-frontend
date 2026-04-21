@@ -148,7 +148,7 @@ export class AuthService {
   }
 
   userInfo() {
-    const email = this.user().email;
+    const email = this.user()?.email;
     return {
       user_id: email,
       email,

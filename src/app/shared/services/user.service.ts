@@ -181,6 +181,14 @@ export class UserService {
     return false;
   }
 
+  hasOneRole(){
+    const roles = this.user()?.roles ?? [];
+    if (roles.length = 1) {
+      return true;
+    }    
+    return false;
+  }
+
   setUserAccesses(email: string, organizationCodes: string[], organizationalUnitCodes: string[]): Observable<{ msg: string }> {
     const url = `${APIPREFIX_USER}/${email}`;
     return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });

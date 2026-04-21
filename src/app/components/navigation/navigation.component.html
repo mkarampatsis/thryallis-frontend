@@ -88,35 +88,35 @@
                         Ακίνητα Φορέων Δ.Δ
                       </a>
                     </li>
-										<li *ngIf="hasEquipmentAdminRole()|| hasEquipmentEditorRole()">
+										<li *ngIf="hasEquipmentAdminRole() || hasEquipmentEditorRole()">
                       <a class="dropdown-item"
                         routerLink="resources/equipment" 
                         routerLinkActive="fw-bold">
                         Εξοπλισμός Φορέων Δ.Δ
                       </a>
                     </li>
-										<li *ngIf="hasUserResourcesAdminRole()|| hasUserResourcesEditorRole()">
+										<li *ngIf="hasUserResourcesAdminRole() || hasUserResourcesEditorRole()">
                       <a class="dropdown-item"
                         routerLink="resources/employee" 
                         routerLinkActive="fw-bold">
                         Προσωπικό Φορέων Δ.Δ
                       </a>
                     </li>
-										<li *ngIf="hasFacilityAdminRole()">
+										<li *ngIf="hasFacilityAdminRole() && hasOneRole()">
                       <a class="dropdown-item"
                         routerLink="resources/equipment-admin" 
                         routerLinkActive="fw-bold">
                         Διαχείριση Ειδών Εξοπλισμού
                       </a>
                     </li>
-										<li *ngIf="hasEquipmentAdminRole()">
+										<li *ngIf="hasEquipmentAdminRole() && hasOneRole()">
                       <a class="dropdown-item"
                         routerLink="resources/facility-admin" 
                         routerLinkActive="fw-bold">
                         Διαχείριση Ειδών Ακινήτων
                       </a>
                     </li>
-                    <li *ngIf="hasUserResourcesAdminRole()">
+                    <li *ngIf="hasUserResourcesAdminRole() && hasOneRole()">
                       <a class="dropdown-item"
                         routerLink="resources/employee-admin" 
                         routerLinkActive="fw-bold">
