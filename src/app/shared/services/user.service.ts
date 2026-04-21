@@ -183,7 +183,7 @@ export class UserService {
 
   hasOneRole(){
     const roles = this.user()?.roles ?? [];
-    if (roles.length = 1) {
+    if (roles.length === 1) {
       return true;
     }    
     return false;

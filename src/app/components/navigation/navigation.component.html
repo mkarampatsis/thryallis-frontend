@@ -102,21 +102,21 @@
                         Προσωπικό Φορέων Δ.Δ
                       </a>
                     </li>
-										<li *ngIf="hasFacilityAdminRole() && hasOneRole()">
+										<li *ngIf="hasFacilityAdminRole()">
                       <a class="dropdown-item"
                         routerLink="resources/equipment-admin" 
                         routerLinkActive="fw-bold">
                         Διαχείριση Ειδών Εξοπλισμού
                       </a>
                     </li>
-										<li *ngIf="hasEquipmentAdminRole() && hasOneRole()">
+										<li *ngIf="hasEquipmentAdminRole()">
                       <a class="dropdown-item"
                         routerLink="resources/facility-admin" 
                         routerLinkActive="fw-bold">
                         Διαχείριση Ειδών Ακινήτων
                       </a>
                     </li>
-                    <li *ngIf="hasUserResourcesAdminRole() && hasOneRole()">
+                    <li *ngIf="hasUserResourcesAdminRole()">
                       <a class="dropdown-item"
                         routerLink="resources/employee-admin" 
                         routerLinkActive="fw-bold">

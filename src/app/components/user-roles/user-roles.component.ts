@@ -70,7 +70,9 @@ export class UserRolesComponent {
 
       if (user) {
         this.roles = this.loadRolesFromToken().filter(r => r.role && r.active);
+        console.log("ROLES", user);
       }
+      
     });
   }
 

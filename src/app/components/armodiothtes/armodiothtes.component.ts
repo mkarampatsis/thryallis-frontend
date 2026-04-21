@@ -84,7 +84,6 @@ export class ArmodiothtesComponent {
           });
 
           this.gridApi.hideOverlay();
-          console.log("REMITS>>",this.remits)
           p.successCallback(this.remits, response.total);
         } catch (err) {
           console.error('Error fetching data:', err);
