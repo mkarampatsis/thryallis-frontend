@@ -48,7 +48,7 @@
   <h4>Ρόλοι χρήστη: {{ user.name }}</h4>
 
   <ul>
-    @for (role of user.roles; track role.role) {
+    @for (role of currentRoles; track role.role) {
       <li>
         <strong>{{ role.role }}</strong>
         <span *ngIf="!role.active" class="text-danger">(Ανενεργός)</span>
@@ -71,8 +71,11 @@
   <form [formGroup]="form">
     <label>Ρόλος</label>
     <select formControlName="role" class="form-control">
-      @for (r of roles; track r) {
-        <option [value]="r">{{ r }}</option>
+      @for (role of roles; track role) {
+        <!-- @if (currentRoles.filter(r=>r.role!=role)){ -->
+          <option [value]="role">{{ role }}</option>
+        <!-- } -->
+        
       }
     </select>
 
@@ -87,7 +90,7 @@
       <input formControlName="monades" class="form-control">
     </div>
 
-    <button class="btn btn-primary mt-3" (click)="saveRole()">Αποθήκευση</button>
+    <!-- <button class="btn btn-primary mt-3" (click)="saveRole()">Αποθήκευση</button> -->
     <button class="btn btn-success mt-3" (click)="addRole()">Προσθήκη</button>
   </form>
 

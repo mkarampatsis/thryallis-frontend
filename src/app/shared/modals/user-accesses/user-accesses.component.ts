@@ -32,8 +32,9 @@ export class UserAccessesComponent {
   userService = inject(UserService)
   modalRef: any;
   user: IUser | undefined;
+  currentRoles: IUserRole[] | undefined = [];
   roles = this.constService.USER_ROLES;
-  userForeis: string[] = [];
+  userForeis: string[] | undefined= [];
   foreis: IOrganizationList[] = [];
 
   store = inject(Store<AppState>);
@@ -62,7 +63,9 @@ export class UserAccessesComponent {
   });
 
   ngOnInit() {
-    this.userForeis = this.user.roles.filter(role => role.role == "EDITOR" && role.active).flatMap(r => r.foreas);
+    this.userForeis = this.user?.roles.filter(role => role.role == "EDITOR" && role.active).flatMap(r => r.foreas);
+    this.currentRoles = this.user?.roles;
+
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
@@ -128,41 +131,43 @@ export class UserAccessesComponent {
 
   addRole() {
     const newRole = this.form.value as IUserRole;
-    const currentRoles = this.user!.roles;
-    const roles = [...currentRoles];
-    roles.push(newRole);
+    // const currentRoles = this.user!.roles;
+    this.currentRoles?.push(newRole)
+    // const roles = [...currentRoles];
+    // roles.push(newRole);
 
     // this.currentRoles.set(roles);
+    console.log("Add", this.currentRoles);
   }
 
   editRole(role: IUserRole) {
     this.form.patchValue(role);
   }
 
-  saveRole() {
-    const updated = this.form.value as IUserRole;
-    const currentRoles = this.user!.roles;
+  // saveRole() {
+  //   const updated = this.form.value as IUserRole;
+  //   const currentRoles = this.user!.roles;
 
-    const roles = currentRoles.map(r =>
-      r.role === updated.role ? updated : r
-    );
+  //   const roles = currentRoles.map(r =>
+  //     r.role === updated.role ? updated : r
+  //   );
 
-    // this.currentRoles.set(roles);
-  }
+  //   // this.currentRoles.set(roles);
+  // }
 
   disableRole(role: IUserRole) {
-    const currentRoles = this.user!.roles;
-    const roles = currentRoles.map(r =>
+    // const currentRoles = this.user!.roles;
+    const roles = this.currentRoles?.map(r =>
       r.role === role.role ? { ...r, active: false } : r
     );
-    console.log("Diabled", roles);
-    // this.currentRoles.set(roles);
+    this.currentRoles = roles;
+    console.log("Disabled", this.currentRoles);
   }
 
   removeRole(role: IUserRole) {
-    const currentRoles = this.user!.roles;  
-    const roles = currentRoles.filter(r => r.role !== role.role);
-    console.log("Removed", roles);
-    // this.currentRoles.set(roles);
+    // const currentRoles = this.user!.roles;  
+    const roles = this.currentRoles?.filter(r => r.role !== role.role);
+    this.currentRoles= roles;
+    console.log("Removed", this.currentRoles);
   }
 }
