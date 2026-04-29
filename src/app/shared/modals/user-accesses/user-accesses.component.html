@@ -41,3 +41,59 @@
         Υποβολή
     </button>
 </div>
+
+
+<!-- <div class="modal-body">
+
+  <h4>Ρόλοι χρήστη: {{ user.name }}</h4>
+
+  <ul>
+    @for (role of currentRoles(); track role.role) {
+      <li>
+        <strong>{{ role.role }}</strong>
+        <span *ngIf="!role.active" class="text-danger">(Ανενεργός)</span>
+
+        <button class="btn btn-sm btn-outline-primary" (click)="editRole(role)">Επεξεργασία</button>
+        <button class="btn btn-sm btn-outline-danger" (click)="disableRole(role)">Απενεργοποίηση</button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="removeRole(role)">Διαγραφή</button>
+
+        <button *ngIf="role.role === 'EDITOR'" class="btn btn-sm btn-outline-success" (click)="editForeas(role)">
+          Διαχείριση Φορέων
+        </button>
+      </li>
+    }
+  </ul>
+
+  <hr>
+
+  <h5>Προσθήκη / Επεξεργασία Ρόλου</h5>
+
+  <form [formGroup]="roleForm">
+    <label>Ρόλος</label>
+    <select formControlName="role" class="form-control">
+      @for (r of ALL_ROLES; track r) {
+        <option [value]="r">{{ r }}</option>
+      }
+    </select>
+
+    <label>Ενεργός</label>
+    <input type="checkbox" formControlName="active">
+
+    <div *ngIf="roleForm.value.role === 'EDITOR'">
+      <label>Φορείς</label>
+      <input formControlName="foreas" class="form-control">
+
+      <label>Μονάδες</label>
+      <input formControlName="monades" class="form-control">
+    </div>
+
+    <button class="btn btn-primary mt-3" (click)="saveRole()">Αποθήκευση</button>
+    <button class="btn btn-success mt-3" (click)="addRole()">Προσθήκη</button>
+  </form>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="modalRef.dismiss()">Άκυρο</button>
+  <button class="btn btn-primary" (click)="submit()">Αποθήκευση αλλαγών</button>
+</div> -->
