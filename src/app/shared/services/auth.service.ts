@@ -10,6 +10,7 @@ import { AppState } from 'src/app/shared/state/app.state';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { Oauth2Service } from 'src/app/shared/services/oauth2.service';
+import { UserService } from './user.service';
 
 const APIPREFIX = `${environment.apiUrl}/log`;
 
@@ -23,7 +24,7 @@ export class AuthService {
   router = inject(Router);
   route = inject(ActivatedRoute)
   oauth2Service = inject(Oauth2Service);
-
+  
   user = signal(<IUser | null>null);
   synchronization = signal<boolean>(false);
   loading = signal<boolean>(false);
@@ -99,7 +100,14 @@ export class AuthService {
               next: (res: IAuthResponse) => {
                 this.user.set(res.user);
                 localStorage.setItem('accessToken', res.accessToken);
-                this.router.navigate(['landing']);
+                // Added to check if user has only one role and redirect to landing, 
+                // otherwise to user-roles
+                const roles = this.user()?.roles ?? [];
+                if (roles.length === 1) {
+                  this.router.navigate(['landing']);
+                } else {  
+                  this.router.navigate(['user-roles']);
+                }   
               },
               error: (err) => {
                 console.log(err);

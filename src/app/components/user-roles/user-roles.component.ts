@@ -12,6 +12,7 @@ import {
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { jwtDecode } from 'jwt-decode';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-roles',
@@ -23,6 +24,7 @@ import { jwtDecode } from 'jwt-decode';
 export class UserRolesComponent {
   constService = inject(ConstService);
   authService = inject(AuthService);
+  router = inject(Router);
   
   user = this.authService.user;
   roles: IUserRole[] = []
@@ -70,7 +72,6 @@ export class UserRolesComponent {
 
       if (user) {
         this.roles = this.loadRolesFromToken().filter(r => r.role && r.active);
-        console.log("ROLES", user);
       }
       
     });
@@ -99,12 +100,17 @@ export class UserRolesComponent {
     if (!role) return;
 
     this.handleRoleSelection(role);
+    // added a small delay to allow the user signal to update before navigating
+    // then redirect to landing page after role selection
+    setTimeout(() => {
+      this.router.navigate(['landing']);
+    }, 100);
   }
 
   handleRoleSelection(role: IUserRole) {
     this.authService.user.update((currentUser) => {
       const user = currentUser as IUser;
-
+      
       return {
         ...user,
         roles: [role]

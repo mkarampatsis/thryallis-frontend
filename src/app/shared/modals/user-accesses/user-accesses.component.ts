@@ -12,6 +12,7 @@ import { IOrganizationList } from '../../interfaces/organization/organization-li
 import { IForeas } from '../../interfaces/foreas/foreas.interface';
 import { selectOrganizationalUnitCodeByOrganizationCode$} from 'src/app/shared/state/organizational-units.state';
 import { UserService } from '../../services/user.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-user-accesses',
@@ -45,6 +46,15 @@ export class UserAccessesComponent {
     loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση φορέων...' };
 
     gridApi: GridApi<IOrganizationList>;
+
+    roles = this.constService.USER_ROLES;
+
+    form = new FormGroup({
+        role: new FormControl('', Validators.required),
+        active: new FormControl(true, Validators.required),
+        foreas: new FormControl([]),
+        monades: new FormControl([]),
+    });
 
     ngOnInit() {
         this.userForeis = this.user.roles.filter(role => role.role=="EDITOR" && role.active).flatMap(r=>r.foreas);
@@ -110,4 +120,52 @@ export class UserAccessesComponent {
     getPreferredLabel(code: string) {
         return this.organizationCodesMap.get(code);
     }
+
+    // addRole() {
+    //     const newRole = this.roleForm.value as IUserRole;
+
+    //     const roles = [...this.currentRoles()];
+    //     roles.push(newRole);
+
+    //     this.currentRoles.set(roles);
+    // }
+
+    // editRole(role: IUserRole) {
+    //     this.roleForm.patchValue(role);
+    // }
+
+    // saveRole() {
+    //     const updated = this.roleForm.value as IUserRole;
+
+    //     const roles = this.currentRoles().map(r =>
+    //     r.role === updated.role ? updated : r
+    //     );
+
+    //     this.currentRoles.set(roles);
+    // }
+
+    // disableRole(role: IUserRole) {
+    //     const roles = this.currentRoles().map(r =>
+    //     r.role === role.role ? { ...r, active: false } : r
+    //     );
+
+    //     this.currentRoles.set(roles);
+    // }
+
+    // removeRole(role: IUserRole) {
+    //     const roles = this.currentRoles().filter(r => r.role !== role.role);
+    //     this.currentRoles.set(roles);
+    // }
+
+    // editForeas(role: IUserRole) {
+    //     if (role.role !== 'EDITOR') return;
+
+    //     const modalRef = this.modalService.open(UserAccessesComponent, {
+    //         size: 'xl',
+    //         centered: true,
+    //     });
+
+    //     modalRef.componentInstance.user = this.user;
+    //     modalRef.componentInstance.modalRef = modalRef;
+    // }
 }
