@@ -112,7 +112,6 @@ export class ConstService {
       field: 'roles',
       headerName: 'Φορείς',
       flex: 1,
-      // cellRenderer: (params) => params.value.find((data) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
       cellRenderer: (params: ICellRendererParams) =>
         (params.value as { role: string; foreas: string[] }[])
           .find((data: { role: string; foreas: string[] }) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
@@ -121,12 +120,6 @@ export class ConstService {
       field: 'roles',
       headerName: 'Ρόλοι',
       flex: 1,
-      // valueGetter: (params) => {
-      //   return params.data.roles
-      //     .filter(role => role.active)  // Get only active roles
-      //     .map(role => role.role)       // Extract role names
-      //     .join(", ");                  // Convert to a string
-      // }
       valueGetter: (params) => {
         return (params.data.roles as { role: string; active: boolean }[])
           .filter((role: { role: string; active: boolean }) => role.active)
@@ -134,7 +127,6 @@ export class ConstService {
           .join(", ");
       }
     },
-
   ];
 
   ORGANIZATIONS_COL_DEFS: ColDef[] = [

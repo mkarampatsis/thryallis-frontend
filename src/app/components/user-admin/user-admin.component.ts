@@ -37,14 +37,28 @@ export class UserAdminComponent implements OnInit {
     onGridReady(params: GridReadyEvent<IUser>): void {
         this.gridApi = params.api;
         this.gridApi.showLoadingOverlay();
-        this.userService.getAllUsers().subscribe((users) => {
-            this.googleUsers = users.googleUsers;
-            this.gsisUsers = users.gsisUsers;
-            this.gridApi.hideOverlay();
-        });
+        this.getAllUsers();
+        // this.userService.getAllUsers().subscribe((users) => {
+        //     this.googleUsers = users.googleUsers;
+        //     this.gsisUsers = users.gsisUsers;
+        //     this.gridApi.hideOverlay();
+        // });
     }
 
     onRowDoubleClicked(event: any): void {
-        this.modalService.userAccesses(event.data);
-    }
+      this.modalService.userAccesses(event.data)
+        .subscribe((result) => {
+        if(result) {
+          this.getAllUsers()
+        }
+      });
+  }
+
+  getAllUsers(){
+    this.userService.getAllUsers().subscribe((users) => {
+      this.googleUsers = users.googleUsers;
+      this.gsisUsers = users.gsisUsers;
+      this.gridApi.hideOverlay();
+    });
+  }
 }

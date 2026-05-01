@@ -331,6 +331,7 @@ export class ModalService {
     });
     modalRef.componentInstance.user = user;
     modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
   }
 
   getUserConsent(prompt: string) {

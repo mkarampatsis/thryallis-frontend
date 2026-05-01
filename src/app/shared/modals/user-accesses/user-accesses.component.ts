@@ -34,6 +34,7 @@ export class UserAccessesComponent {
   user: IUser | undefined;
   currentRoles: IUserRole[] | undefined = [];
   roles = this.constService.USER_ROLES;
+  
   userForeis: string[] | undefined= [];
   foreis: IOrganizationList[] = [];
 
@@ -55,6 +56,13 @@ export class UserAccessesComponent {
 
   gridApi: GridApi<IOrganizationList>;
 
+  readonly defaultFormValues = {
+    role: '',
+    active: true,
+    foreas: [],
+    monades: []
+  };
+
   form = new FormGroup({
     role: new FormControl('', Validators.required),
     active: new FormControl(true, Validators.required),
@@ -65,7 +73,6 @@ export class UserAccessesComponent {
   ngOnInit() {
     this.userForeis = this.user?.roles.filter(role => role.role == "EDITOR" && role.active).flatMap(r => r.foreas);
     this.currentRoles = this.user?.roles;
-
   }
 
   onGridReady(params: GridReadyEvent<IOrganizationList>): void {
@@ -102,21 +109,10 @@ export class UserAccessesComponent {
   }
 
   onSubmit() {
-    const selectedNodes = this.gridApi.getSelectedNodes();
-    const selectedOrganizations = selectedNodes.map((node: any) => node.data['code']);
-    let selectedOrganizationalUnits = []
-    for (let data of selectedOrganizations) {
-      this.store
-        .select(this.selectOrganizationalUnitCodeByOrganizationCode$(data))
-        .pipe(take(1))
-        .subscribe((orgCodes) => {
-          selectedOrganizationalUnits = selectedOrganizationalUnits.concat(...orgCodes)
-        });
-    }
-    this.userService.setUserAccesses(this.user.email, selectedOrganizations, selectedOrganizationalUnits)
+    this.userService.setUserAccesses(this.user?.email as string, this.currentRoles as IUserRole[])
       .pipe(take(1))
       .subscribe((result) => {
-        console.log(result)
+        this.modalRef.dismiss(true);
       });
   }
 
@@ -129,45 +125,77 @@ export class UserAccessesComponent {
     return this.organizationCodesMap.get(code);
   }
 
+  getMissingRoles(currentRole: string) {
+    if (currentRole==="EDITOR"){
+      const roles = this.roles.filter(
+        r => !this.currentRoles?.some(cr => cr.role === r)
+      );
+      return [currentRole, ...roles];
+    } else {
+      return this.roles.filter(
+        r => !this.currentRoles?.some(cr => cr.role === r)
+      );
+    }
+  }
+
   addRole() {
     const newRole = this.form.value as IUserRole;
-    // const currentRoles = this.user!.roles;
-    this.currentRoles?.push(newRole)
-    // const roles = [...currentRoles];
-    // roles.push(newRole);
+    if (newRole.role==="EDITOR") {
+      
+      const {selectedOrganizations, selectedOrganizationalUnits} = this.getEditorAccesses()
+      newRole.foreas = selectedOrganizations
+      newRole.monades = selectedOrganizationalUnits
 
-    // this.currentRoles.set(roles);
-    console.log("Add", this.currentRoles);
+      const exist = this.currentRoles?.filter(r => r.role === "EDITOR");
+      if (exist) {
+        const roles = this.currentRoles?.filter(r => r.role !== "EDITOR");
+        this.currentRoles = roles;
+      }
+    }
+    this.currentRoles?.push(newRole)
+    this.form.reset(this.defaultFormValues);
   }
 
   editRole(role: IUserRole) {
+    this.form.enable(); 
     this.form.patchValue(role);
   }
 
-  // saveRole() {
-  //   const updated = this.form.value as IUserRole;
-  //   const currentRoles = this.user!.roles;
-
-  //   const roles = currentRoles.map(r =>
-  //     r.role === updated.role ? updated : r
-  //   );
-
-  //   // this.currentRoles.set(roles);
-  // }
-
   disableRole(role: IUserRole) {
-    // const currentRoles = this.user!.roles;
     const roles = this.currentRoles?.map(r =>
       r.role === role.role ? { ...r, active: false } : r
     );
     this.currentRoles = roles;
-    console.log("Disabled", this.currentRoles);
+    this.form.reset(this.defaultFormValues);
+  }
+
+  enableRole(role: IUserRole) {
+    const roles = this.currentRoles?.map(r =>
+      r.role === role.role ? { ...r, active: true } : r
+    );
+    this.currentRoles = roles;
+    this.form.reset(this.defaultFormValues);
   }
 
   removeRole(role: IUserRole) {
-    // const currentRoles = this.user!.roles;  
     const roles = this.currentRoles?.filter(r => r.role !== role.role);
-    this.currentRoles= roles;
-    console.log("Removed", this.currentRoles);
+    this.currentRoles = roles;
+    this.form.reset(this.defaultFormValues);
+  }
+
+  getEditorAccesses(){
+    const selectedNodes = this.gridApi.getSelectedNodes();
+    const selectedOrganizations = selectedNodes.map((node: any) => node.data['code']);
+    let selectedOrganizationalUnits = []
+    for (let data of selectedOrganizations) {
+      this.store
+        .select(this.selectOrganizationalUnitCodeByOrganizationCode$(data))
+        .pipe(take(1))
+        .subscribe((orgCodes) => {
+          selectedOrganizationalUnits = selectedOrganizationalUnits.concat(...orgCodes)
+        });
+    }
+
+    return { selectedOrganizations, selectedOrganizationalUnits }
   }
 }

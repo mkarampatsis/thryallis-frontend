@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Observable, take } from 'rxjs';
 import { AuthService } from './auth.service';
 
-import { IUser } from '../interfaces/auth';
+import { IUser, IUserRole } from '../interfaces/auth';
 import { IOrganizationList } from 'src/app/shared/interfaces/organization/organization-list.interface';
 
 // Store
@@ -189,8 +189,8 @@ export class UserService {
     return false;
   }
 
-  setUserAccesses(email: string, organizationCodes: string[], organizationalUnitCodes: string[]): Observable<{ msg: string }> {
+  setUserAccesses(email: string, roles: IUserRole[]): Observable<{ msg: string }> {
     const url = `${APIPREFIX_USER}/${email}`;
-    return this.http.put<{ msg: string }>(url, { email, organizationCodes, organizationalUnitCodes });
+    return this.http.put<{ msg: string }>(url, { email, roles });
   }
 }
