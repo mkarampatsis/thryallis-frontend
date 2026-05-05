@@ -193,4 +193,9 @@ export class UserService {
     const url = `${APIPREFIX_USER}/${email}`;
     return this.http.put<{ msg: string }>(url, { email, roles });
   }
+
+  setUserAccessesGSIS(taxid: string, roles: IUserRole[]): Observable<{ msg: string }> {
+    const url = `${APIPREFIX_USER}/gsis/${taxid}`;
+    return this.http.put<{ msg: string }>(url, { taxid, roles });
+  }
 }

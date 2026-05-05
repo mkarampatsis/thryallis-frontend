@@ -45,6 +45,15 @@ export class UserAdminComponent implements OnInit {
         // });
     }
 
+    onRowDoubleClickedGSIS(event: any): void {
+      this.modalService.userAccessesGSIS(event.data)
+        .subscribe((result) => {
+        if(result) {
+          this.getAllUsers()
+        }
+      });
+    }
+
     onRowDoubleClicked(event: any): void {
       this.modalService.userAccesses(event.data)
         .subscribe((result) => {
