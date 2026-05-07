@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from 'src/app/shared/services/user.service';
 import { GridApi, GridReadyEvent } from 'ag-grid-community';
 
@@ -7,6 +7,7 @@ import { ConstService } from 'src/app/shared/services/const.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { GridLoadingOverlayComponent } from 'src/app/shared/modals/grid-loading-overlay/grid-loading-overlay.component';
 import { ModalService } from 'src/app/shared/services/modal.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-user-admin',
@@ -15,7 +16,7 @@ import { ModalService } from 'src/app/shared/services/modal.service';
     templateUrl: './user-admin.component.html',
     styleUrl: './user-admin.component.css',
 })
-export class UserAdminComponent implements OnInit {
+export class UserAdminComponent {
     userService = inject(UserService);
     constService = inject(ConstService);
     modalService = inject(ModalService);
@@ -32,7 +33,7 @@ export class UserAdminComponent implements OnInit {
 
     gridApi: GridApi<IUser>;
 
-    ngOnInit(): void {}
+    showUserAccesses: string = environment.showUserAccesses;
 
     onGridReady(params: GridReadyEvent<IUser>): void {
         this.gridApi = params.api;

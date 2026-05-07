@@ -7,5 +7,6 @@ export const environment = {
   elasticUrl: 'https://thryallis.elastic.ypes.gov.gr',
   logoutUrl: 'https://oauth2.gsis.gr/oauth2servergov/logout',
   redirectUri: 'https://thryallis.ypes.gov.gr/login',
-  enableGoogleAuth: false
+  enableGoogleAuth: false,
+  showUserAccesses: 'KED'
 };
