@@ -49,6 +49,7 @@ import { InstructionActModalComponent } from '../modals/instruction-act-modal/in
 import { IInstructionAct } from '../interfaces/instruction-act/instruction-act.interface';
 import { OtaDetailsComponent } from '../modals/ota-details/ota-details.component';
 import { RemitFullTextModalComponent } from '../modals/remit-full-text-modal/remit-full-text-modal.component';
+import { UserAccessesGsisComponent } from '../modals/user-accesses-gsis/user-accesses-gsis.component';
 
 @Injectable({
   providedIn: 'root',
@@ -326,6 +327,16 @@ export class ModalService {
 
   userAccesses(user: IUser) {
     const modalRef = this.modalService.open(UserAccessesComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.user = user;
+    modalRef.componentInstance.modalRef = modalRef;
+    return modalRef.dismissed.pipe(take(1)) as Observable<boolean>;
+  }
+
+  userAccessesGSIS(user: IUser) {
+    const modalRef = this.modalService.open(UserAccessesGsisComponent, {
       size: 'xl',
       centered: true,
     });

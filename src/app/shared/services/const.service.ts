@@ -111,7 +111,7 @@ export class ConstService {
     {
       field: 'roles',
       headerName: 'Φορείς',
-      flex: 1,
+      flex: 0.5,
       cellRenderer: (params: ICellRendererParams) =>
         (params.value as { role: string; foreas: string[] }[])
           .find((data: { role: string; foreas: string[] }) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
@@ -119,12 +119,14 @@ export class ConstService {
     {
       field: 'roles',
       headerName: 'Ρόλοι',
-      flex: 1,
+      flex: 2,
+      wrapText: true,
+      autoHeight: true,
       valueGetter: (params) => {
         return (params.data.roles as { role: string; active: boolean }[])
           .filter((role: { role: string; active: boolean }) => role.active)
-          .map((role: { role: string; active: boolean }) => role.role)
-          .join(", ");
+          .map((role: { role: string; active: boolean }) => role.role);
+          // .join(", ");
       }
     },
   ];
