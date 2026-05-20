@@ -5,7 +5,7 @@ import { IHelpbox, IQuestion } from '../../interfaces/helpbox/helpbox.interface'
 import { ConstService } from 'src/app/shared/services/const.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML  } from 'ngx-editor';
+import { DEFAULT_TOOLBAR, Editor, NgxEditorModule, Toolbar, toHTML } from 'ngx-editor';
 import { NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
@@ -19,9 +19,9 @@ import { environment } from 'src/environments/environment';
   selector: 'app-helpbox-answer',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    NgxEditorModule, 
+    CommonModule,
+    ReactiveFormsModule,
+    NgxEditorModule,
     NgbAlertModule,
     NgbTooltipModule,
     NgIf
@@ -47,8 +47,8 @@ export class HelpboxAnswerComponent {
 
   question: IHelpbox;
   questionsNotAnswered: IQuestion[];
-  organizationPreferedLabel:string[] = [];
-  
+  organizationPreferedLabel: string[] = [];
+
   editor: Editor = new Editor();
   toolbar: Toolbar = DEFAULT_TOOLBAR;
   answerText: string;
@@ -59,7 +59,7 @@ export class HelpboxAnswerComponent {
   progress = 0;
   checkFileStatus: boolean = true;
   uploadObjectIDs: string[] = [];
-  
+
   form = new FormGroup({
     answerText: new FormControl('', Validators.required),
     answerFile: new FormControl([]),
@@ -67,7 +67,7 @@ export class HelpboxAnswerComponent {
     questions: new FormArray([])
   });
 
-  ngOnInit() : void {
+  ngOnInit(): void {
     this.getHelpBox();
   }
 
@@ -79,10 +79,10 @@ export class HelpboxAnswerComponent {
     return this.questionsFormArray.controls.some(control => control.value === true);
   }
 
-  initializeForm(){
+  initializeForm() {
     this.form.patchValue({
       answerText: '',
-      answerFile:[]
+      answerFile: []
     });
 
     this.form.markAsPristine();
@@ -102,12 +102,12 @@ export class HelpboxAnswerComponent {
 
   onSubmit() {
     const num = this.form.value.questions.length
-    let loops = 1;
+    // let loops = 1;
 
-    for (let i = 0; i < this.form.value.questions.length; i++) { 
+    for (let i = 0; i < this.form.value.questions.length; i++) {
       const checked = this.form.value.questions[i];
       const questionsAnswered = this.question.questions.filter(q => !q.answered);
-      
+
       if (checked) {
         const helpQuestion = {
           helpBoxId: this.helpboxId,
@@ -123,20 +123,21 @@ export class HelpboxAnswerComponent {
 
         this.helpboxService.answerQuestion(helpQuestion)
           .subscribe(data => {
-            if (loops === num) {
-              this.modalRef.close()
+            // console.log("Answer1",data)
+            // if (loops === num) {
+              // console.log("Answer2",data,loops)
               this.helpboxService.helpboxNeedUpdate.set(true);
-            } else {
-              loops++;
-            }
+              this.modalRef.close()              
+            // } else {
+            //   loops++;
+            // }
           });
-          
       }
     }
-    
+
   }
 
-  sanitizeHtml(html) : SafeHtml {
+  sanitizeHtml(html): SafeHtml {
     if (html) {
       return this.sanitizer.bypassSecurityTrustHtml(html);
     } else {
@@ -144,30 +145,39 @@ export class HelpboxAnswerComponent {
     }
   }
 
-  answerQuestion(id:string){
-    if (this.hasHelpDeskRole()){
+  answerQuestion(id: string) {
+    if (this.hasHelpDeskRole()) {
       this.showForm = true;
-    }
-}
+      
 
-  publishQuestion(questionId:string, published:boolean) {
-    this.helpboxService.publishHelpBoxById({helpBoxId: this.helpboxId, questionId: questionId, published:!published})
+      const index = this.questionsNotAnswered.findIndex(q => q.id === id);
+      
+      if (index !== -1) {
+        const formArray = this.form.get('questions') as FormArray;
+        formArray.controls.forEach(c => c.setValue(false));
+        formArray.at(index).setValue(true);
+      }
+    }
+  }
+
+  publishQuestion(questionId: string, published: boolean) {
+    this.helpboxService.publishHelpBoxById({ helpBoxId: this.helpboxId, questionId: questionId, published: !published })
       .subscribe((data) => {
         this.helpboxService.helpboxNeedUpdate.set(true);
         this.modalRef.close()
-      });    
+      });
   }
 
-  finalizeConversation(){
-      const finalized = !this.question.finalized
-      this.helpboxService.finalizeHelpBoxById({id: this.helpboxId, finalized: finalized})
-          .subscribe((data) => {
-              this.helpboxService.helpboxNeedUpdate.set(true);
-              this.modalRef.close()
-          });    
+  finalizeConversation() {
+    const finalized = !this.question.finalized
+    this.helpboxService.finalizeHelpBoxById({ id: this.helpboxId, finalized: finalized })
+      .subscribe((data) => {
+        this.helpboxService.helpboxNeedUpdate.set(true);
+        this.modalRef.close()
+      });
   }
 
-  newQuestion(){
+  newQuestion() {
     this.helpboxService.helpboxNewQuestion.set(this.question);
     this.router.navigate([], {
       queryParams: { tab: null },
@@ -183,9 +193,9 @@ export class HelpboxAnswerComponent {
     this.modalRef.close()
   }
 
-  getHelpBox(){
+  getHelpBox() {
     this.helpboxService.getHelpboxById(this.helpboxId)
-      .subscribe((data)=>{
+      .subscribe((data) => {
         this.question = data;
         this.showNewQuestionButton = this.question.finalized ? false : true;
 
@@ -195,9 +205,9 @@ export class HelpboxAnswerComponent {
           (this.form.get('questions') as FormArray).push(new FormControl(false));
         });
         // end
-        this.question.organizations.every(data=> {
+        this.question.organizations.every(data => {
           this.organizationPreferedLabel.push(this.constService.getOrganizationPrefferedLabelByCode(data))
-        });  
+        });
         if (this.hasHelpDeskRole()) {
           // this.answerText=this.question.answerText;
           this.initializeForm();
@@ -211,22 +221,22 @@ export class HelpboxAnswerComponent {
       console.log('No files selected!');
       return;
     }
-  
+
     this.progress = 0;
     const fileArray = Array.from(files);
     let completed = 0;
     this.checkFileStatus = true;
-    this.form.controls.answerFile.setErrors({'incorrect': false});
+    this.form.controls.answerFile.setErrors({ 'incorrect': false });
 
-    fileArray.forEach((file, index)=>{
-      const permitTypes = ["pdf", "docx","xlsx", "png", "jpeg"];
+    fileArray.forEach((file, index) => {
+      const permitTypes = ["pdf", "docx", "xlsx", "png", "jpeg"];
       const checkFileType = permitTypes.includes(file.name.toLowerCase().split(".")[1]);
-      const checkFileSize = (file.size/1024)<13000
-      if (!(checkFileSize && checkFileType)) 
+      const checkFileSize = (file.size / 1024) < 13000
+      if (!(checkFileSize && checkFileType))
         this.checkFileStatus = false
-    })  
-  
-    if (this.checkFileStatus){
+    })
+
+    if (this.checkFileStatus) {
       fileArray.forEach((file, index) => {
         this.uploadService.upload(file).subscribe({
           next: (event: any) => {
@@ -243,24 +253,24 @@ export class HelpboxAnswerComponent {
           complete: () => {
             completed++;
             if (completed === fileArray.length) {
-                this.form.controls.answerFile.setValue(this.uploadObjectIDs);
+              this.form.controls.answerFile.setValue(this.uploadObjectIDs);
               this.form.markAsDirty();
-              console.log('All uploads complete:',  this.uploadObjectIDs);
+              console.log('All uploads complete:', this.uploadObjectIDs);
             }
           },
         });
       });
     } else {
-      this.form.controls.answerFile.setErrors({'incorrect': true});
+      this.form.controls.answerFile.setErrors({ 'incorrect': true });
     }
   }
 
-  displayFile(fileId:string) {
+  displayFile(fileId: string) {
     this.uploadService
       .getUploadByID(fileId)
       .pipe(take(1))
       .subscribe((data) => {
-        if (data.type==="application/pdf") {
+        if (data.type === "application/pdf") {
           const url = window.URL.createObjectURL(data);
           const link = document.createElement('a');
           link.href = url;
@@ -268,27 +278,27 @@ export class HelpboxAnswerComponent {
           this.modalService.showPdfViewer(link);
         } else {
           // const type = data.type.split('/')[1];
-          if (data.type==='image/png'){
+          if (data.type === 'image/png') {
             this.helpboxService.downloadFile(data, 'image.png', 'image/png');
           }
-          if (data.type=='image/jpeg'){
+          if (data.type == 'image/jpeg') {
             this.helpboxService.downloadFile(data, 'photo.jpg', 'image/png');
           }
-          if (data.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+          if (data.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             this.helpboxService.downloadFile(data, 'sheet.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           }
-          if (data.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+          if (data.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
             this.helpboxService.downloadFile(data, 'document.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
           }
         }
       });
-    }
+  }
 
   hasHelpDeskRole() {
-      return this.userService.hasHelpDeskRole();
+    return this.userService.hasHelpDeskRole();
   }
 
   hasEditorRole() {
-      return this.userService.hasEditorRole();
+    return this.userService.hasEditorRole();
   }
 }
