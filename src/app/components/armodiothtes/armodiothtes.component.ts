@@ -76,13 +76,14 @@ export class ArmodiothtesComponent {
                 p.sortModel
               )
           );
-          
+
           this.remits = response.rows.map((remit) => {
             return {
               ...remit,
             };
           });
-
+          
+          console.log("Fetched remits>>:", this.remits);
           this.gridApi.hideOverlay();
           p.successCallback(this.remits, response.total);
           // console.log("REMITS", this.remits)
