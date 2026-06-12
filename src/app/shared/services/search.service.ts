@@ -316,7 +316,8 @@ export class SearchService {
           const unitPreferredLabel = unit.preferredLabel;
 
           // If remits is empty
-          if (unit["remits"].length == 0) {
+          if (unit["remits"]?.length == 0) {
+            console.log("REmits 1");
             result.push({
               organizationCode: orgCode,
               organizationScore: orgScore,
@@ -331,6 +332,7 @@ export class SearchService {
               remitScore: 0
             });
           } else {
+            console.log("Remits 2");
             // Loop through remits
             unit.remits.forEach(remit => {
               result.push({
