@@ -331,7 +331,6 @@ export class SearchService {
               remitScore: 0
             });
           } else {
-            console.log("Remits 2");
             // Loop through remits
             unit.remits.forEach(remit => {
               result.push({
