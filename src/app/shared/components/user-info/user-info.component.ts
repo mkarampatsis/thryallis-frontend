@@ -51,6 +51,14 @@ export class UserInfoComponent {
     return this.userService.hasEditorRole();
   }
 
+  hasOTARole(){
+    return this.userService.hasOtaEditorRole || this.userService.hasOtaAdminRole
+  }
+
+  hasResourceRole() {
+    return this.userService.hasEquipmentAdminRole() || this.userService.hasEquipmentAdminRole() || this.userService.hasFacilityAdminRole() || this.userService.hasFacilityEditorRole()
+  }
+
   hasAdminRole() {
     return this.userService.hasAdminRole();
   }

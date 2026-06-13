@@ -94,11 +94,11 @@ export class OtaEditComponent implements OnInit {
     remitText: new FormControl('', Validators.required),
     remitCompetence: new FormControl('', Validators.required),
     remitType: new FormControl('', Validators.required),
-    cofog1: new FormControl(''),
+    cofog1: new FormControl('', Validators.required),
     cofog1_name: new FormControl(''),
-    cofog2: new FormControl(''),
+    cofog2: new FormControl('', Validators.required),
     cofog2_name: new FormControl(''),
-    cofog3: new FormControl(''),
+    cofog3: new FormControl('', Validators.required),
     cofog3_name: new FormControl(''),
     legalProvisions: new FormControl([], Validators.required),
     instructionProvisions: new FormControl([]),
@@ -107,8 +107,8 @@ export class OtaEditComponent implements OnInit {
       organizationCode: new FormControl('', Validators.required),
       organizationType: new FormControl('', Validators.required),
 ​​      status:  new FormControl('', Validators.required),
-      subOrganizationOf: new FormControl('', Validators.required),​
-      subOrganizationOfCode: new FormControl('', Validators.required),
+      subOrganizationOf: new FormControl(null),​
+      subOrganizationOfCode: new FormControl(null),
     }),
     remitLocalOrGlobal: new FormControl('', Validators.required),
   });
@@ -283,13 +283,15 @@ export class OtaEditComponent implements OnInit {
     const selectedNodes = event.api.getSelectedNodes();
     
     this.gridSelectedData = selectedNodes.map(node => node.data);
+    console.log(Object.keys(this.form.controls.publicPolicyAgency.controls));
+    console.log(this.gridSelectedData);
     this.form.controls.publicPolicyAgency.setValue({
       organization: this.gridSelectedData[0].preferredLabel,
       organizationCode: this.gridSelectedData[0].code,
       organizationType: this.gridSelectedData[0].organizationType,
 ​​      status: this.gridSelectedData[0].status,
-      subOrganizationOf: this.gridSelectedData[0].subOrganizationOf,
-      subOrganizationOfCode: this.gridSelectedData[0].subOrganizationOfCode
+      subOrganizationOf: this.gridSelectedData[0].subOrganizationOf?this.gridSelectedData[0].subOrganizationOf: '',
+      subOrganizationOfCode: this.gridSelectedData[0].subOrganizationOfCode?this.gridSelectedData[0].subOrganizationOfCode:''
     });
   }
 

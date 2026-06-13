@@ -316,8 +316,7 @@ export class SearchService {
           const unitPreferredLabel = unit.preferredLabel;
 
           // If remits is empty
-          if (unit["remits"]?.length == 0) {
-            console.log("REmits 1");
+          if (unit["remits"]?.length == 0 || unit["remits"] == null) {
             result.push({
               organizationCode: orgCode,
               organizationScore: orgScore,

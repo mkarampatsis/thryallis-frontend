@@ -18,7 +18,7 @@ export const OtaRoutes: Route[] = [
   {
     path: 'details',
     component: OtaDetailsComponent,
-    canActivate: [AuthGuard, HasOneRoleGuard, OtaGuard]
+    // canActivate: [AuthGuard, HasOneRoleGuard, OtaGuard]
   },
   {
     path: 'search',
@@ -28,6 +28,6 @@ export const OtaRoutes: Route[] = [
   {
     path: 'instruction-provisions',
     component: InstructionProvisionsComponent,
-    canActivate: [AuthGuard, HasOneRoleGuard, OtaGuard]
+    // canActivate: [AuthGuard, HasOneRoleGuard, OtaGuard]
   },
 ];

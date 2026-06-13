@@ -35,7 +35,7 @@ export class SelectInstructionActionComponent {
   autoSizeStrategy = this.constService.autoSizeStrategy;
 
   loadingOverlayComponent = GridLoadingOverlayComponent;
-  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση νομικών πράξεων...' };
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση εγκυκλίων...' };
 
   gridApi: GridApi<IInstructionAct>;
 
