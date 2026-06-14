@@ -235,6 +235,7 @@ export class OtaEditComponent implements OnInit {
       console.log('Current Instruction Provisions:', this.instructionProvisions);
       if (data) {
         const tempProvision = [{ ...data.instructionProvision, isNew: true }, ...this.instructionProvisions];
+        console.log('Temp Instruction Provisions:', tempProvision);
         this.instructionProvisions = uniqWith(tempProvision, (a, b) => {
           return a.instructionActKey === b.instructionActKey;
         });
