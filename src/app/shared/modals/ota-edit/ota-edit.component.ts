@@ -239,6 +239,7 @@ export class OtaEditComponent implements OnInit {
         // this.instructionProvisions = uniqWith(tempProvision, (a, b) => {
         //   return a.instructionActKey === b.instructionActKey;
         // });
+        this.instructionProvisions = tempProvision;
         console.log('Updated Instruction Provisions:', this.instructionProvisions);
         this.form.get('instructionProvisions').setValue(this.instructionProvisions);
         this.updateRemitTextWithNewProvision(data.instructionProvision.instructionProvisionText);
