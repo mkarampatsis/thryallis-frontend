@@ -229,6 +229,7 @@ export class OtaEditComponent implements OnInit {
 
    newInstructionProvision(): void {
     this.modalService.newInstructionProvision().subscribe((data) => {
+      console.log('New Instruction Provision Data:', data);
       if (data) {
         const tempProvision = [{ ...data.instructionProvision, isNew: true }, ...this.instructionProvisions];
         this.instructionProvisions = uniqWith(tempProvision, (a, b) => {

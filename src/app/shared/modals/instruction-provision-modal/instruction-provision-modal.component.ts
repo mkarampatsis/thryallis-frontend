@@ -35,12 +35,12 @@ export class InstructionProvisionModalComponent {
         from_pages: new FormControl('', this.integerValidator),
         to_pages: new FormControl('', this.integerValidator),
       }),
-      instructionProvisionSpecs: new FormGroup({
-        // arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-        arthro: new FormControl(''),
-        paragrafos: new FormControl(''),
-        edafio: new FormControl(''),
-      }),
+      // instructionProvisionSpecs: new FormGroup({
+      //   // arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+      //   arthro: new FormControl(''),
+      //   paragrafos: new FormControl(''),
+      //   edafio: new FormControl(''),
+      // }),
       instructionActKey: new FormControl({ value: '', disabled: true }, Validators.required),
     },
     // this.checkInstructionProvision,
@@ -50,7 +50,7 @@ export class InstructionProvisionModalComponent {
     if (this.instructionProvision) {
       this.selectedInstructionActKey = this.instructionProvision.instructionActKey;
       this.form.get('instructionActText')?.setValue(this.instructionProvision.instructionProvisionText);
-      this.form.get('instructionProvisionSpecs')?.setValue(this.instructionProvision.instructionProvisionSpecs);
+      // this.form.get('instructionProvisionSpecs')?.setValue(this.instructionProvision.instructionProvisionSpecs);
       this.form.get('instructionActKey')?.setValue(this.instructionProvision.instructionActKey);
       this.form.get('instructionPages')?.setValue(this.instructionProvision.instructionPages);
     }
@@ -105,13 +105,13 @@ export class InstructionProvisionModalComponent {
     }
     console.log(invalid)
     // console.log(this.form.value);
-    const instructionProvisionSpecs = this.form.get('instructionProvisionSpecs').value as IInstructionProvisionSpecs;
+    // const instructionProvisionSpecs = this.form.get('instructionProvisionSpecs').value as IInstructionProvisionSpecs;
     const instructionActKey = this.form.get('instructionActKey').value;
     const instructionProvisionText = this.form.get('instructionActText').value;
     const instructionPages = this.form.get('instructionPages').value;
     
     const instructionProvision = {
-      instructionProvisionSpecs,
+      // instructionProvisionSpecs,
       instructionActKey,
       instructionProvisionText,
       instructionPages

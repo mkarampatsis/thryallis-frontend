@@ -155,6 +155,7 @@ export class ListInstructionProvisionsComponent {
   }
 
   prepareInstructionProvisions(data: any[]): InstructionProvisionVM[] {
+    console.log('RAW DATA >>>>>>>>>>>>>>>>', data);
     const result: InstructionProvisionVM[] = [];
 
     let i = 0;
@@ -188,7 +189,7 @@ export class ListInstructionProvisionsComponent {
 
       i += count;
     }
-
+    console.log('PREPARED DATA >>>>>>>>>>>>>>>>', result);
     return result;
   }
 }

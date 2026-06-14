@@ -103,7 +103,7 @@ export class ListLegalProvisionsComponent implements OnChanges {
                   this.remitID,
                 )
                 .subscribe((response) => {
-                  console.log("EDIT>>", response.updatedLegalProvision);
+                  // console.log("EDIT>>", response.updatedLegalProvision);
                   const currentProvisionIndex = indexOf(this.legalProvisions, currentProvision);
                   this.legalProvisions.splice(currentProvisionIndex, 1);
                   this.legalProvisions.push(response.updatedLegalProvision);
