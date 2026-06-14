@@ -8,30 +8,30 @@
         <div class="card-header d-flex align-items-center justify-content-between">
             <span class="fw-semibold">{{ instructionProvision.instructionActKey ? instructionProvision.instructionActKey : instructionProvision["instructionAct"]["instructionActKey"] }}</span>
 
-            <table class="w-50">
-                <tr>
-                    <th *ngIf="instructionProvision.instructionProvisionSpecs.arthro" class="text-center">
-                        Επιμέρους ενότητα εγκυκλίου
-                    </th>
+            <!-- <table class="w-50"> -->
+                <!-- <tr> -->
+                    <!-- <th *ngIf="instructionProvision.instructionProvisionSpecs.arthro" class="text-center"> -->
+                        <!-- Επιμέρους ενότητα εγκυκλίου -->
+                    <!-- </th> -->
                     <!-- <th *ngIf="instructionProvision.instructionProvisionSpecs.paragrafos" class="text-center">
                         Παράγραφος
                     </th>
                     <th *ngIf="instructionProvision.instructionProvisionSpecs.edafio" class="text-center">
                         Εδάφιο
                     </th> -->
-                </tr>
-                <tr>
-                    <td *ngIf="instructionProvision.instructionProvisionSpecs.arthro" class="text-center">
-                        {{ instructionProvision.instructionProvisionSpecs.arthro }}
-                    </td>
+                <!-- </tr> -->
+                <!-- <tr> -->
+                    <!-- <td *ngIf="instructionProvision.instructionProvisionSpecs.arthro" class="text-center"> -->
+                        <!-- {{ instructionProvision.instructionProvisionSpecs.arthro }} -->
+                    <!-- </td> -->
                     <!-- <td *ngIf="instructionProvision.instructionProvisionSpecs.paragrafos" class="text-center">
                         {{ instructionProvision.instructionProvisionSpecs.paragrafos }}
                     </td>
                     <td *ngIf="instructionProvision.instructionProvisionSpecs.edafio" class="text-center">
                         {{ instructionProvision.instructionProvisionSpecs.edafio }}
                     </td> -->
-                </tr>
-            </table>
+                <!-- </tr> -->
+            <!-- </table> -->
         </div>
         <div class="card-body" [innerHTML]="instructionProvision.instructionProvisionText"></div>
     </div>

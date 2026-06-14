@@ -75,6 +75,7 @@ export class ListInstructionProvisionsComponent implements OnChanges {
   }
 
   displayInstructionProvision(provision: IInstructionProvision) {
+    console.log('DISPLAY INSTRUCTION PROVISION >>>>>>>>>>>>>>>>', provision);
     this.modalService.showInstructionProvision(provision);
   }
 
