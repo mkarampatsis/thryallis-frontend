@@ -103,7 +103,6 @@ export class InstructionProvisionModalComponent {
         invalid.push(name);
       }
     }
-    console.log(invalid)
     // console.log(this.form.value);
     // const instructionProvisionSpecs = this.form.get('instructionProvisionSpecs').value as IInstructionProvisionSpecs;
     const instructionActKey = this.form.get('instructionActKey').value;

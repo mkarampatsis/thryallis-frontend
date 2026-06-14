@@ -173,6 +173,7 @@ export class OtaEditComponent implements OnInit {
           const status = response.status;        
           if (status === 201) {
             this.resetForm();
+            console.log("OTA updated successfully:", body);
             this.modalRef.dismiss(true);
           }
         })
@@ -221,6 +222,7 @@ export class OtaEditComponent implements OnInit {
         this.legalProvisions = uniqWith(tempLegalProvision, (a, b) => {
           return a.legalActKey === b.legalActKey && isEqual(a.legalProvisionSpecs, b.legalProvisionSpecs);
         });
+        // console.log('Updated Legal Provisions:', this.legalProvisions);
         this.form.get('legalProvisions').setValue(this.legalProvisions);
         this.updateRemitTextWithNewProvision(data.legalProvision.legalProvisionText);
       }
@@ -229,11 +231,12 @@ export class OtaEditComponent implements OnInit {
 
    newInstructionProvision(): void {
     this.modalService.newInstructionProvision().subscribe((data) => {
-      console.log('New Instruction Provision Data:', data);
+      // console.log('New Instruction Provision Data:', data);
+      // console.log('Current Instruction Provisions:', this.instructionProvisions);
       if (data) {
         const tempProvision = [{ ...data.instructionProvision, isNew: true }, ...this.instructionProvisions];
         this.instructionProvisions = uniqWith(tempProvision, (a, b) => {
-          return a.instructionActKey === b.instructionActKey && isEqual(a.instructionProvisionSpecs, b.instructionProvisionSpecs);
+          return a.instructionActKey === b.instructionActKey;
         });
         this.form.get('instructionProvisions').setValue(this.instructionProvisions);
         this.updateRemitTextWithNewProvision(data.instructionProvision.instructionProvisionText);
@@ -284,8 +287,6 @@ export class OtaEditComponent implements OnInit {
     const selectedNodes = event.api.getSelectedNodes();
     
     this.gridSelectedData = selectedNodes.map(node => node.data);
-    console.log(Object.keys(this.form.controls.publicPolicyAgency.controls));
-    console.log(this.gridSelectedData);
     this.form.controls.publicPolicyAgency.setValue({
       organization: this.gridSelectedData[0].preferredLabel,
       organizationCode: this.gridSelectedData[0].code,

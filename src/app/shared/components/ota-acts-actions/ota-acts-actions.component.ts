@@ -44,17 +44,7 @@ export class OtaActsActionsComponent {
     .pipe(take(1))
     .subscribe(result => {
       if (result) {
-        // console.log('Refresh Grid Data', result);
-        this.otaService.getAllOta()
-        .subscribe(response => {
-          const body = response.body;          
-          const status = response.status;        
-          if (status === 200) {
-            this.otaService.otaActsNeedUpdate.set(true);
-            // this.getOta();
-            // this.gridApi.setRowData(this.otaDetails);
-          }
-        });
+        this.otaService.otaActsNeedUpdate.set(true);
       }
     });
   }

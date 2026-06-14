@@ -24,7 +24,7 @@ interface InstructionProvisionVM extends IInstructionProvision {
   templateUrl: './list-instruction-provisions.component.html',
   styleUrl: './list-instruction-provisions.component.css'
 })
-export class ListInstructionProvisionsComponent {
+export class ListInstructionProvisionsComponent implements OnChanges {
 
   @Input() instructionProvisions: IInstructionProvision[] = [];
   @Output() instructionProvisionsChange = new EventEmitter<IInstructionProvision[]>();
@@ -39,18 +39,22 @@ export class ListInstructionProvisionsComponent {
 
   instructionProvisionsVM: InstructionProvisionVM[] = []
 
+  ngOnInit(): void {
+    console.log('INSTRUCTION PROVISIONS >>>>>>>>>>>>>>>>', this.instructionProvisions);
+  } 
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.instructionProvisions) {
-      // this.instructionProvisions = changes.instructionProvisions.currentValue;
-      this.instructionProvisionsVM = this.prepareInstructionProvisions(changes.instructionProvisions.currentValue);
+      this.instructionProvisions = changes.instructionProvisions.currentValue;
+      // this.instructionProvisionsVM = this.prepareInstructionProvisions(changes.instructionProvisions.currentValue);
       this.sortInstructionProvisions();
     }
 
   }
 
   sortInstructionProvisions() {
-    // const instructionProvisions = this.instructionProvisions;
-    const instructionProvisions = this.instructionProvisionsVM;
+    const instructionProvisions = this.instructionProvisions;
+    // const instructionProvisions = this.instructionProvisionsVM;
 
     const sortedData = instructionProvisions.map((obj) => {
       const dateStr = obj.instructionActKey.match(/\d{2}-\d{2}-\d{4}$/)?.[0]; // Extract date in format DD-MM-YYYY
@@ -66,8 +70,8 @@ export class ListInstructionProvisionsComponent {
 
     // Sort the array by date in descending order
     sortedData.sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
-    // this.instructionProvisions = sortedData;
-    this.instructionProvisionsVM = sortedData;
+    this.instructionProvisions = sortedData;
+    // this.instructionProvisionsVM = sortedData;
   }
 
   displayInstructionProvision(provision: IInstructionProvision) {
@@ -75,7 +79,7 @@ export class ListInstructionProvisionsComponent {
   }
 
   removeInstructionProvision(i: number) {
-    // console.log(this.instructionProvisions);
+    console.log(this.instructionProvisions);
     this.modalService
       .getUserConsent(
         `Πρόκειται να διαγράψετε τη διάταξη που βασίζεται στο <strong>${this.instructionProvisions[i].instructionActKey}</strong>. Παρακαλούμε επιβεβαιώστε ότι επιθυμείτε να συνεχίσετε.`,
