@@ -68,6 +68,8 @@ export class UserAdminComponent {
     this.userService.getAllUsers().subscribe((users) => {
       this.googleUsers = users.googleUsers;
       this.gsisUsers = users.gsisUsers;
+      // console.log('googleUsers', this.googleUsers);
+      // console.log('gsisUsers', this.gsisUsers);
       this.gridApi.hideOverlay();
     });
   }
