@@ -60,13 +60,15 @@ export class RemitService {
     page: number,
     pageSize: number,
     filterModel: any,
-    sortModel: any
+    sortModel: any,
+    status?: { "active": boolean, "inactive": boolean, "unassigned": boolean }
   ): Observable<{ "rows": IRemit[], "total": number }> {
     const params = {
       page: page,
       pageSize: pageSize,
       filter: JSON.stringify(filterModel),
-      sort: JSON.stringify(sortModel)
+      sort: JSON.stringify(sortModel),
+      status: JSON.stringify(status)
     };
 
     const url = `${APIPREFIX}/all/pagination`;

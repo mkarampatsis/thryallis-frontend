@@ -14,11 +14,12 @@ import { ConstService } from 'src/app/shared/services/const.service';
 import { RemitService } from 'src/app/shared/services/remit.service';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { Subject, firstValueFrom } from 'rxjs';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-armodiothtes',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent],
+  imports: [CommonModule, AgGridAngular, GridLoadingOverlayComponent, ReactiveFormsModule],
   templateUrl: './armodiothtes.component.html',
   styleUrl: './armodiothtes.component.css',
 })
@@ -45,6 +46,12 @@ export class ArmodiothtesComponent {
   private sortChange$ = new Subject<void>();
   private showCheckboxes = false;
 
+  form = new FormGroup({
+    active: new FormControl(true),
+    inactive: new FormControl(false),
+    unassigned: new FormControl(false),
+  });
+
   ngOnInit() {
     this.colDefs = this.constService.REMITS_COL_DEFS.map((col, index) => {
       if (index === 0 && !this.showCheckboxes) {
@@ -55,6 +62,7 @@ export class ArmodiothtesComponent {
   }
 
   onGridReady(params: GridReadyEvent<IRemit>): void {
+
     this.gridApi = params.api;
 
     this.restoreGridState();
@@ -62,10 +70,13 @@ export class ArmodiothtesComponent {
     const datasource: IDatasource = {
       getRows: async (p: IGetRowsParams) => {
 
+        // console.log("Form>>>>",this.form.value);
         this.gridApi.showLoadingOverlay();
 
         const page = p.startRow / 100 + 1;
         const pageSize = 100;
+        const status = this.form.getRawValue();
+
         try {
           const response = await firstValueFrom(
             this.remitsService
@@ -73,7 +84,8 @@ export class ArmodiothtesComponent {
                 page,
                 pageSize,
                 p.filterModel,
-                p.sortModel
+                p.sortModel,
+                status
               )
           );
 
@@ -83,12 +95,12 @@ export class ArmodiothtesComponent {
             };
           });
           
-          console.log("Fetched remits>>:", this.remits);
+          // console.log("Fetched remits>>:", this.remits);
           this.gridApi.hideOverlay();
           p.successCallback(this.remits, response.total);
           // console.log("REMITS", this.remits)
         } catch (err) {
-          console.error('Error fetching data:', err);
+          // console.error('Error fetching data:', err);
           this.gridApi.showNoRowsOverlay();
           p.failCallback();
         }
@@ -162,6 +174,7 @@ export class ArmodiothtesComponent {
   }
 
   resetGridState() {
+    this.form.reset({ active: true, inactive: false, unassigned: false });
     localStorage.removeItem('remitGridState');
 
     if (this.gridApi) {
@@ -172,5 +185,10 @@ export class ArmodiothtesComponent {
       this.gridApi.refreshInfiniteCache?.();
       this.gridApi.refreshServerSide?.({ purge: true });
     }
+  }
+
+  onFormValueChange(){
+    // console.log("Checkbox changed:", this.form.value);
+    this.gridApi.refreshInfiniteCache?.();
   }
 }

@@ -1,6 +1,14 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  ValidationErrors,
+  ValidatorFn,
+  AbstractControl,
+} from '@angular/forms';
 import { ModalService } from 'src/app/shared/services/modal.service';
 import { ConstService } from 'src/app/shared/services/const.service';
 import { LegalProvisionService } from 'src/app/shared/services/legal-provision.service';
@@ -13,147 +21,149 @@ import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { cloneDeep, isEqual, uniqWith } from 'lodash-es';
 
 @Component({
-    selector: 'app-new-legal-provision',
-    standalone: true,
-    imports: [CommonModule,ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
-    templateUrl: './legal-provision-modal.component.html',
-    styleUrl: './legal-provision-modal.component.css',
+  selector: 'app-new-legal-provision',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, NgxEditorModule, NgbAlertModule],
+  templateUrl: './legal-provision-modal.component.html',
+  styleUrl: './legal-provision-modal.component.css',
 })
 export class LegalProvisionModalComponent implements OnInit, OnDestroy {
-    legalProvision: ILegalProvision | null = null;
-    // Some useful services
-    modalService = inject(ModalService);
-    constService = inject(ConstService);
-    // legalProvisionService = inject(LegalProvisionService);
+  legalProvision: ILegalProvision | null = null;
+  // Some useful services
+  modalService = inject(ModalService);
+  constService = inject(ConstService);
+  // legalProvisionService = inject(LegalProvisionService);
 
-    modalRef: any;
+  modalRef: any;
 
-    selectedLegalActKey: string | undefined = undefined;
+  selectedLegalActKey: string | undefined = undefined;
 
-    editor: Editor = new Editor();
-    toolbar: Toolbar = DEFAULT_TOOLBAR;
+  editor: Editor = new Editor();
+  toolbar: Toolbar = DEFAULT_TOOLBAR;
 
-    form = new FormGroup(
-        {
-            legalActText: new FormControl('', Validators.required),
-            legalProvisionSpecs: new FormGroup({
-                meros: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-                kefalaio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-                arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-                paragrafos: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-                edafio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-                pararthma: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-            }),
-            legalActKey: new FormControl({ value: '', disabled: true }, Validators.required),
-        },
-        this.checkLegalProvision,
-    );
+  form = new FormGroup(
+    {
+      legalActText: new FormControl('', Validators.required),
+      legalProvisionSpecs: new FormGroup({
+        meros: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        kefalaio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        paragrafos: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        edafio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        pararthma: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+      }),
+      legalActKey: new FormControl({ value: '', disabled: true }, Validators.required),
+    },
+    this.checkLegalProvision,
+  );
 
-    ngOnInit(): void {
-        if (this.legalProvision) {
-            // if (!this.legalProvision.legalProvisionSpecs.kefalaio) {
-            //     this.legalProvision.legalProvisionSpecs.kefalaio = "-";
-            // }
-            // console.log(this.legalProvision, this.legalProvision.legalActKey)
-            this.selectedLegalActKey = this.legalProvision.legalActKey;
-            this.form.get('legalActText')?.setValue(this.legalProvision.legalProvisionText);
-            this.form.get('legalProvisionSpecs')?.setValue(this.legalProvision.legalProvisionSpecs);
-            this.form.get('legalActKey')?.setValue(this.legalProvision.legalActKey);
-        }
+  ngOnInit(): void {
+    if (this.legalProvision) {
+      // if (!this.legalProvision.legalProvisionSpecs.kefalaio) {
+      //     this.legalProvision.legalProvisionSpecs.kefalaio = "-";
+      // }
+      // console.log(this.legalProvision, this.legalProvision.legalActKey)
+      this.selectedLegalActKey = this.legalProvision.legalActKey;
+      this.form.get('legalActText')?.setValue(this.legalProvision.legalProvisionText);
+      this.form.get('legalProvisionSpecs')?.setValue(this.legalProvision.legalProvisionSpecs);
+      this.form.get('legalActKey')?.setValue(this.legalProvision.legalActKey);
     }
-
-    ngOnDestroy(): void {
-        this.editor.destroy();
+    // added in order to by pass the issue of not being able to select a legal act when creating a new legal provision
+    if (!this.selectedLegalActKey) {
+      this.selectLegalAct();
     }
+  }
 
-    checkLegalProvision(form: FormGroup): { [key: string]: boolean } | null {
-        if (
-            form.get('legalProvisionSpecs').get('meros').value.trim() !== '' ||
-            form.get('legalProvisionSpecs').get('kefalaio').value.trim() !== '' ||
-            form.get('legalProvisionSpecs').get('arthro').value.trim() !== '' ||
-            form.get('legalProvisionSpecs').get('paragrafos').value.trim() !== '' ||
-            form.get('legalProvisionSpecs').get('edafio').value.trim() !== '' ||
-            form.get('legalProvisionSpecs').get('pararthma').value.trim() !== ''
-        ) {
-            return null;
-        } else {
-            return { emptyLegalProvision: true };
-        }
+  ngOnDestroy(): void {
+    this.editor.destroy();
+  }
+
+  checkLegalProvision(form: FormGroup): { [key: string]: boolean } | null {
+    if (
+      form.get('legalProvisionSpecs').get('meros').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('kefalaio').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('arthro').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('paragrafos').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('edafio').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('pararthma').value.trim() !== ''
+    ) {
+      return null;
+    } else {
+      return { emptyLegalProvision: true };
     }
+  }
 
-    selectLegalAct() {
-        this.modalService.selectLegalAct().subscribe((data) => {
-            console.log(">>",data);
-            this.selectedLegalActKey = data;
-            this.form.get('legalActKey').setValue(data);
-        });
-    }
+  selectLegalAct() {
+    this.modalService.selectLegalAct().subscribe(data => {
+      console.log('>>', data);
+      this.selectedLegalActKey = data;
+      this.form.get('legalActKey').setValue(data);
+    });
+  }
 
-    onPaste(event: ClipboardEvent) {
-        event.preventDefault();
-        const text = event.clipboardData?.getData('text');
-        console.log('Pasting...', text);
-        this.form.get('legalActText').setValue(text);
-    }
+  onPaste(event: ClipboardEvent) {
+    event.preventDefault();
+    const text = event.clipboardData?.getData('text');
+    console.log('Pasting...', text);
+    this.form.get('legalActText').setValue(text);
+  }
 
-    onSubmit() {
-        // console.log(this.form.value);
-        const legalProvisionSpecs = this.form.get('legalProvisionSpecs').value as ILegalProvisionSpecs;
+  onSubmit() {
+    // console.log(this.form.value);
+    const legalProvisionSpecs = this.form.get('legalProvisionSpecs').value as ILegalProvisionSpecs;
 
-        const legalActKey = this.form.get('legalActKey').value;
-        const legalProvisionText = this.form.get('legalActText').value;
-        const legalProvision = {
-            legalProvisionSpecs,
-            legalActKey,
-            legalProvisionText,
-        } as ILegalProvision;
-        // this.legalProvisionService.newLegalProvision(legalProvision).subscribe((data) => {
-        //     const { message, legalProvision } = data;
-        //     console.log(message);
-        //     this.modalRef.dismiss({ legalProvision });
-        // });
-        this.modalRef.dismiss({ legalProvision });
-    }
+    const legalActKey = this.form.get('legalActKey').value;
+    const legalProvisionText = this.form.get('legalActText').value;
+    const legalProvision = {
+      legalProvisionSpecs,
+      legalActKey,
+      legalProvisionText,
+    } as ILegalProvision;
+    // this.legalProvisionService.newLegalProvision(legalProvision).subscribe((data) => {
+    //     const { message, legalProvision } = data;
+    //     console.log(message);
+    //     this.modalRef.dismiss({ legalProvision });
+    // });
+    this.modalRef.dismiss({ legalProvision });
+  }
 
-    dismiss() {
-        if (this.form.dirty) {
-            this.modalService
-                .getUserConsent(
-                    `Αν κλείσετε το παράθυρο οι αλλαγές στη διάταξη δεν θα αποθηκευτούν! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
-                )
-                .pipe(take(1))
-                .subscribe((consent) => {
-                    if (consent) {
-                        this.modalRef.dismiss();
-                    }
-                });
-        } else {
+  dismiss() {
+    if (this.form.dirty) {
+      this.modalService
+        .getUserConsent(
+          `Αν κλείσετε το παράθυρο οι αλλαγές στη διάταξη δεν θα αποθηκευτούν! Παρακαλούμε επιβεβαιώστε την ενέργεια.`,
+        )
+        .pipe(take(1))
+        .subscribe(consent => {
+          if (consent) {
             this.modalRef.dismiss();
-        }
+          }
+        });
+    } else {
+      this.modalRef.dismiss();
     }
+  }
 
-    greekEnglishLettersNumbersWithTrim(): ValidatorFn {
-        // Greek + English + numbers + spaces
-        const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+$/;
+  greekEnglishLettersNumbersWithTrim(): ValidatorFn {
+    // Greek + English + numbers + spaces
+    const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+$/;
 
-        return (control: AbstractControl): ValidationErrors | null => {
-            let value = control.value;
+    return (control: AbstractControl): ValidationErrors | null => {
+      let value = control.value;
 
-            if (value === null || value === undefined || value === '') {
-            return null;
-            }
+      if (value === null || value === undefined || value === '') {
+        return null;
+      }
 
-            // Auto-trim leading/trailing spaces
-            const trimmedValue = value.trim();
+      // Auto-trim leading/trailing spaces
+      const trimmedValue = value.trim();
 
-            if (trimmedValue !== value) {
-            control.setValue(trimmedValue, { emitEvent: false });
-            value = trimmedValue;
-            }
+      if (trimmedValue !== value) {
+        control.setValue(trimmedValue, { emitEvent: false });
+        value = trimmedValue;
+      }
 
-            return regex.test(value)
-            ? null
-            : { invalidCharacters: true };
-        };
-    }
+      return regex.test(value) ? null : { invalidCharacters: true };
+    };
+  }
 }

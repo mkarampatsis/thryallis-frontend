@@ -289,7 +289,7 @@ export class ConstService {
     { field: 'organization.preferredLabel', headerName: 'Φορέας', flex: 1 },
     { field: 'organizational_unit.preferredLabel', headerName: 'Μονάδα', flex: 1 },
     { field: 'remitType', headerName: 'Τύπος', flex: 1 },
-    { field: 'status', headerName: 'Κατάσταση', flex: 0.5 },
+    { field: 'status', headerName: 'Κατάσταση', flex: 1 },
     {
       field: 'remitText',
       headerName: 'Κείμενο',
