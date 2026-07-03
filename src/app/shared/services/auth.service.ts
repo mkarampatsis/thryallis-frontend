@@ -59,7 +59,13 @@ export class AuthService {
                     this.user.set(body.user);
                     localStorage.setItem('accessToken', body.accessToken);
                     this.loading.set(false);
-                    this.router.navigate(['landing']);
+                    // this.router.navigate(['landing']);
+                    const roles = this.user()?.roles ?? [];
+                    if (roles.length === 1) {
+                      this.router.navigate(['landing']);
+                    } else {  
+                      this.router.navigate(['user-roles']);
+                    } 
                   } else if (status === 204){
                     console.log("not logged in")
                     this.user.set({
