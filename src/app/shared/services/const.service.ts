@@ -111,10 +111,25 @@ export class ConstService {
     {
       field: 'roles',
       headerName: 'Φορείς',
-      flex: 0.5,
-      cellRenderer: (params: ICellRendererParams) =>
-        (params.value as { role: string; foreas: string[] }[])
-          .find((data: { role: string; foreas: string[] }) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
+      flex: 1,
+      wrapText: true,
+      // cellRenderer: (params: ICellRendererParams) =>
+      //   (params.value as { role: string; foreas: string[] }[])
+      //     .find((data: { role: string; foreas: string[] }) => data.role === 'EDITOR')?.foreas.join(', ') ?? '',
+      cellRenderer: (params: ICellRendererParams) => {
+        const roles = params.value as { role: string; foreas: string[] }[];
+        const editor = roles?.find(r => r.role === 'EDITOR');
+
+        const foreas = editor?.foreas ?? [];
+        if (!foreas.length) return '';
+
+        return foreas
+          .map(code => {
+            const name = this.ORGANIZATION_CODES_MAP.get(code) ?? code;
+            return `${name}(${code})`;
+          })
+          .join(', ');
+      }
     },
     {
       field: 'roles',
@@ -122,11 +137,25 @@ export class ConstService {
       flex: 2,
       wrapText: true,
       autoHeight: true,
-      valueGetter: (params) => {
-        return (params.data.roles as { role: string; active: boolean }[])
-          .filter((role: { role: string; active: boolean }) => role.active)
-          .map((role: { role: string; active: boolean }) => role.role);
-          // .join(", ");
+      // valueGetter: (params) => {
+      //   return (params.data.roles as { role: string; active: boolean }[])
+      //     .filter((role: { role: string; active: boolean }) => role.active)
+      //     .map((role: { role: string; active: boolean }) => role.role);
+      //     // .join(", ");
+      // }
+      cellRenderer: (params: ICellRendererParams) => {
+        const roles = (params.data.roles as { role: string; active: boolean }[])
+          .filter(r => r.active)
+          .map(r => r.role);
+
+        return roles
+          .map(role => {
+            const isAdmin = role.includes('ADMIN');
+            return isAdmin
+              ? `<span style="color: red; font-weight: 600;">${role}</span>`
+              : `<span>${role}</span>`;
+          })
+          .join(', ');
       }
     },
   ];

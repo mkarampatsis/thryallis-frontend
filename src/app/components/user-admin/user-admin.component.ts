@@ -10,62 +10,55 @@ import { ModalService } from 'src/app/shared/services/modal.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-    selector: 'app-user-admin',
-    standalone: true,
-    imports: [AgGridAngular, GridLoadingOverlayComponent],
-    templateUrl: './user-admin.component.html',
-    styleUrl: './user-admin.component.css',
+  selector: 'app-user-admin',
+  standalone: true,
+  imports: [AgGridAngular, GridLoadingOverlayComponent],
+  templateUrl: './user-admin.component.html',
+  styleUrl: './user-admin.component.css',
 })
 export class UserAdminComponent {
-    userService = inject(UserService);
-    constService = inject(ConstService);
-    modalService = inject(ModalService);
+  userService = inject(UserService);
+  constService = inject(ConstService);
+  modalService = inject(ModalService);
 
-    googleUsers: IUser[] = [];
-    gsisUsers: IUser[] = [];
-    defaultColDef = this.constService.defaultColDef;
-    colDefs = this.constService.USERS_COL_DEFS;
+  googleUsers: IUser[] = [];
+  gsisUsers: IUser[] = [];
+  defaultColDef = this.constService.defaultColDef;
+  colDefs = this.constService.USERS_COL_DEFS;
+  
+  autoSizeStrategy = this.constService.autoSizeStrategy;
 
-    autoSizeStrategy = this.constService.autoSizeStrategy;
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση προσβάσεων...' };
 
-    loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση προσβάσεων...' };
+  gridApi: GridApi<IUser>;
 
-    gridApi: GridApi<IUser>;
+  showUserAccesses: string = environment.showUserAccesses;
 
-    showUserAccesses: string = environment.showUserAccesses;
-
-    onGridReady(params: GridReadyEvent<IUser>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.getAllUsers();
-        // this.userService.getAllUsers().subscribe((users) => {
-        //     this.googleUsers = users.googleUsers;
-        //     this.gsisUsers = users.gsisUsers;
-        //     this.gridApi.hideOverlay();
-        // });
-    }
-
-    onRowDoubleClickedGSIS(event: any): void {
-      this.modalService.userAccessesGSIS(event.data)
-        .subscribe((result) => {
-        if(result) {
-          this.getAllUsers()
-        }
-      });
-    }
-
-    onRowDoubleClicked(event: any): void {
-      this.modalService.userAccesses(event.data)
-        .subscribe((result) => {
-        if(result) {
-          this.getAllUsers()
-        }
-      });
+  onGridReady(params: GridReadyEvent<IUser>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.getAllUsers();
   }
 
-  getAllUsers(){
-    this.userService.getAllUsers().subscribe((users) => {
+  onRowDoubleClickedGSIS(event: any): void {
+    this.modalService.userAccessesGSIS(event.data).subscribe(result => {
+      if (result) {
+        this.getAllUsers();
+      }
+    });
+  }
+
+  onRowDoubleClicked(event: any): void {
+    this.modalService.userAccesses(event.data).subscribe(result => {
+      if (result) {
+        this.getAllUsers();
+      }
+    });
+  }
+
+  getAllUsers() {
+    this.userService.getAllUsers().subscribe(users => {
       this.googleUsers = users.googleUsers;
       this.gsisUsers = users.gsisUsers;
       // console.log('googleUsers', this.googleUsers);
