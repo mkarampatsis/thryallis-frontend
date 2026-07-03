@@ -150,10 +150,13 @@ export class ConstService {
 
         return roles
           .map(role => {
-            const isAdmin = role.includes('ADMIN');
-            return isAdmin
-              ? `<span style="color: red; font-weight: 600;">${role}</span>`
-              : `<span>${role}</span>`;
+            if (role.includes('ADMIN')) {
+              return `<span style="color: red; font-weight: 600;">${role}</span>`;
+            }
+            if (role.includes('EDITOR')) {
+                return `<span style="color: green; font-weight: 600;">${role}</span>`;
+            }
+            return `<span>${role}</span>`;
           })
           .join(', ');
       }
