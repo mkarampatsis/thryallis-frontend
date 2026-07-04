@@ -178,7 +178,7 @@
                     </div>
                     <!-- fek.issue -->
 
-                    <div class="flex-grow-1">
+                    <!-- <div class="flex-grow-1">
                         <label
                             for="fek-date"
                             class="form-label text-nowrap">
@@ -189,6 +189,25 @@
                             id="fek-date"
                             class="form-control"
                             formControlName="date" />
+                    </div> -->
+                    <div class="flex-grow-1">
+                      <label
+                        for="fek-date"
+                        class="form-label text-nowrap">
+                        Ημερομηνία ΦΕΚ:
+                      </label>
+                      <div class="input-group">
+                        <input
+                          class="form-control"
+                          ngbDatepicker
+                          #dp="ngbDatepicker"
+                          formControlName="date"
+                          placeholder="dd/mm/yyyy"
+                        />
+                        <button class="btn btn-outline-secondary" type="button" (click)="dp.toggle()">
+                          📅
+                        </button>
+                      </div>
                     </div>
                     <!-- fek.date -->
                 </div>
