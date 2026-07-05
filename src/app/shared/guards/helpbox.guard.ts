@@ -9,7 +9,14 @@ export const HelpBoxGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const router = inject(Router);
 
-  if (authService.user() && (userService.hasHelpDeskRole() || userService.hasEditorRole() || userService.hasAdminRole())) {
+  if (authService.user() && (
+    userService.hasHelpDeskRole() || 
+    userService.hasEditorRole() || 
+    userService.hasAdminRole() || 
+    userService.hasHelpDeskOTARole() ||
+    userService.hasOtaAdminRole() ||
+    userService.hasOtaEditorRole()
+  )) {
     return true;
   }
   return router.navigate(['/login']);

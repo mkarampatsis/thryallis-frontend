@@ -112,6 +112,7 @@ export class UserAccessesComponent {
     this.userService.setUserAccesses(this.user?.email as string, this.currentRoles as IUserRole[])
       .pipe(take(1))
       .subscribe((result) => {
+        console.log('User accesses updated successfully:', result);
         this.modalRef.dismiss(true);
       });
   }

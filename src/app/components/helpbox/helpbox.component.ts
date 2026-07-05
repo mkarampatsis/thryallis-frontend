@@ -1,4 +1,5 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import {CommonModule} from '@angular/common';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { EditorsComponent } from './editors/editors.component';
 import { HelpdeskComponent } from './helpdesk/helpdesk.component';
@@ -10,7 +11,7 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 @Component({
   selector: 'app-helpbox',
   standalone: true,
-  imports: [NgbNavModule, EditorsComponent, HelpdeskComponent, FaqComponent, GeneralInfoComponent],
+  imports: [CommonModule,NgbNavModule, EditorsComponent, HelpdeskComponent, FaqComponent, GeneralInfoComponent],
   templateUrl: './helpbox.component.html',
   styleUrl: './helpbox.component.css'
 })
@@ -41,5 +42,9 @@ export class HelpboxComponent {
 
   hasEditorRole() {
     return this.userService.hasEditorRole();
+  }
+
+  hasOTARole(){
+    return this.userService.hasOtaEditorRole() || this.userService.hasHelpDeskOTARole();
   }
 }

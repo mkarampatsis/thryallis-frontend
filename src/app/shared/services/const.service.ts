@@ -37,7 +37,7 @@ export class ConstService {
 
   readonly ORGANIZATION_LEVELS = ['ΚΕΝΤΡΙΚΟ', 'ΑΠΟΚΕΝΤΡΩΜΕΝΟ', 'ΠΕΡΙΦΕΡΕΙΑΚΟ', 'ΤΟΠΙΚΟ', 'ΜΗ ΟΡΙΣΜΕΝΟ'];
 
-  readonly USER_ROLES = ['EDITOR', 'HELPDESK', 'ADMIN', 'FACILITY_EDITOR', 'FACILITY_ADMIN', 'EQUIPMENT_EDITOR', 'EQUIPMENT_ADMIN', 'OTA_EDITOR', 'OTA_ADMIN', 'USER_RESOURCES_EDITOR', 'USER_RESOURCES_ADMIN']
+  readonly USER_ROLES = ['EDITOR', 'HELPDESK', 'HELPDESK_OTA', 'ADMIN', 'FACILITY_EDITOR', 'FACILITY_ADMIN', 'EQUIPMENT_EDITOR', 'EQUIPMENT_ADMIN', 'OTA_EDITOR', 'OTA_ADMIN', 'USER_RESOURCES_EDITOR', 'USER_RESOURCES_ADMIN']
     
   readonly UNIT_TYPES = [
     { "id": 41, "description": "ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ" },

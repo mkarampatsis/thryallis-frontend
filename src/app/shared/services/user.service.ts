@@ -26,6 +26,11 @@ export class UserService {
   store = inject(Store<AppState>);
   organization$ = selectOrganizationByCode$
 
+  getUser(category: string, id?: string): Observable<{user:IUser[]}> {
+    const url = `${APIPREFIX_USER}/${category}/${id}`;
+    return this.http.get<{user:IUser[]}>(url);
+  }
+
   getAllUsers(): Observable<{gsisUsers:IUser[], googleUsers:IUser[]}> {
     const url = `${APIPREFIX_USER}/all`;
     return this.http.get<{gsisUsers:IUser[], googleUsers:IUser[]}>(url);
@@ -38,6 +43,10 @@ export class UserService {
 
   hasHelpDeskRole() {
     return this.user()?.roles.some((role) => role.role === 'HELPDESK' && role.active);
+  }
+  
+  hasHelpDeskOTARole() {
+    return this.user()?.roles.some((role) => role.role === 'HELPDESK_OTA' && role.active);
   }
 
   hasEditorRole() {

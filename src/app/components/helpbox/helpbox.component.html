@@ -1,3 +1,6 @@
+<h1 *ngIf="hasOTARole()" class="govgr-heading-sm">Help Desk Κώδικα</h1>
+<h1 *ngIf="hasEditorRole() || hasHelpDeskRole()" class="govgr-heading-sm">Help Desk Γενικό</h1>
+
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
 	<li [ngbNavItem]="1">
         <button ngbNavLink>Ερωτήματα</button>
