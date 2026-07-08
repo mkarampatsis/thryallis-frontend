@@ -248,7 +248,11 @@ export class RemitModalComponent implements OnInit, OnDestroy {
     if (legalProvision.legalProvisionSpecs.arthro) specs += `Άρθρο ${legalProvision.legalProvisionSpecs.arthro}, `;
     if (legalProvision.legalProvisionSpecs.paragrafos)
       specs += `Παράγραφος ${legalProvision.legalProvisionSpecs.paragrafos}, `;
-    if (legalProvision.legalProvisionSpecs.edafio) specs += `Εδάφιο ${legalProvision.legalProvisionSpecs.edafio}, `;
+    if (legalProvision.legalProvisionSpecs.periptosi) specs += `Περίπτωση ${legalProvision.legalProvisionSpecs.periptosi}, `;
+    if (legalProvision.legalProvisionSpecs.ypoperiptosi) specs += `Υποπερίπτωση ${legalProvision.legalProvisionSpecs.ypoperiptosi}, `;
+    if (legalProvision.legalProvisionSpecs.stoixeio) specs += `Στοιχείο ${legalProvision.legalProvisionSpecs.stoixeio}, `;
+    if (legalProvision.legalProvisionSpecs.ypostoixeio) specs += `Υποστοιχείο ${legalProvision.legalProvisionSpecs.ypostoixeio}, `;
+    // if (legalProvision.legalProvisionSpecs.edafio) specs += `Εδάφιο ${legalProvision.legalProvisionSpecs.edafio}, `;
     if (legalProvision.legalProvisionSpecs.pararthma)
       specs += `Παράρτημα ${legalProvision.legalProvisionSpecs.pararthma}`;
     html = `<strong>${html} (${specs.slice(0, -2)})</strong> ${legalProvision.legalProvisionText}`;

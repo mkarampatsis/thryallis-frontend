@@ -14,7 +14,11 @@
       <th class="text-center">Κεφάλαιο</th>
       <th class="text-center">Άρθρο</th>
       <th class="text-center">Παράγραφος</th>
-      <th class="text-center">Εδάφιο</th>
+      <th class="text-center">Περίπτωση</th>
+      <th class="text-center">Υποπερίπτωση</th>
+      <th class="text-center">Στοιχείο</th>
+      <th class="text-center">Υποστοιχείο</th>
+      <!-- <th class="text-center">Εδάφιο</th> -->
       <th class="text-center">Παράρτημα</th>
       <th class="text-center">Κείμενο</th>
       @if (actionColumnVisible) {
@@ -37,7 +41,11 @@
       <td class="text-center align-content-center">
         {{ legalProvision.legalProvisionSpecs.paragrafos }}
       </td>
-      <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.edafio }}</td>
+      <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.periptosi }}</td>
+      <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.ypoperiptosi }}</td>
+      <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.stoixeio }}</td>
+      <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.ypostoixeio }}</td>
+      <!-- <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.edafio }}</td> -->
       <td class="text-center align-content-center">{{ legalProvision.legalProvisionSpecs.pararthma }}</td>
       <td class="text-center align-content-center">
         <i role="button" (click)="displayLegalProvision(legalProvision)" class="bi bi-file-text fs-5 me-2"

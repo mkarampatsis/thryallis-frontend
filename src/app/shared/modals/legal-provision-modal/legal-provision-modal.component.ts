@@ -49,7 +49,11 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
         kefalaio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
         arthro: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
         paragrafos: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-        edafio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        periptosi: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        ypoperiptosi: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        stoixeio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        ypostoixeio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        // edafio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
         pararthma: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
       }),
       legalActKey: new FormControl({ value: '', disabled: true }, Validators.required),
@@ -84,7 +88,11 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
       form.get('legalProvisionSpecs').get('kefalaio').value.trim() !== '' ||
       form.get('legalProvisionSpecs').get('arthro').value.trim() !== '' ||
       form.get('legalProvisionSpecs').get('paragrafos').value.trim() !== '' ||
-      form.get('legalProvisionSpecs').get('edafio').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('periptosi').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('ypoperiptosi').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('stoixeio').value.trim() !== '' ||
+      form.get('legalProvisionSpecs').get('ypostoixeio').value.trim() !== '' ||
+      // form.get('legalProvisionSpecs').get('edafio').value.trim() !== '' ||
       form.get('legalProvisionSpecs').get('pararthma').value.trim() !== ''
     ) {
       return null;

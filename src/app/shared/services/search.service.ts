@@ -410,7 +410,11 @@ export class SearchService {
           detail.legalProvisionSpecs.meros,
           detail.legalProvisionSpecs.arthro,
           detail.legalProvisionSpecs.paragrafos,
-          detail.legalProvisionSpecs.edafio,
+          detail.legalProvisionSpecs.periptosi,
+          detail.legalProvisionSpecs.ypoperiptosi,
+          detail.legalProvisionSpecs.stoixeio,
+          detail.legalProvisionSpecs.ypostoixeio,
+          // detail.legalProvisionSpecs.edafio,
           detail.legalProvisionSpecs.pararthma,
         ]
           .filter(part => part) // Remove empty fields
@@ -481,7 +485,11 @@ export class SearchService {
         'Κεφάλαιο': item.legalProvisionSpecs.kefalaio,
         'Άρθρο': item.legalProvisionSpecs.arthro,
         'Παράγραφος': item.legalProvisionSpecs.paragrafos,
-        'Εδάφιο': item.legalProvisionSpecs.edafio,
+        'Περίπτωση': item.legalProvisionSpecs.periptosi,  
+        'Υποπερίπτωση': item.legalProvisionSpecs.ypoperiptosi,
+        'Στοιχείο': item.legalProvisionSpecs.stoixeio,
+        'Υποστοιχείο': item.legalProvisionSpecs.ypostoixeio,
+        // 'Εδάφιο': item.legalProvisionSpecs.edafio,
         'Παράρτημα': item.legalProvisionSpecs.pararthma,
         'Κείμενο': item.legalProvisionText
       });
@@ -498,7 +506,11 @@ export class SearchService {
           'Κεφάλαιο': provision.legalProvisionSpecs.kefalaio,
           'Άρθρο': provision.legalProvisionSpecs.arthro,
           'Παράγραφος': provision.legalProvisionSpecs.paragrafos,
-          'Εδάφιο': provision.legalProvisionSpecs.edafio,
+          'Περίπτωση': provision.legalProvisionSpecs.periptosi,
+          'Υποπερίπτωση': provision.legalProvisionSpecs.ypoperiptosi,
+          'Στοιχείο': provision.legalProvisionSpecs.stoixeio,
+          'Υποστοιχείο': provision.legalProvisionSpecs.ypostoixeio,
+          // 'Εδάφιο': provision.legalProvisionSpecs.edafio,
           'Παράρτημα': provision.legalProvisionSpecs.pararthma,
           'Κείμενο': provision.legalProvisionText
         });
@@ -532,7 +544,11 @@ export class SearchService {
             'Κεφάλαιο': provision.legalProvisionSpecs.kefalaio,
             'Άρθρο': provision.legalProvisionSpecs.arthro,
             'Παράγραφος': provision.legalProvisionSpecs.paragrafos,
-            'Εδάφιο': provision.legalProvisionSpecs.edafio,
+            'Περίπτωση': provision.legalProvisionSpecs.periptosi,
+            'Υποπερίπτωση': provision.legalProvisionSpecs.ypoperiptosi,
+            'Στοιχείο': provision.legalProvisionSpecs.stoixeio,
+            'Υποστοιχείο': provision.legalProvisionSpecs.ypostoixeio,
+            // 'Εδάφιο': provision.legalProvisionSpecs.edafio,
             'Παράρτημα': provision.legalProvisionSpecs.pararthma,
             'Κείμενο': provision.legalProvisionText,
             "Κατάσταση Αρμοδιοτήτων": node.remitsFinalized ? 'Ολοκληρωμένες' : 'Σε Επεξεργασία',
