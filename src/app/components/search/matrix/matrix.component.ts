@@ -447,6 +447,8 @@ export class MatrixComponent {
 
         const page = p.startRow / 100 + 1;
         const pageSize = 100;
+        const status={"active":true,"inactive":false,"unassigned":false}
+        
         try {
           const response = await firstValueFrom(
             this.remitsService
@@ -454,7 +456,8 @@ export class MatrixComponent {
                 page,
                 pageSize,
                 p.filterModel,
-                p.sortModel
+                p.sortModel,
+                status
               )
           );
           
