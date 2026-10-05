@@ -66,7 +66,9 @@ export class LogDataComponent {
 
     ngOnInit() {
         this.loading = true;
-        this.logDataService.getAllChangesCodesByType().subscribe((data) => {
+        this.logDataService.getAllChangesCodesByType()
+        .subscribe((data) => {
+            console.log("allOrganizationChanges", data);
             this.allOrganizationChanges = data;
             this.initializeColDefs()
             this.loading = false;
