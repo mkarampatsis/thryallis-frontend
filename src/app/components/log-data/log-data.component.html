@@ -11,6 +11,17 @@
     </span>
 }
 
+@if (allChangesByEntity.length > 0) {
+    <div class="d-flex justify-content-start">
+        <span>Επιλέξτε την όντοτητα για την οποία ενδιάφερεστε να δείτε τα ιστορικά στοιχεία</span>
+        <select class="form-select form-select-sm mb-2" (change)="onEntityChange($event)">
+            @for(entity of allChangesByEntity; track entity) {
+                <option [value]="entity">{{ getEntityLabel(entity) }}</option>
+            }
+        </select>
+    </div>
+}
+
 @if(!loading){
 <span class="d-flex justify-content-end small">Ανοίξτε την καρτέλα του φορέα/μονάδας με διπλό κλικ πάνω στο κελλί</span>
 <ag-grid-angular

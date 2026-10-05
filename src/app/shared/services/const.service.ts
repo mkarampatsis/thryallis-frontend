@@ -52,6 +52,22 @@ export class ConstService {
     { "id": 1, "description": "ΓΡΑΦΕΙΟ" }
   ]
 
+  readonly ENTITY_TYPES = [
+    {"en":"equipment", "gr":"Εξοπλισμός"},
+    {"en":"facility", "gr":"Ακίνητα"},
+    {"en":"generalInfo", "gr":"Γενικές Πληροφορίες"},
+    {"en":"instructionAct", "gr":"Εγκύκλια Οδηγία"},
+    {"en":"instructionProvision", "gr":"Επιμερους Οδηγία Εγκυκλίου"},
+    {"en":"legalAct", "gr":"Νομική Πράξη"},
+    ​{"en":"legalProvision", "gr":"Διατάξεις Πρόβλεψεις"},
+    {"en":"organization", "gr":"Φορέας"},   
+    {"en":"organizationalUnit", "gr":"Μονάδα"},
+    ​{"en":"ota", "gr":"OTA"},
+    {"en":"remit", "gr":"Αρμοδιότητα"},
+    { "en":"space", "gr": "Χώροι Ακινήτων"},
+    { "en":"user", "gr": "Χρήστης" }
+  ];
+
   readonly ACT_TYPES = [
     'ΝΟΜΟΣ',
     'ΠΡΟΕΔΡΙΚΟ ΔΙΑΤΑΓΜΑ',

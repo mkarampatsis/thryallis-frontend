@@ -37,6 +37,7 @@ export class LogDataComponent {
     allOrganizationChanges = [];
     allOrganizationalUnitChanges = [];
     allRemitChanges = [];
+    allChangesByEntity = [];
 
     remits: IRemitExtended[] = [];
 
@@ -66,11 +67,10 @@ export class LogDataComponent {
 
     ngOnInit() {
         this.loading = true;
-        this.logDataService.getAllChangesCodesByType().subscribe((data) => {
-            this.allOrganizationChanges = data;
-            this.initializeColDefs()
-            this.loading = false;
-        })
+        this.logDataService.getAllChangesByEntity().subscribe((data) => {
+            this.allChangesByEntity = data.data;
+            console.log("allChangesByEntity", this.allChangesByEntity)
+        });
     }
 
     initializeColDefs() {
@@ -138,6 +138,29 @@ export class LogDataComponent {
     //     // console.log(event);
     //     this.modalService.showOrganizationDetails(event.data.code);
     // }
+
+    onEntityChange(event: Event) {
+        const select = event.target as HTMLSelectElement;
+        const entity = select.value;
+
+        console.log("Entity changed", entity);
+        if (entity){
+            this.logDataService.getAllChangesCodesByType(entity)
+                .subscribe((data) => {
+                    this.allOrganizationChanges = data;
+                    console.log("allOrganizationChanges", this.allOrganizationChanges)
+                    this.initializeColDefs()
+                    this.loading = false;
+            })
+        }
+    }
+
+    getEntityLabel(entity: string): string {
+        const entityType = this.constService.ENTITY_TYPES.find(
+            type => type.en === entity
+        );
+        return entityType?.gr ?? entity;
+    }
 }
 
 @Component({
