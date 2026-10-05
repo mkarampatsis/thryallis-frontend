@@ -15,202 +15,216 @@ import { selectOrganizationCodeByOrganizationalUnitCode$ } from 'src/app/shared/
 import { HttpParams } from '@angular/common/http';
 
 export interface IRemitExtended extends IRemit {
-    organizationCode: string;
-    organizationLabel: string;
-    organizationUnitLabel: string;
+  organizationCode: string;
+  organizationLabel: string;
+  organizationUnitLabel: string;
 }
 
 @Component({
-    selector: 'app-log-data',
-    standalone: true,
-    imports: [CommonModule, AgGridAngular],
-    templateUrl: './log-data.component.html',
-    styleUrl: './log-data.component.css'
+  selector: 'app-log-data',
+  standalone: true,
+  imports: [CommonModule, AgGridAngular],
+  templateUrl: './log-data.component.html',
+  styleUrl: './log-data.component.css',
 })
 export class LogDataComponent {
-    constService = inject(ConstService);
-    modalService = inject(ModalService);
-    logDataService = inject(LogDataService);
+  constService = inject(ConstService);
+  modalService = inject(ModalService);
+  logDataService = inject(LogDataService);
 
-    loading = false;
+  loading = false;
 
-    allOrganizationChanges = [];
-    allOrganizationalUnitChanges = [];
-    allRemitChanges = [];
-    allChangesByEntity = [];
+  allOrganizationChanges = [];
+  allOrganizationalUnitChanges = [];
+  allRemitChanges = [];
+  allChangesByEntity = [];
 
-    remits: IRemitExtended[] = [];
+  remits: IRemitExtended[] = [];
 
-    store = inject(Store<AppState>);
-    remits$ = selectRemits$;
-    remitsLoading$ = selectRemitsLoading$;
-    selectOrganizationCodeByOrganizationalUnitCode$ = selectOrganizationCodeByOrganizationalUnitCode$;
+  store = inject(Store<AppState>);
+  remits$ = selectRemits$;
+  remitsLoading$ = selectRemitsLoading$;
+  selectOrganizationCodeByOrganizationalUnitCode$ = selectOrganizationCodeByOrganizationalUnitCode$;
 
-    organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
-    organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
+  organizationCodesMap = this.constService.ORGANIZATION_CODES_MAP;
+  organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
 
-    defaultColDef = this.constService.defaultColDef;
-    colDefs: ColDef[]
+  defaultColDef = this.constService.defaultColDef;
+  colDefs: ColDef[];
 
-    autoSizeStrategy = this.constService.autoSizeStrategy;
+  autoSizeStrategy = this.constService.autoSizeStrategy;
 
-    loadingOverlayComponent = GridLoadingOverlayComponent;
-    loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
+  loadingOverlayComponent = GridLoadingOverlayComponent;
+  loadingOverlayComponentParams = { loadingMessage: 'Αναζήτηση αρμοδιοτήτων...' };
 
-    gridApi: GridApi<IRemitExtended>;
+  gridApi: GridApi<IRemitExtended>;
 
-    subscriptions: Subscription[] = [];
+  subscriptions: Subscription[] = [];
 
-    ngOnDestroy(): void {
-        this.subscriptions.forEach((sub) => sub.unsubscribe());
-    }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
 
-    ngOnInit() {
-        this.loading = true;
-        this.logDataService.getAllChangesByEntity().subscribe((data) => {
-            this.allChangesByEntity = data.data;
-            console.log("allChangesByEntity", this.allChangesByEntity)
+  ngOnInit() {
+    this.loading = true;
+    this.logDataService.getAllChangesByEntity().subscribe(data => {
+      this.allChangesByEntity = data.data;
+      console.log('allChangesByEntity', this.allChangesByEntity);
+    });
+  }
+
+  initializeColDefs() {
+    this.colDefs = [
+      {
+        field: 'organizationLabel',
+        headerName: 'Φορέας',
+        flex: 1,
+        cellClassRules: this.getCellClassRulesOrganizations(),
+      },
+      {
+        field: 'organizationUnitLabel',
+        headerName: 'Μονάδα',
+        flex: 1,
+        cellClassRules: this.getCellClassRulesOrganizationalUnits(),
+      },
+      { field: 'remitType', headerName: 'Τύπος', flex: 1 },
+      {
+        field: 'remitText',
+        headerName: 'Αρμοδιότητα',
+        flex: 6,
+        cellRenderer: HtmlCellRenderer,
+        autoHeight: true,
+        cellStyle: { 'white-space': 'normal' },
+      },
+      // { field: 'who', headerName: 'Χρήστης', flex: 1 },
+    ];
+  }
+
+  onGridReady(params: GridReadyEvent<IRemitExtended>): void {
+    this.gridApi = params.api;
+    this.gridApi.showLoadingOverlay();
+    this.subscriptions.push(
+      this.store.select(this.remits$).subscribe(data => {
+        this.remits = data.map(remit => {
+          const orgUnitCode = remit.organizationalUnitCode;
+          const orgCode =
+            this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
+          return {
+            ...remit,
+            organizationCode: orgCode,
+            organizationLabel: this.organizationCodesMap.get(orgCode),
+            organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
+          };
         });
+        // console.log(">>",this.remits)
+        this.gridApi.hideOverlay();
+      }),
+    );
+  }
+
+  getCellClassRulesOrganizations(): CellClassRules {
+    return {
+      'text-success': params =>
+        this.allOrganizationChanges['data']['organizations'].includes(params.data.organizationCode),
+    };
+  }
+
+  getCellClassRulesOrganizationalUnits(): CellClassRules {
+    return {
+      'text-success': params =>
+        this.allOrganizationChanges['data']['organizationalUnits'].includes(
+          params.data.organizationalUnitCode,
+        ),
+    };
+  }
+
+  onCellClicked(event: any): void {
+    if (event.colDef.field == 'organizationLabel') {
+      this.modalService.showChangeDetails(event.data['organizationCode']);
+    } else if (event.colDef.field == 'organizationUnitLabel') {
+      this.modalService.showChangeDetails(event.data['organizationalUnitCode']);
+    } else if (event.colDef.field == 'remitText') {
+      this.modalService.showRemitDetails({
+        organizationCode: event.data.organizationalUnitCode,
+        remitId: event.data['_id']['$oid'],
+      });
     }
+  }
 
-    initializeColDefs() {
-        this.colDefs = [
-            { field: 'organizationLabel', headerName: 'Φορέας', flex: 1, cellClassRules: this.getCellClassRulesOrganizations() },
-            { field: 'organizationUnitLabel', headerName: 'Μονάδα', flex: 1, cellClassRules: this.getCellClassRulesOrganizationalUnits() },
-            { field: 'remitType', headerName: 'Τύπος', flex: 1 },
-            {
-                field: 'remitText',
-                headerName: 'Αρμοδιότητα',
-                flex: 6,
-                cellRenderer: HtmlCellRenderer,
-                autoHeight: true,
-                cellStyle: { 'white-space': 'normal' },
-            },
-            // { field: 'who', headerName: 'Χρήστης', flex: 1 },
-        ];
+  // onRowDoubleClicked(event: any): void {
+  //     // console.log(event);
+  //     this.modalService.showOrganizationDetails(event.data.code);
+  // }
+
+  onEntityChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const entity = select.value;
+
+    console.log('Entity changed', entity);
+    if (entity) {
+      this.logDataService.getAllChangesCodesByType(entity).subscribe(data => {
+        this.allOrganizationChanges = data.data;
+        console.log('allOrganizationChanges', this.allOrganizationChanges);
+        // this.initializeColDefs()
+        this.loading = false;
+      });
     }
+  }
 
-    onGridReady(params: GridReadyEvent<IRemitExtended>): void {
-        this.gridApi = params.api;
-        this.gridApi.showLoadingOverlay();
-        this.subscriptions.push(
-            this.store.select(this.remits$).subscribe((data) => {
-                this.remits = data.map((remit) => {
-                    const orgUnitCode = remit.organizationalUnitCode;
-                    const orgCode =
-                        this.constService.ORGANIZATION_UNIT_CODES_TO_ORGANIZATION_CODES_MAP.get(orgUnitCode);
-                    return {
-                        ...remit,
-                        organizationCode: orgCode,
-                        organizationLabel: this.organizationCodesMap.get(orgCode),
-                        organizationUnitLabel: this.organizationUnitCodesMap.get(remit.organizationalUnitCode),
-                    };
-                });
-                // console.log(">>",this.remits)
-                this.gridApi.hideOverlay();
-            }),
-        );
-    }
-
-    getCellClassRulesOrganizations(): CellClassRules {
-        return {
-            "text-success": (params) => this.allOrganizationChanges["data"]["organizations"].includes(params.data.organizationCode)
-        };
-    }
-
-    getCellClassRulesOrganizationalUnits(): CellClassRules {
-        return {
-            "text-success": (params) => this.allOrganizationChanges["data"]["organizationalUnits"].includes(params.data.organizationalUnitCode)
-        };
-    }
-
-    onCellClicked(event: any): void {
-        if (event.colDef.field == "organizationLabel") {
-            this.modalService.showChangeDetails(event.data['organizationCode']);
-        } else if (event.colDef.field == "organizationUnitLabel") {
-            this.modalService.showChangeDetails(event.data['organizationalUnitCode']);
-        } else if (event.colDef.field == "remitText") {
-            this.modalService.showRemitDetails({organizationCode: event.data.organizationalUnitCode,remitId: event.data["_id"]["$oid"]})
-        }
-    }
-
-    // onRowDoubleClicked(event: any): void {
-    //     // console.log(event);
-    //     this.modalService.showOrganizationDetails(event.data.code);
-    // }
-
-    onEntityChange(event: Event) {
-        const select = event.target as HTMLSelectElement;
-        const entity = select.value;
-
-        console.log("Entity changed", entity);
-        if (entity){
-            this.logDataService.getAllChangesCodesByType(entity)
-                .subscribe((data) => {
-                    this.allOrganizationChanges = data;
-                    console.log("allOrganizationChanges", this.allOrganizationChanges)
-                    this.initializeColDefs()
-                    this.loading = false;
-            })
-        }
-    }
-
-    getEntityLabel(entity: string): string {
-        const entityType = this.constService.ENTITY_TYPES.find(
-            type => type.en === entity
-        );
-        return entityType?.gr ?? entity;
-    }
+  getEntityLabel(entity: string): string {
+    const entityType = this.constService.ENTITY_TYPES.find(type => type.en === entity);
+    return entityType?.gr ?? entity;
+  }
 }
 
 @Component({
-    selector: 'app-html-cell-renderer',
-    standalone: true,
-    imports: [NgIf],
-    template: `
-        <div
-            [innerHTML]="shortText"
-            *ngIf="!showFullText"></div>
-        <div
-            [innerHTML]="params.value"
-            *ngIf="showFullText"></div>
-        <button
-            class="btn btn-info btn-sm mb-2"
-            *ngIf="isLongText"
-            (click)="toggleText()">
-            {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
-        </button>
-    `,
+  selector: 'app-html-cell-renderer',
+  standalone: true,
+  imports: [NgIf],
+  template: `
+    <div
+      [innerHTML]="shortText"
+      *ngIf="!showFullText"></div>
+    <div
+      [innerHTML]="params.value"
+      *ngIf="showFullText"></div>
+    <button
+      class="btn btn-info btn-sm mb-2"
+      *ngIf="isLongText"
+      (click)="toggleText()">
+      {{ showFullText ? 'Σύμπτυξη' : 'Περισσότερα' }}
+    </button>
+  `,
 })
 export class HtmlCellRenderer implements ICellRendererAngularComp {
-    params: any;
-    showFullText = false;
-    shortText = '';
-    isLongText = false;
+  params: any;
+  showFullText = false;
+  shortText = '';
+  isLongText = false;
 
-    agInit(params: any): void {
-        this.params = params;
-        if (this.params.value.length > 500) {
-            this.shortText = this.params.value.substr(0, 500);
-            this.isLongText = true;
-        } else {
-            this.shortText = this.params.value;
-        }
+  agInit(params: any): void {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
     }
+  }
 
-    refresh(params: any): boolean {
-        this.params = params;
-        if (this.params.value.length > 500) {
-            this.shortText = this.params.value.substr(0, 500);
-            this.isLongText = true;
-        } else {
-            this.shortText = this.params.value;
-        }
-        this.showFullText = false; // Reset the text display state
-        return true;
+  refresh(params: any): boolean {
+    this.params = params;
+    if (this.params.value.length > 500) {
+      this.shortText = this.params.value.substr(0, 500);
+      this.isLongText = true;
+    } else {
+      this.shortText = this.params.value;
     }
+    this.showFullText = false; // Reset the text display state
+    return true;
+  }
 
-    toggleText(): void {
-        this.showFullText = !this.showFullText;
-    }
+  toggleText(): void {
+    this.showFullText = !this.showFullText;
+  }
 }
