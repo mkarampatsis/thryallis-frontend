@@ -25,13 +25,13 @@ export class LogDataService {
     userService = inject(UserService);
     constService = inject(ConstService);
         
-    getAllChangesCodesByType(entity: string): Observable<any> {
-        const url = `${APIPREFIX}/allChangesCodesByType/${entity}`;
+    getAllChangesByEntity(entity: string): Observable<any> {
+        const url = `${APIPREFIX}/allChangesByEntity/${entity}`;
         return this.http.get<any>(url);
     }
 
-    getAllChangesByEntity(): Observable<any> {
-        const url = `${APIPREFIX}/allChangesByEntity`;
+    getAllEntityNames(): Observable<any> {
+        const url = `${APIPREFIX}/allEntityNames`;
         return this.http.get<any>(url);
     }
     

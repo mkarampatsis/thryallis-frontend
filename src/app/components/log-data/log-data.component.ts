@@ -67,7 +67,7 @@ export class LogDataComponent {
 
   ngOnInit() {
     this.loading = true;
-    this.logDataService.getAllChangesByEntity().subscribe(data => {
+    this.logDataService.getAllEntityNames().subscribe(data => {
       this.allChangesByEntity = data.data;
       console.log('allChangesByEntity', this.allChangesByEntity);
     });
@@ -162,7 +162,7 @@ export class LogDataComponent {
 
     console.log('Entity changed', entity);
     if (entity) {
-      this.logDataService.getAllChangesCodesByType(entity).subscribe(data => {
+      this.logDataService.getAllChangesByEntity(entity).subscribe(data => {
         this.allOrganizationChanges = data.data;
         console.log('allOrganizationChanges', this.allOrganizationChanges);
         // this.initializeColDefs()
