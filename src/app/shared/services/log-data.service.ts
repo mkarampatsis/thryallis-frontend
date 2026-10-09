@@ -8,6 +8,8 @@ import { ILog } from '../interfaces/log/log.interface';
 import { IRemit } from 'src/app/shared/interfaces/remit/remit.interface';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { HtmlCellRenderer } from 'src/app/components/ota/search/search-grid/search-grid.component';
+import { ColDef } from 'ag-grid-community';
 
 const APIPREFIX = `${environment.apiUrl}/change`;
 
@@ -24,6 +26,38 @@ export class LogDataService {
     organizationService = inject(OrganizationService);
     userService = inject(UserService);
     constService = inject(ConstService);
+
+
+    remitColDefs = [
+      { field: 'what.key.organization', headerName: 'Φορέας', flex: 1 },
+      { field: 'what.key.organizationalUnit', headerName: 'Μονάδα', flex: 1 },
+      { field: 'what.key.code', headerName: 'Κωδικός Μονάδας', flex: 1 },
+      { field: 'action', headerName: 'Διαδικασία', flex: 1, },
+      { field: 'who', headerName: 'Χρήστης', flex: 1, },
+      { 
+        field: 'when', 
+        headerName: 'Ημερομηνία',
+        sortable: true, 
+        cellRenderer: (params) => {
+          const date = new Date(params.value["$date"]);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          return `${day}-${month}-${year}`;
+        },   
+        flex: 1 
+      }
+      // {
+      //   field: 'when',
+      //   headerName: 'Ημερομηνία',
+      //   flex: 6,
+      //   cellRenderer: HtmlCellRenderer,
+      //   autoHeight: true,
+      //   cellStyle: { 'white-space': 'normal' },
+      // },
+      // { field: 'who', headerName: 'Χρήστης', flex: 1 },
+    ];
+
         
     getAllChangesByEntity(entity: string): Observable<any> {
         const url = `${APIPREFIX}/allChangesByEntity/${entity}`;
