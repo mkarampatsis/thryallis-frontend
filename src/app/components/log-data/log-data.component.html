@@ -13,12 +13,18 @@
 }
 
 @if (loading==='show') {
-  <span class="d-flex align-items-center gap-2">
+  <span class="d-flex align-items-center gap-2 mt-2">
     Αναμονή αποτελεσμάτων...
     <span class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </span>
   </span>
+}
+
+@if (loading==='not show' && allChanges.length > 0) {
+  <div class="mt-4 mb-4 ">
+    <span [innerHTML]="showEntityMessage"></span>
+  </div>
 }
 
 @if(loading==='not show' && allChanges.length > 0) {

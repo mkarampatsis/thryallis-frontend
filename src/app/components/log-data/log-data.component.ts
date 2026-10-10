@@ -35,6 +35,7 @@ export class LogDataComponent {
 
   allChanges = [];
   allChangesByEntity = [];
+  showEntityMessage: string = '';
 
   // remits: IRemitExtended[] = [];
 
@@ -160,7 +161,7 @@ export class LogDataComponent {
 
     this.loading = 'show';
     this.allChanges = [];
-    console.log('Entity changed', entity);
+
     if (entity) {
       this.logDataService.getAllChangesByEntity(entity)
       .subscribe(data => {
@@ -170,6 +171,20 @@ export class LogDataComponent {
         this.loading = 'not show';
       });
     }
+
+    switch (entity) {
+      case 'organization':
+        this.showEntityMessage = '<strong>Αφορα αλλαγές που έγιναν στους φορείς, όπως αλλαγές στο <i>Επίπεδο Φορέα</i>, στο <i>Κείμενο Πρόβλεψης της Σύστασης</i> του φορέα ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
+        break;
+      case 'organizationalUnit':
+        this.showEntityMessage = '<strong>Αφορα αλλαγές που έγιναν στις μονάδες, όπως αλλαγές στο <i>Επίπεδο Μονάδας</i>, στο Κείμενο Πρόβλεψης της Σύστασης της Μονάδας ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
+        break;
+      case 'remit':
+        this.showEntityMessage = '<strong>Εμφανίζονται οι αλλαγές που έγιναν στις αρμοδιότητες.</strong>';
+        break;
+      default:
+        this.showEntityMessage = '';
+    } 
   }
 
   getEntityLabel(entity: string): string {
