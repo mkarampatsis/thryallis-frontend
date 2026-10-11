@@ -28,15 +28,15 @@ export class LogDataService {
     constService = inject(ConstService);
 
 
-    remitColDefs = [
+    organizationColDefs = [
+      { field: 'what.key.code', headerName: 'Κωδικός Μονάδας', flex: 0.5 },
       { field: 'what.key.organization', headerName: 'Φορέας', flex: 1 },
-      { field: 'what.key.organizationalUnit', headerName: 'Μονάδα', flex: 1 },
-      { field: 'what.key.code', headerName: 'Κωδικός Μονάδας', flex: 1 },
+      { field: 'what.key.subOrganizationOf', headerName: 'Εποπτεύουσα  Αρχή', flex: 1 },
       { 
         field: 'action', 
         headerName: 
         'Διαδικασία', 
-        flex: 1,
+        flex: 0.5,
         valueGetter: (params) => {
           const type = (params.data.action === 'create') ? 'Δημιουργία' : (params.data.action === 'update') ? 'Ενημέρωση' : (params.data.action === 'delete') ? 'Διαγραφή' : params.data.action;
           return type;
@@ -50,19 +50,61 @@ export class LogDataService {
           const date = new Date(params.data.when.$date).toLocaleDateString('el-GR');
           return date;
         },
-        flex: 1 
-      },
-      // {
-      //   field: 'when',
-      //   headerName: 'Ημερομηνία',
-      //   flex: 6,
-      //   cellRenderer: HtmlCellRenderer,
-      //   autoHeight: true,
-      //   cellStyle: { 'white-space': 'normal' },
-      // },
-      // { field: 'who', headerName: 'Χρήστης', flex: 1 },
+        flex: 0.5
+      }
     ];
 
+    organizationalUnitColDefs = [
+      { field: 'what.key.code', headerName: 'Κωδικός Μονάδας', flex: 0.5 },
+      { field: 'what.key.organizationalUnit', headerName: 'Μονάδα', flex: 1 },
+      { field: 'what.key.organization', headerName: 'Φορέας', flex: 1 },
+      { 
+        field: 'action', 
+        headerName: 
+        'Διαδικασία', 
+        flex: 0.5,
+        valueGetter: (params) => {
+          const type = (params.data.action === 'create') ? 'Δημιουργία' : (params.data.action === 'update') ? 'Ενημέρωση' : (params.data.action === 'delete') ? 'Διαγραφή' : params.data.action;
+          return type;
+        }, 
+      },
+      { field: 'who', headerName: 'Χρήστης', flex: 1, },
+      { 
+        field: 'when', 
+        headerName: 'Ημερομηνία',
+        valueGetter: (params) => {
+          const date = new Date(params.data.when.$date).toLocaleDateString('el-GR');
+          return date;
+        },
+        flex: 0.5 
+      }
+    ];
+
+    remitColDefs = [
+      { field: 'what.key.code', headerName: 'Κωδικός Μονάδας', flex: 0.5 },
+      { field: 'what.key.organizationalUnit', headerName: 'Μονάδα', flex: 1 },
+      { field: 'what.key.organization', headerName: 'Φορέας', flex: 1 },
+      { 
+        field: 'action', 
+        headerName: 
+        'Διαδικασία', 
+        flex: 0.5,
+        valueGetter: (params) => {
+          const type = (params.data.action === 'create') ? 'Δημιουργία' : (params.data.action === 'update') ? 'Ενημέρωση' : (params.data.action === 'delete') ? 'Διαγραφή' : params.data.action;
+          return type;
+        }, 
+      },
+      { field: 'who', headerName: 'Χρήστης', flex: 1, },
+      { 
+        field: 'when', 
+        headerName: 'Ημερομηνία',
+        valueGetter: (params) => {
+          const date = new Date(params.data.when.$date).toLocaleDateString('el-GR');
+          return date;
+        },
+        flex: 0.5 
+      }
+    ];
         
     getAllChangesByEntity(entity: string): Observable<any> {
         const url = `${APIPREFIX}/allChangesByEntity/${entity}`;

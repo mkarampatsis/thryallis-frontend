@@ -32,6 +32,7 @@ export class LogDataComponent {
   logDataService = inject(LogDataService);
 
   loading:string = 'nothing';
+  entity: string = '';
 
   allChanges = [];
   allChangesByEntity = [];
@@ -48,8 +49,9 @@ export class LogDataComponent {
   // organizationUnitCodesMap = this.constService.ORGANIZATION_UNIT_CODES_MAP;
 
   defaultColDef = this.constService.defaultColDef;
-  // colDefs: ColDef[];
   remitColDefs: ColDef[] = this.logDataService.remitColDefs;
+  organizationColDefs: ColDef[] = this.logDataService.organizationColDefs;
+  organizationalUnitColDefs: ColDef[] = this.logDataService.organizationalUnitColDefs;
 
   autoSizeStrategy = this.constService.autoSizeStrategy;
 
@@ -157,22 +159,22 @@ export class LogDataComponent {
 
   onEntityChange(event: Event) {
     const select = event.target as HTMLSelectElement;
-    const entity = select.value;
+    this.entity = select.value;
 
     this.loading = 'show';
     this.allChanges = [];
 
-    if (entity) {
-      this.logDataService.getAllChangesByEntity(entity)
+    if (this.entity) {
+      this.logDataService.getAllChangesByEntity(this.entity)
       .subscribe(data => {
         this.allChanges = data.data;
-        console.log('All changes for entity', entity, this.allChanges);
+        console.log('All changes for entity', this.entity, this.allChanges);
         // this.initializeColDefs()
         this.loading = 'not show';
       });
     }
 
-    switch (entity) {
+    switch (this.entity) {
       case 'organization':
         this.showEntityMessage = '<strong>Αφορα αλλαγές που έγιναν στους φορείς, όπως αλλαγές στο <i>Επίπεδο Φορέα</i>, στο <i>Κείμενο Πρόβλεψης της Σύστασης</i> του φορέα ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
         break;
@@ -185,6 +187,16 @@ export class LogDataComponent {
       default:
         this.showEntityMessage = '';
     } 
+  }
+
+  get columnDefs() {
+    if (this.entity === 'organization') {
+      return this.organizationColDefs;
+    } else if (this.entity === 'remit') {
+      return this.remitColDefs;
+    }
+
+    return this.organizationalUnitColDefs;
   }
 
   getEntityLabel(entity: string): string {

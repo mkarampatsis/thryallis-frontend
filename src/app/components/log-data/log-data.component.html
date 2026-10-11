@@ -6,7 +6,7 @@
   <select class="form-select form-select-sm mb-2" (change)="onEntityChange($event)">
     <option disabled selected>Επιλέξτε οντότητα</option>
     @for(entity of allChangesByEntity; track entity) {
-    <option [value]="entity">{{ getEntityLabel(entity) }}</option>
+      <option [value]="entity">{{ getEntityLabel(entity) }}</option>
     }
   </select>
 </div>
@@ -33,7 +33,7 @@
     [domLayout]="'autoHeight'" 
     [rowData]="allChanges" 
     [defaultColDef]="defaultColDef"
-    [columnDefs]="remitColDefs" 
+    [columnDefs]="columnDefs"
     [pagination]="true" 
     [paginationPageSize]="20"
     [loadingOverlayComponent]="loadingOverlayComponent" 
