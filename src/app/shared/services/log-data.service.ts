@@ -8,8 +8,6 @@ import { ILog } from '../interfaces/log/log.interface';
 import { IRemit } from 'src/app/shared/interfaces/remit/remit.interface';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { HtmlCellRenderer } from 'src/app/components/ota/search/search-grid/search-grid.component';
-import { ColDef } from 'ag-grid-community';
 
 const APIPREFIX = `${environment.apiUrl}/change`;
 
@@ -119,5 +117,10 @@ export class LogDataService {
     getChanges(code: string): Observable<ILog[]> {
         const url = `${APIPREFIX}/${code}`;
         return this.http.get<ILog[]>(url);
+    }
+
+    getChangeById(id: string): Observable<ILog> {
+        const url = `${APIPREFIX}/by_id/${id}`;
+        return this.http.get<ILog>(url);
     }
 }

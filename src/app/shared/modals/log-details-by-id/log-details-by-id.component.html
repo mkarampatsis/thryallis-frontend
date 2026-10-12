@@ -1,0 +1,61 @@
+<div class="d-flex justify-content-between m-3">
+  <span class="h5">Ιστορικά στοιχεία αλλαγών Φορέα/Μονάδας</span>
+
+  <button
+    type="button"
+    class="btn-close"
+    (click)="modalRef.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <span class="d-flex justify-content-center fs-5 fw-bolder mb-3">Στοιχεία Αλλαγών</span>
+  <div class="d-flex flex-column gap-2">
+    @if (result) {
+      <ul>
+        <li>Χρήστης: {{ result.who['firstName'] }} {{ result.who['lastName'] }}</li>
+        <li>Λειτουργία: {{ result.action }}</li>
+        <li>Ημερομηνία: {{ result.when['$date'] | date: 'dd-MM-yyyy HH:mm:ss' }}</li>
+      </ul>
+
+      <p><strong>Αλλαγή:</strong></p>
+      <!-- Provision text, if present -->
+    @if (result.change.provisionText) {
+      <div [innerHTML]="result.change.provisionText"></div>
+    }
+
+    <!-- Remit text, if present -->
+    @if (result.change.remitText) {
+      <div [innerHTML]="result.change.remitText"></div>
+    }
+
+    <!-- Inserted legal provisions -->
+    @if (result.change.legalProvisions?.inserts?.length) {
+      <h4>Legal Provisions:</h4>
+
+      <app-list-legal-provisions 
+        [legalProvisions]="result.change.legalProvisions.inserts">
+      </app-list-legal-provisions>
+      @for (
+        insert of result.change.legalProvisions?.inserts;
+        track insert._id
+      ) {
+        <div [innerHTML]="insert.legalProvisionText"></div>
+      }
+    }
+  }
+    
+    
+          <!-- <td>{{ result.change | json }}</td> -->
+         
+    
+  </div>
+</div>
+
+<div class="d-flex justify-content-end m-3">
+  <button
+    ngbAutofocus
+    type="button"
+    class="btn btn-primary"
+    (click)="modalRef.close()">
+    Επιστροφή
+  </button>
+</div>

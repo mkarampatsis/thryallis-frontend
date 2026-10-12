@@ -140,16 +140,11 @@ export class LogDataComponent {
 
   onCellClicked(event: any): void {
    console.log('Cell clicked', event.data); 
-  //   if (event.colDef.field == 'organizationLabel') {
-  //     this.modalService.showChangeDetails(event.data['organizationCode']);
-  //   } else if (event.colDef.field == 'organizationUnitLabel') {
-  //     this.modalService.showChangeDetails(event.data['organizationalUnitCode']);
-  //   } else if (event.colDef.field == 'remitText') {
-  //     this.modalService.showRemitDetails({
-  //       organizationCode: event.data.organizationalUnitCode,
-  //       remitId: event.data['_id']['$oid'],
-  //     });
-  //   }
+    if (this.entity == 'organization' || this.entity == 'organizationalUnit') {
+      this.modalService.showChangeDetails(event.data['what']['key']['code']);
+    } else if (this.entity == 'remit') {
+      this.modalService.showChangeDetailsById(event.data['_id']['$oid']);
+    }
   }
 
   // onRowDoubleClicked(event: any): void {
@@ -176,10 +171,10 @@ export class LogDataComponent {
 
     switch (this.entity) {
       case 'organization':
-        this.showEntityMessage = '<strong>Αφορα αλλαγές που έγιναν στους φορείς, όπως αλλαγές στο <i>Επίπεδο Φορέα</i>, στο <i>Κείμενο Πρόβλεψης της Σύστασης</i> του φορέα ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
+        this.showEntityMessage = '<strong>Αφορά αλλαγές που έγιναν στους φορείς, όπως στο <i>Επίπεδο Φορέα</i>, στο <i>Κείμενο Πρόβλεψης της Σύστασης</i> του φορέα ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
         break;
       case 'organizationalUnit':
-        this.showEntityMessage = '<strong>Αφορα αλλαγές που έγιναν στις μονάδες, όπως αλλαγές στο <i>Επίπεδο Μονάδας</i>, στο Κείμενο Πρόβλεψης της Σύστασης της Μονάδας ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
+        this.showEntityMessage = '<strong>Αφορά αλλαγές που έγιναν στις μονάδες, όπως στο <i>Επίπεδο Μονάδας</i>, στο Κείμενο Πρόβλεψης της Σύστασης της Μονάδας ή στις <i>Διατάξεις Πρόβλεψεις</i>.</strong>';
         break;
       case 'remit':
         this.showEntityMessage = '<strong>Εμφανίζονται οι αλλαγές που έγιναν στις αρμοδιότητες.</strong>';

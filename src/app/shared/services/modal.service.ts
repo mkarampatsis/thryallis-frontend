@@ -50,6 +50,7 @@ import { IInstructionAct } from '../interfaces/instruction-act/instruction-act.i
 import { OtaDetailsComponent } from '../modals/ota-details/ota-details.component';
 import { RemitFullTextModalComponent } from '../modals/remit-full-text-modal/remit-full-text-modal.component';
 import { UserAccessesGsisComponent } from '../modals/user-accesses-gsis/user-accesses-gsis.component';
+import { LogDetailsByIdComponent } from '../modals/log-details-by-id/log-details-by-id.component';
 
 @Injectable({
   providedIn: 'root',
@@ -371,6 +372,15 @@ export class ModalService {
       centered: true,
     });
     modalRef.componentInstance.code = code;
+    modalRef.componentInstance.modalRef = modalRef;
+  }
+
+  showChangeDetailsById(id: string) {
+    const modalRef = this.modalService.open(LogDetailsByIdComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.id = id;
     modalRef.componentInstance.modalRef = modalRef;
   }
 
