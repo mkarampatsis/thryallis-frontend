@@ -2,13 +2,14 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { IOta } from '../interfaces/ota/ota.interface';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 // For Excel Export
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { ISearch } from '../interfaces/search/search.interface';
 import { IElasticResources } from '../interfaces/search/search-resources.interface';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { ISearchOTA_Output } from '../interfaces/ota/searchOta.interface';
 
 const APIPREFIX_OTA = `${environment.apiUrl}/ota`;
@@ -19,6 +20,7 @@ const APIPREFIX_ELASTIC = `${environment.elasticUrl}/search/ota`;
 })
 export class OtaService {
   http = inject(HttpClient);
+  modalService = inject(ModalService);
 
   otaActsNeedUpdate = signal<boolean>(false);
   
@@ -47,6 +49,18 @@ export class OtaService {
 
   getUniqueOrganizationTypes(): Observable<HttpResponse<string[]>> {
     return this.http.get<string[]>(`${APIPREFIX_OTA}/organization-types`, { observe: 'response' });
+  }
+
+  getFekFromAssets() {
+    this.http.get("/assets/ota/fek_103a.pdf", { responseType: "blob" })
+    .pipe(take(1))
+    .subscribe((pdfBlob) => {
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "document.pdf";
+      this.modalService.showPdfViewer(link);
+    });
   }
 
   // Elastic Request

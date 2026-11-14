@@ -143,12 +143,19 @@
 										Κώδικας ΤΑ
 									</a>
 									<ul class="dropdown-menu">
-										<!-- <li><a class="dropdown-item" href="#">Εμφάνιση Στοιχείων</a></li> -->
+										<li>
+                      <a class="dropdown-item"
+                        (click)="displayPDF()" 
+                        role="button" 
+                        routerLinkActive="fw-bold">
+                        Κώδικας ΤΑ
+                      </a>
+                    </li>
 										<li>
                       <a class="dropdown-item"
                         routerLink="ota/details" 
                         routerLinkActive="fw-bold">
-                      	Στοιχεία Κώδικα
+                      	Αρμοδιότητες Κώδικα ΤΑ
                       </a>
                     </li>
 										<li>
@@ -156,7 +163,7 @@
                         routerLink="ota/instruction-provisions" 
                         routerLinkActive="fw-bold"
                       >
-                        Εγκύκλιες Οδηγίες
+                        Εγκύκλιοι Κώδικα ΤΑ
                       </a>
                     </li>
                     <li>

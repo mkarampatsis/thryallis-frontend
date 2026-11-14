@@ -9,7 +9,51 @@
   <div class="d-flex flex-column gap-2">
 
     @if (this.data) {
-      <table class="table table-striped">
+    <ol [ngClass]="{'bg-warning': data.status === 'ΑΝΕΝΕΡΓΗ'}" class="list-group list-group-numbered">
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Κείμενο Αρμοδιότητας</div>
+            <div [innerHTML]="data.remitText"></div>
+        </div>
+        <span class="badge theme-primary">14</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Φορέας Άσκησης Αρμοδιότητας</div>
+            {{ data.remitCompetence }}
+        </div>
+        <span class="badge theme-primary">14</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Λειτουργική Περιοχή COFOG</div>
+            {{ data.cofog.cofog1_name }}
+        </div>
+        <span class="badge theme-primary">14</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Λειτουργικός Τομέας COFOG</div>
+            {{ data.cofog.cofog2_name }}
+        </div>
+        <span class="badge theme-primary">14</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Θεματική Περιοχή COFOG</div>
+            {{ data.cofog.cofog3_name }}
+        </div>
+        <span class="badge theme-primary">14</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Κωδικός Αρμοδιότητας</div>
+            {{ data.annexCode }}
+        </div>
+        <span class="badge theme-primary">14</span>
+      </li>
+    </ol>
+    <!-- <table class="table table-striped">
         <tbody>
           <tr>
             <td class="d-flex flex-column gap-2" [ngClass]="{'bg-warning': data.status === 'ΑΝΕΝΕΡΓΗ'}">
@@ -51,13 +95,11 @@
             </td>
           </tr>
         </tbody>
-      </table>
-      <app-list-legal-provisions 
-        [legalProvisions]="data.legalProvisions">
-      </app-list-legal-provisions>
-      <app-list-instruction-provisions
-        [instructionProvisions]="data.instructionProvisions">
-      </app-list-instruction-provisions>
+      </table> -->
+    <app-list-legal-provisions [legalProvisions]="data.legalProvisions">
+    </app-list-legal-provisions>
+    <app-list-instruction-provisions [instructionProvisions]="data.instructionProvisions">
+    </app-list-instruction-provisions>
     }
   </div>
 </div>

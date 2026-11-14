@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserService } from 'src/app/shared/services/user.service';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/shared/state/app.state';
+import { OtaService } from 'src/app/shared/services/ota.service';
 
 @Component({
   selector: 'app-navigation',
@@ -19,6 +20,7 @@ import { AppState } from 'src/app/shared/state/app.state';
 
 export class NavigationComponent {
   authService = inject(AuthService);
+  otaService = inject(OtaService);
   userService = inject(UserService);
   user = this.authService.user;
   store = inject(Store<AppState>);
@@ -67,5 +69,9 @@ export class NavigationComponent {
 
   hasOneRole() {
     return this.userService.hasOneRole();
+  }
+
+  displayPDF() {
+    this.otaService.getFekFromAssets();
   }
 }

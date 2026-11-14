@@ -27,6 +27,7 @@ export interface IOta {
   legalProvisions: ILegalProvision[];
   instructionProvisions: IInstructionProvision[];
   publicPolicyAgency: PublicPolicyAgency;
+  annexCode: string;
   status: string;
   finalized: boolean;
 }
@@ -49,4 +50,5 @@ export interface IOtaSearch {
     until:string;
   };
   remitLocalOrGlobal: string;
+  annexCode:string;
 }
