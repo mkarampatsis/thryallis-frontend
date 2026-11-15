@@ -11,7 +11,8 @@
     </div>
       
     <div class="row">
-      <div class="col-md-6 mb-3">
+      <!-- <div class="col-md-6 mb-3"> -->
+      <div class="col-md-12 mb-3">
         <label class="form-label">Φορέας άσκησης αρμοδιότητας:</label>
         <select formControlName="remitCompetence" class="form-select">
           <option value="" disabled>-- Επιλογή --</option>
@@ -21,7 +22,7 @@
         </select>
       </div>
 
-      <div class="col-md-6 mb-3">
+      <!-- <div class="col-md-6 mb-3">
         <label class="form-label">Τύπος αρμοδιότητας:</label>
         <select formControlName="remitType" class="form-select">
           <option value="" disabled>-- Επιλογή --</option>
@@ -29,20 +30,21 @@
             <option [value]="name">{{ name }}</option>
           }
         </select>
-      </div>
+      </div> -->
     </div>
 
     <div class="row mb-3">
-      <div class="col-md-6">
+      <!-- <div class="col-md-6">
         <label class="form-label" for="remitLocalOrGlobal">Αυτοδιοικητική/Κρατική:</label>
         <select formControlName="remitLocalOrGlobal" id="remitLocalOrGlobal" class="form-select">
           <option value="" disabled>-- Επιλογή --</option>
           <option value="Αυτοδιοικητική Αρμοδιότητα (Τοπική)">Αυτοδιοικητική Αρμοδιότητα (Τοπική)</option>
           <option value="Αρμοδιότητα που συνιστά αποστολή του κράτους (Κρατική)">Αρμοδιότητα που συνιστά αποστολή του κράτους (Κρατική)</option>
         </select>
-      </div>
+      </div> -->
 
-      <div class="col-md-6">
+      <!-- <div class="col-md-6"> -->
+      <div class="col-md-12">
         <label for="cofog1" class="form-label">
           Λειτουργική Περιοχή COFOG:
         </label>
@@ -104,7 +106,7 @@
         }
       </div>
     }
-    <div class="row mb-3" formGroupName="publicPolicyAgency">
+    <!-- <div class="row mb-3" formGroupName="publicPolicyAgency">
       <div class="col-md-6">
         <label class="form-label">
           Φορέας Δημόσιας Πολιτικής:
@@ -122,7 +124,7 @@
           }
         </select>
       </div>
-    </div>
+    </div> -->
     <div class="row mb-3" formGroupName="instruction">
       <div class="col-md-6">
         <label class="form-label">
