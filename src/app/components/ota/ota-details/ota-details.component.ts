@@ -43,7 +43,7 @@ export class OtaDetailsComponent implements OnInit {
     // { field: 'remitLocalOrGlobal', headerName: 'Αυτοδιοικητική/Κρατική', flex: 1 },
     // { field: 'remitType', headerName: 'Τύπος Αρμοδιότητας', flex: 0.5 },
     { field: 'remitCompetence', headerName: 'Φορέας Άσκησης', flex: 0.5 },
-    { field: 'annexCode', headerName: 'Κωδικός Αρμοδιότητας', flex: 0.5 },
+    { field: 'annexCode', headerName: 'Κωδικός Πρόβλεψης - Παράρτημα Κώδικα ΤΑ', flex: 0.5 },
     // { field: 'publicPolicyAgency.organization', headerName: 'Φορέας Δημόσιας Πολιτικής', flex: 1 },
     {
       field: 'updatedAt',
