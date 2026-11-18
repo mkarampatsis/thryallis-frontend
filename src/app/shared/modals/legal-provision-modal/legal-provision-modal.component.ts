@@ -54,7 +54,7 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
         stoixeio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
         ypostoixeio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
         // edafio: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
-        pararthma: new FormControl('', [this.greekEnglishLettersNumbersWithTrim()]),
+        pararthma: new FormControl('', [this.greekEnglishLettersNumbersAndDotsWithTrim()]),
       }),
       legalActKey: new FormControl({ value: '', disabled: true }, Validators.required),
     },
