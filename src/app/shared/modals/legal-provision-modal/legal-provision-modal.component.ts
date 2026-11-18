@@ -177,4 +177,33 @@ export class LegalProvisionModalComponent implements OnInit, OnDestroy {
       return regex.test(value) ? null : { invalidCharacters: true };
     };
   }
+
+  greekEnglishLettersNumbersAndDotsWithTrim(): ValidatorFn {
+    // Greek + English + numbers + spaces
+    // const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+$/;
+    
+    // Greek + English + numbers + numbers with dots + without spaces
+    // const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9]+(?:\.[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9]+)*$/;
+
+    // Greek + English + numbers + spaces + numbers with dots
+    const regex = /^[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+(?:\.[A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώ0-9\s]+)*$/;
+
+    return (control: AbstractControl): ValidationErrors | null => {
+      let value = control.value;
+
+      if (value === null || value === undefined || value === '') {
+        return null;
+      }
+
+      // Auto-trim leading/trailing spaces
+      const trimmedValue = value.trim();
+
+      if (trimmedValue !== value) {
+        control.setValue(trimmedValue, { emitEvent: false });
+        value = trimmedValue;
+      }
+
+      return regex.test(value) ? null : { invalidCharacters: true };
+    };
+  }
 }
